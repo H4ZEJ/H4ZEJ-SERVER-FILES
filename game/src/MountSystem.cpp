@@ -125,120 +125,197 @@ void CMountActor::Unmount()
 	m_pkOwner->MountVnum(0);
 }
 
-void CMountActor::Unsummon()
+void CMountActor::Unsummon(bool bLeaveFar)
 {
-	if (true == this->IsSummoned())
-	{
-		this->SetSummonItem(NULL);
-		
-		if (NULL != m_pkChar)
-			M2_DESTROY_CHARACTER(m_pkChar);
+        if (!IsSummoned())
+                return;
 
-		m_pkChar = 0;
-		m_dwVID = 0;
-	}
+        this->SetSummonItem(NULL);
+
+        if (NULL != m_pkChar)
+        {
+                m_pkChar->SetRider(NULL);
+
+                if (bLeaveFar && NULL != m_pkOwner)
+                {
+                        m_pkChar->SetNowWalking(false);
+
+                        float fx, fy;
+                        m_pkChar->SetRotation(GetDegreeFromPositionXY(m_pkChar->GetX(), m_pkChar->GetY(), m_pkOwner->GetX(), m_pkOwner->GetY()) + 180);
+                        GetDeltaByDegree(m_pkChar->GetRotation(), 3500.f, &fx, &fy);
+
+                        m_pkChar->Goto(static_cast<long>(m_pkChar->GetX() + fx), static_cast<long>(m_pkChar->GetY() + fy));
+                        m_pkChar->SendMovePacket(FUNC_WAIT, 0, 0, 0, 0);
+                }
+                else
+                {
+                        M2_DESTROY_CHARACTER(m_pkChar);
+                }
+        }
+
+        m_pkChar = 0;
+        m_dwVID = 0;
 }
 
 DWORD CMountActor::Summon(LPITEM pSummonItem, bool bSpawnFar)
 {
-	long x = m_pkOwner->GetX();
-	long y = m_pkOwner->GetY();
-	long z = m_pkOwner->GetZ();
+        if (NULL == m_pkOwner)
+                return 0;
 
-	if (true == bSpawnFar)
-	{
-		x += (number(0, 1) * 2 - 1) * number(2000, 2500);
-		y += (number(0, 1) * 2 - 1) * number(2000, 2500);
-	}
-	else
-	{
-		x += number(-100, 100);
-		y += number(-100, 100);
-	}
-	
-	if (0 != m_pkChar)
-	{
-		m_pkChar->Show(m_pkOwner->GetMapIndex(), x, y);
-		m_dwVID = m_pkChar->GetVID();
+        long x = m_pkOwner->GetX();
+        long y = m_pkOwner->GetY();
+        long z = m_pkOwner->GetZ();
 
-		return m_dwVID;
-	}
+        if (bSpawnFar)
+        {
+                float fOwnerRot = (m_pkOwner->GetRotation() + 180.0f) * 3.141592f / 180.0f;
+                int iDistance = number(2000, 2500);
+                x += static_cast<long>(cos(fOwnerRot) * iDistance);
+                y += static_cast<long>(sin(fOwnerRot) * iDistance);
+        }
+        else
+        {
+                x += number(-100, 100);
+                y += number(-100, 100);
+        }
 
-	m_pkChar = CHARACTER_MANAGER::instance().SpawnMob(m_dwVnum, m_pkOwner->GetMapIndex(), x, y, z, false, (int)(m_pkOwner->GetRotation()+180), false);
+        if (m_pkChar)
+        {
+                if (m_pkChar->IsDead() || CHARACTER_MANAGER::instance().Find(m_pkChar->GetVID()) != m_pkChar)
+                {
+                        M2_DESTROY_CHARACTER(m_pkChar);
+                        m_pkChar = NULL;
+                        m_dwVID = 0;
+                }
+        }
 
-	if (0 == m_pkChar)
-	{
-		sys_err("[CMountActor::Summon] Failed to summon the mount. (vnum: %d)", m_dwVnum);
-		return 0;
-	}
+        if (NULL == m_pkChar)
+        {
+                m_pkChar = CHARACTER_MANAGER::instance().SpawnMob(m_dwVnum, m_pkOwner->GetMapIndex(), x, y, z, false, static_cast<int>(m_pkOwner->GetRotation() + 180), false);
 
-	m_pkChar->SetMount();
+                if (NULL == m_pkChar)
+                {
+                        sys_err("[CMountActor::Summon] Failed to summon the mount. (vnum: %d)", m_dwVnum);
+                        return 0;
+                }
 
-	m_pkChar->SetEmpire(m_pkOwner->GetEmpire());
+                m_pkChar->SetMount();
+                m_pkChar->SetEmpire(m_pkOwner->GetEmpire());
+        }
 
-	m_dwVID = m_pkChar->GetVID();
+        if (!m_pkChar->Show(m_pkOwner->GetMapIndex(), x, y, z))
+        {
+                sys_err("[CMountActor::Summon] Unable to show mount (vnum: %d)", m_dwVnum);
+                M2_DESTROY_CHARACTER(m_pkChar);
+                m_pkChar = NULL;
+                m_dwVID = 0;
+                return 0;
+        }
 
-	this->SetName();
+        m_pkChar->SetRider(m_pkOwner);
 
-	this->SetSummonItem(pSummonItem);
-	
-	//m_pkOwner->ComputePoints();
-	
-	m_pkChar->Show(m_pkOwner->GetMapIndex(), x, y, z);
+        m_dwVID = m_pkChar->GetVID();
+        m_dwLastActionTime = 0;
 
-	return m_dwVID;
+        this->SetName();
+        this->SetSummonItem(pSummonItem);
+
+        return m_dwVID;
 }
 
 bool CMountActor::_UpdateFollowAI()
 {
-	if (0 == m_pkChar->m_pkMobData)
-	{
+	if (NULL == m_pkChar || NULL == m_pkOwner)
 		return false;
-	}
+
+	if (NULL == m_pkChar->m_pkMobData)
+		return false;
 
 	if (0 == m_originalMoveSpeed)
 	{
 		const CMob* mobData = CMobManager::Instance().Get(m_dwVnum);
 
-		if (0 != mobData)
+		if (NULL != mobData)
 			m_originalMoveSpeed = mobData->m_table.sMovingSpeed;
 	}
-	float	START_FOLLOW_DISTANCE = 300.0f;
 
-	float	RESPAWN_DISTANCE = 4500.f;
-	int		APPROACH = 200;
+        const float START_FOLLOW_DISTANCE = 400.0f;
+        const float START_RUN_DISTANCE = 700.0f;
+        const float RESPAWN_DISTANCE = 4500.f;
+        const int MIN_APPROACH = 150;
+        const int MAX_APPROACH = 300;
+        const bool bDoMoveAlone = true;
+        const bool bRun = true;
 
 	DWORD currentTime = get_dword_time();
 
-	long ownerX = m_pkOwner->GetX();		long ownerY = m_pkOwner->GetY();
-	long charX = m_pkChar->GetX();			long charY = m_pkChar->GetY();
+	long ownerX = m_pkOwner->GetX();
+	long ownerY = m_pkOwner->GetY();
+	long ownerZ = m_pkOwner->GetZ();
+	long charX = m_pkChar->GetX();
+	long charY = m_pkChar->GetY();
+
+	if (m_pkChar->GetMapIndex() != m_pkOwner->GetMapIndex())
+	{
+		if (!m_pkChar->Show(m_pkOwner->GetMapIndex(), ownerX, ownerY, ownerZ))
+			return false;
+
+		charX = m_pkChar->GetX();
+		charY = m_pkChar->GetY();
+	}
 
 	float fDist = DISTANCE_APPROX(charX - ownerX, charY - ownerY);
 
 	if (fDist >= RESPAWN_DISTANCE)
 	{
-		float fOwnerRot = m_pkOwner->GetRotation() * 3.141592f / 180.f;
-		float fx = -APPROACH * cos(fOwnerRot);
-		float fy = -APPROACH * sin(fOwnerRot);
-		if (m_pkChar->Show(m_pkOwner->GetMapIndex(), ownerX + fx, ownerY + fy))
-		{
-			return true;
-		}
+		float fOwnerRot = (m_pkOwner->GetRotation() + 180.0f) * 3.141592f / 180.0f;
+		int iApproach = number(MIN_APPROACH, MAX_APPROACH);
+		long targetX = ownerX + static_cast<long>(cos(fOwnerRot) * iApproach);
+		long targetY = ownerY + static_cast<long>(sin(fOwnerRot) * iApproach);
+
+		if (!m_pkChar->Show(m_pkOwner->GetMapIndex(), targetX, targetY, ownerZ))
+			return false;
+
+		charX = m_pkChar->GetX();
+		charY = m_pkChar->GetY();
+		fDist = DISTANCE_APPROX(charX - ownerX, charY - ownerY);
 	}
 
-	if (fDist >= START_FOLLOW_DISTANCE)
-	{
-		m_pkChar->SetNowWalking(false);
+        if (fDist >= START_FOLLOW_DISTANCE)
+        {
+                if (fDist > START_RUN_DISTANCE)
+                        m_pkChar->SetNowWalking(!bRun);
 
-		Follow(APPROACH);
+                m_pkChar->Follow(m_pkOwner, number(MIN_APPROACH, MAX_APPROACH));
+                m_pkChar->SetLastAttacked(currentTime);
+        }
+        else if (bDoMoveAlone && currentTime > m_dwLastActionTime)
+        {
+                m_dwLastActionTime = currentTime + number(5000, 12000);
 
-		m_pkChar->SetLastAttacked(currentTime);
-		m_dwLastActionTime = currentTime;
-	}
-	else
-		m_pkChar->SendMovePacket(FUNC_WAIT, 0, 0, 0, 0);
+                m_pkChar->SetRotation(number(0, 359));
 
-	return true;
+                float fx, fy;
+                float fMoveDist = static_cast<float>(number(200, 400));
+
+                GetDeltaByDegree(m_pkChar->GetRotation(), fMoveDist, &fx, &fy);
+
+                int destX = m_pkChar->GetX() + static_cast<int>(fx);
+                int destY = m_pkChar->GetY() + static_cast<int>(fy);
+
+                if (!(SECTREE_MANAGER::instance().IsAttackablePosition(m_pkChar->GetMapIndex(), destX, destY) &&
+                      SECTREE_MANAGER::instance().IsAttackablePosition(m_pkChar->GetMapIndex(), m_pkChar->GetX() + static_cast<int>(fx / 2), m_pkChar->GetY() + static_cast<int>(fy / 2))))
+                {
+                        return true;
+                }
+
+                m_pkChar->SetNowWalking(true);
+
+                if (m_pkChar->Goto(destX, destY))
+                        m_pkChar->SendMovePacket(FUNC_WAIT, 0, 0, 0, 0);
+        }
+
+        return true;
 }
 
 bool CMountActor::Update(DWORD deltaTime)
@@ -262,32 +339,10 @@ bool CMountActor::Update(DWORD deltaTime)
 
 bool CMountActor::Follow(float fMinDistance)
 {
-	if( !m_pkOwner || !m_pkChar)
-		return false;
+	if (!m_pkOwner || !m_pkChar)
+	        return false;
 
-	float fOwnerX = m_pkOwner->GetX();
-	float fOwnerY = m_pkOwner->GetY();
-
-	float fPetX = m_pkChar->GetX();
-	float fPetY = m_pkChar->GetY();
-
-	float fDist = DISTANCE_SQRT(fOwnerX - fPetX, fOwnerY - fPetY);
-	if (fDist <= fMinDistance)
-		return false;
-
-	m_pkChar->SetRotationToXY(fOwnerX, fOwnerY);
-
-	float fx, fy;
-
-	float fDistToGo = fDist - fMinDistance;
-	GetDeltaByDegree(m_pkChar->GetRotation(), fDistToGo, &fx, &fy);
-
-	if (!m_pkChar->Goto((int)(fPetX+fx+0.5f), (int)(fPetY+fy+0.5f)) )
-		return false;
-
-	m_pkChar->SendMovePacket(FUNC_WAIT, 0, 0, 0, 0, 0);
-	
-	return true;
+	return m_pkChar->Follow(m_pkOwner, fMinDistance);
 }
 
 void CMountActor::SetSummonItem(LPITEM pItem)
@@ -408,14 +463,8 @@ void CMountSystem::DeleteMount(CMountActor* mountActor)
 	sys_err("[CMountSystem::DeleteMount] Can't find mountActor(0x%x) on my list(size: %d) ", mountActor, m_mountActorMap.size());
 }
 
-void CMountSystem::Unsummon(DWORD vnum, bool bDeleteFromList)
+void CMountSystem::Unsummon(DWORD vnum, bool bDeleteFromList, bool bFromFar)
 {
-	//if (m_pkOwner->IncreaseMountCounter() >= 5)
-	//{
-	//	m_pkOwner->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("_TRANSLATE_CHAT_TYPE_PACKETS_FROM_SOURCE_TO_GLOBAL__TRANSLATE_LIST_110"));
-	//	return;
-	//}
-	
 	CMountActor* actor = this->GetByVnum(vnum);
 
 	if (0 == actor)
@@ -423,16 +472,20 @@ void CMountSystem::Unsummon(DWORD vnum, bool bDeleteFromList)
 		sys_err("[CMountSystem::Unsummon(%d)] Null Pointer (actor)", vnum);
 		return;
 	}
-	actor->Unsummon();
+
+	actor->Unsummon(bFromFar);
 
 	if (true == bDeleteFromList)
+	{
 		this->DeleteMount(actor);
+	}
 
 	bool bActive = false;
-	for (TMountActorMap::iterator it = m_mountActorMap.begin(); it != m_mountActorMap.end(); it++)
+	for (TMountActorMap::iterator it = m_mountActorMap.begin(); it != m_mountActorMap.end(); ++it)
 	{
 		bActive |= it->second->IsSummoned();
 	}
+
 	if (false == bActive)
 	{
 		event_cancel(&m_pkMountSystemUpdateEvent);
@@ -440,6 +493,33 @@ void CMountSystem::Unsummon(DWORD vnum, bool bDeleteFromList)
 	}
 }
 
+void CMountSystem::Unsummon(CMountActor* mountActor, bool bDeleteFromList, bool bFromFar)
+{
+	if (NULL == mountActor)
+	{
+		sys_err("[CMountSystem::Unsummon] Null Pointer (mountActor)");
+		return;
+	}
+
+	mountActor->Unsummon(bFromFar);
+
+	if (true == bDeleteFromList)
+	{
+		DeleteMount(mountActor);
+	}
+
+	bool bActive = false;
+	for (TMountActorMap::iterator it = m_mountActorMap.begin(); it != m_mountActorMap.end(); ++it)
+	{
+		bActive |= it->second->IsSummoned();
+	}
+
+	if (false == bActive)
+	{
+		event_cancel(&m_pkMountSystemUpdateEvent);
+		m_pkMountSystemUpdateEvent = NULL;
+	}
+}
 
 void CMountSystem::Summon(DWORD mobVnum, LPITEM pSummonItem, bool bSpawnFar)
 {
@@ -494,7 +574,7 @@ void CMountSystem::Mount(DWORD mobVnum, LPITEM mountItem)
 		// return;
 	// }
 
-	this->Unsummon(mobVnum, false);
+	this->Unsummon(mobVnum, false, false);
 	mountActor->Mount(mountItem);
 }
 
