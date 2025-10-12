@@ -127,46 +127,72 @@ void CMountActor::Unmount()
 
 void CMountActor::Unsummon()
 {
-	if (true == this->IsSummoned())
-	{
-		this->SetSummonItem(NULL);
-		
-		if (NULL != m_pkChar)
-			M2_DESTROY_CHARACTER(m_pkChar);
+	if (!IsSummoned())
+		return;
 
-		m_pkChar = 0;
-		m_dwVID = 0;
+	SetSummonItem(NULL);
+
+	if (m_pkChar)
+	{
+		m_pkChar->SetRider(NULL);
+		m_pkChar->SendMovePacket(FUNC_WAIT, 0, 0, 0, 0);
+		M2_DESTROY_CHARACTER(m_pkChar);
 	}
+
+	m_pkChar = NULL;
+	m_dwVID = 0;
 }
 
 DWORD CMountActor::Summon(LPITEM pSummonItem, bool bSpawnFar)
 {
-	long x = m_pkOwner->GetX();
-	long y = m_pkOwner->GetY();
-	long z = m_pkOwner->GetZ();
+	if (!m_pkOwner)
+		return 0;
 
-	if (true == bSpawnFar)
+	long ownerX = m_pkOwner->GetX();
+	long ownerY = m_pkOwner->GetY();
+	long ownerZ = m_pkOwner->GetZ();
+
+	long spawnX = ownerX;
+	long spawnY = ownerY;
+
+	if (bSpawnFar)
 	{
-		x += (number(0, 1) * 2 - 1) * number(2000, 2500);
-		y += (number(0, 1) * 2 - 1) * number(2000, 2500);
+		float ownerRot = m_pkOwner->GetRotation() * 3.141592f / 180.f;
+		int distance = number(2000, 2500);
+		spawnX += (long)(-cos(ownerRot) * distance);
+		spawnY += (long)(-sin(ownerRot) * distance);
 	}
 	else
 	{
-		x += number(-100, 100);
-		y += number(-100, 100);
+		spawnX += number(-100, 100);
+		spawnY += number(-100, 100);
 	}
-	
-	if (0 != m_pkChar)
+
+	if (m_pkChar)
 	{
-		m_pkChar->Show(m_pkOwner->GetMapIndex(), x, y);
-		m_dwVID = m_pkChar->GetVID();
-
-		return m_dwVID;
+		if (m_pkChar->IsDead())
+		{
+			m_pkChar->SetRider(NULL);
+			M2_DESTROY_CHARACTER(m_pkChar);
+			m_pkChar = NULL;
+			m_dwVID = 0;
+		}
+		else
+		{
+			m_pkChar->Stop();
+			m_pkChar->SetEmpire(m_pkOwner->GetEmpire());
+			m_pkChar->SetRider(m_pkOwner);
+			m_pkChar->Show(m_pkOwner->GetMapIndex(), spawnX, spawnY, ownerZ);
+			m_dwVID = m_pkChar->GetVID();
+			SetSummonItem(pSummonItem);
+			m_pkChar->SendMovePacket(FUNC_WAIT, 0, 0, 0, 0);
+			return m_dwVID;
+		}
 	}
 
-	m_pkChar = CHARACTER_MANAGER::instance().SpawnMob(m_dwVnum, m_pkOwner->GetMapIndex(), x, y, z, false, (int)(m_pkOwner->GetRotation()+180), false);
+	m_pkChar = CHARACTER_MANAGER::instance().SpawnMob(m_dwVnum, m_pkOwner->GetMapIndex(), spawnX, spawnY, ownerZ, false, (int)(m_pkOwner->GetRotation()+180), false);
 
-	if (0 == m_pkChar)
+	if (!m_pkChar)
 	{
 		sys_err("[CMountActor::Summon] Failed to summon the mount. (vnum: %d)", m_dwVnum);
 		return 0;
@@ -175,23 +201,25 @@ DWORD CMountActor::Summon(LPITEM pSummonItem, bool bSpawnFar)
 	m_pkChar->SetMount();
 
 	m_pkChar->SetEmpire(m_pkOwner->GetEmpire());
+	m_pkChar->SetRider(m_pkOwner);
 
 	m_dwVID = m_pkChar->GetVID();
 
 	this->SetName();
 
 	this->SetSummonItem(pSummonItem);
-	
+
 	//m_pkOwner->ComputePoints();
-	
-	m_pkChar->Show(m_pkOwner->GetMapIndex(), x, y, z);
+
+	m_pkChar->Show(m_pkOwner->GetMapIndex(), spawnX, spawnY, ownerZ);
+	m_pkChar->SendMovePacket(FUNC_WAIT, 0, 0, 0, 0);
 
 	return m_dwVID;
 }
 
 bool CMountActor::_UpdateFollowAI()
 {
-	if (0 == m_pkChar->m_pkMobData)
+	if (!m_pkChar || !m_pkOwner || !m_pkChar->m_pkMobData)
 	{
 		return false;
 	}
@@ -203,10 +231,12 @@ bool CMountActor::_UpdateFollowAI()
 		if (0 != mobData)
 			m_originalMoveSpeed = mobData->m_table.sMovingSpeed;
 	}
-	float	START_FOLLOW_DISTANCE = 300.0f;
+	const float START_FOLLOW_DISTANCE = 400.0f;
 
-	float	RESPAWN_DISTANCE = 4500.f;
-	int		APPROACH = 200;
+	const float START_RUN_DISTANCE = 700.0f;
+	const float RESPAWN_DISTANCE = 4500.0f;
+	const int MIN_APPROACH = 150;
+	const int MAX_APPROACH = 300;
 
 	DWORD currentTime = get_dword_time();
 
@@ -215,12 +245,18 @@ bool CMountActor::_UpdateFollowAI()
 
 	float fDist = DISTANCE_APPROX(charX - ownerX, charY - ownerY);
 
-	if (fDist >= RESPAWN_DISTANCE)
+	if (fDist >= RESPAWN_DISTANCE || m_pkChar->GetMapIndex() != m_pkOwner->GetMapIndex())
 	{
 		float fOwnerRot = m_pkOwner->GetRotation() * 3.141592f / 180.f;
-		float fx = -APPROACH * cos(fOwnerRot);
-		float fy = -APPROACH * sin(fOwnerRot);
-		if (m_pkChar->Show(m_pkOwner->GetMapIndex(), ownerX + fx, ownerY + fy))
+		int iApproach = number(MIN_APPROACH, MAX_APPROACH);
+		float fx = -iApproach * cos(fOwnerRot);
+		float fy = -iApproach * sin(fOwnerRot);
+		if (m_pkChar->Show(m_pkOwner->GetMapIndex(), ownerX + (long)fx, ownerY + (long)fy, m_pkOwner->GetZ()))
+		{
+			m_pkChar->SendMovePacket(FUNC_WAIT, 0, 0, 0, 0);
+			fDist = DISTANCE_APPROX(m_pkChar->GetX() - ownerX, m_pkChar->GetY() - ownerY);
+		}
+		else
 		{
 			return true;
 		}
@@ -228,9 +264,9 @@ bool CMountActor::_UpdateFollowAI()
 
 	if (fDist >= START_FOLLOW_DISTANCE)
 	{
-		m_pkChar->SetNowWalking(false);
+		m_pkChar->SetNowWalking(fDist <= START_RUN_DISTANCE);
 
-		Follow(APPROACH);
+		Follow(number(MIN_APPROACH, MAX_APPROACH));
 
 		m_pkChar->SetLastAttacked(currentTime);
 		m_dwLastActionTime = currentTime;
@@ -240,7 +276,6 @@ bool CMountActor::_UpdateFollowAI()
 
 	return true;
 }
-
 bool CMountActor::Update(DWORD deltaTime)
 {
 	bool bResult = true;
@@ -262,32 +297,10 @@ bool CMountActor::Update(DWORD deltaTime)
 
 bool CMountActor::Follow(float fMinDistance)
 {
-	if( !m_pkOwner || !m_pkChar)
+	if (!m_pkOwner || !m_pkChar)
 		return false;
 
-	float fOwnerX = m_pkOwner->GetX();
-	float fOwnerY = m_pkOwner->GetY();
-
-	float fPetX = m_pkChar->GetX();
-	float fPetY = m_pkChar->GetY();
-
-	float fDist = DISTANCE_SQRT(fOwnerX - fPetX, fOwnerY - fPetY);
-	if (fDist <= fMinDistance)
-		return false;
-
-	m_pkChar->SetRotationToXY(fOwnerX, fOwnerY);
-
-	float fx, fy;
-
-	float fDistToGo = fDist - fMinDistance;
-	GetDeltaByDegree(m_pkChar->GetRotation(), fDistToGo, &fx, &fy);
-
-	if (!m_pkChar->Goto((int)(fPetX+fx+0.5f), (int)(fPetY+fy+0.5f)) )
-		return false;
-
-	m_pkChar->SendMovePacket(FUNC_WAIT, 0, 0, 0, 0, 0);
-	
-	return true;
+	return m_pkChar->Follow(m_pkOwner, fMinDistance);
 }
 
 void CMountActor::SetSummonItem(LPITEM pItem)
