@@ -1,2 +1,0 @@
-@DumpProto -umi
-@pause
