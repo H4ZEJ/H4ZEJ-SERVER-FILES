@@ -36,6 +36,7 @@ private:
 	DWORD			m_dwVnum;
 	DWORD			m_dwVID;
 	DWORD			m_dwLastActionTime;
+	DWORD			m_dwNextIdleActionTime;
 	DWORD			m_dwSummonItemVID;
 	DWORD			m_dwSummonItemVnum;
 
