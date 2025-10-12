@@ -225,102 +225,111 @@ DWORD CMountActor::Summon(LPITEM pSummonItem, bool bSpawnFar)
 
 bool CMountActor::_UpdateFollowAI()
 {
-	if (NULL == m_pkChar || NULL == m_pkOwner)
-		return false;
+        if (!m_pkChar || !m_pkOwner)
+                return false;
 
-	if (NULL == m_pkChar->m_pkMobData)
-		return false;
+        if (!m_pkChar->m_pkMobData)
+                return false;
 
-	if (0 == m_originalMoveSpeed)
-	{
-		const CMob* mobData = CMobManager::Instance().Get(m_dwVnum);
+        if (0 == m_originalMoveSpeed)
+        {
+                const CMob* mobData = CMobManager::Instance().Get(m_dwVnum);
 
-		if (NULL != mobData)
-			m_originalMoveSpeed = mobData->m_table.sMovingSpeed;
-	}
+                if (mobData)
+                        m_originalMoveSpeed = mobData->m_table.sMovingSpeed;
+        }
 
-	const float START_FOLLOW_DISTANCE = 400.0f;
-	const float START_RUN_DISTANCE = 700.0f;
-	const float RESPAWN_DISTANCE = 4500.f;
-	const int MIN_APPROACH = 150;
-	const int MAX_APPROACH = 300;
+        const float START_FOLLOW_DISTANCE = 400.0f;
+        const float START_RUN_DISTANCE = 700.0f;
+        const float RESPAWN_DISTANCE = 4500.0f;
+        const int MIN_APPROACH = 150;
+        const int MAX_APPROACH = 300;
+        const DWORD IDLE_ACTION_MIN = 5000;
+        const DWORD IDLE_ACTION_MAX = 12000;
 
-	DWORD currentTime = get_dword_time();
+        DWORD currentTime = get_dword_time();
 
-	long ownerX = m_pkOwner->GetX();
-	long ownerY = m_pkOwner->GetY();
-	long ownerZ = m_pkOwner->GetZ();
-	long charX = m_pkChar->GetX();
-	long charY = m_pkChar->GetY();
+        long ownerX = m_pkOwner->GetX();
+        long ownerY = m_pkOwner->GetY();
+        long ownerZ = m_pkOwner->GetZ();
+        long charX = m_pkChar->GetX();
+        long charY = m_pkChar->GetY();
 
-	if (m_pkChar->GetMapIndex() != m_pkOwner->GetMapIndex())
-	{
-		if (!m_pkChar->Show(m_pkOwner->GetMapIndex(), ownerX, ownerY, ownerZ))
-			return false;
+        if (m_pkChar->GetMapIndex() != m_pkOwner->GetMapIndex())
+        {
+                if (!m_pkChar->Show(m_pkOwner->GetMapIndex(), ownerX, ownerY, ownerZ))
+                        return false;
 
-		charX = m_pkChar->GetX();
-		charY = m_pkChar->GetY();
-	}
+                charX = m_pkChar->GetX();
+                charY = m_pkChar->GetY();
+        }
 
-	float fDist = DISTANCE_APPROX(charX - ownerX, charY - ownerY);
+        float fDist = DISTANCE_APPROX(charX - ownerX, charY - ownerY);
 
-	if (fDist >= RESPAWN_DISTANCE)
-	{
-		float fOwnerRot = (m_pkOwner->GetRotation() + 180.0f) * 3.141592f / 180.0f;
-		int iApproach = number(MIN_APPROACH, MAX_APPROACH);
-		long targetX = ownerX + static_cast<long>(cos(fOwnerRot) * iApproach);
-		long targetY = ownerY + static_cast<long>(sin(fOwnerRot) * iApproach);
+        if (fDist >= RESPAWN_DISTANCE)
+        {
+                float fOwnerRot = (m_pkOwner->GetRotation() + 180.0f) * 3.141592f / 180.0f;
+                int iApproach = number(MIN_APPROACH, MAX_APPROACH);
+                long targetX = ownerX + static_cast<long>(cos(fOwnerRot) * iApproach);
+                long targetY = ownerY + static_cast<long>(sin(fOwnerRot) * iApproach);
 
-		if (!m_pkChar->Show(m_pkOwner->GetMapIndex(), targetX, targetY, ownerZ))
-			return false;
+                if (!m_pkChar->Show(m_pkOwner->GetMapIndex(), targetX, targetY, ownerZ))
+                        return false;
 
-		charX = m_pkChar->GetX();
-		charY = m_pkChar->GetY();
-		fDist = DISTANCE_APPROX(charX - ownerX, charY - ownerY);
-	}
+                charX = m_pkChar->GetX();
+                charY = m_pkChar->GetY();
+                fDist = DISTANCE_APPROX(charX - ownerX, charY - ownerY);
+        }
 
-	if (fDist >= START_FOLLOW_DISTANCE)
-	{
-		bool bRun = (fDist >= START_RUN_DISTANCE);
-		m_pkChar->SetNowWalking(!bRun);
+        if (fDist >= START_FOLLOW_DISTANCE)
+        {
+                bool bRun = (fDist >= START_RUN_DISTANCE);
+                m_pkChar->SetNowWalking(!bRun);
 
-		m_pkChar->Follow(m_pkOwner, number(MIN_APPROACH, MAX_APPROACH));
-		m_pkChar->SetLastAttacked(currentTime);
-	}
-	else
-	{
-		if (currentTime > m_dwLastActionTime)
-		{
-			m_dwLastActionTime = currentTime + number(5000, 12000);
+                int iApproach = number(MIN_APPROACH, MAX_APPROACH);
 
-			m_pkChar->SetRotation(number(0, 359));
+                if (m_pkChar->Follow(m_pkOwner, iApproach))
+                {
+                        m_pkChar->SetLastAttacked(currentTime);
 
-			float fx, fy;
-			float fMoveDist = static_cast<float>(number(200, 400));
+                        if (m_dwLastActionTime < currentTime + IDLE_ACTION_MIN)
+                                m_dwLastActionTime = currentTime + IDLE_ACTION_MIN;
+                }
+        }
+        else
+        {
+                if (currentTime > m_dwLastActionTime)
+                {
+                        m_dwLastActionTime = currentTime + number(IDLE_ACTION_MIN, IDLE_ACTION_MAX);
 
-			GetDeltaByDegree(m_pkChar->GetRotation(), fMoveDist, &fx, &fy);
+                        m_pkChar->SetRotation(number(0, 359));
 
-			int destX = m_pkChar->GetX() + static_cast<int>(fx);
-			int destY = m_pkChar->GetY() + static_cast<int>(fy);
+                        float fx, fy;
+                        float fMoveDist = static_cast<float>(number(200, 400));
 
-			if (!(SECTREE_MANAGER::instance().IsAttackablePosition(m_pkChar->GetMapIndex(), destX, destY) &&
-			      SECTREE_MANAGER::instance().IsAttackablePosition(m_pkChar->GetMapIndex(), m_pkChar->GetX() + static_cast<int>(fx / 2), m_pkChar->GetY() + static_cast<int>(fy / 2))))
-			{
-				return true;
-			}
+                        GetDeltaByDegree(m_pkChar->GetRotation(), fMoveDist, &fx, &fy);
 
-			m_pkChar->SetNowWalking(true);
+                        int destX = m_pkChar->GetX() + static_cast<int>(fx);
+                        int destY = m_pkChar->GetY() + static_cast<int>(fy);
 
-			if (m_pkChar->Goto(destX, destY))
-				m_pkChar->SendMovePacket(FUNC_WAIT, 0, 0, 0, 0);
-		}
-		else
-		{
-			m_pkChar->SendMovePacket(FUNC_WAIT, 0, 0, 0, 0);
-		}
-	}
+                        if (!(SECTREE_MANAGER::instance().IsAttackablePosition(m_pkChar->GetMapIndex(), destX, destY) &&
+                              SECTREE_MANAGER::instance().IsAttackablePosition(m_pkChar->GetMapIndex(), m_pkChar->GetX() + static_cast<int>(fx / 2), m_pkChar->GetY() + static_cast<int>(fy / 2))))
+                        {
+                                return true;
+                        }
 
-	return true;
+                        m_pkChar->SetNowWalking(true);
+
+                        if (m_pkChar->Goto(destX, destY))
+                                m_pkChar->SendMovePacket(FUNC_WAIT, 0, 0, 0, 0);
+                }
+                else
+                {
+                        m_pkChar->SendMovePacket(FUNC_WAIT, 0, 0, 0, 0);
+                }
+        }
+
+        return true;
 }
 
 bool CMountActor::Update(DWORD deltaTime)
