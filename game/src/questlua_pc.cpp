@@ -2560,7 +2560,7 @@ teleport_area:
 			if (Unique3 && UNIQUE_GROUP_SPECIAL_RIDE == Unique3->GetSpecialGroup())
 		    {
 					lua_pushnumber(L, Unique3->GetVnum());
-					lua_pushnumber(L, Unique3->GetSocket(2));
+					lua_pushnumber(L, Unique3->GetSocket(0));
 			        return 3; // mevcut davranýþ (kostüm binek için)
 		    }
 #endif

@@ -36,6 +36,23 @@ EVENTFUNC(mountsystem_update_event)
 	return PASSES_PER_SEC(1) / 4;
 }
 
+EVENTINFO(mount_leave_event_info)
+{
+    DWORD vid;
+};
+
+EVENTFUNC(mount_leave_vanish_event)
+{
+    mount_leave_event_info* info = dynamic_cast<mount_leave_event_info*>(event->info);
+    if (!info) return 0;
+
+    LPCHARACTER ch = CHARACTER_MANAGER::instance().Find(info->vid);
+    if (ch)
+        M2_DESTROY_CHARACTER(ch);
+
+    return 0; // tek seferlik
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////
 //  CMountActor
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -53,6 +70,7 @@ CMountActor::CMountActor(LPCHARACTER owner, DWORD vnum)
 
 	m_dwSummonItemVID = 0;
 	m_dwSummonItemVnum = 0;
+    m_bLeaveScheduled = false; // <<< yeni
 }
 
 CMountActor::~CMountActor()
@@ -63,17 +81,25 @@ CMountActor::~CMountActor()
 
 void CMountActor::SetName()
 {
-	char buf[64];
-	if (0 != m_pkOwner && 0 != m_pkOwner->GetName())
-		snprintf(buf, sizeof(buf), "Binek ~ |cFFCD5C5C|h%s", m_pkOwner->GetName());
-	else
-		snprintf(buf, sizeof(buf), "%s", m_pkChar->GetMobTable().szLocaleName);
+    char buf[64];
 
-	if (true == IsSummoned())
-		m_pkChar->SetName(buf);
-	
-	m_name = buf;
+    // Sahip adı güvenli şekilde al
+    const char* ownerName = (m_pkOwner ? m_pkOwner->GetName() : "");
+
+    if (ownerName && ownerName[0] != '\0')
+        snprintf(buf, sizeof(buf), "Binek ~ |cFFCD5C5C|h%s", ownerName);
+    else
+    {
+        const char* mobName = (m_pkChar ? m_pkChar->GetMobTable().szLocaleName : "Mount");
+        snprintf(buf, sizeof(buf), "%s", mobName);
+    }
+
+    if (IsSummoned() && m_pkChar)
+        m_pkChar->SetName(buf);
+
+    m_name = buf;
 }
+
 
 bool CMountActor::Mount(LPITEM mountItem)
 {
@@ -125,120 +151,218 @@ void CMountActor::Unmount()
 	m_pkOwner->MountVnum(0);
 }
 
-void CMountActor::Unsummon()
+void CMountActor::Unsummon(bool bLeaveFar)
 {
-	if (true == this->IsSummoned())
-	{
-		this->SetSummonItem(NULL);
-		
-		if (NULL != m_pkChar)
-			M2_DESTROY_CHARACTER(m_pkChar);
+    if (!IsSummoned())
+        return;
 
-		m_pkChar = 0;
-		m_dwVID = 0;
-	}
+    this->SetSummonItem(NULL);
+
+    if (NULL != m_pkChar)
+    {
+        m_pkChar->SetRider(NULL);
+
+        if (bLeaveFar && NULL != m_pkOwner)
+        {
+            m_pkChar->SetNowWalking(false);
+
+            float fx, fy;
+            m_pkChar->SetRotation(GetDegreeFromPositionXY(
+                m_pkChar->GetX(), m_pkChar->GetY(),
+                m_pkOwner->GetX(), m_pkOwner->GetY()) + 180);
+            GetDeltaByDegree(m_pkChar->GetRotation(), 3500.f, &fx, &fy);
+
+            // 1) Uzaklaşma komutu
+            m_pkChar->Goto(static_cast<long>(m_pkChar->GetX() + fx),
+                           static_cast<long>(m_pkChar->GetY() + fy));
+            m_pkChar->SendMovePacket(FUNC_WAIT, 0, 0, 0, 0);
+
+            // 2) Birkaç saniye sonra kesin yok et (tek sefer)
+            if (!m_bLeaveScheduled)
+            {
+                m_bLeaveScheduled = true;
+                mount_leave_event_info* info = AllocEventInfo<mount_leave_event_info>();
+                info->vid = m_pkChar->GetVID();
+                event_create(mount_leave_vanish_event, info, PASSES_PER_SEC(3)); // 3 sn sonra
+            }
+        }
+        else
+        {
+            M2_DESTROY_CHARACTER(m_pkChar);
+        }
+    }
+
+    m_pkChar = 0;
+    m_dwVID  = 0;
+    m_bLeaveScheduled = false; // temizlik
 }
+
 
 DWORD CMountActor::Summon(LPITEM pSummonItem, bool bSpawnFar)
 {
-	long x = m_pkOwner->GetX();
-	long y = m_pkOwner->GetY();
-	long z = m_pkOwner->GetZ();
+    if (!m_pkOwner)
+        return 0;
 
-	if (true == bSpawnFar)
-	{
-		x += (number(0, 1) * 2 - 1) * number(2000, 2500);
-		y += (number(0, 1) * 2 - 1) * number(2000, 2500);
-	}
-	else
-	{
-		x += number(-100, 100);
-		y += number(-100, 100);
-	}
-	
-	if (0 != m_pkChar)
-	{
-		m_pkChar->Show(m_pkOwner->GetMapIndex(), x, y);
-		m_dwVID = m_pkChar->GetVID();
+    long x = m_pkOwner->GetX();
+    long y = m_pkOwner->GetY();
+    long z = m_pkOwner->GetZ();
 
-		return m_dwVID;
-	}
+    if (bSpawnFar)
+    {
+        // Sahibin yönünün TERSİ, 2000..2500
+        const float rad = (m_pkOwner->GetRotation() + 180.0f) * 3.141592f / 180.0f;
+        const int dist = number(2000, 2500);
+        x += (long)(cos(rad) * dist);
+        y += (long)(sin(rad) * dist);
+    }
+    else
+    {
+        x += number(-100, 100);
+        y += number(-100, 100);
+    }
 
-	m_pkChar = CHARACTER_MANAGER::instance().SpawnMob(m_dwVnum, m_pkOwner->GetMapIndex(), x, y, z, false, (int)(m_pkOwner->GetRotation()+180), false);
+    if (m_pkChar && (m_pkChar->IsDead() || CHARACTER_MANAGER::instance().Find(m_pkChar->GetVID()) != m_pkChar))
+    {
+        M2_DESTROY_CHARACTER(m_pkChar);
+        m_pkChar = NULL;
+        m_dwVID = 0;
+    }
 
-	if (0 == m_pkChar)
-	{
-		sys_err("[CMountActor::Summon] Failed to summon the mount. (vnum: %d)", m_dwVnum);
-		return 0;
-	}
+    if (!m_pkChar)
+    {
+        m_pkChar = CHARACTER_MANAGER::instance().SpawnMob(
+            m_dwVnum, m_pkOwner->GetMapIndex(), x, y, z, false,
+            (int)(m_pkOwner->GetRotation() + 180.0f), false);
+        if (!m_pkChar)
+        {
+            sys_err("[CMountActor::Summon] Failed to summon (vnum:%d)", m_dwVnum);
+            return 0;
+        }
+        m_pkChar->SetMount();
+        m_pkChar->SetEmpire(m_pkOwner->GetEmpire());
+    }
 
-	m_pkChar->SetMount();
+    m_pkChar->SetRider(m_pkOwner);
+    m_dwVID = m_pkChar->GetVID();
+    SetName();
 
-	m_pkChar->SetEmpire(m_pkOwner->GetEmpire());
+    if (!m_pkChar->Show(m_pkOwner->GetMapIndex(), x, y, z))
+    {
+        sys_err("[CMountActor::Summon] Show failed (vnum:%d)", m_dwVnum);
+        M2_DESTROY_CHARACTER(m_pkChar);
+        m_pkChar = NULL;
+        m_dwVID = 0;
+        return 0;
+    }
 
-	m_dwVID = m_pkChar->GetVID();
+    m_dwLastActionTime = 0;
 
-	this->SetName();
-
-	this->SetSummonItem(pSummonItem);
-	
-	//m_pkOwner->ComputePoints();
-	
-	m_pkChar->Show(m_pkOwner->GetMapIndex(), x, y, z);
-
-	return m_dwVID;
+    SetSummonItem(pSummonItem);
+    return m_dwVID;
 }
 
 bool CMountActor::_UpdateFollowAI()
 {
-	if (0 == m_pkChar->m_pkMobData)
-	{
-		return false;
-	}
+    if (!m_pkChar || !m_pkOwner)
+        return false;
+    if (!m_pkChar->m_pkMobData)
+        return false;
 
-	if (0 == m_originalMoveSpeed)
-	{
-		const CMob* mobData = CMobManager::Instance().Get(m_dwVnum);
+    if (0 == m_originalMoveSpeed)
+    {
+        const CMob* mobData = CMobManager::Instance().Get(m_dwVnum);
+        if (mobData)
+            m_originalMoveSpeed = mobData->m_table.sMovingSpeed;
+    }
 
-		if (0 != mobData)
-			m_originalMoveSpeed = mobData->m_table.sMovingSpeed;
-	}
-	float	START_FOLLOW_DISTANCE = 300.0f;
+    // At paritesi
+    const float START_FOLLOW_DISTANCE = 400.0f;   // takip yalnızca bu uzaklıktan sonra başlar
+    const float START_RUN_DISTANCE    = 700.0f;   // koşma eşiği
+    const float RESPAWN_DISTANCE      = 4500.0f;  // çok uzaksa arkaya ışınla
 
-	float	RESPAWN_DISTANCE = 4500.f;
-	int		APPROACH = 200;
+    // Stabil yaklaşma mesafesi (150..300) — deterministik olsun ki jitter olmasın
+    const int MIN_APPROACH = 150;
+    const int MAX_APPROACH = 300;
+    const int approach = MIN_APPROACH + (int)((m_pkOwner->GetVID() ^ m_dwVnum) % (MAX_APPROACH - MIN_APPROACH + 1));
 
-	DWORD currentTime = get_dword_time();
+    const DWORD now = get_dword_time();
 
-	long ownerX = m_pkOwner->GetX();		long ownerY = m_pkOwner->GetY();
-	long charX = m_pkChar->GetX();			long charY = m_pkChar->GetY();
+    const long ownerX = m_pkOwner->GetX();
+    const long ownerY = m_pkOwner->GetY();
+    const long ownerZ = m_pkOwner->GetZ();
 
-	float fDist = DISTANCE_APPROX(charX - ownerX, charY - ownerY);
+    long charX = m_pkChar->GetX();
+    long charY = m_pkChar->GetY();
 
-	if (fDist >= RESPAWN_DISTANCE)
-	{
-		float fOwnerRot = m_pkOwner->GetRotation() * 3.141592f / 180.f;
-		float fx = -APPROACH * cos(fOwnerRot);
-		float fy = -APPROACH * sin(fOwnerRot);
-		if (m_pkChar->Show(m_pkOwner->GetMapIndex(), ownerX + fx, ownerY + fy))
-		{
-			return true;
-		}
-	}
+    // Farklı harita ise önce aynı haritaya getir
+    if (m_pkChar->GetMapIndex() != m_pkOwner->GetMapIndex())
+    {
+        if (!m_pkChar->Show(m_pkOwner->GetMapIndex(), ownerX, ownerY, ownerZ))
+            return false;
+        charX = m_pkChar->GetX();
+        charY = m_pkChar->GetY();
+    }
 
-	if (fDist >= START_FOLLOW_DISTANCE)
-	{
-		m_pkChar->SetNowWalking(false);
+    const float fDist = DISTANCE_APPROX(charX - ownerX, charY - ownerY);
 
-		Follow(APPROACH);
+    // Aşırı uzak: sahibin ARKASINA (rot+180°) 'approach' kadar ışınla ve bekle
+    if (fDist >= RESPAWN_DISTANCE)
+    {
+        const float rad = (m_pkOwner->GetRotation() + 180.0f) * 3.141592f / 180.0f;
+        const long nx = ownerX + (long)(cos(rad) * approach);
+        const long ny = ownerY + (long)(sin(rad) * approach);
+        m_pkChar->Show(m_pkOwner->GetMapIndex(), nx, ny, ownerZ);
+        m_pkChar->SetRotation(m_pkOwner->GetRotation());
+        m_pkChar->SendMovePacket(FUNC_WAIT, 0, 0, 0, 0);
+        return true;
+    }
 
-		m_pkChar->SetLastAttacked(currentTime);
-		m_dwLastActionTime = currentTime;
-	}
-	else
-		m_pkChar->SendMovePacket(FUNC_WAIT, 0, 0, 0, 0);
+    if (fDist >= START_FOLLOW_DISTANCE)
+    {
+        // Sadece uzaksa takip: 400+ → takip, 700+ → koş (aksi halde yürüyüş)
+        const bool bRun = (fDist >= START_RUN_DISTANCE);
+        m_pkChar->SetNowWalking(!bRun);
 
-	return true;
+        // Hedefi hesaplayan basit takip (CHARACTER::Follow kullanmadan)
+        Follow((float)approach);
+
+        m_pkChar->SetLastAttacked(now);
+        m_dwLastActionTime = now;
+    }
+    else
+    {
+        // Yakın: WANDER VAR (pet gibi sürekli takip yok)
+        // 5–12 sn'de bir, 200–400 birim yürüyerek kısa bir gezinme yap
+        if (now > m_dwLastActionTime)
+        {
+            m_dwLastActionTime = now + number(5000, 12000);
+
+            m_pkChar->SetNowWalking(true);
+            const int wanderDeg  = number(0, 359);
+            const int wanderDist = number(200, 400);
+
+            float fx, fy;
+            GetDeltaByDegree(wanderDeg, (float)wanderDist, &fx, &fy);
+
+            const long tx = m_pkChar->GetX() + (long)fx;
+            const long ty = m_pkChar->GetY() + (long)fy;
+
+            // Engel/zemin kontrolü YOK — doğrudan dene; başaramazsa bekle
+            m_pkChar->SetRotation(wanderDeg);
+            if (m_pkChar->Goto(tx, ty))
+                m_pkChar->SendMovePacket(FUNC_WAIT, 0, 0, 0, 0);
+            else
+                m_pkChar->SendMovePacket(FUNC_WAIT, 0, 0, 0, 0);
+        }
+        else
+        {
+            // Gezinme aralığı dışında → sadece bekle, sahibin yönüne dön
+            m_pkChar->SetRotation(m_pkOwner->GetRotation());
+            m_pkChar->SendMovePacket(FUNC_WAIT, 0, 0, 0, 0);
+        }
+    }
+
+    return true;
 }
 
 bool CMountActor::Update(DWORD deltaTime)
@@ -262,32 +386,35 @@ bool CMountActor::Update(DWORD deltaTime)
 
 bool CMountActor::Follow(float fMinDistance)
 {
-	if( !m_pkOwner || !m_pkChar)
-		return false;
+    if (!m_pkOwner || !m_pkChar)
+        return false;
 
-	float fOwnerX = m_pkOwner->GetX();
-	float fOwnerY = m_pkOwner->GetY();
+    // Hedef: sahibin arkasında fMinDistance kadar
+    const float rad = (m_pkOwner->GetRotation() + 180.0f) * 3.141592f / 180.0f;
 
-	float fPetX = m_pkChar->GetX();
-	float fPetY = m_pkChar->GetY();
+    const long targetX = m_pkOwner->GetX() + (long)(cos(rad) * fMinDistance);
+    const long targetY = m_pkOwner->GetY() + (long)(sin(rad) * fMinDistance);
 
-	float fDist = DISTANCE_SQRT(fOwnerX - fPetX, fOwnerY - fPetY);
-	if (fDist <= fMinDistance)
-		return false;
+    // Hedefe yeterince yakınsa yeni Goto gönderme → jitter yok
+    const float toTarget = DISTANCE_APPROX(m_pkChar->GetX() - targetX, m_pkChar->GetY() - targetY);
+    if (toTarget <= 25.0f) // küçük bir dead-zone
+    {
+        m_pkChar->SetRotation(m_pkOwner->GetRotation());
+        m_pkChar->SendMovePacket(FUNC_WAIT, 0, 0, 0, 0, 0);
+        return true;
+    }
 
-	m_pkChar->SetRotationToXY(fOwnerX, fOwnerY);
+    // Doğrudan hedefe dön ve tek Goto dene (engel/yan kaçış YOK)
+    m_pkChar->SetRotationToXY(targetX, targetY);
 
-	float fx, fy;
+    if (!m_pkChar->Goto(targetX, targetY))
+    {
+        // Rota çizilemediyse ek sapma/çarpışma çözümü yok; bir sonraki döngüde tekrar denenecek
+        return false;
+    }
 
-	float fDistToGo = fDist - fMinDistance;
-	GetDeltaByDegree(m_pkChar->GetRotation(), fDistToGo, &fx, &fy);
-
-	if (!m_pkChar->Goto((int)(fPetX+fx+0.5f), (int)(fPetY+fy+0.5f)) )
-		return false;
-
-	m_pkChar->SendMovePacket(FUNC_WAIT, 0, 0, 0, 0, 0);
-	
-	return true;
+    m_pkChar->SendMovePacket(FUNC_WAIT, 0, 0, 0, 0, 0);
+    return true;
 }
 
 void CMountActor::SetSummonItem(LPITEM pItem)
@@ -408,14 +535,8 @@ void CMountSystem::DeleteMount(CMountActor* mountActor)
 	sys_err("[CMountSystem::DeleteMount] Can't find mountActor(0x%x) on my list(size: %d) ", mountActor, m_mountActorMap.size());
 }
 
-void CMountSystem::Unsummon(DWORD vnum, bool bDeleteFromList)
+void CMountSystem::Unsummon(DWORD vnum, bool bDeleteFromList, bool bFromFar)
 {
-	//if (m_pkOwner->IncreaseMountCounter() >= 5)
-	//{
-	//	m_pkOwner->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("_TRANSLATE_CHAT_TYPE_PACKETS_FROM_SOURCE_TO_GLOBAL__TRANSLATE_LIST_110"));
-	//	return;
-	//}
-	
 	CMountActor* actor = this->GetByVnum(vnum);
 
 	if (0 == actor)
@@ -423,16 +544,20 @@ void CMountSystem::Unsummon(DWORD vnum, bool bDeleteFromList)
 		sys_err("[CMountSystem::Unsummon(%d)] Null Pointer (actor)", vnum);
 		return;
 	}
-	actor->Unsummon();
+
+	actor->Unsummon(bFromFar);
 
 	if (true == bDeleteFromList)
+	{
 		this->DeleteMount(actor);
+	}
 
 	bool bActive = false;
-	for (TMountActorMap::iterator it = m_mountActorMap.begin(); it != m_mountActorMap.end(); it++)
+	for (TMountActorMap::iterator it = m_mountActorMap.begin(); it != m_mountActorMap.end(); ++it)
 	{
 		bActive |= it->second->IsSummoned();
 	}
+
 	if (false == bActive)
 	{
 		event_cancel(&m_pkMountSystemUpdateEvent);
@@ -440,6 +565,33 @@ void CMountSystem::Unsummon(DWORD vnum, bool bDeleteFromList)
 	}
 }
 
+void CMountSystem::Unsummon(CMountActor* mountActor, bool bDeleteFromList, bool bFromFar)
+{
+	if (NULL == mountActor)
+	{
+		sys_err("[CMountSystem::Unsummon] Null Pointer (mountActor)");
+		return;
+	}
+
+	mountActor->Unsummon(bFromFar);
+
+	if (true == bDeleteFromList)
+	{
+		DeleteMount(mountActor);
+	}
+
+	bool bActive = false;
+	for (TMountActorMap::iterator it = m_mountActorMap.begin(); it != m_mountActorMap.end(); ++it)
+	{
+		bActive |= it->second->IsSummoned();
+	}
+
+	if (false == bActive)
+	{
+		event_cancel(&m_pkMountSystemUpdateEvent);
+		m_pkMountSystemUpdateEvent = NULL;
+	}
+}
 
 void CMountSystem::Summon(DWORD mobVnum, LPITEM pSummonItem, bool bSpawnFar)
 {
@@ -494,7 +646,7 @@ void CMountSystem::Mount(DWORD mobVnum, LPITEM mountItem)
 		// return;
 	// }
 
-	this->Unsummon(mobVnum, false);
+	this->Unsummon(mobVnum, false, false);
 	mountActor->Mount(mountItem);
 }
 

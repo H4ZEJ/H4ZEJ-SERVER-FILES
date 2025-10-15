@@ -28,7 +28,7 @@ public:
 	bool			Mount(LPITEM mountItem);
 	void			Unmount();
 	DWORD			Summon(LPITEM pSummonItem, bool bSpawnFar = false);
-	void			Unsummon();
+	void			Unsummon(bool bLeaveFar = false);
 	bool			IsSummoned() const			{ return 0 != m_pkChar; }
 	void			SetSummonItem (LPITEM pItem);
 	DWORD			GetSummonItemVID () { return m_dwSummonItemVID; }
@@ -45,6 +45,7 @@ private:
 
 	LPCHARACTER		m_pkChar;
 	LPCHARACTER		m_pkOwner;
+    bool            m_bLeaveScheduled = false;
 };
 
 class CMountSystem
@@ -69,8 +70,8 @@ public:
 
 	void		Summon(DWORD mobVnum, LPITEM pSummonItem, bool bSpawnFar);
 
-	void		Unsummon(DWORD mobVnum, bool bDeleteFromList = false);
-	void		Unsummon(CMountActor* mountActor, bool bDeleteFromList = false);
+	void		Unsummon(DWORD mobVnum, bool bDeleteFromList = false, bool bFromFar = false);
+	void		Unsummon(CMountActor* mountActor, bool bDeleteFromList = false, bool bFromFar = false);
 	
 	void		Mount(DWORD mobVnum, LPITEM mountItem);
 	void		Unmount(DWORD mobVnum);

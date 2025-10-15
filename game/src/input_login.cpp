@@ -573,6 +573,12 @@ void CInputLogin::Entergame(LPDESC d, const char * data)
 
 	ch->ResetPlayTime();
 
+	if (ch->GetHorseLevel() > 0)
+	{
+		ch->EnterHorse();
+	}
+	ch->CheckMount();
+
 	ch->StartSaveEvent();
 	ch->StartRecoveryEvent();
 	ch->StartCheckSpeedHackEvent();
@@ -745,6 +751,9 @@ void CInputLogin::Entergame(LPDESC d, const char * data)
 		ch->SkillLevelPacket();
 		// @fixme182 END
 	}
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
+	ch->CheckMount();
+#endif
 }
 
 void CInputLogin::Empire(LPDESC d, const char * c_pData)

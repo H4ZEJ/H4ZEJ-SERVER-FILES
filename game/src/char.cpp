@@ -7187,11 +7187,14 @@ void CHARACTER::MountUnsummon(LPITEM mountItem)
 	if (GetMountVnum() == mobVnum)
 		mountSystem->Unmount(mobVnum);
 
-	mountSystem->Unsummon(mobVnum);
+	mountSystem->Unsummon(mobVnum, false, true);
 }
 
 void CHARACTER::CheckMount()
 {
+    if (IsWarp() || !GetSectree())
+        return;
+
 #ifdef ENABLE_BLOCK_ITEMS_ON_WAR_MAP
 	if (CWarMapManager::instance().IsWarMap(GetMapIndex()))
 		return;
@@ -7207,20 +7210,34 @@ void CHARACTER::CheckMount()
 		return;
 #endif
 
-	CMountSystem* mountSystem = GetMountSystem();
-	LPITEM mountItem = GetWear(WEAR_COSTUME_MOUNT);
-	DWORD mobVnum = 0;
+    CMountSystem* mountSystem = GetMountSystem();
+    LPITEM mountItem = GetWear(WEAR_COSTUME_MOUNT);
+    if (!mountSystem || !mountItem)
+        return;
 
-	if (!mountSystem || !mountItem)
-		return;
+    DWORD mobVnum = 0;
+    if (mountItem->GetValue(1) != 0)
+        mobVnum = mountItem->GetValue(1);
+    if (!mobVnum)
+        return;
 
-	if (mountItem->GetValue(1) != 0)
-		mobVnum = mountItem->GetValue(1);
-
-	if (mountSystem->CountSummoned() == 0)
+	if (mountSystem->CountSummoned() == 0 && !GetMountVnum())
 	{
 		mountSystem->Summon(mobVnum, mountItem, false);
-		// mountSystem->Summon(mobVnum, mountItem); //@duzenleme ýþýnlanýnca binek üstünden inmezsin..
+		mountSystem->Mount(mobVnum, mountItem);
+	}
+	else if (mountSystem->CountSummoned() > 0 && !GetMountVnum())
+	{
+		mountSystem->Mount(mobVnum, mountItem);
+	}
+	else
+	{
+		if (GetMountVnum() == mobVnum)
+			mountSystem->Unmount(mobVnum);
+
+		mountSystem->Unsummon(mobVnum);
+		mountSystem->Summon(mobVnum, mountItem, false);
+		mountSystem->Mount(mobVnum, mountItem);
 	}
 }
 
