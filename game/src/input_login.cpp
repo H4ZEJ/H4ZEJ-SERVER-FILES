@@ -577,7 +577,6 @@ void CInputLogin::Entergame(LPDESC d, const char * data)
 	{
 		ch->EnterHorse();
 	}
-	ch->CheckMount();
 
 	ch->StartSaveEvent();
 	ch->StartRecoveryEvent();
