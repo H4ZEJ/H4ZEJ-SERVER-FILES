@@ -7192,9 +7192,6 @@ void CHARACTER::MountUnsummon(LPITEM mountItem)
 
 void CHARACTER::CheckMount()
 {
-    if (IsWarp() || !GetSectree())
-        return;
-
 #ifdef ENABLE_BLOCK_ITEMS_ON_WAR_MAP
 	if (CWarMapManager::instance().IsWarMap(GetMapIndex()))
 		return;
@@ -7210,16 +7207,15 @@ void CHARACTER::CheckMount()
 		return;
 #endif
 
-    CMountSystem* mountSystem = GetMountSystem();
-    LPITEM mountItem = GetWear(WEAR_COSTUME_MOUNT);
-    if (!mountSystem || !mountItem)
-        return;
+	CMountSystem* mountSystem = GetMountSystem();
+	LPITEM mountItem = GetWear(WEAR_COSTUME_MOUNT);
+	DWORD mobVnum = 0;
 
-    DWORD mobVnum = 0;
-    if (mountItem->GetValue(1) != 0)
-        mobVnum = mountItem->GetValue(1);
-    if (!mobVnum)
-        return;
+	if (!mountSystem || !mountItem)
+		return;
+
+	if (mountItem->GetValue(1) != 0)
+		mobVnum = mountItem->GetValue(1);
 
 	if (mountSystem->CountSummoned() == 0 && !GetMountVnum())
 	{
