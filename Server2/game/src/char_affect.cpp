@@ -254,10 +254,7 @@ void CHARACTER::ClearAffect(bool bSave)
 		it = m_list_pkAffect.erase(it);
 		CAffect::Release(pkAff);
 	}
-#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
-	RemoveAffect(AFFECT_MOUNT);
-	RemoveAffect(AFFECT_MOUNT_BONUS);
-#endif
+
 	if (afOld != m_afAffectFlag ||
 			wMovSpd != GetPoint(POINT_MOV_SPEED) ||
 			wAttSpd != GetPoint(POINT_ATT_SPEED))
@@ -571,7 +568,7 @@ void CHARACTER::LoadAffect(DWORD dwCount, TPacketAffectElement * pElements)
 
 	m_bIsLoadedAffect = true;
 
-	ComputePoints(); // @fixme156
+	// ComputePoints(); // @fixme156
 	DragonSoul_Initialize();
 
 	// @fixme118 BEGIN (regain affect hp/mp)

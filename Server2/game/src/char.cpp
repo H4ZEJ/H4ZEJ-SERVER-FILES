@@ -366,7 +366,6 @@ void CHARACTER::Initialize()
 #ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 	m_mountSystem = 0;
 	m_bIsMount = false;
-	m_bMountCounter = 0;
 #endif
 
 }
@@ -422,11 +421,6 @@ void CHARACTER::Destroy()
 		m_mountSystem->Destroy();
 		delete m_mountSystem;
 		m_mountSystem = 0;
-	}
-	if (GetMountVnum())
-	{
-		RemoveAffect(AFFECT_MOUNT);
-		RemoveAffect(AFFECT_MOUNT_BONUS);
 	}
 #endif
 
@@ -1283,14 +1277,6 @@ void CHARACTER::Disconnect(const char * c_pszReason)
 	CTargetManager::instance().Logout(GetPlayerID());
 
 	MessengerManager::instance().Logout(GetName());
-
-#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
-	if (GetMountVnum())
-	{
-		RemoveAffect(AFFECT_MOUNT);
-		RemoveAffect(AFFECT_MOUNT_BONUS);
-	}
-#endif
 
 	if (GetDesc())
 		GetDesc()->BindCharacter(NULL);
@@ -7182,6 +7168,8 @@ void CHARACTER::CheckMount()
 		mountSystem->Summon(mobVnum, mountItem, false);
 		mountSystem->Mount(mobVnum, mountItem);
 	}
+
+	UpdatePacket();
 }
 
 bool CHARACTER::IsRidingMount()

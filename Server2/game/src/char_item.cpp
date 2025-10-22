@@ -6266,9 +6266,6 @@ bool CHARACTER::EquipItem(LPITEM item, int iCandidateCell)
 
 		if ((ITEM_UNIQUE == item->GetType() && UNIQUE_SPECIAL_RIDE == item->GetSubType() && IS_SET(item->GetFlag(), ITEM_FLAG_QUEST_USE))
 			|| (ITEM_UNIQUE == item->GetType() && UNIQUE_SPECIAL_MOUNT_RIDE == item->GetSubType() && IS_SET(item->GetFlag(), ITEM_FLAG_QUEST_USE))
-#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
-			|| (ITEM_COSTUME == item->GetType() && COSTUME_MOUNT == item->GetSubType())
-#endif
 			)
 		{
 			quest::CQuestManager::instance().UseItem(GetPlayerID(), item, false);
@@ -7056,14 +7053,6 @@ bool CHARACTER::IsEquipUniqueItem(DWORD dwItemVnum) const
 			return true;
 	}
 
-#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
-	{
-		LPITEM u = GetWear(WEAR_COSTUME_MOUNT);
-		if (u && u->GetVnum() == dwItemVnum)
-			return true;
-	}
-#endif
-
 	if (dwItemVnum == UNIQUE_ITEM_RING_OF_LANGUAGE)
 		return IsEquipUniqueItem(UNIQUE_ITEM_RING_OF_LANGUAGE_SAMPLE);
 
@@ -7086,14 +7075,6 @@ bool CHARACTER::IsEquipUniqueGroup(DWORD dwGroupVnum) const
 		if (u && u->GetSpecialGroup() == (int) dwGroupVnum)
 			return true;
 	}
-
-#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
-	{
-		LPITEM u = GetWear(WEAR_COSTUME_MOUNT);
-		if (u && u->GetSpecialGroup() == (int)dwGroupVnum)
-			return true;
-	}
-#endif
 
 	return false;
 }
@@ -7376,9 +7357,6 @@ bool CHARACTER::UnEquipSpecialRideUniqueItem()
 {
 	LPITEM Unique1 = GetWear(WEAR_UNIQUE1);
 	LPITEM Unique2 = GetWear(WEAR_UNIQUE2);
-#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
-	LPITEM MountCostume = GetWear(WEAR_COSTUME_MOUNT);
-#endif
 
 	if( NULL != Unique1 )
 	{
@@ -7395,11 +7373,6 @@ bool CHARACTER::UnEquipSpecialRideUniqueItem()
 			return UnequipItem(Unique2);
 		}
 	}
-
-#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
-	if (MountCostume)
-		return UnequipItem(MountCostume);
-#endif
 
 	return true;
 }

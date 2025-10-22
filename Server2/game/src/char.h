@@ -820,9 +820,6 @@ class CHARACTER : public CEntity, public CFSM, public CHorseRider
 		BYTE			m_bAddChrState;
 		bool			m_bSkipSave;
 		BYTE			m_bChatCounter;
-#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
-	BYTE			m_bMountCounter;
-#endif
 
 		// End of Basic Points
 

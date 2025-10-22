@@ -75,11 +75,7 @@ bool ITEM_MANAGER::Initialize(TItemTable * table, int size)
 		if (m_vec_prototype[i].dwRefinedVnum)
 			m_map_ItemRefineFrom.emplace(m_vec_prototype[i].dwRefinedVnum, m_vec_prototype[i].dwVnum);
 
-		if (m_vec_prototype[i].bType == ITEM_QUEST || IS_SET(m_vec_prototype[i].dwFlags, ITEM_FLAG_QUEST_USE | ITEM_FLAG_QUEST_USE_MULTIPLE)
-#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
-			|| (m_vec_prototype[i].bType == ITEM_COSTUME && m_vec_prototype[i].bSubType == COSTUME_MOUNT)
-#endif
-		)
+		if (m_vec_prototype[i].bType == ITEM_QUEST || IS_SET(m_vec_prototype[i].dwFlags, ITEM_FLAG_QUEST_USE | ITEM_FLAG_QUEST_USE_MULTIPLE))
 			quest::CQuestManager::instance().RegisterNPCVnum(m_vec_prototype[i].dwVnum);
 
 		m_map_vid.emplace(m_vec_prototype[i].dwVnum, m_vec_prototype[i]);
@@ -322,11 +318,7 @@ LPITEM ITEM_MANAGER::CreateItem(DWORD vnum, DWORD count, DWORD id, bool bTryMagi
 		}
 	}
 
-	else if (item->GetType() == ITEM_UNIQUE
-#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
-	|| (item->GetType() == ITEM_COSTUME && item->GetSubType() == COSTUME_MOUNT)
-#endif
-	)
+	else if (item->GetType() == ITEM_UNIQUE)
 	{
 		for (itertype (m_map_pkSpecialItemGroup) it = m_map_pkSpecialItemGroup.begin(); it != m_map_pkSpecialItemGroup.end(); it++)
 		{
