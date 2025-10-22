@@ -81,7 +81,7 @@ int CItem::GetAttributeSetIndex()
 				#endif
 			#endif
 
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 		case COSTUME_MOUNT:
 			break;
 #endif

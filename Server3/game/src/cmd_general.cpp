@@ -33,7 +33,7 @@
 #include "threeway_war.h"
 #include "log.h"
 #include "../../common/VnumHelper.h"
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 #include "MountSystem.h"
 #endif
 
@@ -471,7 +471,7 @@ ACMD(do_restart)
 			{
 				ch->WarpSet(EMPIRE_START_X(ch->GetEmpire()), EMPIRE_START_Y(ch->GetEmpire()));
 
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 				ch->CheckMount();
 #endif
 				ch->ReviveInvisible(5);
@@ -495,7 +495,7 @@ ACMD(do_restart)
 
 				ch->PointChange(POINT_HP, ch->GetMaxHP() - ch->GetHP());
 				ch->PointChange(POINT_SP, ch->GetMaxSP() - ch->GetSP());
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 				ch->CheckMount();
 #endif
 				ch->ReviveInvisible(5);
@@ -529,7 +529,7 @@ ACMD(do_restart)
 
 					ch->PointChange(POINT_HP, ch->GetMaxHP() - ch->GetHP());
 					ch->PointChange(POINT_SP, ch->GetMaxSP() - ch->GetSP());
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 				ch->CheckMount();
 #endif
 					ch->ReviveInvisible(5);
@@ -541,7 +541,7 @@ ACMD(do_restart)
 					//ch->Show(ch->GetMapIndex(), ch->GetX(), ch->GetY());
 					ch->PointChange(POINT_HP, ch->GetMaxHP() - ch->GetHP());
 					ch->PointChange(POINT_SP, ch->GetMaxSP() - ch->GetSP());
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 				ch->CheckMount();
 #endif
 					ch->ReviveInvisible(5);
@@ -571,7 +571,7 @@ ACMD(do_restart)
 			//ch->Show(ch->GetMapIndex(), ch->GetX(), ch->GetY());
 			ch->PointChange(POINT_HP, 50 - ch->GetHP());
 			ch->DeathPenalty(0);
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 				ch->CheckMount();
 #endif
 			ch->ReviveInvisible(5);
@@ -1218,7 +1218,7 @@ ACMD(do_setblockmode)
 
 ACMD(do_unmount)
 {
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 	// balik tutarken ata binmicek.
 	LPITEM rod = ch->GetWear(WEAR_WEAPON);
 	if (rod && rod->GetType() == ITEM_ROD)
@@ -1960,7 +1960,7 @@ ACMD(do_costume)
 #ifdef ENABLE_WEAPON_COSTUME_SYSTEM
 	CItem* pWeapon = ch->GetWear(WEAR_COSTUME_WEAPON);
 #endif
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 	CItem* pMount = ch->GetWear(WEAR_COSTUME_MOUNT);
 #endif
 
@@ -2004,7 +2004,7 @@ ACMD(do_costume)
 			ch->UnequipItem(pWeapon);
 	}
 #endif
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 	if (pMount)
 	{
 		const char* itemName = pMount->GetName();
@@ -2310,7 +2310,7 @@ ACMD(do_click_mall)
 	ch->ChatPacket(CHAT_TYPE_COMMAND, "ShowMeMallPassword");
 }
 
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 ACMD(do_ride)
 {
 	if (ch->IsDead() || ch->IsStun())
@@ -2413,7 +2413,7 @@ ACMD(do_ride)
 			if (
 				NULL==ch->GetWear(WEAR_UNIQUE1)
 				|| NULL==ch->GetWear(WEAR_UNIQUE2)
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 				|| NULL == ch->GetWear(WEAR_COSTUME_MOUNT)
 #endif
 			)

@@ -959,7 +959,7 @@ namespace
 				LPCHARACTER ch = (LPCHARACTER)ent;
 
 				if (!ch->IsPC() && !ch->IsPet()
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 					&& !ch->IsMount()
 #endif
 					)
@@ -978,7 +978,7 @@ namespace
 				LPCHARACTER ch = (LPCHARACTER)ent;
 
 				if (!ch->IsPC() && !ch->IsPet()
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 					&& !ch->IsMount()
 #endif
 					)

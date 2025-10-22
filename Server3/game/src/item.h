@@ -244,7 +244,7 @@ class CItem : public CEntity
 		bool		IsNewMountItem();
 		bool		IsRamadanRing();
 
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 	bool		IsMountItem();
 #endif
 

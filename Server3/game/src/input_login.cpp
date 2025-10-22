@@ -750,7 +750,7 @@ void CInputLogin::Entergame(LPDESC d, const char * data)
 		ch->SkillLevelPacket();
 		// @fixme182 END
 	}
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 	if (!CWarMapManager::instance().IsWarMap(ch->GetMapIndex()))
 		ch->CheckMount();
 #endif

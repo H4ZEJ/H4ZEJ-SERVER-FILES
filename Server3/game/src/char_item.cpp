@@ -462,19 +462,16 @@ void CHARACTER::SetItem(TItemPos Cell, LPITEM pItem
 
 LPITEM CHARACTER::GetWear(BYTE bCell) const
 {
-    if (!m_PlayerSlots || !m_PlayerSlots->pItems)
-    {
-        sys_err("GetWear: PlayerSlots or pItems null (char %s)", GetName());
-        return nullptr;
-    }
+	if (!m_PlayerSlots)
+		return nullptr;
 
-    if (bCell >= WEAR_MAX_NUM + DRAGON_SOUL_DECK_MAX_NUM * DS_SLOT_MAX)
-    {
-        sys_err("CHARACTER::GetWear: invalid wear cell %d", bCell);
-        return nullptr;
-    }
+	if (bCell >= WEAR_MAX_NUM + DRAGON_SOUL_DECK_MAX_NUM * DS_SLOT_MAX)
+	{
+		sys_err("CHARACTER::GetWear: invalid wear cell %d", bCell);
+		return NULL;
+	}
 
-    return m_PlayerSlots->pItems[INVENTORY_MAX_NUM + bCell];
+	return m_PlayerSlots->pItems[INVENTORY_MAX_NUM + bCell];
 }
 
 void CHARACTER::SetWear(BYTE bCell, LPITEM item)
@@ -1718,7 +1715,7 @@ bool CHARACTER::UseItemEx(LPITEM item, TItemPos DestCell)
 			return ItemProcess_Polymorph(item);
 
 		case ITEM_QUEST:
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 		if (GetWear(WEAR_COSTUME_MOUNT))
 		{
 			if (item->GetVnum() == 50051 || item->GetVnum() == 50052 || item->GetVnum() == 50053)
@@ -6346,7 +6343,7 @@ void CHARACTER::BuffOnAttr_ValueChange(BYTE bType, BYTE bOldValue, BYTE bNewValu
 #ifdef ENABLE_WEAPON_COSTUME_SYSTEM
 				,WEAR_COSTUME_WEAPON
 #endif
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 				,WEAR_COSTUME_MOUNT
 #endif
 					};

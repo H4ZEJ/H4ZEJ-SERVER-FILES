@@ -1393,7 +1393,7 @@ struct FPurgeMonsters
 		{
 			LPCHARACTER lpChar = (LPCHARACTER)ent;
 			if (lpChar->IsMonster() == true && !lpChar->IsPet()
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 				&& !lpChar->IsMount()
 #endif
 				)
@@ -1452,7 +1452,7 @@ struct FPurgeNPCs
 		{
 			LPCHARACTER lpChar = (LPCHARACTER)ent;
 			if (lpChar->IsNPC() == true && !lpChar->IsPet()
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 				&& !lpChar->IsMount()
 #endif
 				)

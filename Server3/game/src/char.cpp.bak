@@ -7129,7 +7129,6 @@ void CHARACTER::MountUnsummon(LPITEM mountItem)
 
 	if (mountItem->FindApplyValue(APPLY_MOUNT) != 0)
 		mobVnum = mountItem->FindApplyValue(APPLY_MOUNT);
-
 	if (GetMountVnum() == mobVnum)
 		mountSystem->Unmount(mobVnum);
 

@@ -22,7 +22,7 @@ namespace quest
 	ALUA(horse_is_riding)
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 		if (ch->IsRidingMount())
 			return 0;
 #endif
@@ -37,7 +37,7 @@ namespace quest
 	ALUA(horse_is_summon)
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 		if (ch->IsRidingMount())
 			return 0;
 #endif
@@ -56,7 +56,7 @@ namespace quest
 	ALUA(horse_ride)
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 		if (ch->IsRidingMount())
 			return 0;
 #endif
@@ -74,7 +74,7 @@ namespace quest
 	ALUA(horse_summon)
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 		if (ch->IsRidingMount())
 			return 0;
 #endif

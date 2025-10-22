@@ -257,7 +257,7 @@ static const std::unordered_map<uint32_t, std::vector<std::string>> mapItemSubTy
 #ifdef ENABLE_WEAPON_COSTUME_SYSTEM
 		,"COSTUME_WEAPON"
 #endif
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 		,"COSTUME_MOUNT"
 #endif
 	}
@@ -415,7 +415,7 @@ int get_Item_WearFlag_Value(string inputString)
 #ifdef ENABLE_WEAPON_COSTUME_SYSTEM
 	"WEAR_COSTUME_WEAPON"
 #endif
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 	"WEAR_COSTUME_MOUNT"
 #endif
 
@@ -602,7 +602,7 @@ int get_Item_ApplyType_Value(string inputString)
 	"APPLY_RESIST_DARK",
 	"APPLY_ANTI_CRITICAL_PCT",
 	"APPLY_ANTI_PENETRATE_PCT"
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 	,"APPLY_MOUNT"
 #endif
 };

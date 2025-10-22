@@ -67,7 +67,7 @@ enum eCommonDefines {
 //////////////////////////////////////////////////////////////////////////
 
 #define ENABLE_EXCHANGE_RENEWAL
-#define __MOUNT_COSTUME_SYSTEM__
+#define ENABLE_MOUNT_COSTUME_SYSTEM
 #define ENABLE_UPDATE_PACKET_FIX
 #define __NOT_BUFF_CLEAR__
 

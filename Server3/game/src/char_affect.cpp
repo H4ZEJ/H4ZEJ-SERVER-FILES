@@ -27,7 +27,7 @@ bool IS_NO_SAVE_AFFECT(uint32_t type, CHARACTER* owner = nullptr)
 	{
 		case AFFECT_WAR_FLAG:
 		case AFFECT_REVIVE_INVISIBLE:
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 		case AFFECT_MOUNT:
 		case AFFECT_MOUNT_BONUS:
 #endif

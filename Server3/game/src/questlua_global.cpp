@@ -1125,7 +1125,7 @@ namespace quest
 				LPCHARACTER ch = (LPCHARACTER) ent;
 
 				if (!ch->IsPC() && !ch->IsPet()
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 					&& !ch->IsMount()
 #endif
 					)
@@ -1403,7 +1403,7 @@ namespace quest
 					return;
 
 				if (!pChar->IsPet()
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 					&& !pChar->IsMount()
 #endif
 					&& (true == pChar->IsMonster() || true == pChar->IsStone()))

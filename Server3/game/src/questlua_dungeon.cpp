@@ -656,7 +656,7 @@ namespace quest
 					return;
 
 				if (!pChar->IsPet() &&
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 					!pChar->IsMount() &&
 #endif
 				(true == pChar->IsMonster() || true == pChar->IsStone()))

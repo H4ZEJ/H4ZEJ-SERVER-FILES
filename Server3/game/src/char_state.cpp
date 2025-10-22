@@ -497,7 +497,7 @@ void CHARACTER::__StateIdle_NPC()
 	if (IsPet())
 		return;
 
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 	if (IsMount())
 		return;
 #endif

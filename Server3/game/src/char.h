@@ -28,7 +28,7 @@ const DWORD GetRandomSkillVnum(BYTE bJob = JOB_MAX_NUM);
 
 class CBuffOnAttributes;
 class CPetSystem;
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 class CMountSystem;
 #endif
 
@@ -820,7 +820,7 @@ class CHARACTER : public CEntity, public CFSM, public CHorseRider
 		BYTE			m_bAddChrState;
 		bool			m_bSkipSave;
 		BYTE			m_bChatCounter;
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 	BYTE			m_bMountCounter;
 #endif
 
@@ -1920,7 +1920,7 @@ class CHARACTER : public CEntity, public CFSM, public CHorseRider
 		bool IsPet() { return m_bIsPet; }
 #endif
 
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 private:
 	bool m_bIsMount;
 public:
@@ -2007,7 +2007,7 @@ public:
 		uint64_t GetGuildToken() const;
 		void SendGuildToken();
 #endif
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 public:
 	CMountSystem* GetMountSystem() { return m_mountSystem; }
 	void	MountSummon(LPITEM mountItem);

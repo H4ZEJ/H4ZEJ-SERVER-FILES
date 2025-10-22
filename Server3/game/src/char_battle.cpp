@@ -1157,7 +1157,7 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 		}
 		else if (GetMountVnum())
 		{
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 			LPITEM wearCostumeMount = GetWear(WEAR_COSTUME_MOUNT);
 			if (wearCostumeMount)
 				MountUnsummon(wearCostumeMount);

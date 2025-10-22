@@ -767,7 +767,7 @@ struct FuncPurge
 		sys_log(0, "PURGE: %s %d", pkChr->GetName(), iDist);
 
 		if (pkChr->IsNPC() && !pkChr->IsPet()
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 			&& !pkChr->IsMount()
 #endif
 			&& pkChr->GetRider() == NULL
@@ -3239,7 +3239,7 @@ ACMD(do_horse_ride)
 
 ACMD(do_horse_summon)
 {
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 	if (ch->IsRidingMount())
 		return;
 #endif

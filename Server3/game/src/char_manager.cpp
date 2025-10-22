@@ -116,7 +116,7 @@ void CHARACTER_MANAGER::DestroyCharacter(LPCHARACTER ch)
 	}
 
 	if (ch->IsNPC() && !ch->IsPet()
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 		&& !ch->IsMount()
 #endif
 		&& ch->GetRider() == NULL

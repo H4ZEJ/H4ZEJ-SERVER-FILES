@@ -511,7 +511,7 @@ int CItem::FindEquipCell(LPCHARACTER ch, int iCandidateCell)
 			return WEAR_COSTUME_BODY;
 		else if (GetSubType() == COSTUME_HAIR)
 			return WEAR_COSTUME_HAIR;
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 		else if (GetSubType() == COSTUME_MOUNT)
 			return WEAR_COSTUME_MOUNT;
 #endif
@@ -622,7 +622,7 @@ void CItem::ModifyPoints(bool bAdd)
 						if (p->aApplies[i].bType == APPLY_NONE)
 							continue;
 
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 						if (IsMountItem())
 							continue;
 #endif
@@ -779,7 +779,7 @@ void CItem::ModifyPoints(bool bAdd)
 				}
 #endif
 
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 		else if (GetSubType() == COSTUME_MOUNT)
 		{
 			// not need to do a thing in here
@@ -911,7 +911,7 @@ bool CItem::EquipTo(LPCHARACTER ch, BYTE bWearCell)
 
 	m_pOwner->ComputeBattlePoints();
 
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 	if (IsMountItem())
 	{
 		ch->MountSummon(this);
@@ -945,7 +945,7 @@ bool CItem::Unequip()
 		return false;
 	}
 
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 	if (IsMountItem())
 	{
 		m_pOwner->MountUnsummon(this);
@@ -1656,7 +1656,7 @@ bool CItem::IsRideItem()
 		return true;
 	if (ITEM_UNIQUE == GetType() && UNIQUE_SPECIAL_MOUNT_RIDE == GetSubType())
 		return true;
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 	if (ITEM_COSTUME == GetType() && COSTUME_MOUNT == GetSubType())
 		return true;
 #endif
@@ -1670,7 +1670,7 @@ bool CItem::IsRamadanRing()
 	return false;
 }
 
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 bool CItem::IsMountItem()
 {
 	if (GetType() == ITEM_COSTUME && GetSubType() == COSTUME_MOUNT)
@@ -1701,7 +1701,7 @@ bool CItem::IsNewMountItem()
 	return (
 		(ITEM_UNIQUE == GetType() && UNIQUE_SPECIAL_RIDE == GetSubType() && IS_SET(GetFlag(), ITEM_FLAG_QUEST_USE))
 		|| (ITEM_UNIQUE == GetType() && UNIQUE_SPECIAL_MOUNT_RIDE == GetSubType() && IS_SET(GetFlag(), ITEM_FLAG_QUEST_USE))
-#ifdef __MOUNT_COSTUME_SYSTEM__
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 		|| (ITEM_COSTUME == GetType() && COSTUME_MOUNT == GetSubType())
 #endif
 		); // @fixme152
