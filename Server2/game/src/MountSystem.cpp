@@ -309,10 +309,11 @@ void CMountActor::SetSummonItem(LPITEM pItem)
 
 CMountSystem::CMountSystem(LPCHARACTER owner)
 {
-	m_pkOwner = owner;
-	m_dwUpdatePeriod = 400;
+        m_pkOwner = owner;
+        m_dwUpdatePeriod = 400;
 
-	m_dwLastUpdateTime = 0;
+        m_dwLastUpdateTime = 0;
+        m_pkMountSystemUpdateEvent = NULL;
 }
 
 CMountSystem::~CMountSystem()
@@ -446,16 +447,25 @@ void CMountSystem::Summon(DWORD mobVnum, LPITEM pSummonItem, bool bSpawnFar)
 	if (!mountVID)
 		sys_err("[CMountSystem::Summon(%d)] Null Pointer (mountVID)", pSummonItem->GetID());
 
-	if (NULL == m_pkMountSystemUpdateEvent)
+	EnsureUpdateEventStarted();
+}
+
+void CMountSystem::SummonSilent(DWORD mobVnum, LPITEM pSummonItem)
+{
+	CMountActor* mountActor = this->GetByVnum(mobVnum);
+
+	if (0 == mountActor)
 	{
-		mountsystem_event_info* info = AllocEventInfo<mountsystem_event_info>();
-
-		info->pMountSystem = this;
-
-		m_pkMountSystemUpdateEvent = event_create(mountsystem_update_event, info, PASSES_PER_SEC(1) / 4);
+		mountActor = M2_NEW CMountActor(m_pkOwner, mobVnum);
+		m_mountActorMap.insert(std::make_pair(mobVnum, mountActor));
 	}
 
-	//return mountActor;
+	if (mountActor->IsSummoned())
+		mountActor->Unsummon();
+
+	mountActor->SetSummonItem(pSummonItem);
+
+	EnsureUpdateEventStarted();
 }
 
 void CMountSystem::Mount(DWORD mobVnum, LPITEM mountItem)
@@ -480,6 +490,8 @@ void CMountSystem::Mount(DWORD mobVnum, LPITEM mountItem)
 
 	this->Unsummon(mobVnum, false);
 	mountActor->Mount(mountItem);
+
+	EnsureUpdateEventStarted();
 }
 
 void CMountSystem::Unmount(DWORD mobVnum)
@@ -505,6 +517,43 @@ void CMountSystem::Unmount(DWORD mobVnum)
 	}
 
 	mountActor->Unmount();
+
+	EnsureUpdateEventStarted();
+}
+
+void CMountSystem::UnsummonAll()
+{
+	std::vector<CMountActor*> actors;
+	for (auto it = m_mountActorMap.begin(); it != m_mountActorMap.end(); ++it)
+	{
+		if (it->second)
+			actors.push_back(it->second);
+	}
+
+	for (auto* actor : actors)
+	{
+		actor->Unsummon();
+		DeleteMount(actor);
+	}
+
+	if (m_mountActorMap.empty())
+	{
+		event_cancel(&m_pkMountSystemUpdateEvent);
+		m_pkMountSystemUpdateEvent = NULL;
+	}
+}
+
+void CMountSystem::EnsureUpdateEventStarted()
+{
+	if (m_pkMountSystemUpdateEvent)
+	{
+		event_cancel(&m_pkMountSystemUpdateEvent);
+		m_pkMountSystemUpdateEvent = NULL;
+	}
+	mountsystem_event_info* info = AllocEventInfo<mountsystem_event_info>();
+	info->pMountSystem = this;
+	m_pkMountSystemUpdateEvent = event_create(mountsystem_update_event, info, PASSES_PER_SEC(1) / 4);
+	m_dwLastUpdateTime = 0;
 }
 
 CMountActor* CMountSystem::GetByVID(DWORD vid) const

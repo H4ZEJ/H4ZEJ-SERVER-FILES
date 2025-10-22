@@ -838,6 +838,14 @@ bool CItem::IsEquipable() const
 // return false on error state
 bool CItem::EquipTo(LPCHARACTER ch, BYTE bWearCell)
 {
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
+	if (ITEM_COSTUME == GetType() && COSTUME_MOUNT == GetSubType())
+	{
+		CMountSystem* ms = ch ? ch->GetMountSystem() : NULL;
+		if (ms)
+			ms->UnsummonAll();
+	}
+#endif
 	if (!ch)
 	{
 		sys_err("EquipTo: nil character");
@@ -930,6 +938,14 @@ bool CItem::EquipTo(LPCHARACTER ch, BYTE bWearCell)
 
 bool CItem::Unequip()
 {
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
+	if (GetType() == ITEM_COSTUME && GetSubType() == COSTUME_MOUNT)
+	{
+		CMountSystem* ms = m_pOwner ? m_pOwner->GetMountSystem() : NULL;
+		if (ms)
+			ms->UnsummonAll();
+	}
+#endif
 	if (!m_pOwner || GetCell() < INVENTORY_MAX_NUM)
 	{
 		// ITEM_OWNER_INVALID_PTR_BUG
@@ -1562,7 +1578,7 @@ void CItem::SetAccessorySocketDownGradeTime(DWORD time)
 	SetSocket(2, time);
 
 	if (test_server && GetOwner())
-		GetOwner()->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("%s¿¡¼­ ¼ÒÄÏ ºüÁú¶§±îÁö ³²Àº ½Ã°£ %d"), GetName(), time);
+		GetOwner()->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("%sì—ì„œ ì†Œì¼“ ë¹ ì§ˆë•Œê¹Œì§€ ë‚¨ì€ ì‹œê°„ %d"), GetName(), time);
 }
 
 EVENTFUNC(accessory_socket_expire_event)
@@ -1720,7 +1736,7 @@ void CItem::AccessorySocketDegrade()
 
 		if (ch)
 		{
-			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("%s¿¡ ¹ÚÇôÀÖ´ø º¸¼®ÀÌ »ç¶óÁı´Ï´Ù."), GetName());
+			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("%sì— ë°•í˜€ìˆë˜ ë³´ì„ì´ ì‚¬ë¼ì§‘ë‹ˆë‹¤."), GetName());
 		}
 
 		ModifyPoints(false);
