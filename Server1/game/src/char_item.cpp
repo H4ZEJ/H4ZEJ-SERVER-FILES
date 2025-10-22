@@ -6128,7 +6128,7 @@ bool CHARACTER::EquipItem(LPITEM item, int iCandidateCell)
 	if (item->IsRideItem())
 	{
 #ifdef ENABLE_MOUNT_COSTUME_SYSTEM
-		if (IsRiding() && !(item->GetType() == ITEM_COSTUME && item->GetSubType() == COSTUME_MOUNT))
+		if (IsRiding() && !IsMountItem())
 		{
 		ChatPacket(CHAT_TYPE_INFO, LC_TEXT("이미 탈것을 이용중입니다."));
 			return false;
