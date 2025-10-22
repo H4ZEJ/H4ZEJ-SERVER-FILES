@@ -2,6 +2,7 @@
 #include "utils.h"
 #include "config.h"
 #include "char.h"
+#include "MountSystem.h"
 #include "desc.h"
 #include "sectree_manager.h"
 #include "packet.h"
@@ -844,6 +845,14 @@ bool CItem::EquipTo(LPCHARACTER ch, BYTE bWearCell)
 		return false;
 	}
 
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
+	if (IsMountItem())
+	{
+		if (CMountSystem* mountSystem = ch->GetMountSystem())
+			mountSystem->UnsummonAll();
+	}
+#endif
+
 	if (IsDragonSoul())
 	{
 		if (bWearCell < WEAR_MAX_NUM || bWearCell >= WEAR_MAX_NUM + DRAGON_SOUL_DECK_MAX_NUM * DS_SLOT_MAX)
@@ -930,6 +939,16 @@ bool CItem::EquipTo(LPCHARACTER ch, BYTE bWearCell)
 
 bool CItem::Unequip()
 {
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
+	if (IsMountItem())
+	{
+		if (m_pOwner)
+		{
+			if (CMountSystem* mountSystem = m_pOwner->GetMountSystem())
+				mountSystem->UnsummonAll();
+		}
+	}
+#endif
 	if (!m_pOwner || GetCell() < INVENTORY_MAX_NUM)
 	{
 		// ITEM_OWNER_INVALID_PTR_BUG
@@ -1562,7 +1581,7 @@ void CItem::SetAccessorySocketDownGradeTime(DWORD time)
 	SetSocket(2, time);
 
 	if (test_server && GetOwner())
-		GetOwner()->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("%s¿¡¼­ ¼ÒÄÏ ºüÁú¶§±îÁö ³²Àº ½Ã°£ %d"), GetName(), time);
+		GetOwner()->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("%sì—ì„œ ì†Œì¼“ ë¹ ì§ˆë•Œê¹Œì§€ ë‚¨ì€ ì‹œê°„ %d"), GetName(), time);
 }
 
 EVENTFUNC(accessory_socket_expire_event)
@@ -1720,7 +1739,7 @@ void CItem::AccessorySocketDegrade()
 
 		if (ch)
 		{
-			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("%s¿¡ ¹ÚÇôÀÖ´ø º¸¼®ÀÌ »ç¶óÁı´Ï´Ù."), GetName());
+			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("%sì— ë°•í˜€ìˆë˜ ë³´ì„ì´ ì‚¬ë¼ì§‘ë‹ˆë‹¤."), GetName());
 		}
 
 		ModifyPoints(false);
