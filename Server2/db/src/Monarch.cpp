@@ -21,14 +21,14 @@ bool CMonarch::VoteMonarch(DWORD pid, DWORD selectdpid)
 
 	if (it == m_map_MonarchElection.end())
 	{
-		MonarchElectionInfo * p = new MonarchElectionInfo;
+		MonarchElectionInfo* p = new MonarchElectionInfo;
 		p->pid = pid;
-		p->selectedpid= selectdpid;
+		p->selectedpid = selectdpid;
 		m_map_MonarchElection.emplace(pid, p);
 
 		char szQuery[256];
 		snprintf(szQuery, sizeof(szQuery),
-				"INSERT INTO monarch_election(pid, selectedpid, electiondata) VALUES(%d, %d, now())", pid, selectdpid);
+			"INSERT INTO monarch_election(pid, selectedpid, electiondata) VALUES(%d, %d, now())", pid, selectdpid);
 
 		CDBManager::instance().AsyncQuery(szQuery);
 		return 1;
@@ -41,7 +41,7 @@ void CMonarch::ElectMonarch()
 {
 	int size = GetVecMonarchCandidacy().size();
 
-	int * s = new int[size];
+	int* s = new int[size];
 
 	itertype(m_map_MonarchElection) it = m_map_MonarchElection.begin();
 
@@ -49,16 +49,16 @@ void CMonarch::ElectMonarch()
 
 	for (; it != m_map_MonarchElection.end(); ++it)
 	{
-		if ((idx =  GetCandidacyIndex(it->second->pid)) < 0)
+		if ((idx = GetCandidacyIndex(it->second->pid)) < 0)
 			continue;
 
 		++s[idx];
 
 		if (g_test_server)
-			sys_log (0, "[MONARCH_VOTE] pid(%d) come to vote candidacy pid(%d)", it->second->pid, m_vec_MonarchCandidacy[idx].pid);
+			sys_log(0, "[MONARCH_VOTE] pid(%d) come to vote candidacy pid(%d)", it->second->pid, m_vec_MonarchCandidacy[idx].pid);
 	}
 
-	delete [] s;
+	delete[] s;
 }
 
 bool CMonarch::IsCandidacy(DWORD pid)
@@ -74,7 +74,7 @@ bool CMonarch::IsCandidacy(DWORD pid)
 	return true;
 }
 
-bool CMonarch::AddCandidacy(DWORD pid, const char * name)
+bool CMonarch::AddCandidacy(DWORD pid, const char* name)
 {
 	if (IsCandidacy(pid) == false)
 		return false;
@@ -87,13 +87,13 @@ bool CMonarch::AddCandidacy(DWORD pid, const char * name)
 
 	char szQuery[256];
 	snprintf(szQuery, sizeof(szQuery),
-			"INSERT INTO monarch_candidacy(pid, date) VALUES(%d, now())", pid);
+		"INSERT INTO monarch_candidacy(pid, date) VALUES(%d, now())", pid);
 
 	CDBManager::instance().AsyncQuery(szQuery);
 	return true;
 }
 
-bool CMonarch::DelCandidacy(const char * name)
+bool CMonarch::DelCandidacy(const char* name)
 {
 	itertype(m_vec_MonarchCandidacy) it = m_vec_MonarchCandidacy.begin();
 	for (; it != m_vec_MonarchCandidacy.end(); ++it)
@@ -102,10 +102,10 @@ bool CMonarch::DelCandidacy(const char * name)
 		{
 			char szQuery[256];
 			snprintf(szQuery, sizeof(szQuery),
-					"DELETE FROM monarch_candidacy WHERE pid=%d ", it->pid);
+				"DELETE FROM monarch_candidacy WHERE pid=%d ", it->pid);
 			CDBManager::instance().AsyncQuery(szQuery);
 
-			m_vec_MonarchCandidacy.erase (it);
+			m_vec_MonarchCandidacy.erase(it);
 			return true;
 		}
 	}
@@ -138,7 +138,7 @@ bool CMonarch::AddMoney(int Empire, int64_t Money)
 
 bool CMonarch::DecMoney(int Empire, int64_t Money)
 {
-	if (m_MonarchInfo.money[Empire] - Money <  0)
+	if (m_MonarchInfo.money[Empire] - Money < 0)
 		return false;
 	m_MonarchInfo.money[Empire] -= Money;
 
@@ -163,7 +163,7 @@ bool CMonarch::TakeMoney(int Empire, DWORD pid, int64_t Money)
 
 	char szQuery[1024];
 	snprintf(szQuery, sizeof(szQuery),
-			"UPDATE monarch SET money=%lld WHERE empire=%d", m_MonarchInfo.money[Empire], Empire);
+		"UPDATE monarch SET money=%lld WHERE empire=%d", m_MonarchInfo.money[Empire], Empire);
 
 	CDBManager::instance().AsyncQuery(szQuery);
 
@@ -174,63 +174,63 @@ bool CMonarch::TakeMoney(int Empire, DWORD pid, int64_t Money)
 
 bool CMonarch::LoadMonarch()
 {
-	MonarchInfo * p = &m_MonarchInfo;
-    char szQuery[256];
+	MonarchInfo* p = &m_MonarchInfo;
+	char szQuery[256];
 	snprintf(szQuery, sizeof(szQuery), "SELECT a.empire, a.pid, b.name, a.money, a.windate FROM monarch a, player%s b WHERE a.pid=b.id", GetTablePostfix());
 	auto pMsg = CDBManager::instance().DirectQuery(szQuery, SQL_PLAYER);
 
 	if (pMsg->Get()->uiNumRows == 0)
 		return false;
 
-    MYSQL_ROW row;
-    while ((row = mysql_fetch_row(pMsg->Get()->pSQLResult)) != nullptr)
-    {
-        int idx = 0;
-        int Empire = 0; str_to_number(Empire, row[idx++]);
+	MYSQL_ROW row;
+	while ((row = mysql_fetch_row(pMsg->Get()->pSQLResult)) != nullptr)
+	{
+		int idx = 0;
+		int Empire = 0; str_to_number(Empire, row[idx++]);
 
-        str_to_number(p->pid[Empire], row[idx++]);
+		str_to_number(p->pid[Empire], row[idx++]);
 		strlcpy(p->name[Empire], row[idx++], sizeof(p->name[Empire]));
 
-        str_to_number(p->money[Empire], row[idx++]);
+		str_to_number(p->money[Empire], row[idx++]);
 		strlcpy(p->date[Empire], row[idx++], sizeof(p->date[Empire]));
 
 		if (g_test_server)
-        	sys_log(0, "[LOAD_MONARCH] Empire %d pid %d money %lld windate %s", Empire, p->pid[Empire], p->money[Empire], p->date[Empire]);
-    }
+			sys_log(0, "[LOAD_MONARCH] Empire %d pid %d money %lld windate %s", Empire, p->pid[Empire], p->money[Empire], p->date[Empire]);
+	}
 
-    return true;
+	return true;
 }
 
-bool CMonarch::SetMonarch(const char * name)
+bool CMonarch::SetMonarch(const char* name)
 {
-	MonarchInfo * p = &m_MonarchInfo;
-    char szQuery[256];
+	MonarchInfo* p = &m_MonarchInfo;
+	char szQuery[256];
 	snprintf(szQuery, sizeof(szQuery), "SELECT player_index.empire, player.id, player.name, player.gold FROM player JOIN player_index ON player_index.id = player.account_id WHERE player.name = '%s'", name);
 
 	auto pMsg = CDBManager::instance().DirectQuery(szQuery, SQL_PLAYER);
 	if (pMsg->Get()->uiNumRows == 0)
 		return false;
 
-    MYSQL_ROW row;
+	MYSQL_ROW row;
 	int Empire = 0;
-    while ((row = mysql_fetch_row(pMsg->Get()->pSQLResult)) != nullptr)
-    {
-        int idx = 0;
-        str_to_number(Empire, row[idx++]);
+	while ((row = mysql_fetch_row(pMsg->Get()->pSQLResult)) != nullptr)
+	{
+		int idx = 0;
+		str_to_number(Empire, row[idx++]);
 
-        str_to_number(p->pid[Empire], row[idx++]);
+		str_to_number(p->pid[Empire], row[idx++]);
 		strlcpy(p->name[Empire], row[idx++], sizeof(p->name[Empire]));
-        p->money[Empire] = atoll(row[idx++]);
+		p->money[Empire] = atoll(row[idx++]);
 
 		if (g_test_server)
 			sys_log(0, "[Set_MONARCH] Empire %d pid %d money %lld windate %s", Empire, p->pid[Empire], p->money[Empire], p->date[Empire]);
-    }
+	}
 
 	snprintf(szQuery, sizeof(szQuery),
-					"REPLACE INTO monarch (empire, name, windate, money) VALUES(%d, %d, now(), %lld)", Empire, p->pid[Empire], p->money[Empire]);
+		"REPLACE INTO monarch (empire, name, windate, money) VALUES(%d, %d, now(), %lld)", Empire, p->pid[Empire], p->money[Empire]);
 
- 	CDBManager::instance().AsyncQuery(szQuery, SQL_PLAYER);
-    return true;
+	CDBManager::instance().AsyncQuery(szQuery, SQL_PLAYER);
+	return true;
 }
 
 bool CMonarch::DelMonarch(int Empire)
@@ -248,7 +248,7 @@ bool CMonarch::DelMonarch(int Empire)
 	return true;
 }
 
-bool CMonarch::DelMonarch(const char * name)
+bool CMonarch::DelMonarch(const char* name)
 {
 	for (int n = 1; n < 4; ++n)
 	{

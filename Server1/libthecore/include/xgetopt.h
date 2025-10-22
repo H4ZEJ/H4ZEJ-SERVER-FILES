@@ -16,14 +16,14 @@
 #define XGETOPT_H
 
 extern int optind, opterr, optreset;
-extern TCHAR *optarg;
+extern TCHAR* optarg;
 
-int getopt(int argc, TCHAR *argv[], TCHAR *optstring);
+int getopt(int argc, TCHAR* argv[], TCHAR* optstring);
 
 extern char* _optarg;
 extern int _optind;
 
-int getopt(int argc, char *const argv[], const char *optstring);
+int getopt(int argc, char* const argv[], const char* optstring);
 
 #endif //XGETOPT_H
 //martysama0134's 8e0aa8057d3f54320e391131a48866b4

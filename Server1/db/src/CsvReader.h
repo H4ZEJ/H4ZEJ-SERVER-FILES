@@ -29,33 +29,33 @@
 class cCsvAlias
 {
 private:
-    typedef std::map<std::string, size_t> NAME2INDEX_MAP;
-    typedef std::map<size_t, std::string> INDEX2NAME_MAP;
+	typedef std::map<std::string, size_t> NAME2INDEX_MAP;
+	typedef std::map<size_t, std::string> INDEX2NAME_MAP;
 
-    NAME2INDEX_MAP m_Name2Index;
-    INDEX2NAME_MAP m_Index2Name;
-
-public:
-
-    cCsvAlias() {}
-
-    virtual ~cCsvAlias() {}
+	NAME2INDEX_MAP m_Name2Index;
+	INDEX2NAME_MAP m_Index2Name;
 
 public:
 
-    void AddAlias(const char* name, size_t index);
+	cCsvAlias() {}
 
-    void Destroy();
+	virtual ~cCsvAlias() {}
 
-    const char* operator [] (size_t index) const;
+public:
 
-    size_t operator [] (const char* name) const;
+	void AddAlias(const char* name, size_t index);
+
+	void Destroy();
+
+	const char* operator [] (size_t index) const;
+
+	size_t operator [] (const char* name) const;
 
 private:
 
-    cCsvAlias(const cCsvAlias&) {}
+	cCsvAlias(const cCsvAlias&) {}
 
-    const cCsvAlias& operator = (const cCsvAlias&) { return *this; }
+	const cCsvAlias& operator = (const cCsvAlias&) { return *this; }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -84,35 +84,35 @@ class cCsvRow : public std::vector<std::string>
 {
 public:
 
-    cCsvRow() {}
+	cCsvRow() {}
 
-    ~cCsvRow() {}
+	~cCsvRow() {}
 
 public:
 
-    int AsInt(size_t index) const { return atoi(at(index).c_str()); }
+	int AsInt(size_t index) const { return atoi(at(index).c_str()); }
 
-    double AsDouble(size_t index) const { return atof(at(index).c_str()); }
+	double AsDouble(size_t index) const { return atof(at(index).c_str()); }
 
-    const char* AsString(size_t index) const { return at(index).c_str(); }
+	const char* AsString(size_t index) const { return at(index).c_str(); }
 
-    int AsInt(const char* name, const cCsvAlias& alias) const {
-        return atoi( at(alias[name]).c_str() );
-    }
+	int AsInt(const char* name, const cCsvAlias& alias) const {
+		return atoi(at(alias[name]).c_str());
+	}
 
-    double AsDouble(const char* name, const cCsvAlias& alias) const {
-        return atof( at(alias[name]).c_str() );
-    }
+	double AsDouble(const char* name, const cCsvAlias& alias) const {
+		return atof(at(alias[name]).c_str());
+	}
 
-    const char* AsString(const char* name, const cCsvAlias& alias) const {
-        return at(alias[name]).c_str();
-    }
+	const char* AsString(const char* name, const cCsvAlias& alias) const {
+		return at(alias[name]).c_str();
+	}
 
-    cCsvRow(const cCsvRow&) {}
+	cCsvRow(const cCsvRow&) {}
 
 private:
 
-    const cCsvRow& operator = (const cCsvRow&) { return *this; }
+	const cCsvRow& operator = (const cCsvRow&) { return *this; }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -146,35 +146,35 @@ private:
 class cCsvFile
 {
 private:
-    typedef std::vector<cCsvRow*> ROWS;
+	typedef std::vector<cCsvRow*> ROWS;
 
-    ROWS m_Rows;
-
-public:
-
-    cCsvFile() {}
-
-    virtual ~cCsvFile() { Destroy(); }
+	ROWS m_Rows;
 
 public:
 
-    bool Load(const char* fileName, const char seperator=',', const char quote='"');
+	cCsvFile() {}
 
-    bool Save(const char* fileName, bool append=false, char seperator=',', char quote='"') const;
+	virtual ~cCsvFile() { Destroy(); }
 
-    void Destroy();
+public:
 
-    cCsvRow* operator [] (size_t index);
+	bool Load(const char* fileName, const char seperator = ',', const char quote = '"');
 
-    const cCsvRow* operator [] (size_t index) const;
+	bool Save(const char* fileName, bool append = false, char seperator = ',', char quote = '"') const;
 
-    size_t GetRowCount() const { return m_Rows.size(); }
+	void Destroy();
+
+	cCsvRow* operator [] (size_t index);
+
+	const cCsvRow* operator [] (size_t index) const;
+
+	size_t GetRowCount() const { return m_Rows.size(); }
 
 private:
 
-    cCsvFile(const cCsvFile&) {}
+	cCsvFile(const cCsvFile&) {}
 
-    const cCsvFile& operator = (const cCsvFile&) { return *this; }
+	const cCsvFile& operator = (const cCsvFile&) { return *this; }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -203,50 +203,50 @@ private:
 
 class cCsvTable
 {
-public :
-    cCsvFile  m_File;
+public:
+	cCsvFile  m_File;
 	std::string m_fileName;
 private:
-    cCsvAlias m_Alias;
-    int       m_CurRow;
+	cCsvAlias m_Alias;
+	int       m_CurRow;
 
 public:
 
-    cCsvTable();
+	cCsvTable();
 
-    virtual ~cCsvTable();
+	virtual ~cCsvTable();
 
 public:
 
-    bool Load(const char* fileName, const char seperator=',', const char quote='"');
+	bool Load(const char* fileName, const char seperator = ',', const char quote = '"');
 
-    void AddAlias(const char* name, size_t index) { m_Alias.AddAlias(name, index); }
+	void AddAlias(const char* name, size_t index) { m_Alias.AddAlias(name, index); }
 
-    bool Next();
+	bool Next();
 
-    size_t ColCount() const;
+	size_t ColCount() const;
 
-    int AsInt(size_t index) const;
+	int AsInt(size_t index) const;
 
-    double AsDouble(size_t index) const;
+	double AsDouble(size_t index) const;
 
-    const char* AsStringByIndex(size_t index) const;
+	const char* AsStringByIndex(size_t index) const;
 
-    int AsInt(const char* name) const { return AsInt(m_Alias[name]); }
+	int AsInt(const char* name) const { return AsInt(m_Alias[name]); }
 
-    double AsDouble(const char* name) const { return AsDouble(m_Alias[name]); }
+	double AsDouble(const char* name) const { return AsDouble(m_Alias[name]); }
 
-    const char* AsString(const char* name) const { return AsStringByIndex(m_Alias[name]); }
+	const char* AsString(const char* name) const { return AsStringByIndex(m_Alias[name]); }
 
-    void Destroy();
+	void Destroy();
 
 private:
 
-    const cCsvRow* const CurRow() const;
+	const cCsvRow* const CurRow() const;
 
-    cCsvTable(const cCsvTable&) {}
+	cCsvTable(const cCsvTable&) {}
 
-    const cCsvTable& operator = (const cCsvTable&) { return *this; }
+	const cCsvTable& operator = (const cCsvTable&) { return *this; }
 };
 
 #endif //__CSVFILE_H__

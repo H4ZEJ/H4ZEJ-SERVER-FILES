@@ -19,46 +19,46 @@ enum OXEventStatus
 
 class COXEventManager : public singleton<COXEventManager>
 {
-	private :
-		std::map<DWORD, DWORD> m_map_char;
-		std::map<DWORD, DWORD> m_map_attender;
-		std::map<DWORD, DWORD> m_map_miss;
+private:
+	std::map<DWORD, DWORD> m_map_char;
+	std::map<DWORD, DWORD> m_map_attender;
+	std::map<DWORD, DWORD> m_map_miss;
 
-		std::vector<std::vector<tag_Quiz> > m_vec_quiz;
+	std::vector<std::vector<tag_Quiz> > m_vec_quiz;
 
-		LPEVENT m_timedEvent;
+	LPEVENT m_timedEvent;
 
-	protected :
-		bool CheckAnswer();
+protected:
+	bool CheckAnswer();
 
-		bool EnterAudience(LPCHARACTER pChar);
-		bool EnterAttender(LPCHARACTER pChar);
+	bool EnterAudience(LPCHARACTER pChar);
+	bool EnterAttender(LPCHARACTER pChar);
 
-	public :
-		bool Initialize();
-		void Destroy();
+public:
+	bool Initialize();
+	void Destroy();
 
-		OXEventStatus GetStatus();
-		void SetStatus(OXEventStatus status);
+	OXEventStatus GetStatus();
+	void SetStatus(OXEventStatus status);
 
-		bool LoadQuizScript(const char* szFileName);
+	bool LoadQuizScript(const char* szFileName);
 
-		bool Enter(LPCHARACTER pChar);
+	bool Enter(LPCHARACTER pChar);
 
-		bool CloseEvent();
+	bool CloseEvent();
 
-		void ClearQuiz();
-		bool AddQuiz(unsigned char level, const char* pszQuestion, bool answer);
-		bool ShowQuizList(LPCHARACTER pChar);
+	void ClearQuiz();
+	bool AddQuiz(unsigned char level, const char* pszQuestion, bool answer);
+	bool ShowQuizList(LPCHARACTER pChar);
 
-		bool Quiz(unsigned char level, int timelimit);
-		bool GiveItemToAttender(DWORD dwItemVnum, BYTE count);
+	bool Quiz(unsigned char level, int timelimit);
+	bool GiveItemToAttender(DWORD dwItemVnum, BYTE count);
 
-		bool CheckAnswer(bool answer);
-		void WarpToAudience();
+	bool CheckAnswer(bool answer);
+	void WarpToAudience();
 
-		bool LogWinner();
+	bool LogWinner();
 
-		DWORD GetAttenderCount() { return m_map_attender.size(); }
+	DWORD GetAttenderCount() { return m_map_attender.size(); }
 };
 //martysama0134's 8e0aa8057d3f54320e391131a48866b4

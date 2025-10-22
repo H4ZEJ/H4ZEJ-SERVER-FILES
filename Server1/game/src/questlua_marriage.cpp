@@ -17,7 +17,7 @@ namespace quest
 {
 	ALUA(marriage_engage_to)
 	{
-		DWORD vid = (DWORD) lua_tonumber(L, 1);
+		DWORD vid = (DWORD)lua_tonumber(L, 1);
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 		LPCHARACTER ch_you = CHARACTER_MANAGER::instance().Find(vid);
 		if (ch_you)
@@ -72,9 +72,9 @@ namespace quest
 
 	struct FBuildLuaWeddingMapList
 	{
-		lua_State * L;
+		lua_State* L;
 		int m_count;
-		FBuildLuaWeddingMapList(lua_State * L) : L(L), m_count(1)
+		FBuildLuaWeddingMapList(lua_State* L) : L(L), m_count(1)
 		{
 			lua_newtable(L);
 		}
@@ -111,8 +111,8 @@ namespace quest
 			return 0;
 		}
 
-		DWORD pid1 = (DWORD) lua_tonumber(L, 1);
-		DWORD pid2 = (DWORD) lua_tonumber(L, 2);
+		DWORD pid1 = (DWORD)lua_tonumber(L, 1);
+		DWORD pid2 = (DWORD)lua_tonumber(L, 2);
 
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
@@ -128,7 +128,7 @@ namespace quest
 			return 0;
 		}
 		//PREVENT_HACK
-		if ( ch->IsHack() )
+		if (ch->IsHack())
 			return 0;
 		//END_PREVENT_HACK
 
@@ -147,7 +147,7 @@ namespace quest
 		}
 
 		//PREVENT_HACK
-		if ( ch->IsHack() )
+		if (ch->IsHack())
 			return 0;
 		//END_PREVENT_HACK
 
@@ -216,7 +216,6 @@ namespace quest
 			pWedding->ShoutInMap(CHAT_TYPE_COMMAND, lua_tostring(L, 1));
 		}
 		return 0;
-
 	}
 
 	ALUA(marriage_wedding_is_playing_music)
@@ -264,9 +263,9 @@ namespace quest
 		{
 			marriage::WeddingMap* pWedding = marriage::WeddingManager::instance().Find(pMarriage->pWeddingInfo->dwMapIndex);
 			pWedding->SetMusic(
-					lua_toboolean(L, 1),
-					lua_tostring(L, 2)
-					);
+				lua_toboolean(L, 1),
+				lua_tostring(L, 2)
+			);
 		}
 		return 0;
 	}

@@ -7,26 +7,26 @@ LocaleStringMapType localeString;
 
 int g_iUseLocale = 0;
 
-void locale_add(const char **strings)
+void locale_add(const char** strings)
 {
-	LocaleStringMapType::const_iterator iter = localeString.find( strings[0] );
+	LocaleStringMapType::const_iterator iter = localeString.find(strings[0]);
 
-	if( iter == localeString.end() )
+	if (iter == localeString.end())
 	{
 		localeString.emplace(strings[0], strings[1]);
 	}
 }
 
-const char * locale_find(const char *string)
+const char* locale_find(const char* string)
 {
 	if (0 == g_iUseLocale || LC_IsKorea() || LC_IsWE_Korea())
 	{
 		return (string);
 	}
 
-	LocaleStringMapType::const_iterator iter = localeString.find( string );
+	LocaleStringMapType::const_iterator iter = localeString.find(string);
 
-	if( iter == localeString.end() )
+	if (iter == localeString.end())
 	{
 		static char s_line[1024] = "@0949";
 		strlcpy(s_line + 5, string, sizeof(s_line) - 5);
@@ -38,9 +38,9 @@ const char * locale_find(const char *string)
 	return iter->second.c_str();
 }
 
-const char *quote_find_end(const char *string)
+const char* quote_find_end(const char* string)
 {
-	const char  *tmp = string;
+	const char* tmp = string;
 	int         quote = 0;
 
 	while (*tmp)
@@ -49,9 +49,9 @@ const char *quote_find_end(const char *string)
 		{
 			switch (*(tmp + 1))
 			{
-				case '"':
-					tmp += 2;
-					continue;
+			case '"':
+				tmp += 2;
+				continue;
 			}
 		}
 		else if (*tmp == '"')
@@ -67,11 +67,11 @@ const char *quote_find_end(const char *string)
 	return (NULL);
 }
 
-char *locale_convert(const char *src, int len)
+char* locale_convert(const char* src, int len)
 {
-	const char	*tmp;
+	const char* tmp;
 	int		i, j;
-	char	*buf, *dest;
+	char* buf, * dest;
 	int		start = 0;
 	char	last_char = 0;
 
@@ -98,7 +98,7 @@ char *locale_convert(const char *src, int len)
 		}
 		else if (start)
 		{
-ENCODE:
+		ENCODE:
 			if (*tmp == '\\' && *(tmp + 1) == 'n')
 			{
 				*(dest++) = '\n';
@@ -127,10 +127,10 @@ ENCODE:
 
 #define NUM_LOCALES 2
 
-void locale_init(const char *filename)
+void locale_init(const char* filename)
 {
-	FILE        *fp = fopen(filename, "rb");
-	char        *buf;
+	FILE* fp = fopen(filename, "rb");
+	char* buf;
 
 	if (!fp) return;
 
@@ -148,10 +148,10 @@ void locale_init(const char *filename)
 
 	fclose(fp);
 
-	const char * tmp;
-	const char * end;
+	const char* tmp;
+	const char* end;
 
-	char *	strings[NUM_LOCALES];
+	char* strings[NUM_LOCALES];
 
 	if (!buf)
 	{
@@ -204,8 +204,7 @@ void locale_init(const char *filename)
 			if (tmp)
 				tmp++;
 		}
-	}
-	while (tmp && *tmp);
+	} while (tmp && *tmp);
 
 	M2_DELETE_ARRAY(buf);
 }

@@ -24,7 +24,7 @@ TTriggerFunction OnClickTriggers[ON_CLICK_MAX_NUM] =
 	{ OnClickShop,	},	// ON_CLICK_SHOP,
 };
 
-void CHARACTER::AssignTriggers(const TMobTable * table)
+void CHARACTER::AssignTriggers(const TMobTable* table)
 {
 	if (table->bOnClickType >= ON_CLICK_MAX_NUM)
 	{
@@ -55,102 +55,101 @@ int OnIdleDefault(TRIGGERPARAM)
 
 class FuncFindMobVictim
 {
-	public:
-		FuncFindMobVictim(LPCHARACTER pkChr, int iMaxDistance) :
-			m_pkChr(pkChr),
-			m_iMinDistance(~(1L << 31)),
-			m_iMaxDistance(iMaxDistance),
-			m_lx(pkChr->GetX()),
-			m_ly(pkChr->GetY()),
-			m_pkChrVictim(NULL),
-			m_pkChrBuilding(NULL)
+public:
+	FuncFindMobVictim(LPCHARACTER pkChr, int iMaxDistance) :
+		m_pkChr(pkChr),
+		m_iMinDistance(~(1L << 31)),
+		m_iMaxDistance(iMaxDistance),
+		m_lx(pkChr->GetX()),
+		m_ly(pkChr->GetY()),
+		m_pkChrVictim(NULL),
+		m_pkChrBuilding(NULL)
 	{
 	};
 
-		bool operator () (LPENTITY ent)
+	bool operator () (LPENTITY ent)
+	{
+		if (!ent->IsType(ENTITY_CHARACTER))
+			return false;
+
+		LPCHARACTER pkChr = (LPCHARACTER)ent;
+
+		if (pkChr->IsBuilding() &&
+			(pkChr->IsAffectFlag(AFF_BUILDING_CONSTRUCTION_SMALL) ||
+				pkChr->IsAffectFlag(AFF_BUILDING_CONSTRUCTION_LARGE) ||
+				pkChr->IsAffectFlag(AFF_BUILDING_UPGRADE)))
 		{
-			if (!ent->IsType(ENTITY_CHARACTER))
-				return false;
-
-			LPCHARACTER pkChr = (LPCHARACTER) ent;
-
-			if (pkChr->IsBuilding() &&
-				(pkChr->IsAffectFlag(AFF_BUILDING_CONSTRUCTION_SMALL) ||
-				 pkChr->IsAffectFlag(AFF_BUILDING_CONSTRUCTION_LARGE) ||
-				 pkChr->IsAffectFlag(AFF_BUILDING_UPGRADE)))
-			{
-				m_pkChrBuilding = pkChr;
-			}
-
-			if (pkChr->IsNPC())
-			{
-				if ( !pkChr->IsMonster() || !m_pkChr->IsAttackMob() || m_pkChr->IsAggressive()  )
-					return false;
-
-			}
-
-			if (pkChr->IsDead())
-				return false;
-
-			if (pkChr->IsAffectFlag(AFF_EUNHYUNG) ||
-					pkChr->IsAffectFlag(AFF_INVISIBILITY) ||
-					pkChr->IsAffectFlag(AFF_REVIVE_INVISIBLE))
-				return false;
-
-			if (pkChr->IsAffectFlag(AFF_TERROR) && m_pkChr->IsImmune(IMMUNE_TERROR) == false )
-			{
-				if ( pkChr->GetLevel() >= m_pkChr->GetLevel() )
-					return false;
-			}
-
-		 	if ( m_pkChr->IsNoAttackShinsu() )
-			{
-				if ( pkChr->GetEmpire() == 1 )
-					return false;
-			}
-
-			if ( m_pkChr->IsNoAttackChunjo() )
-			{
-				if ( pkChr->GetEmpire() == 2 )
-					return false;
-			}
-
-			if ( m_pkChr->IsNoAttackJinno() )
-			{
-				if ( pkChr->GetEmpire() == 3 )
-					return false;
-			}
-
-			int iDistance = DISTANCE_APPROX(m_lx - pkChr->GetX(), m_ly - pkChr->GetY());
-
-			if (iDistance < m_iMinDistance && iDistance <= m_iMaxDistance)
-			{
-				m_pkChrVictim = pkChr;
-				m_iMinDistance = iDistance;
-			}
-			return true;
+			m_pkChrBuilding = pkChr;
 		}
 
-		LPCHARACTER GetVictim()
+		if (pkChr->IsNPC())
 		{
-			if ((m_pkChrBuilding && ((m_pkChr->GetHP() * 2) > m_pkChr->GetMaxHP())) || !m_pkChrVictim)
-			{
-				return m_pkChrBuilding;
-			}
-
-			return (m_pkChrVictim);
+			if (!pkChr->IsMonster() || !m_pkChr->IsAttackMob() || m_pkChr->IsAggressive())
+				return false;
 		}
 
-	private:
-		LPCHARACTER	m_pkChr;
+		if (pkChr->IsDead())
+			return false;
 
-		int		m_iMinDistance;
-		int		m_iMaxDistance;
-		long		m_lx;
-		long		m_ly;
+		if (pkChr->IsAffectFlag(AFF_EUNHYUNG) ||
+			pkChr->IsAffectFlag(AFF_INVISIBILITY) ||
+			pkChr->IsAffectFlag(AFF_REVIVE_INVISIBLE))
+			return false;
 
-		LPCHARACTER	m_pkChrVictim;
-		LPCHARACTER	m_pkChrBuilding;
+		if (pkChr->IsAffectFlag(AFF_TERROR) && m_pkChr->IsImmune(IMMUNE_TERROR) == false)
+		{
+			if (pkChr->GetLevel() >= m_pkChr->GetLevel())
+				return false;
+		}
+
+		if (m_pkChr->IsNoAttackShinsu())
+		{
+			if (pkChr->GetEmpire() == 1)
+				return false;
+		}
+
+		if (m_pkChr->IsNoAttackChunjo())
+		{
+			if (pkChr->GetEmpire() == 2)
+				return false;
+		}
+
+		if (m_pkChr->IsNoAttackJinno())
+		{
+			if (pkChr->GetEmpire() == 3)
+				return false;
+		}
+
+		int iDistance = DISTANCE_APPROX(m_lx - pkChr->GetX(), m_ly - pkChr->GetY());
+
+		if (iDistance < m_iMinDistance && iDistance <= m_iMaxDistance)
+		{
+			m_pkChrVictim = pkChr;
+			m_iMinDistance = iDistance;
+		}
+		return true;
+	}
+
+	LPCHARACTER GetVictim()
+	{
+		if ((m_pkChrBuilding && ((m_pkChr->GetHP() * 2) > m_pkChr->GetMaxHP())) || !m_pkChrVictim)
+		{
+			return m_pkChrBuilding;
+		}
+
+		return (m_pkChrVictim);
+	}
+
+private:
+	LPCHARACTER	m_pkChr;
+
+	int		m_iMinDistance;
+	int		m_iMaxDistance;
+	long		m_lx;
+	long		m_ly;
+
+	LPCHARACTER	m_pkChrVictim;
+	LPCHARACTER	m_pkChrBuilding;
 };
 
 LPCHARACTER FindVictim(LPCHARACTER pkChr, int iMaxDistance)

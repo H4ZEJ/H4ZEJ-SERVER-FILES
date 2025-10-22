@@ -3,8 +3,8 @@
 
 int	Start();
 void End();
-const char * GetTablePostfix();
-const char * GetPlayerDBName();
+const char* GetTablePostfix();
+const char* GetPlayerDBName();
 
 #endif
 //martysama0134's 8e0aa8057d3f54320e391131a48866b4

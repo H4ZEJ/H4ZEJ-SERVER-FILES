@@ -13,8 +13,8 @@
 #include "questmanager.h"
 
 // @fixme142 BEGIN
-static char	__account[CHARACTER_NAME_MAX_LEN*2+1];
-static char	__companion[CHARACTER_NAME_MAX_LEN*2+1];
+static char	__account[CHARACTER_NAME_MAX_LEN * 2 + 1];
+static char	__companion[CHARACTER_NAME_MAX_LEN * 2 + 1];
 // @fixme142 END
 
 MessengerManager::MessengerManager()
@@ -55,12 +55,12 @@ void MessengerManager::Login(MessengerManager::keyA account)
 	// @fixme142 END
 
 	DBManager::instance().FuncQuery(msl::bind1st(std::mem_fn(&MessengerManager::LoadList), this),
-			"SELECT account, companion FROM messenger_list%s WHERE account='%s'", get_table_postfix(), __account);
+		"SELECT account, companion FROM messenger_list%s WHERE account='%s'", get_table_postfix(), __account);
 
 	m_set_loginAccount.emplace(account);
 }
 
-void MessengerManager::LoadList(SQLMsg * msg)
+void MessengerManager::LoadList(SQLMsg* msg)
 {
 	if (NULL == msg)
 		return;
@@ -129,8 +129,8 @@ void MessengerManager::RequestToAdd(LPCHARACTER ch, LPCHARACTER target)
 
 	if (quest::CQuestManager::instance().GetPCForce(ch->GetPlayerID())->IsRunning() == true)
 	{
-	    ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("상대방이 친구 추가를 받을 수 없는 상태입니다."));
-	    return;
+		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("상대방이 친구 추가를 받을 수 없는 상태입니다."));
+		return;
 	}
 
 	if (quest::CQuestManager::instance().GetPCForce(target->GetPlayerID())->IsRunning() == true)
@@ -212,7 +212,7 @@ void MessengerManager::AddToList(MessengerManager::keyA account, MessengerManage
 
 	sys_log(0, "Messenger Add %s %s", account.c_str(), companion.c_str());
 	DBManager::instance().Query("INSERT INTO messenger_list%s VALUES ('%s', '%s')",
-			get_table_postfix(), __account, __companion);
+		get_table_postfix(), __account, __companion);
 
 	__AddToList(account, companion);
 
@@ -250,7 +250,7 @@ void MessengerManager::RemoveFromList(MessengerManager::keyA account, MessengerM
 
 	sys_log(1, "Messenger Remove %s %s", account.c_str(), companion.c_str());
 	DBManager::instance().Query("DELETE FROM messenger_list%s WHERE account='%s' AND companion = '%s'",
-			get_table_postfix(), __account, __companion);
+		get_table_postfix(), __account, __companion);
 
 	__RemoveFromList(account, companion);
 
@@ -273,19 +273,19 @@ void MessengerManager::RemoveAllList(keyA account)
 	// @fixme142 END
 
 	DBManager::instance().Query("DELETE FROM messenger_list%s WHERE account='%s' OR companion='%s'",
-			get_table_postfix(), __account, __account);
+		get_table_postfix(), __account, __account);
 
 	for (std::set<keyT>::iterator iter = company.begin();
-			iter != company.end();
-			iter++ )
+		iter != company.end();
+		iter++)
 	{
 		this->RemoveFromList(account, *iter);
 		this->RemoveFromList(*iter, account); // @fixme183
 	}
 
 	for (std::set<keyT>::iterator iter = company.begin();
-			iter != company.end();
-			)
+		iter != company.end();
+		)
 	{
 		company.erase(iter++);
 	}
@@ -313,9 +313,9 @@ void MessengerManager::SendList(MessengerManager::keyA account)
 
 	TPacketGCMessenger pack;
 
-	pack.header		= HEADER_GC_MESSENGER;
-	pack.subheader	= MESSENGER_SUBHEADER_GC_LIST;
-	pack.size		= sizeof(TPacketGCMessenger);
+	pack.header = HEADER_GC_MESSENGER;
+	pack.subheader = MESSENGER_SUBHEADER_GC_LIST;
+	pack.size = sizeof(TPacketGCMessenger);
 
 	TPacketGCMessengerListOffline pack_offline;
 	TPacketGCMessengerListOnline pack_online;
@@ -374,9 +374,9 @@ void MessengerManager::SendLogin(MessengerManager::keyA account, MessengerManage
 
 	TPacketGCMessenger pack;
 
-	pack.header			= HEADER_GC_MESSENGER;
-	pack.subheader		= MESSENGER_SUBHEADER_GC_LOGIN;
-	pack.size			= sizeof(TPacketGCMessenger) + sizeof(BYTE) + bLen;
+	pack.header = HEADER_GC_MESSENGER;
+	pack.subheader = MESSENGER_SUBHEADER_GC_LOGIN;
+	pack.size = sizeof(TPacketGCMessenger) + sizeof(BYTE) + bLen;
 
 	d->BufferedPacket(&pack, sizeof(TPacketGCMessenger));
 	d->BufferedPacket(&bLen, sizeof(BYTE));
@@ -398,9 +398,9 @@ void MessengerManager::SendLogout(MessengerManager::keyA account, MessengerManag
 
 	TPacketGCMessenger pack;
 
-	pack.header		= HEADER_GC_MESSENGER;
-	pack.subheader	= MESSENGER_SUBHEADER_GC_LOGOUT;
-	pack.size		= sizeof(TPacketGCMessenger) + sizeof(BYTE) + bLen;
+	pack.header = HEADER_GC_MESSENGER;
+	pack.subheader = MESSENGER_SUBHEADER_GC_LOGOUT;
+	pack.size = sizeof(TPacketGCMessenger) + sizeof(BYTE) + bLen;
 
 	d->BufferedPacket(&pack, sizeof(TPacketGCMessenger));
 	d->BufferedPacket(&bLen, sizeof(BYTE));

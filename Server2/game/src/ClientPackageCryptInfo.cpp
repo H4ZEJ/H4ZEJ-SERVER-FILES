@@ -14,16 +14,16 @@ CClientPackageCryptInfo::~CClientPackageCryptInfo()
 {
 	m_vecPackageCryptKeys.clear();
 	m_mapPackageSDB.clear();
-	if( m_pSerializedCryptKeyStream )
+	if (m_pSerializedCryptKeyStream)
 	{
 		delete[] m_pSerializedCryptKeyStream;
 		m_pSerializedCryptKeyStream = NULL;
 	}
 }
 
-bool CClientPackageCryptInfo::LoadPackageCryptFile( const char* pCryptFile )
+bool CClientPackageCryptInfo::LoadPackageCryptFile(const char* pCryptFile)
 {
-	FILE * fp = fopen(pCryptFile, "rb");
+	FILE* fp = fopen(pCryptFile, "rb");
 
 	if (!fp)
 		return false;
@@ -32,10 +32,10 @@ bool CClientPackageCryptInfo::LoadPackageCryptFile( const char* pCryptFile )
 	fread(&iSDBDataOffset, sizeof(int), 1, fp);
 
 	int iPackageCnt;
-	fread( &iPackageCnt, sizeof(int), 1, fp );
+	fread(&iPackageCnt, sizeof(int), 1, fp);
 	m_nCryptKeyPackageCnt += iPackageCnt;
 
-	int iCryptKeySize = iSDBDataOffset - 2*sizeof(int);
+	int iCryptKeySize = iSDBDataOffset - 2 * sizeof(int);
 
 	{
 		if (0 == iCryptKeySize)
@@ -46,10 +46,10 @@ bool CClientPackageCryptInfo::LoadPackageCryptFile( const char* pCryptFile )
 		else
 		{
 			int nCurKeySize = (int)m_vecPackageCryptKeys.size();
-			m_vecPackageCryptKeys.resize( nCurKeySize + sizeof(int) + iCryptKeySize);
+			m_vecPackageCryptKeys.resize(nCurKeySize + sizeof(int) + iCryptKeySize);
 
-			memcpy( &m_vecPackageCryptKeys[nCurKeySize], &iCryptKeySize, sizeof(int));
-			fread( &m_vecPackageCryptKeys[nCurKeySize + sizeof(int)], sizeof(BYTE), iCryptKeySize, fp );
+			memcpy(&m_vecPackageCryptKeys[nCurKeySize], &iCryptKeySize, sizeof(int));
+			fread(&m_vecPackageCryptKeys[nCurKeySize + sizeof(int)], sizeof(BYTE), iCryptKeySize, fp);
 			sys_log(0, "[PackageCryptInfo] %s loaded. (key size: %d, count: %d, total: %d)", pCryptFile, iCryptKeySize, iPackageCnt, m_nCryptKeyPackageCnt);
 		}
 	}
@@ -77,21 +77,21 @@ bool CClientPackageCryptInfo::LoadPackageCryptFile( const char* pCryptFile )
 	if (0 == iCryptKeySize && 0 == iSDBPackageCnt)
 		return false;
 
-	for( int i = 0; i < iSDBPackageCnt; ++i )
+	for (int i = 0; i < iSDBPackageCnt; ++i)
 	{
 		fread(&dwPackageNameHash, sizeof(DWORD), 1, fp);
 		fread(&dwPackageStreamSize, sizeof(DWORD), 1, fp);
 
 		fread(&dwSDBFileCnt, sizeof(DWORD), 1, fp);
 
-		sys_log(0, "[PackageCryptInfo] SDB Loaded. (Name Hash : %d, Stream Size: %d, File Count: %d)", dwPackageNameHash,dwPackageStreamSize, dwSDBFileCnt);
+		sys_log(0, "[PackageCryptInfo] SDB Loaded. (Name Hash : %d, Stream Size: %d, File Count: %d)", dwPackageNameHash, dwPackageStreamSize, dwSDBFileCnt);
 
-		for( int j = 0; j < (int)dwSDBFileCnt; ++j )
+		for (int j = 0; j < (int)dwSDBFileCnt; ++j)
 		{
 			fread(&dwFileNameHash, sizeof(DWORD), 1, fp);
 			fread(&dwMapNameSize, sizeof(DWORD), 1, fp);
 
-			strRelatedMapName.resize( dwMapNameSize );
+			strRelatedMapName.resize(dwMapNameSize);
 			fread(&strRelatedMapName[0], sizeof(BYTE), dwMapNameSize, fp);
 
 			sys_log(0, "[PackageCryptInfo] \t SDB each file info loaded.(MapName: %s, NameHash: %X)", strRelatedMapName.c_str(), dwFileNameHash);
@@ -104,7 +104,7 @@ bool CClientPackageCryptInfo::LoadPackageCryptFile( const char* pCryptFile )
 			fread(&vecSDBStream[0], sizeof(BYTE), bSDBStreamSize, fp);
 
 			//reconstruct it
-			TPackageSDBMap::iterator it = m_mapPackageSDB.find( strRelatedMapName );
+			TPackageSDBMap::iterator it = m_mapPackageSDB.find(strRelatedMapName);
 			if (it == m_mapPackageSDB.end())
 			{
 				TPerFileSDBInfo fileSDBInfo;
@@ -115,7 +115,7 @@ bool CClientPackageCryptInfo::LoadPackageCryptFile( const char* pCryptFile )
 			std::vector<TSupplementaryDataBlockInfo>& rSDBInfos = m_mapPackageSDB[strRelatedMapName].vecSDBInfos;
 			{
 				SDBInfo.dwPackageIdentifier = dwPackageNameHash;
-				SDBInfo.dwFileIdentifier    = dwFileNameHash;
+				SDBInfo.dwFileIdentifier = dwFileNameHash;
 				SDBInfo.vecSDBStream.resize(bSDBStreamSize);
 
 				memcpy(&SDBInfo.vecSDBStream[0], &vecSDBStream[0], bSDBStreamSize);
@@ -129,15 +129,15 @@ bool CClientPackageCryptInfo::LoadPackageCryptFile( const char* pCryptFile )
 	return  true;
 }
 
-bool CClientPackageCryptInfo::LoadPackageCryptInfo( const char* pCryptInfoDir )
+bool CClientPackageCryptInfo::LoadPackageCryptInfo(const char* pCryptInfoDir)
 {
-	DIR * pDir = opendir(pCryptInfoDir);
+	DIR* pDir = opendir(pCryptInfoDir);
 
 	if (!pDir)
 		return false;
 
 	m_nCryptKeyPackageCnt = 0;
-	if( m_pSerializedCryptKeyStream )
+	if (m_pSerializedCryptKeyStream)
 	{
 		delete[] m_pSerializedCryptKeyStream;
 		m_pSerializedCryptKeyStream = NULL;
@@ -148,7 +148,7 @@ bool CClientPackageCryptInfo::LoadPackageCryptInfo( const char* pCryptInfoDir )
 
 	const char szPrefixCryptInfoFile[] = "cshybridcrypt";
 
-	dirent * pDirEnt;
+	dirent* pDirEnt;
 	while ((pDirEnt = readdir(pDir)))
 	{
 		//if (strncmp( &(pDirEnt->d_name[0]), szPrefixCryptInfoFile, strlen(szPrefixCryptInfoFile)) )
@@ -162,7 +162,7 @@ bool CClientPackageCryptInfo::LoadPackageCryptInfo( const char* pCryptInfoDir )
 
 		sys_log(0, "[PackageCryptInfo] Try to load crypt file: %s", strFullPathName.c_str());
 
-		if (false == LoadPackageCryptFile( strFullPathName.c_str() ))
+		if (false == LoadPackageCryptFile(strFullPathName.c_str()))
 			sys_err("[PackageCryptInfo] Failed to load %s", strFullPathName.c_str());
 	}
 
@@ -170,27 +170,27 @@ bool CClientPackageCryptInfo::LoadPackageCryptInfo( const char* pCryptInfoDir )
 	return true;
 }
 
-void CClientPackageCryptInfo::GetPackageCryptKeys( BYTE** ppData, int& iDataSize )
+void CClientPackageCryptInfo::GetPackageCryptKeys(BYTE** ppData, int& iDataSize)
 {
 	int nCryptKeySize = m_vecPackageCryptKeys.size();
-	int iStreamSize   = sizeof(int)+nCryptKeySize;
+	int iStreamSize = sizeof(int) + nCryptKeySize;
 
 	//NOTE : Crypt Key Info isn`t updated during runtime. ( in case of file reloading all data is cleared & recreated )
 	//it`s not safe but due to performance benefit we don`t do re-serialize.
-	if( m_pSerializedCryptKeyStream )
+	if (m_pSerializedCryptKeyStream)
 	{
-		*ppData   = m_pSerializedCryptKeyStream;
+		*ppData = m_pSerializedCryptKeyStream;
 		iDataSize = iStreamSize;
 		return;
 	}
 
-	if( nCryptKeySize > 0 )
+	if (nCryptKeySize > 0)
 	{
 		m_pSerializedCryptKeyStream = new BYTE[iStreamSize];
-		memcpy(&m_pSerializedCryptKeyStream[0], &m_nCryptKeyPackageCnt, sizeof(int) );
-		memcpy(&m_pSerializedCryptKeyStream[sizeof(int)], &m_vecPackageCryptKeys[0], nCryptKeySize );
+		memcpy(&m_pSerializedCryptKeyStream[0], &m_nCryptKeyPackageCnt, sizeof(int));
+		memcpy(&m_pSerializedCryptKeyStream[sizeof(int)], &m_vecPackageCryptKeys[0], nCryptKeySize);
 
-		*ppData   = m_pSerializedCryptKeyStream;
+		*ppData = m_pSerializedCryptKeyStream;
 		iDataSize = iStreamSize;
 	}
 	else
@@ -200,13 +200,13 @@ void CClientPackageCryptInfo::GetPackageCryptKeys( BYTE** ppData, int& iDataSize
 	}
 }
 
-bool CClientPackageCryptInfo::GetRelatedMapSDBStreams(const char* pMapName, BYTE** ppData, int& iDataSize )
+bool CClientPackageCryptInfo::GetRelatedMapSDBStreams(const char* pMapName, BYTE** ppData, int& iDataSize)
 {
 	std::string strLowerMapName = pMapName;
 	stl_lowers(strLowerMapName);
 
-	TPackageSDBMap::iterator it = m_mapPackageSDB.find( strLowerMapName.c_str() );
-	if( it == m_mapPackageSDB.end() || it->second.vecSDBInfos.size() == 0 )
+	TPackageSDBMap::iterator it = m_mapPackageSDB.find(strLowerMapName.c_str());
+	if (it == m_mapPackageSDB.end() || it->second.vecSDBInfos.size() == 0)
 	{
 		//sys_err("GetRelatedMapSDBStreams Failed(%s)", strLowerMapName.c_str());
 		return false;

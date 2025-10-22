@@ -18,8 +18,8 @@
 
 struct emotion_type_s
 {
-	const char *	command;
-	const char *	command_to_client;
+	const char* command;
+	const char* command_to_client;
 	long	flag;
 	float	extra_delay;
 } emotion_types[] = {
@@ -54,7 +54,7 @@ std::set<std::pair<DWORD, DWORD> > s_emotion_set;
 
 ACMD(do_emotion_allow)
 {
-	if ( ch->GetArena() )
+	if (ch->GetArena())
 	{
 		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("대련장에서 사용하실 수 없습니다."));
 		return;
@@ -125,7 +125,7 @@ ACMD(do_emotion)
 		return;
 	}
 
-	if (IS_SET(emotion_types[i].flag, WOMAN_ONLY) && SEX_MALE==GET_SEX(ch))
+	if (IS_SET(emotion_types[i].flag, WOMAN_ONLY) && SEX_MALE == GET_SEX(ch))
 	{
 		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("여자만 할 수 있습니다."));
 		return;
@@ -175,7 +175,7 @@ ACMD(do_emotion)
 
 		if (IS_SET(emotion_types[i].flag, OTHER_SEX_ONLY))
 		{
-			if (GET_SEX(ch)==GET_SEX(victim))
+			if (GET_SEX(ch) == GET_SEX(victim))
 			{
 				ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("이성간에만 할 수 있습니다."));
 				return;
@@ -186,11 +186,11 @@ ACMD(do_emotion)
 		{
 			if (s_emotion_set.find(std::make_pair(victim->GetVID(), ch->GetVID())) == s_emotion_set.end())
 			{
-				if (true == marriage::CManager::instance().IsMarried( ch->GetPlayerID() ))
+				if (true == marriage::CManager::instance().IsMarried(ch->GetPlayerID()))
 				{
-					const marriage::TMarriage* marriageInfo = marriage::CManager::instance().Get( ch->GetPlayerID() );
+					const marriage::TMarriage* marriageInfo = marriage::CManager::instance().Get(ch->GetPlayerID());
 
-					const DWORD other = marriageInfo->GetOther( ch->GetPlayerID() );
+					const DWORD other = marriageInfo->GetOther(ch->GetPlayerID());
 
 					if (0 == other || other != victim->GetPlayerID())
 					{
@@ -209,12 +209,12 @@ ACMD(do_emotion)
 		}
 	}
 
-	char chatbuf[256+1];
+	char chatbuf[256 + 1];
 	int len = snprintf(chatbuf, sizeof(chatbuf), "%s %u %u",
-			emotion_types[i].command_to_client,
-			(DWORD) ch->GetVID(), victim ? (DWORD) victim->GetVID() : 0);
+		emotion_types[i].command_to_client,
+		(DWORD)ch->GetVID(), victim ? (DWORD)victim->GetVID() : 0);
 
-	if (len < 0 || len >= (int) sizeof(chatbuf))
+	if (len < 0 || len >= (int)sizeof(chatbuf))
 		len = sizeof(chatbuf) - 1;
 
 	++len;

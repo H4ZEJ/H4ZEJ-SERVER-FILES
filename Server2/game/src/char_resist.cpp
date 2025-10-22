@@ -31,20 +31,20 @@ EVENTINFO(TPoisonEventInfo)
 	DWORD	attacker_pid;
 
 	TPoisonEventInfo()
-	: ch()
-	, count(0)
-	, attacker_pid(0)
+		: ch()
+		, count(0)
+		, attacker_pid(0)
 	{
 	}
 };
 
 EVENTFUNC(poison_event)
 {
-	TPoisonEventInfo * info = dynamic_cast<TPoisonEventInfo *>( event->info );
+	TPoisonEventInfo* info = dynamic_cast<TPoisonEventInfo*>(event->info);
 
-	if ( info == NULL )
+	if (info == NULL)
 	{
-		sys_err( "poison_event> <Factor> Null pointer" );
+		sys_err("poison_event> <Factor> Null pointer");
 		return 0;
 	}
 
@@ -75,8 +75,6 @@ EVENTFUNC(poison_event)
 	}
 }
 
-
-
 EVENTINFO(TFireEventInfo)
 {
 	DynamicCharacterPtr ch;
@@ -85,21 +83,21 @@ EVENTINFO(TFireEventInfo)
 	DWORD	attacker_pid;
 
 	TFireEventInfo()
-	: ch()
-	, count(0)
-	, amount(0)
-	, attacker_pid(0)
+		: ch()
+		, count(0)
+		, amount(0)
+		, attacker_pid(0)
 	{
 	}
 };
 
 EVENTFUNC(fire_event)
 {
-	TFireEventInfo * info = dynamic_cast<TFireEventInfo *>( event->info );
+	TFireEventInfo* info = dynamic_cast<TFireEventInfo*>(event->info);
 
-	if ( info == NULL )
+	if (info == NULL)
 	{
-		sys_err( "fire_event> <Factor> Null pointer" );
+		sys_err("fire_event> <Factor> Null pointer");
 		return 0;
 	}
 
@@ -134,14 +132,12 @@ static int poison_level_adjust[9] =
 	100, 90, 80, 70, 50, 30, 10, 5, 0
 };
 
-
-
 void CHARACTER::AttackedByFire(LPCHARACTER pkAttacker, int amount, int count)
 {
 	if (m_pkFireEvent)
 		return;
 
-	AddAffect(AFFECT_FIRE, POINT_NONE, 0, AFF_FIRE, count*3+1, 0, true);
+	AddAffect(AFFECT_FIRE, POINT_NONE, 0, AFF_FIRE, count * 3 + 1, 0, true);
 
 	TFireEventInfo* info = AllocEventInfo<TFireEventInfo>();
 
@@ -160,7 +156,6 @@ void CHARACTER::AttackedByPoison(LPCHARACTER pkAttacker)
 
 	if (m_bHasPoisoned && !IsPC())
 		return;
-
 
 	if (pkAttacker && pkAttacker->GetLevel() < GetLevel())
 	{
@@ -184,7 +179,7 @@ void CHARACTER::AttackedByPoison(LPCHARACTER pkAttacker)
 
 	info->ch = this;
 	info->count = 10;
-	info->attacker_pid = pkAttacker?pkAttacker->GetPlayerID():0;
+	info->attacker_pid = pkAttacker ? pkAttacker->GetPlayerID() : 0;
 
 	m_pkPoisonEvent = event_create(poison_event, info, 1);
 
@@ -195,8 +190,6 @@ void CHARACTER::AttackedByPoison(LPCHARACTER pkAttacker)
 		pkAttacker->ChatPacket(CHAT_TYPE_INFO, "%s", buf);
 	}
 }
-
-
 
 void CHARACTER::RemoveFire()
 {
@@ -209,8 +202,6 @@ void CHARACTER::RemovePoison()
 	RemoveAffect(AFFECT_POISON);
 	event_cancel(&m_pkPoisonEvent);
 }
-
-
 
 void CHARACTER::ApplyMobAttribute(const TMobTable* table)
 {
@@ -225,7 +216,6 @@ void CHARACTER::ApplyMobAttribute(const TMobTable* table)
 		if (table->cResists[i] != 0)
 			ApplyPoint(aiMobResistsApplyIdx[i], table->cResists[i]);
 	}
-
 }
 
 // #define ENABLE_IMMUNE_PERC
@@ -235,7 +225,7 @@ bool CHARACTER::IsImmune(DWORD dwImmuneFlag)
 	// ChatPacket(CHAT_TYPE_PARTY, "<IMMUNE_IS> (%u == %u)", m_pointsInstant.dwImmuneFlag, dwImmuneFlag);
 	if (IS_SET(m_pointsInstant.dwImmuneFlag, dwImmuneFlag))
 	{
-		#ifdef ENABLE_IMMUNE_PERC
+#ifdef ENABLE_IMMUNE_PERC
 		int immune_pct = 90;
 		int	percent = number(1, 100);
 
@@ -250,10 +240,10 @@ bool CHARACTER::IsImmune(DWORD dwImmuneFlag)
 				ChatPacket(CHAT_TYPE_PARTY, "<IMMUNE_FAIL> (%s)", GetName());
 			return false;
 		}
-		#else
+#else
 		if (test_server && IsPC())
 			ChatPacket(CHAT_TYPE_PARTY, "<IMMUNE_SUCCESS> (%s)", GetName());
-		#endif
+#endif
 		return true;
 	}
 

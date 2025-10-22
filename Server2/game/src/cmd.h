@@ -6,8 +6,8 @@
 
 struct command_info
 {
-	const char * command;
-	void (*command_pointer) (LPCHARACTER ch, const char *argument, int cmd, int subcmd);
+	const char* command;
+	void (*command_pointer) (LPCHARACTER ch, const char* argument, int cmd, int subcmd);
 	int subcmd;
 	int minimum_position;
 	int gm_level;
@@ -15,8 +15,8 @@ struct command_info
 
 extern struct command_info cmd_info[];
 
-extern void interpret_command(LPCHARACTER ch, const char * argument, size_t len);
-extern void interpreter_set_privilege(const char * cmd, int lvl);
+extern void interpret_command(LPCHARACTER ch, const char* argument, size_t len);
+extern void interpreter_set_privilege(const char* cmd, int lvl);
 
 enum SCMD_ACTION
 {
@@ -51,16 +51,16 @@ enum SCMD_XMAS
 };
 
 extern void Shutdown(int iSec);
-extern void SendLog(const char * c_pszBuf);
+extern void SendLog(const char* c_pszBuf);
 #ifdef ENABLE_FULL_NOTICE
-extern void SendNotice(const char * c_pszBuf, bool bBigFont=false);
-extern void BroadcastNotice(const char * c_pszBuf, bool bBigFont=false);
+extern void SendNotice(const char* c_pszBuf, bool bBigFont = false);
+extern void BroadcastNotice(const char* c_pszBuf, bool bBigFont = false);
 #else
-extern void SendNotice(const char * c_pszBuf);
-extern void BroadcastNotice(const char * c_pszBuf);
+extern void SendNotice(const char* c_pszBuf);
+extern void BroadcastNotice(const char* c_pszBuf);
 #endif
 extern void SendNoticeMap(const char* c_pszBuf, int nMapIndex, bool bBigFont);
-extern void SendMonarchNotice(BYTE bEmpire, const char * c_pszBuf);
+extern void SendMonarchNotice(BYTE bEmpire, const char* c_pszBuf);
 
 // LUA_ADD_BGM_INFO
 void CHARACTER_SetBGMVolumeEnable();

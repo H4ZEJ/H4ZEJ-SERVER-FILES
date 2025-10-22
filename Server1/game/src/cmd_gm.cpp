@@ -66,12 +66,12 @@ void Command_ApplyAffect(LPCHARACTER ch, const char* argument, const char* affec
 
 	switch (cmdAffect)
 	{
-		case COMMANDAFFECT_STUN:
-			SkillAttackAffect(tch, 1000, IMMUNE_STUN, AFFECT_STUN, POINT_NONE, 0, AFF_STUN, 30, "GM_STUN");
-			break;
-		case COMMANDAFFECT_SLOW:
-			SkillAttackAffect(tch, 1000, IMMUNE_SLOW, AFFECT_SLOW, POINT_MOV_SPEED, -30, AFF_SLOW, 30, "GM_SLOW");
-			break;
+	case COMMANDAFFECT_STUN:
+		SkillAttackAffect(tch, 1000, IMMUNE_STUN, AFFECT_STUN, POINT_NONE, 0, AFF_STUN, 30, "GM_STUN");
+		break;
+	case COMMANDAFFECT_SLOW:
+		SkillAttackAffect(tch, 1000, IMMUNE_SLOW, AFFECT_SLOW, POINT_MOV_SPEED, -30, AFF_SLOW, 30, "GM_SLOW");
+		break;
 	}
 
 	sys_log(0, "%s %s", arg1, affectName);
@@ -104,7 +104,7 @@ ACMD(do_transfer)
 	LPCHARACTER tch = CHARACTER_MANAGER::instance().FindPC(arg1);
 	if (!tch)
 	{
-		CCI * pkCCI = P2P_MANAGER::instance().Find(arg1);
+		CCI* pkCCI = P2P_MANAGER::instance().Find(arg1);
 
 		if (pkCCI)
 		{
@@ -151,9 +151,9 @@ struct GotoInfo
 
 	GotoInfo()
 	{
-		st_name 	= "";
-		empire 		= 0;
-		mapIndex 	= 0;
+		st_name = "";
+		empire = 0;
+		mapIndex = 0;
 
 		x = 0;
 		y = 0;
@@ -168,9 +168,9 @@ struct GotoInfo
 	}
 	void __copy__(const GotoInfo& c_src)
 	{
-		st_name 	= c_src.st_name;
-		empire 		= c_src.empire;
-		mapIndex 	= c_src.mapIndex;
+		st_name = c_src.st_name;
+		empire = c_src.empire;
+		mapIndex = c_src.mapIndex;
 
 		x = c_src.x;
 		y = c_src.y;
@@ -192,10 +192,10 @@ void CHARACTER_AddGotoInfo(const std::string& c_st_name, BYTE empire, int mapInd
 	sys_log(0, "AddGotoInfo(name=%s, empire=%d, mapIndex=%d, pos=(%d, %d))", c_st_name.c_str(), empire, mapIndex, x, y);
 }
 
-bool FindInString(const char * c_pszFind, const char * c_pszIn)
+bool FindInString(const char* c_pszFind, const char* c_pszIn)
 {
-	const char * c = c_pszIn;
-	const char * p;
+	const char* c = c_pszIn;
+	const char* p;
 
 	p = strchr(c, '|');
 
@@ -289,7 +289,7 @@ ACMD(do_goto)
 		BYTE empire = 0;
 
 		if (*arg1 == '#')
-			str_to_number(mapIndex,  (arg1 + 1));
+			str_to_number(mapIndex, (arg1 + 1));
 
 		if (*arg2 && isnhdigit(*arg2))
 		{
@@ -353,7 +353,7 @@ ACMD(do_warp)
 					return;
 				}
 
-				ch->WarpToPID( pkCCI->dwPID );
+				ch->WarpToPID(pkCCI->dwPID);
 			}
 			else
 			{
@@ -498,7 +498,7 @@ ACMD(do_mob_coward)
 		return;
 	}
 
-	const CMob * pkMob;
+	const CMob* pkMob;
 
 	if (isdigit(*arg1))
 	{
@@ -533,13 +533,13 @@ ACMD(do_mob_coward)
 	while (iCount--)
 	{
 		tch = CHARACTER_MANAGER::instance().SpawnMobRange(vnum,
-				ch->GetMapIndex(),
-				ch->GetX() - number(200, 750),
-				ch->GetY() - number(200, 750),
-				ch->GetX() + number(200, 750),
-				ch->GetY() + number(200, 750),
-				true,
-				pkMob->m_table.bType == CHAR_TYPE_STONE);
+			ch->GetMapIndex(),
+			ch->GetX() - number(200, 750),
+			ch->GetY() - number(200, 750),
+			ch->GetX() + number(200, 750),
+			ch->GetY() + number(200, 750),
+			true,
+			pkMob->m_table.bType == CHAR_TYPE_STONE);
 		if (tch)
 			tch->SetCoward();
 	}
@@ -580,7 +580,7 @@ ACMD(do_mob_aggresive)
 		return;
 	}
 
-	const CMob * pkMob;
+	const CMob* pkMob;
 
 	if (isdigit(*arg1))
 	{
@@ -615,13 +615,13 @@ ACMD(do_mob_aggresive)
 	while (iCount--)
 	{
 		tch = CHARACTER_MANAGER::instance().SpawnMobRange(vnum,
-				ch->GetMapIndex(),
-				ch->GetX() - number(200, 750),
-				ch->GetY() - number(200, 750),
-				ch->GetX() + number(200, 750),
-				ch->GetY() + number(200, 750),
-				true,
-				pkMob->m_table.bType == CHAR_TYPE_STONE);
+			ch->GetMapIndex(),
+			ch->GetX() - number(200, 750),
+			ch->GetY() - number(200, 750),
+			ch->GetX() + number(200, 750),
+			ch->GetY() + number(200, 750),
+			true,
+			pkMob->m_table.bType == CHAR_TYPE_STONE);
 		if (tch)
 			tch->SetAggressive();
 	}
@@ -678,13 +678,13 @@ ACMD(do_mob)
 	while (iCount--)
 	{
 		CHARACTER_MANAGER::instance().SpawnMobRange(vnum,
-				ch->GetMapIndex(),
-				ch->GetX() - number(200, 750),
-				ch->GetY() - number(200, 750),
-				ch->GetX() + number(200, 750),
-				ch->GetY() + number(200, 750),
-				true,
-				pkMob->m_table.bType == CHAR_TYPE_STONE);
+			ch->GetMapIndex(),
+			ch->GetX() - number(200, 750),
+			ch->GetY() - number(200, 750),
+			ch->GetX() + number(200, 750),
+			ch->GetY() + number(200, 750),
+			true,
+			pkMob->m_table.bType == CHAR_TYPE_STONE);
 	}
 }
 
@@ -725,7 +725,7 @@ ACMD(do_mob_ld)
 	}
 
 	int dir = 1;
-	long x=0,y=0;
+	long x = 0, y = 0;
 
 	if (*arg2)
 		str_to_number(x, arg2);
@@ -736,8 +736,8 @@ ACMD(do_mob_ld)
 
 	CHARACTER_MANAGER::instance().SpawnMob(vnum,
 		ch->GetMapIndex(),
-		x*100,
-		y*100,
+		x * 100,
+		y * 100,
 		ch->GetZ(),
 		pkMob->m_table.bType == CHAR_TYPE_STONE,
 		dir);
@@ -757,7 +757,7 @@ struct FuncPurge
 		if (!ent->IsType(ENTITY_CHARACTER))
 			return;
 
-		LPCHARACTER pkChr = (LPCHARACTER) ent;
+		LPCHARACTER pkChr = (LPCHARACTER)ent;
 
 		int iDist = DISTANCE_APPROX(pkChr->GetX() - m_pkGM->GetX(), pkChr->GetY() - m_pkGM->GetY());
 
@@ -829,7 +829,7 @@ ACMD(do_item_purge)
 		}
 		for (i = 0; i < DRAGON_SOUL_INVENTORY_MAX_NUM; ++i)
 		{
-			if ((item = ch->GetItem(TItemPos(DRAGON_SOUL_INVENTORY, i ))))
+			if ((item = ch->GetItem(TItemPos(DRAGON_SOUL_INVENTORY, i))))
 			{
 				ITEM_MANAGER::instance().RemoveItem(item, "PURGE");
 			}
@@ -861,7 +861,7 @@ ACMD(do_item_purge)
 	{
 		for (i = 0; i < DRAGON_SOUL_INVENTORY_MAX_NUM; ++i)
 		{
-			if ((item = ch->GetItem(TItemPos(DRAGON_SOUL_INVENTORY, i ))))
+			if ((item = ch->GetItem(TItemPos(DRAGON_SOUL_INVENTORY, i))))
 			{
 				ITEM_MANAGER::instance().RemoveItem(item, "PURGE");
 			}
@@ -891,7 +891,7 @@ ACMD(do_item_purge)
 	}
 	for (i = 0; i < DRAGON_SOUL_INVENTORY_MAX_NUM; ++i)
 	{
-		if ((item = ch->GetItem(TItemPos(DRAGON_SOUL_INVENTORY, i ))))
+		if ((item = ch->GetItem(TItemPos(DRAGON_SOUL_INVENTORY, i))))
 		{
 			ITEM_MANAGER::instance().RemoveItem(item, "PURGE");
 		}
@@ -911,7 +911,7 @@ ACMD(do_state)
 	{
 		if (arg1[0] == '#')
 		{
-			tch = CHARACTER_MANAGER::instance().Find(strtoul(arg1+1, NULL, 10));
+			tch = CHARACTER_MANAGER::instance().Find(strtoul(arg1 + 1, NULL, 10));
 		}
 		else
 		{
@@ -949,11 +949,11 @@ ACMD(do_state)
 	ch->ChatPacket(CHAT_TYPE_INFO, "%s", buf);
 
 	int len = snprintf(buf, sizeof(buf), "Coordinate %ldx%ld (%ldx%ld)",
-			tch->GetX(), tch->GetY(), tch->GetX() / 100, tch->GetY() / 100);
+		tch->GetX(), tch->GetY(), tch->GetX() / 100, tch->GetY() / 100);
 
 	len = snprintf(buf, sizeof(buf), "Hostname %s Channel %u (port %u)", g_stHostname.c_str(), g_bChannel, mother_port);
 
-	if (len < 0 || len >= (int) sizeof(buf))
+	if (len < 0 || len >= (int)sizeof(buf))
 		len = sizeof(buf) - 1;
 
 	LPSECTREE pSec = SECTREE_MANAGER::instance().Get(tch->GetMapIndex(), tch->GetX(), tch->GetY());
@@ -961,7 +961,7 @@ ACMD(do_state)
 	{
 		TMapSetting& map_setting = SECTREE_MANAGER::instance().GetMap(tch->GetMapIndex())->m_setting;
 		snprintf(buf + len, sizeof(buf) - len, " MapIndex %ld Attribute %08X Local Position (%ld x %ld)",
-			tch->GetMapIndex(), pSec->GetAttribute(tch->GetX(), tch->GetY()), (tch->GetX() - map_setting.iBaseX)/100, (tch->GetY() - map_setting.iBaseY)/100);
+			tch->GetMapIndex(), pSec->GetAttribute(tch->GetX(), tch->GetY()), (tch->GetX() - map_setting.iBaseX) / 100, (tch->GetY() - map_setting.iBaseY) / 100);
 	}
 
 	ch->ChatPacket(CHAT_TYPE_INFO, "%s", buf);
@@ -970,91 +970,91 @@ ACMD(do_state)
 	ch->ChatPacket(CHAT_TYPE_INFO, "HP %d/%d", tch->GetHP(), tch->GetMaxHP());
 	ch->ChatPacket(CHAT_TYPE_INFO, "SP %d/%d", tch->GetSP(), tch->GetMaxSP());
 	ch->ChatPacket(CHAT_TYPE_INFO, "ATT %d MAGIC_ATT %d SPD %d CRIT %d%% PENE %d%% ATT_BONUS %d%%",
-			tch->GetPoint(POINT_ATT_GRADE),
-			tch->GetPoint(POINT_MAGIC_ATT_GRADE),
-			tch->GetPoint(POINT_ATT_SPEED),
-			tch->GetPoint(POINT_CRITICAL_PCT),
-			tch->GetPoint(POINT_PENETRATE_PCT),
-			tch->GetPoint(POINT_ATT_BONUS));
+		tch->GetPoint(POINT_ATT_GRADE),
+		tch->GetPoint(POINT_MAGIC_ATT_GRADE),
+		tch->GetPoint(POINT_ATT_SPEED),
+		tch->GetPoint(POINT_CRITICAL_PCT),
+		tch->GetPoint(POINT_PENETRATE_PCT),
+		tch->GetPoint(POINT_ATT_BONUS));
 	ch->ChatPacket(CHAT_TYPE_INFO, "DEF %d MAGIC_DEF %d BLOCK %d%% DODGE %d%% DEF_BONUS %d%%",
-			tch->GetPoint(POINT_DEF_GRADE),
-			tch->GetPoint(POINT_MAGIC_DEF_GRADE),
-			tch->GetPoint(POINT_BLOCK),
-			tch->GetPoint(POINT_DODGE),
-			tch->GetPoint(POINT_DEF_BONUS));
+		tch->GetPoint(POINT_DEF_GRADE),
+		tch->GetPoint(POINT_MAGIC_DEF_GRADE),
+		tch->GetPoint(POINT_BLOCK),
+		tch->GetPoint(POINT_DODGE),
+		tch->GetPoint(POINT_DEF_BONUS));
 
 	ch->ChatPacket(CHAT_TYPE_INFO, "RESISTANCES:");
 	ch->ChatPacket(CHAT_TYPE_INFO, "   WARR:%3d%% ASAS:%3d%% SURA:%3d%% SHAM:%3d%%",
-			tch->GetPoint(POINT_RESIST_WARRIOR),
-			tch->GetPoint(POINT_RESIST_ASSASSIN),
-			tch->GetPoint(POINT_RESIST_SURA),
-			tch->GetPoint(POINT_RESIST_SHAMAN)
+		tch->GetPoint(POINT_RESIST_WARRIOR),
+		tch->GetPoint(POINT_RESIST_ASSASSIN),
+		tch->GetPoint(POINT_RESIST_SURA),
+		tch->GetPoint(POINT_RESIST_SHAMAN)
 	);
 	ch->ChatPacket(CHAT_TYPE_INFO, "   SWORD:%3d%% THSWORD:%3d%% DAGGER:%3d%% BELL:%3d%% FAN:%3d%% BOW:%3d%%"
 
-			,
-			tch->GetPoint(POINT_RESIST_SWORD),
-			tch->GetPoint(POINT_RESIST_TWOHAND),
-			tch->GetPoint(POINT_RESIST_DAGGER),
-			tch->GetPoint(POINT_RESIST_BELL),
-			tch->GetPoint(POINT_RESIST_FAN),
-			tch->GetPoint(POINT_RESIST_BOW)
+		,
+		tch->GetPoint(POINT_RESIST_SWORD),
+		tch->GetPoint(POINT_RESIST_TWOHAND),
+		tch->GetPoint(POINT_RESIST_DAGGER),
+		tch->GetPoint(POINT_RESIST_BELL),
+		tch->GetPoint(POINT_RESIST_FAN),
+		tch->GetPoint(POINT_RESIST_BOW)
 	);
 
 	ch->ChatPacket(CHAT_TYPE_INFO, "   ELEC:%3d%% FIRE:%3d%% ICE:%3d%% WIND:%3d%% EARTH:%3d%% DARK:%3d%%",
-			tch->GetPoint(POINT_RESIST_ELEC),
-			tch->GetPoint(POINT_RESIST_FIRE),
-			tch->GetPoint(POINT_RESIST_ICE),
-			tch->GetPoint(POINT_RESIST_WIND),
-			tch->GetPoint(POINT_RESIST_EARTH),
-			tch->GetPoint(POINT_RESIST_DARK));
+		tch->GetPoint(POINT_RESIST_ELEC),
+		tch->GetPoint(POINT_RESIST_FIRE),
+		tch->GetPoint(POINT_RESIST_ICE),
+		tch->GetPoint(POINT_RESIST_WIND),
+		tch->GetPoint(POINT_RESIST_EARTH),
+		tch->GetPoint(POINT_RESIST_DARK));
 
 	ch->ChatPacket(CHAT_TYPE_INFO, "   MAGIC:%3d%% CRIT:%3d%% PENE:%3d%%",
-			tch->GetPoint(POINT_RESIST_MAGIC),
-			tch->GetPoint(POINT_RESIST_CRITICAL),
-			tch->GetPoint(POINT_RESIST_PENETRATE)
+		tch->GetPoint(POINT_RESIST_MAGIC),
+		tch->GetPoint(POINT_RESIST_CRITICAL),
+		tch->GetPoint(POINT_RESIST_PENETRATE)
 	);
 
 	ch->ChatPacket(CHAT_TYPE_INFO, "MALL:");
 	ch->ChatPacket(CHAT_TYPE_INFO, "   ATT:%3d%% DEF:%3d%% EXP:%3d%% ITEMx%d GOLDx%d",
-			tch->GetPoint(POINT_MALL_ATTBONUS),
-			tch->GetPoint(POINT_MALL_DEFBONUS),
-			tch->GetPoint(POINT_MALL_EXPBONUS),
-			tch->GetPoint(POINT_MALL_ITEMBONUS) / 10,
-			tch->GetPoint(POINT_MALL_GOLDBONUS) / 10);
+		tch->GetPoint(POINT_MALL_ATTBONUS),
+		tch->GetPoint(POINT_MALL_DEFBONUS),
+		tch->GetPoint(POINT_MALL_EXPBONUS),
+		tch->GetPoint(POINT_MALL_ITEMBONUS) / 10,
+		tch->GetPoint(POINT_MALL_GOLDBONUS) / 10);
 
 	ch->ChatPacket(CHAT_TYPE_INFO, "BONUS:");
 	ch->ChatPacket(CHAT_TYPE_INFO, "   SKILL:%3d%% NORMAL:%3d%% SKILL_DEF:%3d%% NORMAL_DEF:%3d%%",
-			tch->GetPoint(POINT_SKILL_DAMAGE_BONUS),
-			tch->GetPoint(POINT_NORMAL_HIT_DAMAGE_BONUS),
-			tch->GetPoint(POINT_SKILL_DEFEND_BONUS),
-			tch->GetPoint(POINT_NORMAL_HIT_DEFEND_BONUS));
+		tch->GetPoint(POINT_SKILL_DAMAGE_BONUS),
+		tch->GetPoint(POINT_NORMAL_HIT_DAMAGE_BONUS),
+		tch->GetPoint(POINT_SKILL_DEFEND_BONUS),
+		tch->GetPoint(POINT_NORMAL_HIT_DEFEND_BONUS));
 
 	ch->ChatPacket(CHAT_TYPE_INFO, "ATTBONUS:");
 	ch->ChatPacket(CHAT_TYPE_INFO, "   HUMAN:%3d%% ANIMAL:%3d%% ORC:%3d%% MILGYO:%3d%% UNDEAD:%3d%%",
-			tch->GetPoint(POINT_ATTBONUS_HUMAN),
-			tch->GetPoint(POINT_ATTBONUS_ANIMAL),
-			tch->GetPoint(POINT_ATTBONUS_ORC),
-			tch->GetPoint(POINT_ATTBONUS_MILGYO),
-			tch->GetPoint(POINT_ATTBONUS_UNDEAD));
+		tch->GetPoint(POINT_ATTBONUS_HUMAN),
+		tch->GetPoint(POINT_ATTBONUS_ANIMAL),
+		tch->GetPoint(POINT_ATTBONUS_ORC),
+		tch->GetPoint(POINT_ATTBONUS_MILGYO),
+		tch->GetPoint(POINT_ATTBONUS_UNDEAD));
 
 	ch->ChatPacket(CHAT_TYPE_INFO, "   DEVIL:%3d%% INSECT:%3d%% FIRE:%3d%% ICE:%3d%% DESERT:%3d%%",
-			tch->GetPoint(POINT_ATTBONUS_DEVIL),
-			tch->GetPoint(POINT_ATTBONUS_INSECT),
-			tch->GetPoint(POINT_ATTBONUS_FIRE),
-			tch->GetPoint(POINT_ATTBONUS_ICE),
-			tch->GetPoint(POINT_ATTBONUS_DESERT));
+		tch->GetPoint(POINT_ATTBONUS_DEVIL),
+		tch->GetPoint(POINT_ATTBONUS_INSECT),
+		tch->GetPoint(POINT_ATTBONUS_FIRE),
+		tch->GetPoint(POINT_ATTBONUS_ICE),
+		tch->GetPoint(POINT_ATTBONUS_DESERT));
 
 	ch->ChatPacket(CHAT_TYPE_INFO, "   TREE:%3d%% MONSTER:%3d%%",
-			tch->GetPoint(POINT_ATTBONUS_TREE),
-			tch->GetPoint(POINT_ATTBONUS_MONSTER));
+		tch->GetPoint(POINT_ATTBONUS_TREE),
+		tch->GetPoint(POINT_ATTBONUS_MONSTER));
 
 	ch->ChatPacket(CHAT_TYPE_INFO, "   WARR:%3d%% ASSA:%3d%% SURA:%3d%% SHAM:%3d%%"
-			,
-			tch->GetPoint(POINT_ATTBONUS_WARRIOR),
-			tch->GetPoint(POINT_ATTBONUS_ASSASSIN),
-			tch->GetPoint(POINT_ATTBONUS_SURA),
-			tch->GetPoint(POINT_ATTBONUS_SHAMAN)
+		,
+		tch->GetPoint(POINT_ATTBONUS_WARRIOR),
+		tch->GetPoint(POINT_ATTBONUS_ASSASSIN),
+		tch->GetPoint(POINT_ATTBONUS_SURA),
+		tch->GetPoint(POINT_ATTBONUS_SHAMAN)
 
 	);
 
@@ -1090,12 +1090,12 @@ ACMD(do_state)
 
 struct notice_packet_func
 {
-	const char * m_str;
+	const char* m_str;
 #ifdef ENABLE_FULL_NOTICE
 	bool m_bBigFont;
-	notice_packet_func(const char * str, bool bBigFont=false) : m_str(str), m_bBigFont(bBigFont)
+	notice_packet_func(const char* str, bool bBigFont = false) : m_str(str), m_bBigFont(bBigFont)
 #else
-	notice_packet_func(const char * str) : m_str(str)
+	notice_packet_func(const char* str) : m_str(str)
 #endif
 	{
 	}
@@ -1105,7 +1105,7 @@ struct notice_packet_func
 		if (!d->GetCharacter())
 			return;
 #ifdef ENABLE_FULL_NOTICE
-		d->GetCharacter()->ChatPacket((m_bBigFont)?CHAT_TYPE_BIG_NOTICE:CHAT_TYPE_NOTICE, "%s", m_str);
+		d->GetCharacter()->ChatPacket((m_bBigFont) ? CHAT_TYPE_BIG_NOTICE : CHAT_TYPE_NOTICE, "%s", m_str);
 #else
 		d->GetCharacter()->ChatPacket(CHAT_TYPE_NOTICE, "%s", m_str);
 #endif
@@ -1114,10 +1114,10 @@ struct notice_packet_func
 
 struct monarch_notice_packet_func
 {
-	const char * m_str;
+	const char* m_str;
 	BYTE m_bEmpire;
 
-	monarch_notice_packet_func(BYTE bEmpire, const char * str) : m_str(str), m_bEmpire(bEmpire)
+	monarch_notice_packet_func(BYTE bEmpire, const char* str) : m_str(str), m_bEmpire(bEmpire)
 	{
 	}
 
@@ -1134,12 +1134,12 @@ struct monarch_notice_packet_func
 };
 
 #ifdef ENABLE_FULL_NOTICE
-void SendNotice(const char * c_pszBuf, bool bBigFont)
+void SendNotice(const char* c_pszBuf, bool bBigFont)
 #else
-void SendNotice(const char * c_pszBuf)
+void SendNotice(const char* c_pszBuf)
 #endif
 {
-	const DESC_MANAGER::DESC_SET & c_ref_set = DESC_MANAGER::instance().GetClientSet();
+	const DESC_MANAGER::DESC_SET& c_ref_set = DESC_MANAGER::instance().GetClientSet();
 #ifdef ENABLE_FULL_NOTICE
 	std::for_each(c_ref_set.begin(), c_ref_set.end(), notice_packet_func(c_pszBuf, bBigFont));
 #else
@@ -1149,7 +1149,7 @@ void SendNotice(const char * c_pszBuf)
 
 void SendMonarchNotice(BYTE bEmpire, const char* c_pszBuf)
 {
-	const DESC_MANAGER::DESC_SET & c_ref_set = DESC_MANAGER::instance().GetClientSet();
+	const DESC_MANAGER::DESC_SET& c_ref_set = DESC_MANAGER::instance().GetClientSet();
 	std::for_each(c_ref_set.begin(), c_ref_set.end(), monarch_notice_packet_func(bEmpire, c_pszBuf));
 }
 
@@ -1174,15 +1174,15 @@ struct notice_map_packet_func
 
 void SendNoticeMap(const char* c_pszBuf, int nMapIndex, bool bBigFont)
 {
-	const DESC_MANAGER::DESC_SET & c_ref_set = DESC_MANAGER::instance().GetClientSet();
+	const DESC_MANAGER::DESC_SET& c_ref_set = DESC_MANAGER::instance().GetClientSet();
 	std::for_each(c_ref_set.begin(), c_ref_set.end(), notice_map_packet_func(c_pszBuf, nMapIndex, bBigFont));
 }
 
 struct log_packet_func
 {
-	const char * m_str;
+	const char* m_str;
 
-	log_packet_func(const char * str) : m_str(str)
+	log_packet_func(const char* str) : m_str(str)
 	{
 	}
 
@@ -1196,21 +1196,21 @@ struct log_packet_func
 	}
 };
 
-void SendLog(const char * c_pszBuf)
+void SendLog(const char* c_pszBuf)
 {
-	const DESC_MANAGER::DESC_SET & c_ref_set = DESC_MANAGER::instance().GetClientSet();
+	const DESC_MANAGER::DESC_SET& c_ref_set = DESC_MANAGER::instance().GetClientSet();
 	std::for_each(c_ref_set.begin(), c_ref_set.end(), log_packet_func(c_pszBuf));
 }
 
 #ifdef ENABLE_FULL_NOTICE
-void BroadcastNotice(const char * c_pszBuf, bool bBigFont)
+void BroadcastNotice(const char* c_pszBuf, bool bBigFont)
 #else
-void BroadcastNotice(const char * c_pszBuf)
+void BroadcastNotice(const char* c_pszBuf)
 #endif
 {
 	TPacketGGNotice p;
 #ifdef ENABLE_FULL_NOTICE
-	p.bHeader = (bBigFont)?HEADER_GG_BIG_NOTICE:HEADER_GG_NOTICE;
+	p.bHeader = (bBigFont) ? HEADER_GG_BIG_NOTICE : HEADER_GG_NOTICE;
 #else
 	p.bHeader = HEADER_GG_NOTICE;
 #endif
@@ -1229,7 +1229,7 @@ void BroadcastNotice(const char * c_pszBuf)
 #endif
 }
 
-void BroadcastMonarchNotice(BYTE bEmpire, const char * c_pszBuf)
+void BroadcastMonarchNotice(BYTE bEmpire, const char* c_pszBuf)
 {
 	TPacketGGMonarchNotice p;
 	p.bHeader = HEADER_GG_MONARCH_NOTICE;
@@ -1296,56 +1296,57 @@ ACMD(do_monarch_notice)
 ACMD(do_who)
 {
 	int iTotal;
-	int * paiEmpireUserCount;
+	int* paiEmpireUserCount;
 	int iLocal;
 
 	DESC_MANAGER::instance().GetUserCount(iTotal, &paiEmpireUserCount, iLocal);
 
 	ch->ChatPacket(CHAT_TYPE_INFO, "Total [%d] %d / %d / %d (this server %d)",
-			iTotal, paiEmpireUserCount[1], paiEmpireUserCount[2], paiEmpireUserCount[3], iLocal);
+		iTotal, paiEmpireUserCount[1], paiEmpireUserCount[2], paiEmpireUserCount[3], iLocal);
 }
 
 class user_func
 {
-	public:
-		LPCHARACTER	m_ch;
-		static int count;
-		static char str[128];
-		static int str_len;
+public:
+	LPCHARACTER	m_ch;
+	static int count;
+	static char str[128];
+	static int str_len;
 
-		user_func()
-			: m_ch(NULL)
-		{}
+	user_func()
+		: m_ch(NULL)
+	{
+	}
 
-		void initialize(LPCHARACTER ch)
+	void initialize(LPCHARACTER ch)
+	{
+		m_ch = ch;
+		str_len = 0;
+		count = 0;
+		str[0] = '\0';
+	}
+
+	void operator () (LPDESC d)
+	{
+		if (!d->GetCharacter())
+			return;
+
+		int len = snprintf(str + str_len, sizeof(str) - str_len, "%-16s ", d->GetCharacter()->GetName());
+
+		if (len < 0 || len >= (int)sizeof(str) - str_len)
+			len = (sizeof(str) - str_len) - 1;
+
+		str_len += len;
+		++count;
+
+		if (!(count % 4))
 		{
-			m_ch = ch;
-			str_len = 0;
-			count = 0;
+			m_ch->ChatPacket(CHAT_TYPE_INFO, str);
+
 			str[0] = '\0';
+			str_len = 0;
 		}
-
-		void operator () (LPDESC d)
-		{
-			if (!d->GetCharacter())
-				return;
-
-			int len = snprintf(str + str_len, sizeof(str) - str_len, "%-16s ", d->GetCharacter()->GetName());
-
-			if (len < 0 || len >= (int) sizeof(str) - str_len)
-				len = (sizeof(str) - str_len) - 1;
-
-			str_len += len;
-			++count;
-
-			if (!(count % 4))
-			{
-				m_ch->ChatPacket(CHAT_TYPE_INFO, str);
-
-				str[0] = '\0';
-				str_len = 0;
-			}
-		}
+	}
 };
 
 int	user_func::count = 0;
@@ -1354,7 +1355,7 @@ int	user_func::str_len = 0;
 
 ACMD(do_user)
 {
-	const DESC_MANAGER::DESC_SET & c_ref_set = DESC_MANAGER::instance().GetClientSet();
+	const DESC_MANAGER::DESC_SET& c_ref_set = DESC_MANAGER::instance().GetClientSet();
 	user_func func;
 
 	func.initialize(ch);
@@ -1448,7 +1449,7 @@ ACMD(do_poison)
 #define BINARY  1
 #define NUMBER  2
 
-namespace DoSetTypes{
+namespace DoSetTypes {
 	typedef enum do_set_types_s {
 		GOLD, RACE, SEX, JOB, EXP, MAX_HP, MAX_SP, SKILL, ALIGNMENT, ALIGN
 	} do_set_types_t;
@@ -1456,9 +1457,9 @@ namespace DoSetTypes{
 
 const struct set_struct
 {
-	const char *cmd;
+	const char* cmd;
 	const char type;
-	const char * help;
+	const char* help;
 } set_fields[] = {
 	{ "gold",		NUMBER,	NULL	},
 	{ "race",		NUMBER,	"0. Warrior, 1. Ninja, 2. Sura, 3. Shaman"		},
@@ -1492,7 +1493,7 @@ ACMD(do_set)
 		ch->ChatPacket(CHAT_TYPE_INFO, "List of the fields available:");
 		for (i = 0; *(set_fields[i].cmd) != '\n'; i++)
 		{
-			ch->ChatPacket(CHAT_TYPE_INFO, " %d. %s", i+1, set_fields[i].cmd);
+			ch->ChatPacket(CHAT_TYPE_INFO, " %d. %s", i + 1, set_fields[i].cmd);
 			if (set_fields[i].help != NULL)
 				ch->ChatPacket(CHAT_TYPE_INFO, "  Help: %s", set_fields[i].help);
 		}
@@ -1516,126 +1517,125 @@ ACMD(do_set)
 
 	switch (i)
 	{
-		case DoSetTypes::GOLD:	// gold
-			{
-				int gold = 0;
-				str_to_number(gold, arg3);
-				DBManager::instance().SendMoneyLog(MONEY_LOG_MISC, 3, gold);
-				tch->PointChange(POINT_GOLD, gold, true);
-			}
-			break;
+	case DoSetTypes::GOLD:	// gold
+	{
+		int gold = 0;
+		str_to_number(gold, arg3);
+		DBManager::instance().SendMoneyLog(MONEY_LOG_MISC, 3, gold);
+		tch->PointChange(POINT_GOLD, gold, true);
+	}
+	break;
 
-		case DoSetTypes::RACE: // race
+	case DoSetTypes::RACE: // race
 #ifdef ENABLE_NEWSTUFF
-			{
-				int amount = 0;
-				str_to_number(amount, arg3);
-				amount = MINMAX(0, amount, JOB_MAX_NUM);
-				ESex mySex = GET_SEX(tch);
-				DWORD dwRace = MAIN_RACE_WARRIOR_M;
-				switch (amount)
-				{
-					case JOB_WARRIOR:
-						dwRace = (mySex==SEX_MALE)?MAIN_RACE_WARRIOR_M:MAIN_RACE_WARRIOR_W;
-						break;
-					case JOB_ASSASSIN:
-						dwRace = (mySex==SEX_MALE)?MAIN_RACE_ASSASSIN_M:MAIN_RACE_ASSASSIN_W;
-						break;
-					case JOB_SURA:
-						dwRace = (mySex==SEX_MALE)?MAIN_RACE_SURA_M:MAIN_RACE_SURA_W;
-						break;
-					case JOB_SHAMAN:
-						dwRace = (mySex==SEX_MALE)?MAIN_RACE_SHAMAN_M:MAIN_RACE_SHAMAN_W;
-						break;
-				}
-				if (dwRace!=tch->GetRaceNum())
-				{
-					tch->SetRace(dwRace);
-					tch->ClearSkill();
-					tch->SetSkillGroup(0);
-					// quick mesh change workaround begin
-					tch->SetPolymorph(101);
-					tch->SetPolymorph(0);
-					// quick mesh change workaround end
-				}
-			}
-#endif
+	{
+		int amount = 0;
+		str_to_number(amount, arg3);
+		amount = MINMAX(0, amount, JOB_MAX_NUM);
+		ESex mySex = GET_SEX(tch);
+		DWORD dwRace = MAIN_RACE_WARRIOR_M;
+		switch (amount)
+		{
+		case JOB_WARRIOR:
+			dwRace = (mySex == SEX_MALE) ? MAIN_RACE_WARRIOR_M : MAIN_RACE_WARRIOR_W;
 			break;
+		case JOB_ASSASSIN:
+			dwRace = (mySex == SEX_MALE) ? MAIN_RACE_ASSASSIN_M : MAIN_RACE_ASSASSIN_W;
+			break;
+		case JOB_SURA:
+			dwRace = (mySex == SEX_MALE) ? MAIN_RACE_SURA_M : MAIN_RACE_SURA_W;
+			break;
+		case JOB_SHAMAN:
+			dwRace = (mySex == SEX_MALE) ? MAIN_RACE_SHAMAN_M : MAIN_RACE_SHAMAN_W;
+			break;
+		}
+		if (dwRace != tch->GetRaceNum())
+		{
+			tch->SetRace(dwRace);
+			tch->ClearSkill();
+			tch->SetSkillGroup(0);
+			// quick mesh change workaround begin
+			tch->SetPolymorph(101);
+			tch->SetPolymorph(0);
+			// quick mesh change workaround end
+		}
+	}
+#endif
+	break;
 
-		case DoSetTypes::SEX: // sex
+	case DoSetTypes::SEX: // sex
 #ifdef ENABLE_NEWSTUFF
-			{
-				int amount = 0;
-				str_to_number(amount, arg3);
-				amount = MINMAX(SEX_MALE, amount, SEX_FEMALE);
-				if (amount != GET_SEX(tch))
-				{
-					tch->ChangeSex();
-					// quick mesh change workaround begin
-					tch->SetPolymorph(101);
-					tch->SetPolymorph(0);
-					// quick mesh change workaround end
-				}
-			}
+	{
+		int amount = 0;
+		str_to_number(amount, arg3);
+		amount = MINMAX(SEX_MALE, amount, SEX_FEMALE);
+		if (amount != GET_SEX(tch))
+		{
+			tch->ChangeSex();
+			// quick mesh change workaround begin
+			tch->SetPolymorph(101);
+			tch->SetPolymorph(0);
+			// quick mesh change workaround end
+		}
+	}
 #endif
-			break;
+	break;
 
-		case DoSetTypes::JOB: // job
+	case DoSetTypes::JOB: // job
 #ifdef ENABLE_NEWSTUFF
-			{
-				int amount = 0;
-				str_to_number(amount, arg3);
-				amount = MINMAX(0, amount, 2);
-				if (amount != tch->GetSkillGroup())
-				{
-					tch->ClearSkill();
-					tch->SetSkillGroup(amount);
-				}
-			}
+	{
+		int amount = 0;
+		str_to_number(amount, arg3);
+		amount = MINMAX(0, amount, 2);
+		if (amount != tch->GetSkillGroup())
+		{
+			tch->ClearSkill();
+			tch->SetSkillGroup(amount);
+		}
+	}
 #endif
-			break;
+	break;
 
-		case DoSetTypes::EXP: // exp
-			{
-				int amount = 0;
-				str_to_number(amount, arg3);
-				tch->PointChange(POINT_EXP, amount, true);
-			}
-			break;
+	case DoSetTypes::EXP: // exp
+	{
+		int amount = 0;
+		str_to_number(amount, arg3);
+		tch->PointChange(POINT_EXP, amount, true);
+	}
+	break;
 
-		case DoSetTypes::MAX_HP: // max_hp
-			{
-				int amount = 0;
-				str_to_number(amount, arg3);
-				tch->PointChange(POINT_MAX_HP, amount, true);
-			}
-			break;
+	case DoSetTypes::MAX_HP: // max_hp
+	{
+		int amount = 0;
+		str_to_number(amount, arg3);
+		tch->PointChange(POINT_MAX_HP, amount, true);
+	}
+	break;
 
-		case DoSetTypes::MAX_SP: // max_sp
-			{
-				int amount = 0;
-				str_to_number(amount, arg3);
-				tch->PointChange(POINT_MAX_SP, amount, true);
-			}
-			break;
+	case DoSetTypes::MAX_SP: // max_sp
+	{
+		int amount = 0;
+		str_to_number(amount, arg3);
+		tch->PointChange(POINT_MAX_SP, amount, true);
+	}
+	break;
 
-		case DoSetTypes::SKILL: // active skill point
-			{
-				int amount = 0;
-				str_to_number(amount, arg3);
-				tch->PointChange(POINT_SKILL, amount, true);
-			}
-			break;
+	case DoSetTypes::SKILL: // active skill point
+	{
+		int amount = 0;
+		str_to_number(amount, arg3);
+		tch->PointChange(POINT_SKILL, amount, true);
+	}
+	break;
 
-		case DoSetTypes::ALIGN: // alignment
-		case DoSetTypes::ALIGNMENT: // alignment
-			{
-				int	amount = 0;
-				str_to_number(amount, arg3);
-				tch->UpdateAlignment(amount - ch->GetRealAlignment());
-			}
-			break;
-
+	case DoSetTypes::ALIGN: // alignment
+	case DoSetTypes::ALIGNMENT: // alignment
+	{
+		int	amount = 0;
+		str_to_number(amount, arg3);
+		tch->UpdateAlignment(amount - ch->GetRealAlignment());
+	}
+	break;
 	}
 
 	if (set_fields[i].type == NUMBER)
@@ -1851,15 +1851,15 @@ ACMD(do_event_flag)
 	str_to_number(value, arg2);
 
 	if (!strcmp(arg1, "mob_item") ||
-			!strcmp(arg1, "mob_exp") ||
-			!strcmp(arg1, "mob_gold") ||
-			!strcmp(arg1, "mob_dam") ||
-			!strcmp(arg1, "mob_gold_pct") ||
-			!strcmp(arg1, "mob_item_buyer") ||
-			!strcmp(arg1, "mob_exp_buyer") ||
-			!strcmp(arg1, "mob_gold_buyer") ||
-			!strcmp(arg1, "mob_gold_pct_buyer")
-	   )
+		!strcmp(arg1, "mob_exp") ||
+		!strcmp(arg1, "mob_gold") ||
+		!strcmp(arg1, "mob_dam") ||
+		!strcmp(arg1, "mob_gold_pct") ||
+		!strcmp(arg1, "mob_item_buyer") ||
+		!strcmp(arg1, "mob_exp_buyer") ||
+		!strcmp(arg1, "mob_gold_buyer") ||
+		!strcmp(arg1, "mob_gold_pct_buyer")
+		)
 		value = MINMAX(0, value, 1000);
 
 	//quest::CQuestManager::instance().SetEventFlag(arg1, atoi(arg2));
@@ -1920,7 +1920,7 @@ ACMD(do_qf)
 		quest::PC::QuestInfoIterator it = pPC->quest_begin();
 		unsigned int questindex = quest::CQuestManager::instance().GetQuestIndexByName(questname);
 
-		while (it!= pPC->quest_end())
+		while (it != pPC->quest_end())
 		{
 			if (it->first == questindex)
 			{
@@ -1954,13 +1954,13 @@ ACMD(do_b1)
 		GetDeltaByDegree(rot, 800, &fx, &fy);
 
 		LPCHARACTER tch = CHARACTER_MANAGER::instance().SpawnMobRange(number(701, 706),
-				ch->GetMapIndex(),
-				304222 + (int)fx,
-				742858 + (int)fy,
-				304222 + (int)fx,
-				742858 + (int)fy,
-				true,
-				false);
+			ch->GetMapIndex(),
+			304222 + (int)fx,
+			742858 + (int)fy,
+			304222 + (int)fx,
+			742858 + (int)fy,
+			true,
+			false);
 		tch->SetAggressive();
 	}
 
@@ -1971,13 +1971,13 @@ ACMD(do_b1)
 		GetDeltaByDegree(rot, 800, &fx, &fy);
 
 		LPCHARACTER tch = CHARACTER_MANAGER::instance().SpawnMobRange(8009,
-				ch->GetMapIndex(),
-				304222 + (int)fx,
-				742858 + (int)fy,
-				304222 + (int)fx,
-				742858 + (int)fy,
-				true,
-				false);
+			ch->GetMapIndex(),
+			304222 + (int)fx,
+			742858 + (int)fy,
+			304222 + (int)fx,
+			742858 + (int)fy,
+			true,
+			false);
 		tch->SetAggressive();
 	}
 }
@@ -1998,11 +1998,11 @@ ACMD(do_b3)
 	chTemple = CHARACTER_MANAGER::instance().SpawnMobRange(14004, ch->GetMapIndex(), 307700, 741600, 307700, 741600, true, false);
 	chTemple->AddAffect(AFFECT_DUNGEON_UNIQUE, POINT_NONE, 0, AFF_DUNGEON_UNIQUE, 65535, 0, true);
 
-	chTraining= CHARACTER_MANAGER::instance().SpawnMobRange(14010, ch->GetMapIndex(), 307100, 739500, 307100, 739500, true, false);
+	chTraining = CHARACTER_MANAGER::instance().SpawnMobRange(14010, ch->GetMapIndex(), 307100, 739500, 307100, 739500, true, false);
 	chTraining->AddAffect(AFFECT_DUNGEON_UNIQUE, POINT_NONE, 0, AFF_DUNGEON_UNIQUE, 65535, 0, true);
-	chTree= CHARACTER_MANAGER::instance().SpawnMobRange(14013, ch->GetMapIndex(), 300800, 741600, 300800, 741600, true, false);
+	chTree = CHARACTER_MANAGER::instance().SpawnMobRange(14013, ch->GetMapIndex(), 300800, 741600, 300800, 741600, true, false);
 	chTree->AddAffect(AFFECT_DUNGEON_UNIQUE, POINT_NONE, 0, AFF_DUNGEON_UNIQUE, 65535, 0, true);
-	chPortal= CHARACTER_MANAGER::instance().SpawnMobRange(14001, ch->GetMapIndex(), 300900, 744500, 300900, 744500, true, false);
+	chPortal = CHARACTER_MANAGER::instance().SpawnMobRange(14001, ch->GetMapIndex(), 300900, 744500, 300900, 744500, true, false);
 	chPortal->AddAffect(AFFECT_DUNGEON_UNIQUE, POINT_NONE, 0, AFF_DUNGEON_UNIQUE, 65535, 0, true);
 	chBall = CHARACTER_MANAGER::instance().SpawnMobRange(14012, ch->GetMapIndex(), 302500, 746600, 302500, 746600, true, false);
 	chBall->AddAffect(AFFECT_DUNGEON_UNIQUE, POINT_NONE, 0, AFF_DUNGEON_UNIQUE, 65535, 0, true);
@@ -2019,13 +2019,13 @@ ACMD(do_b4)
 		GetDeltaByDegree(rot, 1200, &fx, &fy);
 
 		LPCHARACTER tch = CHARACTER_MANAGER::instance().SpawnMobRange(number(701, 706),
-				ch->GetMapIndex(),
-				307900 + (int)fx,
-				744500 + (int)fy,
-				307900 + (int)fx,
-				744500 + (int)fy,
-				true,
-				false);
+			ch->GetMapIndex(),
+			307900 + (int)fx,
+			744500 + (int)fy,
+			307900 + (int)fx,
+			744500 + (int)fy,
+			true,
+			false);
 		tch->SetAggressive();
 	}
 
@@ -2036,13 +2036,13 @@ ACMD(do_b4)
 		GetDeltaByDegree(rot, 1200, &fx, &fy);
 
 		LPCHARACTER tch = CHARACTER_MANAGER::instance().SpawnMobRange(8009,
-				ch->GetMapIndex(),
-				307900 + (int)fx,
-				744500 + (int)fy,
-				307900 + (int)fx,
-				744500 + (int)fy,
-				true,
-				false);
+			ch->GetMapIndex(),
+			307900 + (int)fx,
+			744500 + (int)fy,
+			307900 + (int)fx,
+			744500 + (int)fy,
+			true,
+			false);
 		tch->SetAggressive();
 	}
 }
@@ -2073,7 +2073,7 @@ ACMD(do_book)
 
 	one_argument(argument, arg1, sizeof(arg1));
 
-	CSkillProto * pkProto;
+	CSkillProto* pkProto;
 
 	if (isnhdigit(*arg1))
 	{
@@ -2116,7 +2116,7 @@ ACMD(do_setskillother)
 		return;
 	}
 
-	CSkillProto * pk;
+	CSkillProto* pk;
 
 	if (isdigit(*arg2))
 	{
@@ -2151,7 +2151,7 @@ ACMD(do_setskill)
 		return;
 	}
 
-	CSkillProto * pk;
+	CSkillProto* pk;
 
 	if (isdigit(*arg1))
 	{
@@ -2214,36 +2214,36 @@ ACMD(do_reload)
 	{
 		switch (LOWER(*arg1))
 		{
-			case 'u':
-				ch->ChatPacket(CHAT_TYPE_INFO, "Reloading state_user_count.");
-				LoadStateUserCount();
-				break;
+		case 'u':
+			ch->ChatPacket(CHAT_TYPE_INFO, "Reloading state_user_count.");
+			LoadStateUserCount();
+			break;
 
-			case 'p':
-				ch->ChatPacket(CHAT_TYPE_INFO, "Reloading prototype tables,");
-				db_clientdesc->DBPacket(HEADER_GD_RELOAD_PROTO, 0, NULL, 0);
-				break;
+		case 'p':
+			ch->ChatPacket(CHAT_TYPE_INFO, "Reloading prototype tables,");
+			db_clientdesc->DBPacket(HEADER_GD_RELOAD_PROTO, 0, NULL, 0);
+			break;
 
-			case 'q':
-				ch->ChatPacket(CHAT_TYPE_INFO, "Reloading quest.");
-				quest::CQuestManager::instance().Reload();
-				break;
+		case 'q':
+			ch->ChatPacket(CHAT_TYPE_INFO, "Reloading quest.");
+			quest::CQuestManager::instance().Reload();
+			break;
 
-			case 'f':
-				fishing::Initialize();
-				break;
+		case 'f':
+			fishing::Initialize();
+			break;
 
-				//RELOAD_ADMIN
-			case 'a':
-				ch->ChatPacket(CHAT_TYPE_INFO, "Reloading Admin infomation.");
-				db_clientdesc->DBPacket(HEADER_GD_RELOAD_ADMIN, 0, NULL, 0);
-				sys_log(0, "Reloading admin infomation.");
-				break;
-				//END_RELOAD_ADMIN
-			case 'c':	// cube
+			//RELOAD_ADMIN
+		case 'a':
+			ch->ChatPacket(CHAT_TYPE_INFO, "Reloading Admin infomation.");
+			db_clientdesc->DBPacket(HEADER_GD_RELOAD_ADMIN, 0, NULL, 0);
+			sys_log(0, "Reloading admin infomation.");
+			break;
+			//END_RELOAD_ADMIN
+		case 'c':	// cube
 
-				Cube_init ();
-				break;
+			Cube_init();
+			break;
 		}
 	}
 	else
@@ -2359,7 +2359,7 @@ struct FuncWeaken
 		if (!ent->IsType(ENTITY_CHARACTER))
 			return;
 
-		LPCHARACTER pkChr = (LPCHARACTER) ent;
+		LPCHARACTER pkChr = (LPCHARACTER)ent;
 
 		int iDist = DISTANCE_APPROX(pkChr->GetX() - m_pkGM->GetX(), pkChr->GetY() - m_pkGM->GetY());
 
@@ -2460,7 +2460,7 @@ ACMD(do_set_state)
 		quest::PC::QuestInfoIterator it = pPC->quest_begin();
 		unsigned int questindex = quest::CQuestManager::instance().GetQuestIndexByName(questname);
 
-		while (it!= pPC->quest_end())
+		while (it != pPC->quest_end())
 		{
 			if (it->first == questindex)
 			{
@@ -2584,7 +2584,7 @@ ACMD(do_polymorph)
 		{
 			int value = 0;
 			str_to_number(value, arg2);
-			bMaintainStat = (value>0);
+			bMaintainStat = (value > 0);
 		}
 
 		ch->SetPolymorph(dwVnum, bMaintainStat);
@@ -2629,10 +2629,10 @@ ACMD(do_polymorph_item)
 
 ACMD(do_priv_empire)
 {
-	char arg1[256] = {0};
-	char arg2[256] = {0};
-	char arg3[256] = {0};
-	char arg4[256] = {0};
+	char arg1[256] = { 0 };
+	char arg2[256] = { 0 };
+	char arg3[256] = { 0 };
+	char arg4[256] = { 0 };
 	int empire = 0;
 	int type = 0;
 	int value = 0;
@@ -2652,8 +2652,8 @@ ACMD(do_priv_empire)
 		goto USAGE;
 
 	str_to_number(empire, arg1);
-	str_to_number(type,	arg2);
-	str_to_number(value,	arg3);
+	str_to_number(type, arg2);
+	str_to_number(value, arg3);
 	value = MINMAX(0, value, 1000);
 	str_to_number(duration, arg4);
 
@@ -2669,10 +2669,10 @@ ACMD(do_priv_empire)
 	if (duration < 0)
 		goto USAGE;
 
-	duration = duration * (60*60);
+	duration = duration * (60 * 60);
 
 	sys_log(0, "_give_empire_privileage(empire=%d, type=%d, value=%d, duration=%d) by command",
-			empire, type, value, duration);
+		empire, type, value, duration);
 	CPrivManager::instance().RequestGiveEmpirePriv(empire, type, value, duration);
 	return;
 
@@ -2691,7 +2691,7 @@ ACMD(do_priv_guild)
 
 	if (*arg1)
 	{
-		CGuild * g = CGuildManager::instance().FindGuildByName(arg1);
+		CGuild* g = CGuildManager::instance().FindGuildByName(arg1);
 
 		if (!g)
 		{
@@ -2704,16 +2704,16 @@ ACMD(do_priv_guild)
 			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("그런 이름 또는 번호의 길드가 없습니다."));
 		else
 		{
-			char buf[1024+1];
+			char buf[1024 + 1];
 			snprintf(buf, sizeof(buf), "%d", g->GetID()); // @fixme177
 
 			using namespace quest;
-			PC * pc = CQuestManager::instance().GetPC(ch->GetPlayerID());
+			PC* pc = CQuestManager::instance().GetPC(ch->GetPlayerID());
 			QuestState qs = CQuestManager::instance().OpenState("ADMIN_QUEST", QUEST_FISH_REFINE_STATE_INDEX);
 			luaL_loadbuffer(qs.co, buf, strlen(buf), "ADMIN_QUEST");
 			pc->SetQuest("ADMIN_QUEST", qs);
 
-			QuestState & rqs = *pc->GetRunningQuestState();
+			QuestState& rqs = *pc->GetRunningQuestState();
 
 			if (!CQuestManager::instance().RunState(rqs))
 			{
@@ -2795,17 +2795,17 @@ ACMD(do_xmas)
 
 	switch (subcmd)
 	{
-		case SCMD_XMAS_SNOW:
-			quest::CQuestManager::instance().RequestSetEventFlag("xmas_snow", flag);
-			break;
+	case SCMD_XMAS_SNOW:
+		quest::CQuestManager::instance().RequestSetEventFlag("xmas_snow", flag);
+		break;
 
-		case SCMD_XMAS_BOOM:
-			quest::CQuestManager::instance().RequestSetEventFlag("xmas_boom", flag);
-			break;
+	case SCMD_XMAS_BOOM:
+		quest::CQuestManager::instance().RequestSetEventFlag("xmas_boom", flag);
+		break;
 
-		case SCMD_XMAS_SANTA:
-			quest::CQuestManager::instance().RequestSetEventFlag("xmas_santa", flag);
-			break;
+	case SCMD_XMAS_SANTA:
+		quest::CQuestManager::instance().RequestSetEventFlag("xmas_santa", flag);
+		break;
 	}
 }
 
@@ -2819,8 +2819,8 @@ ACMD(do_block_chat_list)
 	}
 
 	DBManager::instance().ReturnQuery(QID_BLOCK_CHAT_LIST, ch->GetPlayerID(), NULL,
-			"SELECT p.name, a.lDuration FROM affect%s as a, player%s as p WHERE a.bType = %d AND a.dwPID = p.id",
-			get_table_postfix(), get_table_postfix(), AFFECT_BLOCK_CHAT);
+		"SELECT p.name, a.lDuration FROM affect%s as a, player%s as p WHERE a.bType = %d AND a.dwPID = p.id",
+		get_table_postfix(), get_table_postfix(), AFFECT_BLOCK_CHAT);
 }
 
 ACMD(do_vote_block_chat)
@@ -2866,7 +2866,7 @@ ACMD(do_block_chat)
 
 	if (!tch)
 	{
-		CCI * pkCCI = P2P_MANAGER::instance().Find(name);
+		CCI* pkCCI = P2P_MANAGER::instance().Find(name);
 
 		if (pkCCI)
 		{
@@ -2903,10 +2903,10 @@ ACMD(do_build)
 	using namespace building;
 
 	char arg1[256], arg2[256], arg3[256], arg4[256];
-	const char * line = one_argument(argument, arg1, sizeof(arg1));
+	const char* line = one_argument(argument, arg1, sizeof(arg1));
 	BYTE GMLevel = ch->GetGMLevel();
 
-	CLand * pkLand = CManager::instance().FindLand(ch->GetMapIndex(), ch->GetX(), ch->GetY());
+	CLand* pkLand = CManager::instance().FindLand(ch->GetMapIndex(), ch->GetX(), ch->GetY());
 
 	if (!pkLand)
 	{
@@ -2937,239 +2937,238 @@ ACMD(do_build)
 
 	switch (LOWER(*arg1))
 	{
-		case 'c':
-			{
-				// /build c vnum x y x_rot y_rot z_rot
-				char arg5[256], arg6[256];
-				line = one_argument(two_arguments(line, arg1, sizeof(arg1), arg2, sizeof(arg2)), arg3, sizeof(arg3)); // vnum x y
-				one_argument(two_arguments(line, arg4, sizeof(arg4), arg5, sizeof(arg5)), arg6, sizeof(arg6)); // x_rot y_rot z_rot
+	case 'c':
+	{
+		// /build c vnum x y x_rot y_rot z_rot
+		char arg5[256], arg6[256];
+		line = one_argument(two_arguments(line, arg1, sizeof(arg1), arg2, sizeof(arg2)), arg3, sizeof(arg3)); // vnum x y
+		one_argument(two_arguments(line, arg4, sizeof(arg4), arg5, sizeof(arg5)), arg6, sizeof(arg6)); // x_rot y_rot z_rot
 
-				if (!*arg1 || !*arg2 || !*arg3 || !*arg4 || !*arg5 || !*arg6)
+		if (!*arg1 || !*arg2 || !*arg3 || !*arg4 || !*arg5 || !*arg6)
+		{
+			ch->ChatPacket(CHAT_TYPE_INFO, "Invalid syntax");
+			return;
+		}
+
+		DWORD dwVnum = 0;
+		str_to_number(dwVnum, arg1);
+
+		using namespace building;
+
+		const TObjectProto* t = CManager::instance().GetObjectProto(dwVnum);
+		if (!t)
+		{
+			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("존재하지 않는 건물입니다."));
+			return;
+		}
+
+		const DWORD BUILDING_MAX_PRICE = 100000000;
+
+		if (t->dwGroupVnum)
+		{
+			if (pkLand->FindObjectByGroup(t->dwGroupVnum))
+			{
+				ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("같이 지을 수 없는 종류의 건물이 지어져 있습니다."));
+				return;
+			}
+		}
+
+		if (t->dwDependOnGroupVnum)
+		{
+			//		const TObjectProto * dependent = CManager::instance().GetObjectProto(dwVnum);
+			//		if (dependent)
+			{
+				if (!pkLand->FindObjectByGroup(t->dwDependOnGroupVnum))
 				{
-					ch->ChatPacket(CHAT_TYPE_INFO, "Invalid syntax");
+					ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("건설에 필요한 건물이 지어져 있지 않습니다."));
 					return;
 				}
-
-				DWORD dwVnum = 0;
-				str_to_number(dwVnum,  arg1);
-
-				using namespace building;
-
-				const TObjectProto * t = CManager::instance().GetObjectProto(dwVnum);
-				if (!t)
-				{
-					ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("존재하지 않는 건물입니다."));
-					return;
-				}
-
-				const DWORD BUILDING_MAX_PRICE = 100000000;
-
-				if (t->dwGroupVnum)
-				{
-					if (pkLand->FindObjectByGroup(t->dwGroupVnum))
-					{
-						ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("같이 지을 수 없는 종류의 건물이 지어져 있습니다."));
-						return;
-					}
-				}
-
-				if (t->dwDependOnGroupVnum)
-				{
-					//		const TObjectProto * dependent = CManager::instance().GetObjectProto(dwVnum);
-					//		if (dependent)
-					{
-						if (!pkLand->FindObjectByGroup(t->dwDependOnGroupVnum))
-						{
-							ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("건설에 필요한 건물이 지어져 있지 않습니다."));
-							return;
-						}
-					}
-				}
-
-				if (test_server || GMLevel == GM_PLAYER)
-				{
-					if (t->dwPrice > BUILDING_MAX_PRICE)
-					{
-						ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("건물 비용 정보 이상으로 건설 작업에 실패했습니다."));
-						return;
-					}
-
-					if (ch->GetGold() < (int)t->dwPrice)
-					{
-						ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("건설 비용이 부족합니다."));
-						return;
-					}
-
-					int i;
-					for (i = 0; i < OBJECT_MATERIAL_MAX_NUM; ++i)
-					{
-						DWORD dwItemVnum = t->kMaterials[i].dwItemVnum;
-						DWORD dwItemCount = t->kMaterials[i].dwCount;
-
-						if (dwItemVnum == 0)
-							break;
-
-						if ((int) dwItemCount > ch->CountSpecifyItem(dwItemVnum))
-						{
-							ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("자재가 부족하여 건설할 수 없습니다."));
-							return;
-						}
-					}
-				}
-
-				float x_rot = atof(arg4);
-				float y_rot = atof(arg5);
-				float z_rot = atof(arg6);
-
-				long map_x = 0;
-				str_to_number(map_x, arg2);
-				long map_y = 0;
-				str_to_number(map_y, arg3);
-
-				bool isSuccess = pkLand->RequestCreateObject(dwVnum,
-						ch->GetMapIndex(),
-						map_x,
-						map_y,
-						x_rot,
-						y_rot,
-						z_rot, true);
-
-				if (!isSuccess)
-				{
-					if (test_server)
-						ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("건물을 지을 수 없는 위치입니다."));
-					return;
-				}
-
-				if (test_server || GMLevel == GM_PLAYER)
-
-				{
-					ch->PointChange(POINT_GOLD, -t->dwPrice);
-
-					{
-						int i;
-						for (i = 0; i < OBJECT_MATERIAL_MAX_NUM; ++i)
-						{
-							DWORD dwItemVnum = t->kMaterials[i].dwItemVnum;
-							DWORD dwItemCount = t->kMaterials[i].dwCount;
-
-							if (dwItemVnum == 0)
-								break;
-
-							sys_log(0, "BUILD: material %d %u %u", i, dwItemVnum, dwItemCount);
-							ch->RemoveSpecifyItem(dwItemVnum, dwItemCount);
-						}
-					}
-				}
 			}
-			break;
+		}
 
-		case 'd' :
-			// build (d)elete ObjectID
+		if (test_server || GMLevel == GM_PLAYER)
+		{
+			if (t->dwPrice > BUILDING_MAX_PRICE)
 			{
-				one_argument(line, arg1, sizeof(arg1));
-
-				if (!*arg1)
-				{
-					ch->ChatPacket(CHAT_TYPE_INFO, "Invalid syntax");
-					return;
-				}
-
-				DWORD vid = 0;
-				str_to_number(vid, arg1);
-				pkLand->RequestDeleteObjectByVID(vid);
+				ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("건물 비용 정보 이상으로 건설 작업에 실패했습니다."));
+				return;
 			}
-			break;
 
-			// BUILD_WALL
-
-			// build w n/e/w/s
-		case 'w' :
-			if (GMLevel > GM_PLAYER)
+			if (ch->GetGold() < (int)t->dwPrice)
 			{
-				int mapIndex = ch->GetMapIndex();
-
-				one_argument(line, arg1, sizeof(arg1));
-
-				sys_log(0, "guild.wall.build map[%d] direction[%s]", mapIndex, arg1);
-
-				switch (arg1[0])
-				{
-					case 's':
-						pkLand->RequestCreateWall(mapIndex,   0.0f);
-						break;
-					case 'n':
-						pkLand->RequestCreateWall(mapIndex, 180.0f);
-						break;
-					case 'e':
-						pkLand->RequestCreateWall(mapIndex,  90.0f);
-						break;
-					case 'w':
-						pkLand->RequestCreateWall(mapIndex, 270.0f);
-						break;
-					default:
-						ch->ChatPacket(CHAT_TYPE_INFO, "guild.wall.build unknown_direction[%s]", arg1);
-						sys_err("guild.wall.build unknown_direction[%s]", arg1);
-						break;
-				}
-
+				ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("건설 비용이 부족합니다."));
+				return;
 			}
-			break;
 
-		case 'e':
-			if (GMLevel > GM_PLAYER)
+			int i;
+			for (i = 0; i < OBJECT_MATERIAL_MAX_NUM; ++i)
 			{
-				pkLand->RequestDeleteWall();
-			}
-			break;
+				DWORD dwItemVnum = t->kMaterials[i].dwItemVnum;
+				DWORD dwItemCount = t->kMaterials[i].dwCount;
 
-		case 'W' :
-
-			if (GMLevel >  GM_PLAYER)
-			{
-				int setID = 0, wallSize = 0;
-				char arg5[256], arg6[256];
-				line = two_arguments(line, arg1, sizeof(arg1), arg2, sizeof(arg2));
-				line = two_arguments(line, arg3, sizeof(arg3), arg4, sizeof(arg4));
-				two_arguments(line, arg5, sizeof(arg5), arg6, sizeof(arg6));
-
-				str_to_number(setID, arg1);
-				str_to_number(wallSize, arg2);
-
-				if (setID != 14105 && setID != 14115 && setID != 14125)
-				{
-					sys_log(0, "BUILD_WALL: wrong wall set id %d", setID);
+				if (dwItemVnum == 0)
 					break;
-				}
-				else
+
+				if ((int)dwItemCount > ch->CountSpecifyItem(dwItemVnum))
 				{
-					bool door_east = false;
-					str_to_number(door_east, arg3);
-					bool door_west = false;
-					str_to_number(door_west, arg4);
-					bool door_south = false;
-					str_to_number(door_south, arg5);
-					bool door_north = false;
-					str_to_number(door_north, arg6);
-					pkLand->RequestCreateWallBlocks(setID, ch->GetMapIndex(), wallSize, door_east, door_west, door_south, door_north);
+					ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("자재가 부족하여 건설할 수 없습니다."));
+					return;
 				}
 			}
-			break;
+		}
 
-		case 'E' :
+		float x_rot = atof(arg4);
+		float y_rot = atof(arg5);
+		float z_rot = atof(arg6);
 
-			if (GMLevel > GM_PLAYER)
+		long map_x = 0;
+		str_to_number(map_x, arg2);
+		long map_y = 0;
+		str_to_number(map_y, arg3);
+
+		bool isSuccess = pkLand->RequestCreateObject(dwVnum,
+			ch->GetMapIndex(),
+			map_x,
+			map_y,
+			x_rot,
+			y_rot,
+			z_rot, true);
+
+		if (!isSuccess)
+		{
+			if (test_server)
+				ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("건물을 지을 수 없는 위치입니다."));
+			return;
+		}
+
+		if (test_server || GMLevel == GM_PLAYER)
+
+		{
+			ch->PointChange(POINT_GOLD, -t->dwPrice);
+
 			{
-				one_argument(line, arg1, sizeof(arg1));
-				DWORD id = 0;
-				str_to_number(id, arg1);
-				pkLand->RequestDeleteWallBlocks(id);
-			}
-			break;
+				int i;
+				for (i = 0; i < OBJECT_MATERIAL_MAX_NUM; ++i)
+				{
+					DWORD dwItemVnum = t->kMaterials[i].dwItemVnum;
+					DWORD dwItemCount = t->kMaterials[i].dwCount;
 
-		default:
-			ch->ChatPacket(CHAT_TYPE_INFO, "Invalid command %s", arg1);
-			break;
+					if (dwItemVnum == 0)
+						break;
+
+					sys_log(0, "BUILD: material %d %u %u", i, dwItemVnum, dwItemCount);
+					ch->RemoveSpecifyItem(dwItemVnum, dwItemCount);
+				}
+			}
+		}
+	}
+	break;
+
+	case 'd':
+		// build (d)elete ObjectID
+	{
+		one_argument(line, arg1, sizeof(arg1));
+
+		if (!*arg1)
+		{
+			ch->ChatPacket(CHAT_TYPE_INFO, "Invalid syntax");
+			return;
+		}
+
+		DWORD vid = 0;
+		str_to_number(vid, arg1);
+		pkLand->RequestDeleteObjectByVID(vid);
+	}
+	break;
+
+	// BUILD_WALL
+
+	// build w n/e/w/s
+	case 'w':
+		if (GMLevel > GM_PLAYER)
+		{
+			int mapIndex = ch->GetMapIndex();
+
+			one_argument(line, arg1, sizeof(arg1));
+
+			sys_log(0, "guild.wall.build map[%d] direction[%s]", mapIndex, arg1);
+
+			switch (arg1[0])
+			{
+			case 's':
+				pkLand->RequestCreateWall(mapIndex, 0.0f);
+				break;
+			case 'n':
+				pkLand->RequestCreateWall(mapIndex, 180.0f);
+				break;
+			case 'e':
+				pkLand->RequestCreateWall(mapIndex, 90.0f);
+				break;
+			case 'w':
+				pkLand->RequestCreateWall(mapIndex, 270.0f);
+				break;
+			default:
+				ch->ChatPacket(CHAT_TYPE_INFO, "guild.wall.build unknown_direction[%s]", arg1);
+				sys_err("guild.wall.build unknown_direction[%s]", arg1);
+				break;
+			}
+		}
+		break;
+
+	case 'e':
+		if (GMLevel > GM_PLAYER)
+		{
+			pkLand->RequestDeleteWall();
+		}
+		break;
+
+	case 'W':
+
+		if (GMLevel > GM_PLAYER)
+		{
+			int setID = 0, wallSize = 0;
+			char arg5[256], arg6[256];
+			line = two_arguments(line, arg1, sizeof(arg1), arg2, sizeof(arg2));
+			line = two_arguments(line, arg3, sizeof(arg3), arg4, sizeof(arg4));
+			two_arguments(line, arg5, sizeof(arg5), arg6, sizeof(arg6));
+
+			str_to_number(setID, arg1);
+			str_to_number(wallSize, arg2);
+
+			if (setID != 14105 && setID != 14115 && setID != 14125)
+			{
+				sys_log(0, "BUILD_WALL: wrong wall set id %d", setID);
+				break;
+			}
+			else
+			{
+				bool door_east = false;
+				str_to_number(door_east, arg3);
+				bool door_west = false;
+				str_to_number(door_west, arg4);
+				bool door_south = false;
+				str_to_number(door_south, arg5);
+				bool door_north = false;
+				str_to_number(door_north, arg6);
+				pkLand->RequestCreateWallBlocks(setID, ch->GetMapIndex(), wallSize, door_east, door_west, door_south, door_north);
+			}
+		}
+		break;
+
+	case 'E':
+
+		if (GMLevel > GM_PLAYER)
+		{
+			one_argument(line, arg1, sizeof(arg1));
+			DWORD id = 0;
+			str_to_number(id, arg1);
+			pkLand->RequestDeleteWallBlocks(id);
+		}
+		break;
+
+	default:
+		ch->ChatPacket(CHAT_TYPE_INFO, "Invalid command %s", arg1);
+		break;
 	}
 }
 // END_OF_BUILD_BUILDING
@@ -3197,8 +3196,8 @@ ACMD(do_horse_state)
 
 ACMD(do_horse_level)
 {
-	char arg1[256] = {0};
-	char arg2[256] = {0};
+	char arg1[256] = { 0 };
+	char arg2[256] = { 0 };
 	LPCHARACTER victim;
 	int	level = 0;
 
@@ -3311,23 +3310,23 @@ ACMD(do_affect_remove)
 		ch->ChatPacket(CHAT_TYPE_INFO, "-- Affect List of %s -------------------------------", tch->GetName());
 		ch->ChatPacket(CHAT_TYPE_INFO, "Type Point Modif Duration Flag");
 
-		const std::list<CAffect *> & cont = tch->GetAffectContainer();
+		const std::list<CAffect*>& cont = tch->GetAffectContainer();
 
 		itertype(cont) it = cont.begin();
 
 		while (it != cont.end())
 		{
-			CAffect * pkAff = *it++;
+			CAffect* pkAff = *it++;
 
 			ch->ChatPacket(CHAT_TYPE_INFO, "%4d %5d %5d %8d %u",
-					pkAff->dwType, pkAff->bApplyOn, pkAff->lApplyValue, pkAff->lDuration, pkAff->dwFlag);
+				pkAff->dwType, pkAff->bApplyOn, pkAff->lApplyValue, pkAff->lDuration, pkAff->dwFlag);
 		}
 		return;
 	}
 
 	bool removed = false;
 
-	CAffect * af;
+	CAffect* af;
 
 	DWORD	type = 0;
 	str_to_number(type, arg1);
@@ -3534,38 +3533,38 @@ ACMD(do_stat_plus_amount)
 #ifndef ENABLE_STATPLUS_NOLIMIT
 	switch (subcmd)
 	{
-		case POINT_HT :
-			if (nPoint + ch->GetPoint(POINT_HT) > 90)
-			{
-				nPoint = 90 - ch->GetPoint(POINT_HT);
-			}
-			break;
+	case POINT_HT:
+		if (nPoint + ch->GetPoint(POINT_HT) > 90)
+		{
+			nPoint = 90 - ch->GetPoint(POINT_HT);
+		}
+		break;
 
-		case POINT_IQ :
-			if (nPoint + ch->GetPoint(POINT_IQ) > 90)
-			{
-				nPoint = 90 - ch->GetPoint(POINT_IQ);
-			}
-			break;
+	case POINT_IQ:
+		if (nPoint + ch->GetPoint(POINT_IQ) > 90)
+		{
+			nPoint = 90 - ch->GetPoint(POINT_IQ);
+		}
+		break;
 
-		case POINT_ST :
-			if (nPoint + ch->GetPoint(POINT_ST) > 90)
-			{
-				nPoint = 90 - ch->GetPoint(POINT_ST);
-			}
-			break;
+	case POINT_ST:
+		if (nPoint + ch->GetPoint(POINT_ST) > 90)
+		{
+			nPoint = 90 - ch->GetPoint(POINT_ST);
+		}
+		break;
 
-		case POINT_DX :
-			if (nPoint + ch->GetPoint(POINT_DX) > 90)
-			{
-				nPoint = 90 - ch->GetPoint(POINT_DX);
-			}
-			break;
+	case POINT_DX:
+		if (nPoint + ch->GetPoint(POINT_DX) > 90)
+		{
+			nPoint = 90 - ch->GetPoint(POINT_DX);
+		}
+		break;
 
-		default :
-			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("명령어의 서브 커맨드가 잘못 되었습니다."));
-			return;
-			break;
+	default:
+		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("명령어의 서브 커맨드가 잘못 되었습니다."));
+		return;
+		break;
 	}
 #endif
 
@@ -3620,7 +3619,7 @@ struct FCountInMap
 	{
 		if (ent->IsType(ENTITY_CHARACTER))
 		{
-			LPCHARACTER ch = (LPCHARACTER) ent;
+			LPCHARACTER ch = (LPCHARACTER)ent;
 			if (ch && ch->IsPC())
 				++m_Count[ch->GetEmpire()];
 		}
@@ -3646,9 +3645,9 @@ ACMD(do_threeway_war_info)
 		}
 
 		ch->ChatPacket(CHAT_TYPE_INFO, "%s killscore %d usercount %d",
-				EMPIRE_NAME(n),
-			   	CThreeWayWar::instance().GetKillScore(n),
-				c.GetCount(n));
+			EMPIRE_NAME(n),
+			CThreeWayWar::instance().GetKillScore(n),
+			c.GetCount(n));
 	}
 }
 
@@ -3656,7 +3655,7 @@ ACMD(do_threeway_war_myinfo)
 {
 	ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("나의 삼거리 진행정보"));
 	ch->ChatPacket(CHAT_TYPE_INFO, "Deadcount %d",
-			CThreeWayWar::instance().GetReviveTokenForPlayer(ch->GetPlayerID()));
+		CThreeWayWar::instance().GetReviveTokenForPlayer(ch->GetPlayerID()));
 }
 
 ACMD(do_rmcandidacy)
@@ -3675,7 +3674,7 @@ ACMD(do_rmcandidacy)
 
 	if (!tch)
 	{
-		CCI * pkCCI = P2P_MANAGER::instance().Find(arg1);
+		CCI* pkCCI = P2P_MANAGER::instance().Find(arg1);
 
 		if (pkCCI)
 		{
@@ -3793,7 +3792,7 @@ ACMD(do_flush)
 		return;
 	}
 
-	DWORD pid = (DWORD) strtoul(arg1, NULL, 10);
+	DWORD pid = (DWORD)strtoul(arg1, NULL, 10);
 	auto tch = CHARACTER_MANAGER::instance().FindByPID(pid);
 	if (!tch) {
 		ch->ChatPacket(CHAT_TYPE_INFO, "player_id %d not found", pid);
@@ -3874,7 +3873,7 @@ ACMD(do_clear_land)
 {
 	const building::CLand* pLand = building::CManager::instance().FindLand(ch->GetMapIndex(), ch->GetX(), ch->GetY());
 
-	if( NULL == pLand )
+	if (NULL == pLand)
 	{
 		return;
 	}
@@ -3886,19 +3885,19 @@ ACMD(do_clear_land)
 
 ACMD(do_special_item)
 {
-    ITEM_MANAGER::instance().ConvSpecialDropItemFile();
+	ITEM_MANAGER::instance().ConvSpecialDropItemFile();
 }
 
 ACMD(do_set_stat)
 {
-	char szName [256];
+	char szName[256];
 	char szChangeAmount[256];
 
-	two_arguments (argument, szName, sizeof (szName), szChangeAmount, sizeof(szChangeAmount));
+	two_arguments(argument, szName, sizeof(szName), szChangeAmount, sizeof(szChangeAmount));
 
 	if (*szName == '\0' || *szChangeAmount == '\0')
 	{
-		ch->ChatPacket (CHAT_TYPE_INFO, "Invalid argument.");
+		ch->ChatPacket(CHAT_TYPE_INFO, "Invalid argument.");
 		return;
 	}
 
@@ -3906,16 +3905,16 @@ ACMD(do_set_stat)
 
 	if (!tch)
 	{
-		CCI * pkCCI = P2P_MANAGER::instance().Find(szName);
+		CCI* pkCCI = P2P_MANAGER::instance().Find(szName);
 
 		if (pkCCI)
 		{
-			ch->ChatPacket (CHAT_TYPE_INFO, "Cannot find player(%s). %s is not in your game server.", szName, szName);
+			ch->ChatPacket(CHAT_TYPE_INFO, "Cannot find player(%s). %s is not in your game server.", szName, szName);
 			return;
 		}
 		else
 		{
-			ch->ChatPacket (CHAT_TYPE_INFO, "Cannot find player(%s). Perhaps %s doesn't login or exist.", szName, szName);
+			ch->ChatPacket(CHAT_TYPE_INFO, "Cannot find player(%s). Perhaps %s doesn't login or exist.", szName, szName);
 			return;
 		}
 	}
@@ -3995,7 +3994,7 @@ ACMD(do_set_stat)
 		tch->PointChange(POINT_STAT, -nChangeAmount);
 		tch->ComputePoints();
 
-		const char* stat_name[4] = {"con", "int", "str", "dex"};
+		const char* stat_name[4] = { "con", "int", "str", "dex" };
 		if (-1 == n)
 			return;
 		ch->ChatPacket(CHAT_TYPE_INFO, "%s's %s change %d to %d", szName, stat_name[n], nCurPoint, nPoint);
@@ -4014,22 +4013,22 @@ ACMD(do_get_item_id_list)
 
 ACMD(do_set_socket)
 {
-	char arg1 [256];
-	char arg2 [256];
-	char arg3 [256];
+	char arg1[256];
+	char arg2[256];
+	char arg3[256];
 
-	one_argument (two_arguments (argument, arg1, sizeof (arg1), arg2, sizeof(arg2)), arg3, sizeof (arg3));
+	one_argument(two_arguments(argument, arg1, sizeof(arg1), arg2, sizeof(arg2)), arg3, sizeof(arg3));
 
 	int item_id, socket_num, value;
-	if (!str_to_number (item_id, arg1) || !str_to_number (socket_num, arg2) || !str_to_number (value, arg3))
+	if (!str_to_number(item_id, arg1) || !str_to_number(socket_num, arg2) || !str_to_number(value, arg3))
 		return;
 
-	LPITEM item = ITEM_MANAGER::instance().Find (item_id);
+	LPITEM item = ITEM_MANAGER::instance().Find(item_id);
 	if (item)
-		item->SetSocket (socket_num, value);
+		item->SetSocket(socket_num, value);
 }
 
-ACMD (do_can_dead)
+ACMD(do_can_dead)
 {
 	if (subcmd)
 		ch->SetArmada();
@@ -4037,47 +4036,47 @@ ACMD (do_can_dead)
 		ch->ResetArmada();
 }
 
-ACMD (do_all_skill_master)
+ACMD(do_all_skill_master)
 {
 	ch->SetHorseLevel(SKILL_MAX_LEVEL);
 	for (int i = 0; i < SKILL_MAX_NUM; i++)
 	{
 		if (true == ch->CanUseSkill(i))
 		{
-			switch(i)
+			switch (i)
 			{
 				// @fixme154 BEGIN
 				// taking out the it->second->bMaxLevel from map_pkSkillProto (&& 1==40|SKILL_MAX_LEVEL) will be very resource-wasting, so we go full ugly so far
-				case SKILL_COMBO:
-					ch->SetSkillLevel(i, 2);
-					break;
-				case SKILL_LANGUAGE1:
-				case SKILL_LANGUAGE2:
-				case SKILL_LANGUAGE3:
-					ch->SetSkillLevel(i, 20);
-					break;
-				case SKILL_HORSE_SUMMON:
-					ch->SetSkillLevel(i, 10);
-					break;
-				case SKILL_HORSE:
-					ch->SetSkillLevel(i, HORSE_MAX_LEVEL);
-					break;
+			case SKILL_COMBO:
+				ch->SetSkillLevel(i, 2);
+				break;
+			case SKILL_LANGUAGE1:
+			case SKILL_LANGUAGE2:
+			case SKILL_LANGUAGE3:
+				ch->SetSkillLevel(i, 20);
+				break;
+			case SKILL_HORSE_SUMMON:
+				ch->SetSkillLevel(i, 10);
+				break;
+			case SKILL_HORSE:
+				ch->SetSkillLevel(i, HORSE_MAX_LEVEL);
+				break;
 				// CanUseSkill will be true for skill_horse_skills if riding
-				case SKILL_HORSE_WILDATTACK:
-				case SKILL_HORSE_CHARGE:
-				case SKILL_HORSE_ESCAPE:
-				case SKILL_HORSE_WILDATTACK_RANGE:
-					ch->SetSkillLevel(i, 20);
-					break;
+			case SKILL_HORSE_WILDATTACK:
+			case SKILL_HORSE_CHARGE:
+			case SKILL_HORSE_ESCAPE:
+			case SKILL_HORSE_WILDATTACK_RANGE:
+				ch->SetSkillLevel(i, 20);
+				break;
 				// @fixme154 END
-				default:
-					ch->SetSkillLevel(i, SKILL_MAX_LEVEL);
-					break;
+			default:
+				ch->SetSkillLevel(i, SKILL_MAX_LEVEL);
+				break;
 			}
 		}
 		else
 		{
-			switch(i)
+			switch (i)
 			{
 			case SKILL_HORSE_WILDATTACK:
 			case SKILL_HORSE_CHARGE:
@@ -4092,7 +4091,7 @@ ACMD (do_all_skill_master)
 	ch->SkillLevelPacket();
 }
 
-ACMD (do_item_full_set)
+ACMD(do_item_full_set)
 {
 	BYTE job = ch->GetJob();
 	LPITEM item;
@@ -4109,122 +4108,122 @@ ACMD (do_item_full_set)
 	switch (job)
 	{
 	case JOB_SURA:
-		{
-			item = ITEM_MANAGER::instance().CreateItem(11699);
-			if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
-				M2_DESTROY_ITEM(item);
-			item = ITEM_MANAGER::instance().CreateItem(13049);
-			if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
-				M2_DESTROY_ITEM(item);
-			item = ITEM_MANAGER::instance().CreateItem(15189 );
-			if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
-				M2_DESTROY_ITEM(item);
-			item = ITEM_MANAGER::instance().CreateItem(189 );
-			if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
-				M2_DESTROY_ITEM(item);
-			item = ITEM_MANAGER::instance().CreateItem(12529 );
-			if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
-				M2_DESTROY_ITEM(item);
-			item = ITEM_MANAGER::instance().CreateItem(14109 );
-			if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
-				M2_DESTROY_ITEM(item);
-			item = ITEM_MANAGER::instance().CreateItem(17209 );
-			if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
-				M2_DESTROY_ITEM(item);
-			item = ITEM_MANAGER::instance().CreateItem(16209 );
-			if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
-				M2_DESTROY_ITEM(item);
-		}
-		break;
+	{
+		item = ITEM_MANAGER::instance().CreateItem(11699);
+		if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
+			M2_DESTROY_ITEM(item);
+		item = ITEM_MANAGER::instance().CreateItem(13049);
+		if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
+			M2_DESTROY_ITEM(item);
+		item = ITEM_MANAGER::instance().CreateItem(15189);
+		if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
+			M2_DESTROY_ITEM(item);
+		item = ITEM_MANAGER::instance().CreateItem(189);
+		if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
+			M2_DESTROY_ITEM(item);
+		item = ITEM_MANAGER::instance().CreateItem(12529);
+		if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
+			M2_DESTROY_ITEM(item);
+		item = ITEM_MANAGER::instance().CreateItem(14109);
+		if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
+			M2_DESTROY_ITEM(item);
+		item = ITEM_MANAGER::instance().CreateItem(17209);
+		if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
+			M2_DESTROY_ITEM(item);
+		item = ITEM_MANAGER::instance().CreateItem(16209);
+		if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
+			M2_DESTROY_ITEM(item);
+	}
+	break;
 	case JOB_WARRIOR:
-		{
-			item = ITEM_MANAGER::instance().CreateItem(11299);
-			if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
-				M2_DESTROY_ITEM(item);
-			item = ITEM_MANAGER::instance().CreateItem(13049);
-			if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
-				M2_DESTROY_ITEM(item);
-			item = ITEM_MANAGER::instance().CreateItem(15189 );
-			if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
-				M2_DESTROY_ITEM(item);
-			item = ITEM_MANAGER::instance().CreateItem(3159 );
-			if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
-				M2_DESTROY_ITEM(item);
-			item = ITEM_MANAGER::instance().CreateItem(12249 );
-			if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
-				M2_DESTROY_ITEM(item);
-			item = ITEM_MANAGER::instance().CreateItem(14109 );
-			if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
-				M2_DESTROY_ITEM(item);
-			item = ITEM_MANAGER::instance().CreateItem(17109 );
-			if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
-				M2_DESTROY_ITEM(item);
-			item = ITEM_MANAGER::instance().CreateItem(16109 );
-			if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
-				M2_DESTROY_ITEM(item);
-		}
-		break;
+	{
+		item = ITEM_MANAGER::instance().CreateItem(11299);
+		if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
+			M2_DESTROY_ITEM(item);
+		item = ITEM_MANAGER::instance().CreateItem(13049);
+		if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
+			M2_DESTROY_ITEM(item);
+		item = ITEM_MANAGER::instance().CreateItem(15189);
+		if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
+			M2_DESTROY_ITEM(item);
+		item = ITEM_MANAGER::instance().CreateItem(3159);
+		if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
+			M2_DESTROY_ITEM(item);
+		item = ITEM_MANAGER::instance().CreateItem(12249);
+		if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
+			M2_DESTROY_ITEM(item);
+		item = ITEM_MANAGER::instance().CreateItem(14109);
+		if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
+			M2_DESTROY_ITEM(item);
+		item = ITEM_MANAGER::instance().CreateItem(17109);
+		if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
+			M2_DESTROY_ITEM(item);
+		item = ITEM_MANAGER::instance().CreateItem(16109);
+		if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
+			M2_DESTROY_ITEM(item);
+	}
+	break;
 	case JOB_SHAMAN:
-		{
-			item = ITEM_MANAGER::instance().CreateItem(11899);
-			if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
-				M2_DESTROY_ITEM(item);
-			item = ITEM_MANAGER::instance().CreateItem(13049);
-			if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
-				M2_DESTROY_ITEM(item);
-			item = ITEM_MANAGER::instance().CreateItem(15189 );
-			if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
-				M2_DESTROY_ITEM(item);
-			item = ITEM_MANAGER::instance().CreateItem(7159 );
-			if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
-				M2_DESTROY_ITEM(item);
-			item = ITEM_MANAGER::instance().CreateItem(12669 );
-			if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
-				M2_DESTROY_ITEM(item);
-			item = ITEM_MANAGER::instance().CreateItem(14109 );
-			if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
-				M2_DESTROY_ITEM(item);
-			item = ITEM_MANAGER::instance().CreateItem(17209 );
-			if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
-				M2_DESTROY_ITEM(item);
-			item = ITEM_MANAGER::instance().CreateItem(16209 );
-			if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
-				M2_DESTROY_ITEM(item);
-		}
-		break;
+	{
+		item = ITEM_MANAGER::instance().CreateItem(11899);
+		if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
+			M2_DESTROY_ITEM(item);
+		item = ITEM_MANAGER::instance().CreateItem(13049);
+		if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
+			M2_DESTROY_ITEM(item);
+		item = ITEM_MANAGER::instance().CreateItem(15189);
+		if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
+			M2_DESTROY_ITEM(item);
+		item = ITEM_MANAGER::instance().CreateItem(7159);
+		if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
+			M2_DESTROY_ITEM(item);
+		item = ITEM_MANAGER::instance().CreateItem(12669);
+		if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
+			M2_DESTROY_ITEM(item);
+		item = ITEM_MANAGER::instance().CreateItem(14109);
+		if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
+			M2_DESTROY_ITEM(item);
+		item = ITEM_MANAGER::instance().CreateItem(17209);
+		if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
+			M2_DESTROY_ITEM(item);
+		item = ITEM_MANAGER::instance().CreateItem(16209);
+		if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
+			M2_DESTROY_ITEM(item);
+	}
+	break;
 	case JOB_ASSASSIN:
-		{
-			item = ITEM_MANAGER::instance().CreateItem(11499);
-			if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
-				M2_DESTROY_ITEM(item);
-			item = ITEM_MANAGER::instance().CreateItem(13049);
-			if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
-				M2_DESTROY_ITEM(item);
-			item = ITEM_MANAGER::instance().CreateItem(15189 );
-			if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
-				M2_DESTROY_ITEM(item);
-			item = ITEM_MANAGER::instance().CreateItem(1139 );
-			if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
-				M2_DESTROY_ITEM(item);
-			item = ITEM_MANAGER::instance().CreateItem(12389 );
-			if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
-				M2_DESTROY_ITEM(item);
-			item = ITEM_MANAGER::instance().CreateItem(14109 );
-			if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
-				M2_DESTROY_ITEM(item);
-			item = ITEM_MANAGER::instance().CreateItem(17189 );
-			if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
-				M2_DESTROY_ITEM(item);
-			item = ITEM_MANAGER::instance().CreateItem(16189 );
-			if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
-				M2_DESTROY_ITEM(item);
-		}
-		break;
+	{
+		item = ITEM_MANAGER::instance().CreateItem(11499);
+		if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
+			M2_DESTROY_ITEM(item);
+		item = ITEM_MANAGER::instance().CreateItem(13049);
+		if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
+			M2_DESTROY_ITEM(item);
+		item = ITEM_MANAGER::instance().CreateItem(15189);
+		if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
+			M2_DESTROY_ITEM(item);
+		item = ITEM_MANAGER::instance().CreateItem(1139);
+		if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
+			M2_DESTROY_ITEM(item);
+		item = ITEM_MANAGER::instance().CreateItem(12389);
+		if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
+			M2_DESTROY_ITEM(item);
+		item = ITEM_MANAGER::instance().CreateItem(14109);
+		if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
+			M2_DESTROY_ITEM(item);
+		item = ITEM_MANAGER::instance().CreateItem(17189);
+		if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
+			M2_DESTROY_ITEM(item);
+		item = ITEM_MANAGER::instance().CreateItem(16189);
+		if (!item || !item->EquipTo(ch, item->FindEquipCell(ch)))
+			M2_DESTROY_ITEM(item);
+	}
+	break;
 	}
 	ch->ComputePoints(); //@fixme300
 }
 
-ACMD (do_attr_full_set)
+ACMD(do_attr_full_set)
 {
 	BYTE job = ch->GetJob();
 	LPITEM item;
@@ -4235,110 +4234,110 @@ ACMD (do_attr_full_set)
 	case JOB_ASSASSIN:
 	case JOB_SURA:
 	case JOB_SHAMAN:
+	{
+		item = ch->GetWear(WEAR_HEAD);
+		if (item != NULL)
 		{
-			item = ch->GetWear(WEAR_HEAD);
-			if (item != NULL)
-			{
-				item->ClearAttribute();
-				item->SetForceAttribute( 0, APPLY_ATT_SPEED, 8);
-				item->SetForceAttribute( 1, APPLY_HP_REGEN, 30);
-				item->SetForceAttribute( 2, APPLY_SP_REGEN, 30);
-				item->SetForceAttribute( 3, APPLY_DODGE, 15);
-				item->SetForceAttribute( 4, APPLY_STEAL_SP, 10);
-			}
-
-			item = ch->GetWear(WEAR_WEAPON);
-			if (item != NULL)
-			{
-				item->ClearAttribute();
-				item->SetForceAttribute( 0, APPLY_CAST_SPEED, 20);
-				item->SetForceAttribute( 1, APPLY_CRITICAL_PCT, 10);
-				item->SetForceAttribute( 2, APPLY_PENETRATE_PCT, 10);
-				item->SetForceAttribute( 3, APPLY_ATTBONUS_DEVIL, 20);
-				item->SetForceAttribute( 4, APPLY_STR, 12);
-			}
-
-			item = ch->GetWear(WEAR_SHIELD);
-			if (item != NULL)
-			{
-				item->ClearAttribute();
-				item->SetForceAttribute( 0, APPLY_CON, 12);
-				item->SetForceAttribute( 1, APPLY_BLOCK, 15);
-				item->SetForceAttribute( 2, APPLY_REFLECT_MELEE, 10);
-				item->SetForceAttribute( 3, APPLY_IMMUNE_STUN, 1);
-				item->SetForceAttribute( 4, APPLY_IMMUNE_SLOW, 1);
-			}
-
-			item = ch->GetWear(WEAR_BODY);
-			if (item != NULL)
-			{
-				item->ClearAttribute();
-				item->SetForceAttribute( 0, APPLY_MAX_HP, 2000);
-				item->SetForceAttribute( 1, APPLY_CAST_SPEED, 20);
-				item->SetForceAttribute( 2, APPLY_STEAL_HP, 10);
-				item->SetForceAttribute( 3, APPLY_REFLECT_MELEE, 10);
-				item->SetForceAttribute( 4, APPLY_ATT_GRADE_BONUS, 50);
-			}
-
-			item = ch->GetWear(WEAR_FOOTS);
-			if (item != NULL)
-			{
-				item->ClearAttribute();
-				item->SetForceAttribute( 0, APPLY_MAX_HP, 2000);
-				item->SetForceAttribute( 1, APPLY_MAX_SP, 80);
-				item->SetForceAttribute( 2, APPLY_MOV_SPEED, 8);
-				item->SetForceAttribute( 3, APPLY_ATT_SPEED, 8);
-				item->SetForceAttribute( 4, APPLY_CRITICAL_PCT, 10);
-			}
-
-			item = ch->GetWear(WEAR_WRIST);
-			if (item != NULL)
-			{
-				item->ClearAttribute();
-				item->SetForceAttribute( 0, APPLY_MAX_HP, 2000);
-				item->SetForceAttribute( 1, APPLY_MAX_SP, 80);
-				item->SetForceAttribute( 2, APPLY_PENETRATE_PCT, 10);
-				item->SetForceAttribute( 3, APPLY_STEAL_HP, 10);
-				item->SetForceAttribute( 4, APPLY_MANA_BURN_PCT, 10);
-			}
-			item = ch->GetWear(WEAR_NECK);
-			if (item != NULL)
-			{
-				item->ClearAttribute();
-				item->SetForceAttribute( 0, APPLY_MAX_HP, 2000);
-				item->SetForceAttribute( 1, APPLY_MAX_SP, 80);
-				item->SetForceAttribute( 2, APPLY_CRITICAL_PCT, 10);
-				item->SetForceAttribute( 3, APPLY_PENETRATE_PCT, 10);
-				item->SetForceAttribute( 4, APPLY_STEAL_SP, 10);
-			}
-			item = ch->GetWear(WEAR_EAR);
-			if (item != NULL)
-			{
-				item->ClearAttribute();
-				item->SetForceAttribute( 0, APPLY_MOV_SPEED, 20);
-				item->SetForceAttribute( 1, APPLY_MANA_BURN_PCT, 10);
-				item->SetForceAttribute( 2, APPLY_POISON_REDUCE, 5);
-				item->SetForceAttribute( 3, APPLY_ATTBONUS_DEVIL, 20);
-				item->SetForceAttribute( 4, APPLY_ATTBONUS_UNDEAD, 20);
-			}
+			item->ClearAttribute();
+			item->SetForceAttribute(0, APPLY_ATT_SPEED, 8);
+			item->SetForceAttribute(1, APPLY_HP_REGEN, 30);
+			item->SetForceAttribute(2, APPLY_SP_REGEN, 30);
+			item->SetForceAttribute(3, APPLY_DODGE, 15);
+			item->SetForceAttribute(4, APPLY_STEAL_SP, 10);
 		}
-		break;
+
+		item = ch->GetWear(WEAR_WEAPON);
+		if (item != NULL)
+		{
+			item->ClearAttribute();
+			item->SetForceAttribute(0, APPLY_CAST_SPEED, 20);
+			item->SetForceAttribute(1, APPLY_CRITICAL_PCT, 10);
+			item->SetForceAttribute(2, APPLY_PENETRATE_PCT, 10);
+			item->SetForceAttribute(3, APPLY_ATTBONUS_DEVIL, 20);
+			item->SetForceAttribute(4, APPLY_STR, 12);
+		}
+
+		item = ch->GetWear(WEAR_SHIELD);
+		if (item != NULL)
+		{
+			item->ClearAttribute();
+			item->SetForceAttribute(0, APPLY_CON, 12);
+			item->SetForceAttribute(1, APPLY_BLOCK, 15);
+			item->SetForceAttribute(2, APPLY_REFLECT_MELEE, 10);
+			item->SetForceAttribute(3, APPLY_IMMUNE_STUN, 1);
+			item->SetForceAttribute(4, APPLY_IMMUNE_SLOW, 1);
+		}
+
+		item = ch->GetWear(WEAR_BODY);
+		if (item != NULL)
+		{
+			item->ClearAttribute();
+			item->SetForceAttribute(0, APPLY_MAX_HP, 2000);
+			item->SetForceAttribute(1, APPLY_CAST_SPEED, 20);
+			item->SetForceAttribute(2, APPLY_STEAL_HP, 10);
+			item->SetForceAttribute(3, APPLY_REFLECT_MELEE, 10);
+			item->SetForceAttribute(4, APPLY_ATT_GRADE_BONUS, 50);
+		}
+
+		item = ch->GetWear(WEAR_FOOTS);
+		if (item != NULL)
+		{
+			item->ClearAttribute();
+			item->SetForceAttribute(0, APPLY_MAX_HP, 2000);
+			item->SetForceAttribute(1, APPLY_MAX_SP, 80);
+			item->SetForceAttribute(2, APPLY_MOV_SPEED, 8);
+			item->SetForceAttribute(3, APPLY_ATT_SPEED, 8);
+			item->SetForceAttribute(4, APPLY_CRITICAL_PCT, 10);
+		}
+
+		item = ch->GetWear(WEAR_WRIST);
+		if (item != NULL)
+		{
+			item->ClearAttribute();
+			item->SetForceAttribute(0, APPLY_MAX_HP, 2000);
+			item->SetForceAttribute(1, APPLY_MAX_SP, 80);
+			item->SetForceAttribute(2, APPLY_PENETRATE_PCT, 10);
+			item->SetForceAttribute(3, APPLY_STEAL_HP, 10);
+			item->SetForceAttribute(4, APPLY_MANA_BURN_PCT, 10);
+		}
+		item = ch->GetWear(WEAR_NECK);
+		if (item != NULL)
+		{
+			item->ClearAttribute();
+			item->SetForceAttribute(0, APPLY_MAX_HP, 2000);
+			item->SetForceAttribute(1, APPLY_MAX_SP, 80);
+			item->SetForceAttribute(2, APPLY_CRITICAL_PCT, 10);
+			item->SetForceAttribute(3, APPLY_PENETRATE_PCT, 10);
+			item->SetForceAttribute(4, APPLY_STEAL_SP, 10);
+		}
+		item = ch->GetWear(WEAR_EAR);
+		if (item != NULL)
+		{
+			item->ClearAttribute();
+			item->SetForceAttribute(0, APPLY_MOV_SPEED, 20);
+			item->SetForceAttribute(1, APPLY_MANA_BURN_PCT, 10);
+			item->SetForceAttribute(2, APPLY_POISON_REDUCE, 5);
+			item->SetForceAttribute(3, APPLY_ATTBONUS_DEVIL, 20);
+			item->SetForceAttribute(4, APPLY_ATTBONUS_UNDEAD, 20);
+		}
+	}
+	break;
 	}
 	ch->ComputePoints(); //@fixme300
 }
 
-ACMD (do_full_set)
+ACMD(do_full_set)
 {
 	do_all_skill_master(ch, NULL, 0, 0);
 	do_item_full_set(ch, NULL, 0, 0);
 	do_attr_full_set(ch, NULL, 0, 0);
 }
 
-ACMD (do_use_item)
+ACMD(do_use_item)
 {
-	char arg1 [256];
+	char arg1[256];
 
-	one_argument (argument, arg1, sizeof (arg1));
+	one_argument(argument, arg1, sizeof(arg1));
 
 	int cell = 0;
 	str_to_number(cell, arg1);
@@ -4346,7 +4345,7 @@ ACMD (do_use_item)
 	LPITEM item = ch->GetInventoryItem(cell);
 	if (item)
 	{
-		ch->UseItem(TItemPos (INVENTORY, cell));
+		ch->UseItem(TItemPos(INVENTORY, cell));
 	}
 	else
 	{
@@ -4354,37 +4353,37 @@ ACMD (do_use_item)
 	}
 }
 
-ACMD (do_clear_affect)
+ACMD(do_clear_affect)
 {
 	ch->ClearAffect(true);
 }
 
-ACMD (do_dragon_soul)
+ACMD(do_dragon_soul)
 {
 	char arg1[512];
-	const char* rest = one_argument (argument, arg1, sizeof(arg1));
+	const char* rest = one_argument(argument, arg1, sizeof(arg1));
 	switch (arg1[0])
 	{
 	case 'a':
+	{
+		one_argument(rest, arg1, sizeof(arg1));
+		int deck_idx;
+		if (str_to_number(deck_idx, arg1) == false)
 		{
-			one_argument (rest, arg1, sizeof(arg1));
-			int deck_idx;
-			if (str_to_number(deck_idx, arg1) == false)
-			{
-				return;
-			}
-			ch->DragonSoul_ActivateDeck(deck_idx);
+			return;
 		}
-		break;
+		ch->DragonSoul_ActivateDeck(deck_idx);
+	}
+	break;
 	case 'd':
-		{
-			ch->DragonSoul_DeactivateAll();
-		}
-		break;
+	{
+		ch->DragonSoul_DeactivateAll();
+	}
+	break;
 	}
 }
 
-ACMD (do_ds_list)
+ACMD(do_ds_list)
 {
 	for (int i = 0; i < DRAGON_SOUL_INVENTORY_MAX_NUM; i++)
 	{

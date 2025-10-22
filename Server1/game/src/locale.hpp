@@ -3,8 +3,8 @@
 
 extern "C"
 {
-	void locale_init(const char *filename);
-	const char *locale_find(const char *string);
+	void locale_init(const char* filename);
+	const char* locale_find(const char* string);
 
 	extern int g_iUseLocale;
 

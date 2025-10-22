@@ -45,7 +45,7 @@
 
 #define MAPNAME_DEFAULT	"none"
 
-bool GetServerLocation(TAccountTable & rTab, BYTE bEmpire)
+bool GetServerLocation(TAccountTable& rTab, BYTE bEmpire)
 {
 	bool bFound = false;
 
@@ -57,41 +57,41 @@ bool GetServerLocation(TAccountTable & rTab, BYTE bEmpire)
 		bFound = true;
 		long lIndex = 0;
 
-		#ifdef ENABLE_MOVE_CHANNEL
+#ifdef ENABLE_MOVE_CHANNEL
 		if (!CMapLocation::instance().Get(rTab.players[i].x, rTab.players[i].y, lIndex, rTab.players[i].lAddr, rTab.players[i].wPort, g_bChannel))
-		#else
+#else
 		if (!CMapLocation::instance().Get(rTab.players[i].x, rTab.players[i].y, lIndex, rTab.players[i].lAddr, rTab.players[i].wPort))
-		#endif
+#endif
 		{
 			sys_err("location error name %s mapindex %d %d x %d empire %d",
-					rTab.players[i].szName, lIndex, rTab.players[i].x, rTab.players[i].y, rTab.bEmpire);
+				rTab.players[i].szName, lIndex, rTab.players[i].x, rTab.players[i].y, rTab.bEmpire);
 
 			rTab.players[i].x = EMPIRE_START_X(rTab.bEmpire);
 			rTab.players[i].y = EMPIRE_START_Y(rTab.bEmpire);
 
 			lIndex = 0;
 
-			#ifdef ENABLE_MOVE_CHANNEL
+#ifdef ENABLE_MOVE_CHANNEL
 			if (!CMapLocation::instance().Get(rTab.players[i].x, rTab.players[i].y, lIndex, rTab.players[i].lAddr, rTab.players[i].wPort, g_bChannel))
-			#else
+#else
 			if (!CMapLocation::instance().Get(rTab.players[i].x, rTab.players[i].y, lIndex, rTab.players[i].lAddr, rTab.players[i].wPort))
-			#endif
+#endif
 			{
 				sys_err("cannot find server for mapindex %d %d x %d (name %s)",
-						lIndex,
-						rTab.players[i].x,
-						rTab.players[i].y,
-						rTab.players[i].szName);
+					lIndex,
+					rTab.players[i].x,
+					rTab.players[i].y,
+					rTab.players[i].szName);
 #ifdef ENABLE_NEWSTUFF
 				if (!g_stProxyIP.empty())
-					rTab.players[i].lAddr=inet_addr(g_stProxyIP.c_str());
+					rTab.players[i].lAddr = inet_addr(g_stProxyIP.c_str());
 #endif
 				continue;
 			}
 		}
 #ifdef ENABLE_NEWSTUFF
 		if (!g_stProxyIP.empty())
-			rTab.players[i].lAddr=inet_addr(g_stProxyIP.c_str());
+			rTab.players[i].lAddr = inet_addr(g_stProxyIP.c_str());
 #endif
 		struct in_addr in;
 		in.s_addr = rTab.players[i].lAddr;
@@ -101,11 +101,11 @@ bool GetServerLocation(TAccountTable & rTab, BYTE bEmpire)
 	return bFound;
 }
 
-void CInputDB::LoginSuccess(DWORD dwHandle, const char *data)
+void CInputDB::LoginSuccess(DWORD dwHandle, const char* data)
 {
 	sys_log(0, "LoginSuccess");
 
-	TAccountTable * pTab = (TAccountTable *) data;
+	TAccountTable* pTab = (TAccountTable*)data;
 
 	LPDESC d = DESC_MANAGER::instance().FindByHandle(dwHandle);
 
@@ -171,18 +171,18 @@ void CInputDB::PlayerCreateFailure(LPDESC d, BYTE bType)
 
 	TPacketGCCreateFailure pack;
 
-	pack.header	= HEADER_GC_CHARACTER_CREATE_FAILURE;
-	pack.bType	= bType;
+	pack.header = HEADER_GC_CHARACTER_CREATE_FAILURE;
+	pack.bType = bType;
 
 	d->Packet(&pack, sizeof(pack));
 }
 
-void CInputDB::PlayerCreateSuccess(LPDESC d, const char * data)
+void CInputDB::PlayerCreateSuccess(LPDESC d, const char* data)
 {
 	if (!d)
 		return;
 
-	TPacketDGCreateSuccess * pPacketDB = (TPacketDGCreateSuccess *) data;
+	TPacketDGCreateSuccess* pPacketDB = (TPacketDGCreateSuccess*)data;
 
 	if (pPacketDB->bAccountCharacterIndex >= PLAYER_PER_ACCOUNT)
 	{
@@ -192,20 +192,20 @@ void CInputDB::PlayerCreateSuccess(LPDESC d, const char * data)
 
 	long lIndex = 0;
 
-	#ifdef ENABLE_MOVE_CHANNEL
+#ifdef ENABLE_MOVE_CHANNEL
 	if (!CMapLocation::instance().Get(pPacketDB->player.x, pPacketDB->player.y, lIndex, pPacketDB->player.lAddr, pPacketDB->player.wPort, g_bChannel))
-	#else
+#else
 	if (!CMapLocation::instance().Get(pPacketDB->player.x, pPacketDB->player.y, lIndex, pPacketDB->player.lAddr, pPacketDB->player.wPort))
-	#endif
+#endif
 	{
 		sys_err("InputDB::PlayerCreateSuccess: cannot find server for mapindex %d %d x %d (name %s)",
-				lIndex,
-				pPacketDB->player.x,
-				pPacketDB->player.y,
-				pPacketDB->player.szName);
+			lIndex,
+			pPacketDB->player.x,
+			pPacketDB->player.y,
+			pPacketDB->player.szName);
 	}
 
-	TAccountTable & r_Tab = d->GetAccountTable();
+	TAccountTable& r_Tab = d->GetAccountTable();
 	r_Tab.players[pPacketDB->bAccountCharacterIndex] = pPacketDB->player;
 
 	TPacketGCPlayerCreateSuccess pack;
@@ -215,7 +215,7 @@ void CInputDB::PlayerCreateSuccess(LPDESC d, const char * data)
 	pack.player = pPacketDB->player;
 #ifdef ENABLE_NEWSTUFF
 	if (!g_stProxyIP.empty())
-		pack.player.lAddr=inet_addr(g_stProxyIP.c_str());
+		pack.player.lAddr = inet_addr(g_stProxyIP.c_str());
 #endif
 	d->Packet(&pack, sizeof(TPacketGCPlayerCreateSuccess));
 
@@ -224,9 +224,9 @@ void CInputDB::PlayerCreateSuccess(LPDESC d, const char * data)
 
 	if (china_event_server)
 	{
-		t.window	= INVENTORY;
-		t.count	= 1;
-		t.owner	= r_Tab.players[pPacketDB->bAccountCharacterIndex].dwID;
+		t.window = INVENTORY;
+		t.count = 1;
+		t.owner = r_Tab.players[pPacketDB->bAccountCharacterIndex].dwID;
 
 		struct SInitialItem
 		{
@@ -242,18 +242,17 @@ void CInputDB::PlayerCreateSuccess(LPDESC d, const char * data)
 			{ {11443,	0}, {12363,	3}, {15103,	4}, { 1053,	2}, { 2083,	1}, {16083,	7}, {17083,	8}, {13193,	9}, {14103,	10}, },
 			{ {11643,	0}, {12503,	2}, {15103,	3}, {   93,	1}, {16123,	4}, {17143,	7}, {13193,	8}, {14103,	9}, {    0,	0}, },
 			{ {11843,	0}, {12643,	1}, {15103,	2}, { 7083,	3}, { 5053,	4}, {16123,	6}, {17143,	7}, {13193,	8}, {14103,	9}, },
-
 		};
 
 		int job = pPacketDB->player.byJob;
-		for (int i=0; i < MAX_INITIAL_ITEM; i++)
+		for (int i = 0; i < MAX_INITIAL_ITEM; i++)
 		{
 			if (initialItems[job][i].dwVnum == 0)
 				continue;
 
-			t.id	= ITEM_MANAGER::instance().GetNewID();
-			t.pos	= initialItems[job][i].pos;
-			t.vnum	= initialItems[job][i].dwVnum;
+			t.id = ITEM_MANAGER::instance().GetNewID();
+			t.pos = initialItems[job][i].pos;
+			t.vnum = initialItems[job][i].dwVnum;
 
 			db_clientdesc->DBPacketHeader(HEADER_GD_ITEM_SAVE, 0, sizeof(TPlayerItem));
 			db_clientdesc->Packet(&t, sizeof(TPlayerItem));
@@ -263,15 +262,15 @@ void CInputDB::PlayerCreateSuccess(LPDESC d, const char * data)
 	LogManager::instance().CharLog(pack.player.dwID, 0, 0, 0, "CREATE PLAYER", "", d->GetHostName());
 }
 
-void CInputDB::PlayerDeleteSuccess(LPDESC d, const char * data)
+void CInputDB::PlayerDeleteSuccess(LPDESC d, const char* data)
 {
 	if (!d)
 		return;
 
 	BYTE account_index;
 	account_index = decode_byte(data);
-	d->BufferedPacket(encode_byte(HEADER_GC_CHARACTER_DELETE_SUCCESS),	1);
-	d->Packet(encode_byte(account_index),			1);
+	d->BufferedPacket(encode_byte(HEADER_GC_CHARACTER_DELETE_SUCCESS), 1);
+	d->Packet(encode_byte(account_index), 1);
 
 	d->GetAccountTable().players[account_index].dwID = 0;
 }
@@ -281,20 +280,20 @@ void CInputDB::PlayerDeleteFail(LPDESC d)
 	if (!d)
 		return;
 
-	d->Packet(encode_byte(HEADER_GC_CHARACTER_DELETE_WRONG_SOCIAL_ID),	1);
+	d->Packet(encode_byte(HEADER_GC_CHARACTER_DELETE_WRONG_SOCIAL_ID), 1);
 	//d->Packet(encode_byte(account_index),			1);
 
 	//d->GetAccountTable().players[account_index].dwID = 0;
 }
 
-void CInputDB::ChangeName(LPDESC d, const char * data)
+void CInputDB::ChangeName(LPDESC d, const char* data)
 {
 	if (!d)
 		return;
 
-	TPacketDGChangeName * p = (TPacketDGChangeName *) data;
+	TPacketDGChangeName* p = (TPacketDGChangeName*)data;
 
-	TAccountTable & r = d->GetAccountTable();
+	TAccountTable& r = d->GetAccountTable();
 
 	if (!r.id)
 		return;
@@ -317,9 +316,9 @@ void CInputDB::ChangeName(LPDESC d, const char * data)
 }
 
 #define ENABLE_GOHOME_IF_MAP_NOT_EXIST
-void CInputDB::PlayerLoad(LPDESC d, const char * data)
+void CInputDB::PlayerLoad(LPDESC d, const char* data)
 {
-	TPlayerTable * pTab = (TPlayerTable *) data;
+	TPlayerTable* pTab = (TPlayerTable*)data;
 
 	if (!d)
 		return;
@@ -398,7 +397,7 @@ void CInputDB::PlayerLoad(LPDESC d, const char * data)
 
 		char buf[51];
 		snprintf(buf, sizeof(buf), "%s %d %d %ld %d",
-				inet_ntoa(ch->GetDesc()->GetAddr().sin_addr), ch->GetGold(), g_bChannel, ch->GetMapIndex(), ch->GetAlignment());
+			inet_ntoa(ch->GetDesc()->GetAddr().sin_addr), ch->GetGold(), g_bChannel, ch->GetMapIndex(), ch->GetAlignment());
 		LogManager::instance().CharLog(ch, 0, "LOGIN", buf);
 	}
 
@@ -408,20 +407,20 @@ void CInputDB::PlayerLoad(LPDESC d, const char * data)
 	long lPublicMapIndex = lMapIndex >= 10000 ? lMapIndex / 10000 : lMapIndex;
 
 	//Send Supplementary Data Block if new map requires security packages in loading this map
-	const TMapRegion * rMapRgn = SECTREE_MANAGER::instance().GetMapRegion(lPublicMapIndex);
-	if( rMapRgn )
+	const TMapRegion* rMapRgn = SECTREE_MANAGER::instance().GetMapRegion(lPublicMapIndex);
+	if (rMapRgn)
 	{
-		DESC_MANAGER::instance().SendClientPackageSDBToLoadMap( d, rMapRgn->strMapName.c_str() );
+		DESC_MANAGER::instance().SendClientPackageSDBToLoadMap(d, rMapRgn->strMapName.c_str());
 	}
 	//if (!map_allow_find(lMapIndex >= 10000 ? lMapIndex / 10000 : lMapIndex) || !CheckEmpire(ch, lMapIndex))
 	if (!map_allow_find(lPublicMapIndex))
 	{
 		sys_err("InputDB::PlayerLoad : entering %d map is not allowed here (name: %s, empire %u)",
-				lMapIndex, pTab->name, d->GetEmpire());
+			lMapIndex, pTab->name, d->GetEmpire());
 
 		ch->SetWarpLocation(EMPIRE_START_MAP(d->GetEmpire()),
-				EMPIRE_START_X(d->GetEmpire()) / 100,
-				EMPIRE_START_Y(d->GetEmpire()) / 100);
+			EMPIRE_START_X(d->GetEmpire()) / 100,
+			EMPIRE_START_Y(d->GetEmpire()) / 100);
 
 		d->SetPhase(PHASE_CLOSE);
 		return;
@@ -436,14 +435,14 @@ void CInputDB::PlayerLoad(LPDESC d, const char * data)
 	ch->SkillLevelPacket();
 
 	sys_log(0, "InputDB: player_load %s %dx%dx%d LEVEL %d MOV_SPEED %d JOB %d ATG %d DFG %d GMLv %d",
-			pTab->name,
-			ch->GetX(), ch->GetY(), ch->GetZ(),
-			ch->GetLevel(),
-			ch->GetPoint(POINT_MOV_SPEED),
-			ch->GetJob(),
-			ch->GetPoint(POINT_ATT_GRADE),
-			ch->GetPoint(POINT_DEF_GRADE),
-			ch->GetGMLevel());
+		pTab->name,
+		ch->GetX(), ch->GetY(), ch->GetZ(),
+		ch->GetLevel(),
+		ch->GetPoint(POINT_MOV_SPEED),
+		ch->GetJob(),
+		ch->GetPoint(POINT_ATT_GRADE),
+		ch->GetPoint(POINT_DEF_GRADE),
+		ch->GetGMLevel());
 
 	ch->QuerySafeboxSize();
 }
@@ -478,7 +477,7 @@ void CInputDB::Boot(const char* data)
 	sys_log(0, "sizeof(TObjectProto) = %d", sizeof(building::TObjectProto));
 	sys_log(0, "sizeof(TObject) = %d", sizeof(building::TObject));
 	//ADMIN_MANAGER
-	sys_log(0, "sizeof(TAdminManager) = %d", sizeof (TAdminInfo) );
+	sys_log(0, "sizeof(TAdminManager) = %d", sizeof(TAdminInfo));
 	//END_ADMIN_MANAGER
 
 	WORD size;
@@ -487,7 +486,7 @@ void CInputDB::Boot(const char* data)
 	 * MOB
 	 */
 
-	if (decode_2bytes(data)!=sizeof(TMobTable))
+	if (decode_2bytes(data) != sizeof(TMobTable))
 	{
 		sys_err("mob table size error");
 		thecore_shutdown();
@@ -501,7 +500,7 @@ void CInputDB::Boot(const char* data)
 
 	if (size)
 	{
-		CMobManager::instance().Initialize((TMobTable *) data, size);
+		CMobManager::instance().Initialize((TMobTable*)data, size);
 		data += size * sizeof(TMobTable);
 	}
 
@@ -523,7 +522,7 @@ void CInputDB::Boot(const char* data)
 
 	if (size)
 	{
-		ITEM_MANAGER::instance().Initialize((TItemTable *) data, size);
+		ITEM_MANAGER::instance().Initialize((TItemTable*)data, size);
 		data += size * sizeof(TItemTable);
 	}
 
@@ -545,7 +544,7 @@ void CInputDB::Boot(const char* data)
 
 	if (size)
 	{
-		if (!CShopManager::instance().Initialize((TShopTable *) data, size))
+		if (!CShopManager::instance().Initialize((TShopTable*)data, size))
 		{
 			sys_err("shop table Initialize error");
 			thecore_shutdown();
@@ -572,7 +571,7 @@ void CInputDB::Boot(const char* data)
 
 	if (size)
 	{
-		if (!CSkillManager::instance().Initialize((TSkillTable *) data, size))
+		if (!CSkillManager::instance().Initialize((TSkillTable*)data, size))
 		{
 			sys_err("cannot initialize skill table");
 			thecore_shutdown();
@@ -598,7 +597,7 @@ void CInputDB::Boot(const char* data)
 
 	if (size)
 	{
-		CRefineManager::instance().Initialize((TRefineTable*) data, size);
+		CRefineManager::instance().Initialize((TRefineTable*)data, size);
 		data += size * sizeof(TRefineTable);
 	}
 
@@ -619,7 +618,7 @@ void CInputDB::Boot(const char* data)
 
 	if (size)
 	{
-		TItemAttrTable * p = (TItemAttrTable *) data;
+		TItemAttrTable* p = (TItemAttrTable*)data;
 
 		for (int i = 0; i < size; ++i, ++p)
 		{
@@ -634,8 +633,8 @@ void CInputDB::Boot(const char* data)
 	data += size * sizeof(TItemAttrTable);
 
 	/*
-     * ITEM RARE
-     */
+	 * ITEM RARE
+	 */
 	if (decode_2bytes(data) != sizeof(TItemAttrTable))
 	{
 		sys_err("item rare table size error");
@@ -650,7 +649,7 @@ void CInputDB::Boot(const char* data)
 
 	if (size)
 	{
-		TItemAttrTable * p = (TItemAttrTable *) data;
+		TItemAttrTable* p = (TItemAttrTable*)data;
 
 		for (int i = 0; i < size; ++i, ++p)
 		{
@@ -679,7 +678,7 @@ void CInputDB::Boot(const char* data)
 	size = decode_2bytes(data);
 	data += 2;
 
-	CBanwordManager::instance().Initialize((TBanwordTable *) data, size);
+	CBanwordManager::instance().Initialize((TBanwordTable*)data, size);
 	data += size * sizeof(TBanwordTable);
 
 	{
@@ -700,7 +699,7 @@ void CInputDB::Boot(const char* data)
 		size = decode_2bytes(data);
 		data += 2;
 
-		TLand * kLand = (TLand *) data;
+		TLand* kLand = (TLand*)data;
 		data += size * sizeof(TLand);
 
 		for (WORD i = 0; i < size; ++i, ++kLand)
@@ -721,7 +720,7 @@ void CInputDB::Boot(const char* data)
 		size = decode_2bytes(data);
 		data += 2;
 
-		CManager::instance().LoadObjectProto((TObjectProto *) data, size);
+		CManager::instance().LoadObjectProto((TObjectProto*)data, size);
 		data += size * sizeof(TObjectProto);
 
 		/*
@@ -738,16 +737,16 @@ void CInputDB::Boot(const char* data)
 		size = decode_2bytes(data);
 		data += 2;
 
-		TObject * kObj = (TObject *) data;
+		TObject* kObj = (TObject*)data;
 		data += size * sizeof(TObject);
 
 		for (WORD i = 0; i < size; ++i, ++kObj)
 			CManager::instance().LoadObject(kObj, true);
 	}
-	set_global_time(*(time_t *) data);
+	set_global_time(*(time_t*)data);
 	data += sizeof(time_t);
 
-	if (decode_2bytes(data) != sizeof(TItemIDRangeTable) )
+	if (decode_2bytes(data) != sizeof(TItemIDRangeTable))
 	{
 		sys_err("ITEM ID RANGE size error");
 		thecore_shutdown();
@@ -758,37 +757,37 @@ void CInputDB::Boot(const char* data)
 	size = decode_2bytes(data);
 	data += 2;
 
-	TItemIDRangeTable* range = (TItemIDRangeTable*) data;
+	TItemIDRangeTable* range = (TItemIDRangeTable*)data;
 	data += size * sizeof(TItemIDRangeTable);
 
-	TItemIDRangeTable* rangespare = (TItemIDRangeTable*) data;
+	TItemIDRangeTable* rangespare = (TItemIDRangeTable*)data;
 	data += size * sizeof(TItemIDRangeTable);
 
 	//ADMIN_MANAGER
 
-	int ChunkSize = decode_2bytes(data );
+	int ChunkSize = decode_2bytes(data);
 	data += 2;
-	int HostSize = decode_2bytes(data );
+	int HostSize = decode_2bytes(data);
 	data += 2;
-	sys_log(0, "GM Value Count %d %d", HostSize, ChunkSize  );
-	for (int n = 0; n < HostSize; ++n )
+	sys_log(0, "GM Value Count %d %d", HostSize, ChunkSize);
+	for (int n = 0; n < HostSize; ++n)
 	{
-		gm_new_host_inert(data );
-		sys_log(0, "GM HOST : IP[%s] ", data );
+		gm_new_host_inert(data);
+		sys_log(0, "GM HOST : IP[%s] ", data);
 		data += ChunkSize;
 	}
 
 	data += 2;
-	int adminsize = decode_2bytes(data );
+	int adminsize = decode_2bytes(data);
 	data += 2;
 
-	for (int n = 0; n < adminsize; ++n )
+	for (int n = 0; n < adminsize; ++n)
 	{
 		tAdminInfo& rAdminInfo = *(tAdminInfo*)data;
 
-		gm_new_insert(rAdminInfo );
+		gm_new_insert(rAdminInfo);
 
-		data += sizeof(rAdminInfo );
+		data += sizeof(rAdminInfo);
 	}
 
 	//END_ADMIN_MANAGER
@@ -797,7 +796,7 @@ void CInputDB::Boot(const char* data)
 	data += 2;
 	data += 2;
 
-	TMonarchInfo& p = *(TMonarchInfo *) data;
+	TMonarchInfo& p = *(TMonarchInfo*)data;
 	data += sizeof(TMonarchInfo);
 
 	CMonarch::instance().SetMonarchInfo(&p);
@@ -815,13 +814,13 @@ void CInputDB::Boot(const char* data)
 	data += 2;
 
 	if (test_server)
-		sys_log (0, "[MONARCH] Size %d Count %d", CandidacySize, CandidacyCount);
+		sys_log(0, "[MONARCH] Size %d Count %d", CandidacySize, CandidacyCount);
 
 	data += CandidacySize * CandidacyCount;
 
 	//END_MONARCH
 
-	WORD endCheck=decode_2bytes(data);
+	WORD endCheck = decode_2bytes(data);
 	if (endCheck != 0xffff)
 	{
 		sys_err("boot packet end check error [%x]!=0xffff", endCheck);
@@ -829,8 +828,8 @@ void CInputDB::Boot(const char* data)
 		return;
 	}
 	else
-		sys_log(0, "boot packet end check ok [%x]==0xffff", endCheck );
-	data +=2;
+		sys_log(0, "boot packet end check ok [%x]==0xffff", endCheck);
+	data += 2;
 
 	if (!ITEM_MANAGER::instance().SetMaxItemID(*range))
 	{
@@ -858,21 +857,21 @@ void CInputDB::Boot(const char* data)
 	char szDragonSoulTableFileName[FILE_NAME_LEN];
 
 	snprintf(szCommonDropItemFileName, sizeof(szCommonDropItemFileName),
-			"%s/common_drop_item.txt", LocaleService_GetBasePath().c_str());
+		"%s/common_drop_item.txt", LocaleService_GetBasePath().c_str());
 	snprintf(szETCDropItemFileName, sizeof(szETCDropItemFileName),
-			"%s/etc_drop_item.txt", LocaleService_GetBasePath().c_str());
+		"%s/etc_drop_item.txt", LocaleService_GetBasePath().c_str());
 	snprintf(szMOBDropItemFileName, sizeof(szMOBDropItemFileName),
-			"%s/mob_drop_item.txt", LocaleService_GetBasePath().c_str());
+		"%s/mob_drop_item.txt", LocaleService_GetBasePath().c_str());
 	snprintf(szSpecialItemGroupFileName, sizeof(szSpecialItemGroupFileName),
-			"%s/special_item_group.txt", LocaleService_GetBasePath().c_str());
+		"%s/special_item_group.txt", LocaleService_GetBasePath().c_str());
 	snprintf(szDropItemGroupFileName, sizeof(szDropItemGroupFileName),
-			"%s/drop_item_group.txt", LocaleService_GetBasePath().c_str());
+		"%s/drop_item_group.txt", LocaleService_GetBasePath().c_str());
 	snprintf(szMapIndexFileName, sizeof(szMapIndexFileName),
-			"%s/index", LocaleService_GetMapPath().c_str());
+		"%s/index", LocaleService_GetMapPath().c_str());
 	snprintf(szItemVnumMaskTableFileName, sizeof(szItemVnumMaskTableFileName),
-			"%s/ori_to_new_table.txt", LocaleService_GetBasePath().c_str());
+		"%s/ori_to_new_table.txt", LocaleService_GetBasePath().c_str());
 	snprintf(szDragonSoulTableFileName, sizeof(szDragonSoulTableFileName),
-			"%s/dragon_soul_table.txt", LocaleService_GetBasePath().c_str());
+		"%s/dragon_soul_table.txt", LocaleService_GetBasePath().c_str());
 
 	sys_log(0, "Initializing Informations of Cube System");
 	Cube_InformationInitialize();
@@ -960,18 +959,18 @@ EVENTINFO(quest_login_event_info)
 	DWORD dwPID;
 
 	quest_login_event_info()
-	: dwPID( 0 )
+		: dwPID(0)
 	{
 	}
 };
 
 EVENTFUNC(quest_login_event)
 {
-	quest_login_event_info* info = dynamic_cast<quest_login_event_info*>( event->info );
+	quest_login_event_info* info = dynamic_cast<quest_login_event_info*>(event->info);
 
-	if ( info == NULL )
+	if (info == NULL)
 	{
-		sys_err( "quest_login_event> <Factor> Null pointer" );
+		sys_err("quest_login_event> <Factor> Null pointer");
 		return 0;
 	}
 
@@ -1012,7 +1011,7 @@ EVENTFUNC(quest_login_event)
 	}
 }
 
-void CInputDB::QuestLoad(LPDESC d, const char * c_pData)
+void CInputDB::QuestLoad(LPDESC d, const char* c_pData)
 {
 	if (NULL == d)
 		return;
@@ -1024,7 +1023,7 @@ void CInputDB::QuestLoad(LPDESC d, const char * c_pData)
 
 	const DWORD dwCount = decode_4bytes(c_pData);
 
-	const TQuestTable* pQuestTable = reinterpret_cast<const TQuestTable*>(c_pData+4);
+	const TQuestTable* pQuestTable = reinterpret_cast<const TQuestTable*>(c_pData + 4);
 
 	if (NULL != pQuestTable)
 	{
@@ -1039,7 +1038,7 @@ void CInputDB::QuestLoad(LPDESC d, const char * c_pData)
 
 		sys_log(0, "QUEST_LOAD: count %d", dwCount);
 
-		quest::PC * pkPC = quest::CQuestManager::instance().GetPCForce(ch->GetPlayerID());
+		quest::PC* pkPC = quest::CQuestManager::instance().GetPCForce(ch->GetPlayerID());
 
 		if (!pkPC)
 		{
@@ -1057,7 +1056,7 @@ void CInputDB::QuestLoad(LPDESC d, const char * c_pData)
 			st += ".";
 			st += pQuestTable[i].szState;
 
-			sys_log(0,  "            %s %d", st.c_str(), pQuestTable[i].lValue);
+			sys_log(0, "            %s %d", st.c_str(), pQuestTable[i].lValue);
 			pkPC->SetFlag(st.c_str(), pQuestTable[i].lValue, false);
 		}
 
@@ -1079,12 +1078,12 @@ void CInputDB::QuestLoad(LPDESC d, const char * c_pData)
 	}
 }
 
-void CInputDB::SafeboxLoad(LPDESC d, const char * c_pData)
+void CInputDB::SafeboxLoad(LPDESC d, const char* c_pData)
 {
 	if (!d)
 		return;
 
-	TSafeboxTable * p = (TSafeboxTable *) c_pData;
+	TSafeboxTable* p = (TSafeboxTable*)c_pData;
 
 	if (d->GetAccountTable().id != p->dwID)
 	{
@@ -1100,9 +1099,9 @@ void CInputDB::SafeboxLoad(LPDESC d, const char * c_pData)
 	LPCHARACTER ch = d->GetCharacter();
 
 	//PREVENT_TRADE_WINDOW
-	if (ch->GetShopOwner() || ch->GetExchange() || ch->GetMyShop() || ch->IsCubeOpen() )
+	if (ch->GetShopOwner() || ch->GetExchange() || ch->GetMyShop() || ch->IsCubeOpen())
 	{
-		d->GetCharacter()->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("다른거래창이 열린상태에서는 창고를 열수가 없습니다." ) );
+		d->GetCharacter()->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("다른거래창이 열린상태에서는 창고를 열수가 없습니다."));
 		d->GetCharacter()->CancelSafeboxLoad();
 		return;
 	}
@@ -1110,22 +1109,22 @@ void CInputDB::SafeboxLoad(LPDESC d, const char * c_pData)
 
 	// ADD_PREMIUM
 	if (d->GetCharacter()->GetPremiumRemainSeconds(PREMIUM_SAFEBOX) > 0 ||
-			d->GetCharacter()->IsEquipUniqueGroup(UNIQUE_GROUP_LARGE_SAFEBOX))
+		d->GetCharacter()->IsEquipUniqueGroup(UNIQUE_GROUP_LARGE_SAFEBOX))
 		bSize = 3;
 	// END_OF_ADD_PREMIUM
 
 	//if (d->GetCharacter()->IsEquipUniqueItem(UNIQUE_ITEM_SAFEBOX_EXPAND))
 
 	//d->GetCharacter()->LoadSafebox(p->bSize * SAFEBOX_PAGE_SIZE, p->dwGold, p->wItemCount, (TPlayerItem *) (c_pData + sizeof(TSafeboxTable)));
-	d->GetCharacter()->LoadSafebox(bSize * SAFEBOX_PAGE_SIZE, p->dwGold, p->wItemCount, (TPlayerItem *) (c_pData + sizeof(TSafeboxTable)));
+	d->GetCharacter()->LoadSafebox(bSize * SAFEBOX_PAGE_SIZE, p->dwGold, p->wItemCount, (TPlayerItem*)(c_pData + sizeof(TSafeboxTable)));
 }
 
-void CInputDB::SafeboxChangeSize(LPDESC d, const char * c_pData)
+void CInputDB::SafeboxChangeSize(LPDESC d, const char* c_pData)
 {
 	if (!d)
 		return;
 
-	BYTE bSize = *(BYTE *) c_pData;
+	BYTE bSize = *(BYTE*)c_pData;
 
 	if (!d->GetCharacter())
 		return;
@@ -1158,7 +1157,7 @@ void CInputDB::SafeboxChangePasswordAnswer(LPDESC d, const char* c_pData)
 	if (!d->GetCharacter())
 		return;
 
-	TSafeboxChangePasswordPacketAnswer* p = (TSafeboxChangePasswordPacketAnswer*) c_pData;
+	TSafeboxChangePasswordPacketAnswer* p = (TSafeboxChangePasswordPacketAnswer*)c_pData;
 	if (p->flag)
 	{
 		d->GetCharacter()->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("<창고> 창고 비밀번호가 변경되었습니다."));
@@ -1169,12 +1168,12 @@ void CInputDB::SafeboxChangePasswordAnswer(LPDESC d, const char* c_pData)
 	}
 }
 
-void CInputDB::MallLoad(LPDESC d, const char * c_pData)
+void CInputDB::MallLoad(LPDESC d, const char* c_pData)
 {
 	if (!d)
 		return;
 
-	TSafeboxTable * p = (TSafeboxTable *) c_pData;
+	TSafeboxTable* p = (TSafeboxTable*)c_pData;
 
 	if (d->GetAccountTable().id != p->dwID)
 	{
@@ -1185,16 +1184,16 @@ void CInputDB::MallLoad(LPDESC d, const char * c_pData)
 	if (!d->GetCharacter())
 		return;
 
-	d->GetCharacter()->LoadMall(p->wItemCount, (TPlayerItem *) (c_pData + sizeof(TSafeboxTable)));
+	d->GetCharacter()->LoadMall(p->wItemCount, (TPlayerItem*)(c_pData + sizeof(TSafeboxTable)));
 }
 
-void CInputDB::LoginAlready(LPDESC d, const char * c_pData)
+void CInputDB::LoginAlready(LPDESC d, const char* c_pData)
 {
 	if (!d)
 		return;
 
 	{
-		TPacketDGLoginAlready * p = (TPacketDGLoginAlready *) c_pData;
+		TPacketDGLoginAlready* p = (TPacketDGLoginAlready*)c_pData;
 
 		LPDESC d2 = DESC_MANAGER::instance().FindByLoginName(p->szLogin);
 
@@ -1215,15 +1214,15 @@ void CInputDB::LoginAlready(LPDESC d, const char * c_pData)
 	LoginFailure(d, "ALREADY");
 }
 
-void CInputDB::EmpireSelect(LPDESC d, const char * c_pData)
+void CInputDB::EmpireSelect(LPDESC d, const char* c_pData)
 {
 	sys_log(0, "EmpireSelect %p", get_pointer(d));
 
 	if (!d)
 		return;
 
-	TAccountTable & rTable = d->GetAccountTable();
-	rTable.bEmpire = *(BYTE *) c_pData;
+	TAccountTable& rTable = d->GetAccountTable();
+	rTable.bEmpire = *(BYTE*)c_pData;
 
 	TPacketGCEmpire pe;
 	pe.bHeader = HEADER_GC_EMPIRE;
@@ -1242,13 +1241,13 @@ void CInputDB::EmpireSelect(LPDESC d, const char * c_pData)
 	d->SendLoginSuccessPacket();
 }
 
-void CInputDB::MapLocations(const char * c_pData)
+void CInputDB::MapLocations(const char* c_pData)
 {
-	BYTE bCount = *(BYTE *) (c_pData++);
+	BYTE bCount = *(BYTE*)(c_pData++);
 
 	sys_log(0, "InputDB::MapLocations %d", bCount);
 
-	TMapLocation * pLoc = (TMapLocation *) c_pData;
+	TMapLocation* pLoc = (TMapLocation*)c_pData;
 
 	while (bCount--)
 	{
@@ -1257,104 +1256,104 @@ void CInputDB::MapLocations(const char * c_pData)
 			if (0 == pLoc->alMaps[i])
 				break;
 
-			#ifdef ENABLE_MOVE_CHANNEL
+#ifdef ENABLE_MOVE_CHANNEL
 			CMapLocation::instance().Insert(pLoc->alMaps[i], pLoc->szHost, pLoc->wPort, pLoc->channel);
-			#else
+#else
 			CMapLocation::instance().Insert(pLoc->alMaps[i], pLoc->szHost, pLoc->wPort);
-			#endif
+#endif
 		}
 
 		pLoc++;
 	}
 }
 
-void CInputDB::P2P(const char * c_pData)
+void CInputDB::P2P(const char* c_pData)
 {
 	extern LPFDWATCH main_fdw;
 
-	TPacketDGP2P * p = (TPacketDGP2P *) c_pData;
+	TPacketDGP2P* p = (TPacketDGP2P*)c_pData;
 
 	P2P_MANAGER& mgr = P2P_MANAGER::instance();
 
 	if (false == DESC_MANAGER::instance().IsP2PDescExist(p->szHost, p->wPort))
 	{
-	    LPCLIENT_DESC pkDesc = NULL;
+		LPCLIENT_DESC pkDesc = NULL;
 		sys_log(0, "InputDB:P2P %s:%u", p->szHost, p->wPort);
-	    pkDesc = DESC_MANAGER::instance().CreateConnectionDesc(main_fdw, p->szHost, p->wPort, PHASE_P2P, false);
+		pkDesc = DESC_MANAGER::instance().CreateConnectionDesc(main_fdw, p->szHost, p->wPort, PHASE_P2P, false);
 		mgr.RegisterConnector(pkDesc);
 		pkDesc->SetP2P(p->szHost, p->wPort, p->bChannel);
 	}
 }
 
-void CInputDB::GuildLoad(const char * c_pData)
+void CInputDB::GuildLoad(const char* c_pData)
 {
-	CGuildManager::instance().LoadGuild(*(DWORD *) c_pData);
+	CGuildManager::instance().LoadGuild(*(DWORD*)c_pData);
 }
 
 void CInputDB::GuildSkillUpdate(const char* c_pData)
 {
-	TPacketGuildSkillUpdate * p = (TPacketGuildSkillUpdate *) c_pData;
+	TPacketGuildSkillUpdate* p = (TPacketGuildSkillUpdate*)c_pData;
 
-	CGuild * g = CGuildManager::instance().TouchGuild(p->guild_id);
+	CGuild* g = CGuildManager::instance().TouchGuild(p->guild_id);
 
 	if (g)
 	{
 		g->UpdateSkill(p->skill_point, p->skill_levels);
-		g->GuildPointChange(POINT_SP, p->amount, p->save?true:false);
+		g->GuildPointChange(POINT_SP, p->amount, p->save ? true : false);
 	}
 }
 
 void CInputDB::GuildWar(const char* c_pData)
 {
-	TPacketGuildWar * p = (TPacketGuildWar*) c_pData;
+	TPacketGuildWar* p = (TPacketGuildWar*)c_pData;
 
 	sys_log(0, "InputDB::GuildWar %u %u state %d", p->dwGuildFrom, p->dwGuildTo, p->bWar);
 
 	switch (p->bWar)
 	{
-		case GUILD_WAR_SEND_DECLARE:
-		case GUILD_WAR_RECV_DECLARE:
-			CGuildManager::instance().DeclareWar(p->dwGuildFrom, p->dwGuildTo, p->bType);
-			break;
+	case GUILD_WAR_SEND_DECLARE:
+	case GUILD_WAR_RECV_DECLARE:
+		CGuildManager::instance().DeclareWar(p->dwGuildFrom, p->dwGuildTo, p->bType);
+		break;
 
-		case GUILD_WAR_REFUSE:
-			CGuildManager::instance().RefuseWar(p->dwGuildFrom, p->dwGuildTo);
-			break;
+	case GUILD_WAR_REFUSE:
+		CGuildManager::instance().RefuseWar(p->dwGuildFrom, p->dwGuildTo);
+		break;
 
-		case GUILD_WAR_WAIT_START:
-			CGuildManager::instance().WaitStartWar(p->dwGuildFrom, p->dwGuildTo);
-			break;
+	case GUILD_WAR_WAIT_START:
+		CGuildManager::instance().WaitStartWar(p->dwGuildFrom, p->dwGuildTo);
+		break;
 
-		case GUILD_WAR_CANCEL:
-			CGuildManager::instance().CancelWar(p->dwGuildFrom, p->dwGuildTo);
-			break;
+	case GUILD_WAR_CANCEL:
+		CGuildManager::instance().CancelWar(p->dwGuildFrom, p->dwGuildTo);
+		break;
 
-		case GUILD_WAR_ON_WAR:
-			CGuildManager::instance().StartWar(p->dwGuildFrom, p->dwGuildTo);
-			break;
+	case GUILD_WAR_ON_WAR:
+		CGuildManager::instance().StartWar(p->dwGuildFrom, p->dwGuildTo);
+		break;
 
-		case GUILD_WAR_END:
-			CGuildManager::instance().EndWar(p->dwGuildFrom, p->dwGuildTo);
-			break;
+	case GUILD_WAR_END:
+		CGuildManager::instance().EndWar(p->dwGuildFrom, p->dwGuildTo);
+		break;
 
-		case GUILD_WAR_OVER:
-			CGuildManager::instance().WarOver(p->dwGuildFrom, p->dwGuildTo, p->bType);
-			break;
+	case GUILD_WAR_OVER:
+		CGuildManager::instance().WarOver(p->dwGuildFrom, p->dwGuildTo, p->bType);
+		break;
 
-		case GUILD_WAR_RESERVE:
-			CGuildManager::instance().ReserveWar(p->dwGuildFrom, p->dwGuildTo, p->bType);
-			break;
+	case GUILD_WAR_RESERVE:
+		CGuildManager::instance().ReserveWar(p->dwGuildFrom, p->dwGuildTo, p->bType);
+		break;
 
-		default:
-			sys_err("Unknown guild war state");
-			break;
+	default:
+		sys_err("Unknown guild war state");
+		break;
 	}
 }
 
 void CInputDB::GuildWarScore(const char* c_pData)
 {
-	TPacketGuildWarScore* p = (TPacketGuildWarScore*) c_pData;
-	CGuild * g = CGuildManager::instance().TouchGuild(p->dwGuildGainPoint);
+	TPacketGuildWarScore* p = (TPacketGuildWarScore*)c_pData;
+	CGuild* g = CGuildManager::instance().TouchGuild(p->dwGuildGainPoint);
 	g->SetWarScoreAgainstTo(p->dwGuildOpponent, p->lScore);
 }
 
@@ -1365,10 +1364,10 @@ void CInputDB::GuildSkillRecharge()
 
 void CInputDB::GuildExpUpdate(const char* c_pData)
 {
-	TPacketGuildSkillUpdate * p = (TPacketGuildSkillUpdate *) c_pData;
+	TPacketGuildSkillUpdate* p = (TPacketGuildSkillUpdate*)c_pData;
 	sys_log(1, "GuildExpUpdate %d", p->amount);
 
-	CGuild * g = CGuildManager::instance().TouchGuild(p->guild_id);
+	CGuild* g = CGuildManager::instance().TouchGuild(p->guild_id);
 
 	if (g)
 		g->GuildPointChange(POINT_EXP, p->amount);
@@ -1376,8 +1375,8 @@ void CInputDB::GuildExpUpdate(const char* c_pData)
 
 void CInputDB::GuildAddMember(const char* c_pData)
 {
-	TPacketDGGuildMember * p = (TPacketDGGuildMember *) c_pData;
-	CGuild * g = CGuildManager::instance().TouchGuild(p->dwGuild);
+	TPacketDGGuildMember* p = (TPacketDGGuildMember*)c_pData;
+	CGuild* g = CGuildManager::instance().TouchGuild(p->dwGuild);
 
 	if (g)
 		g->AddMember(p);
@@ -1385,7 +1384,7 @@ void CInputDB::GuildAddMember(const char* c_pData)
 
 void CInputDB::GuildRemoveMember(const char* c_pData)
 {
-	TPacketGuild* p=(TPacketGuild*)c_pData;
+	TPacketGuild* p = (TPacketGuild*)c_pData;
 	CGuild* g = CGuildManager::instance().TouchGuild(p->dwGuild);
 
 	if (g)
@@ -1394,7 +1393,7 @@ void CInputDB::GuildRemoveMember(const char* c_pData)
 
 void CInputDB::GuildChangeGrade(const char* c_pData)
 {
-	TPacketGuild* p=(TPacketGuild*)c_pData;
+	TPacketGuild* p = (TPacketGuild*)c_pData;
 	CGuild* g = CGuildManager::instance().TouchGuild(p->dwGuild);
 
 	if (g)
@@ -1404,8 +1403,8 @@ void CInputDB::GuildChangeGrade(const char* c_pData)
 void CInputDB::GuildChangeMemberData(const char* c_pData)
 {
 	sys_log(0, "Recv GuildChangeMemberData");
-	TPacketGuildChangeMemberData * p = (TPacketGuildChangeMemberData *) c_pData;
-	CGuild * g = CGuildManager::instance().TouchGuild(p->guild_id);
+	TPacketGuildChangeMemberData* p = (TPacketGuildChangeMemberData*)c_pData;
+	CGuild* g = CGuildManager::instance().TouchGuild(p->guild_id);
 
 	if (g)
 		g->ChangeMemberData(p->pid, p->offer, p->level, p->grade);
@@ -1413,21 +1412,21 @@ void CInputDB::GuildChangeMemberData(const char* c_pData)
 
 void CInputDB::GuildDisband(const char* c_pData)
 {
-	TPacketGuild * p = (TPacketGuild*) c_pData;
+	TPacketGuild* p = (TPacketGuild*)c_pData;
 	CGuildManager::instance().DisbandGuild(p->dwGuild);
 }
 
 void CInputDB::GuildLadder(const char* c_pData)
 {
-	TPacketGuildLadder* p = (TPacketGuildLadder*) c_pData;
+	TPacketGuildLadder* p = (TPacketGuildLadder*)c_pData;
 	sys_log(0, "Recv GuildLadder %u %d / w %d d %d l %d", p->dwGuild, p->lLadderPoint, p->lWin, p->lDraw, p->lLoss);
-	CGuild * g = CGuildManager::instance().TouchGuild(p->dwGuild);
+	CGuild* g = CGuildManager::instance().TouchGuild(p->dwGuild);
 
 	g->SetLadderPoint(p->lLadderPoint);
 	g->SetWarData(p->lWin, p->lDraw, p->lLoss);
 }
 
-void CInputDB::ItemLoad(LPDESC d, const char * c_pData)
+void CInputDB::ItemLoad(LPDESC d, const char* c_pData)
 {
 	LPCHARACTER ch;
 
@@ -1444,7 +1443,7 @@ void CInputDB::ItemLoad(LPDESC d, const char * c_pData)
 
 	std::vector<LPITEM> v;
 
-	TPlayerItem * p = (TPlayerItem *) c_pData;
+	TPlayerItem* p = (TPlayerItem*)c_pData;
 
 	for (DWORD i = 0; i < dwCount; ++i, ++p)
 	{
@@ -1473,7 +1472,7 @@ void CInputDB::ItemLoad(LPDESC d, const char * c_pData)
 #endif
 
 		if ((p->window == INVENTORY && ch->GetInventoryItem(p->pos)) ||
-				(p->window == EQUIPMENT && ch->GetWear(p->pos)))
+			(p->window == EQUIPMENT && ch->GetWear(p->pos)))
 		{
 			sys_log(0, "ITEM_RESTORE: %s %s", ch->GetName(), item->GetName());
 			v.emplace_back(item);
@@ -1482,24 +1481,24 @@ void CInputDB::ItemLoad(LPDESC d, const char * c_pData)
 		{
 			switch (p->window)
 			{
-				case INVENTORY:
-				case DRAGON_SOUL_INVENTORY:
-					item->AddToCharacter(ch, TItemPos(p->window, p->pos));
-					break;
+			case INVENTORY:
+			case DRAGON_SOUL_INVENTORY:
+				item->AddToCharacter(ch, TItemPos(p->window, p->pos));
+				break;
 
-				case EQUIPMENT:
-					if (item->CheckItemUseLevel(ch->GetLevel()) == true )
-					{
-						if (item->EquipTo(ch, p->pos) == false )
-						{
-							v.emplace_back(item);
-						}
-					}
-					else
+			case EQUIPMENT:
+				if (item->CheckItemUseLevel(ch->GetLevel()) == true)
+				{
+					if (item->EquipTo(ch, p->pos) == false)
 					{
 						v.emplace_back(item);
 					}
-					break;
+				}
+				else
+				{
+					v.emplace_back(item);
+				}
+				break;
 			}
 		}
 
@@ -1537,7 +1536,7 @@ void CInputDB::ItemLoad(LPDESC d, const char * c_pData)
 	ch->SetItemLoaded();
 }
 
-void CInputDB::AffectLoad(LPDESC d, const char * c_pData)
+void CInputDB::AffectLoad(LPDESC d, const char* c_pData)
 {
 	if (!d)
 		return;
@@ -1556,36 +1555,36 @@ void CInputDB::AffectLoad(LPDESC d, const char * c_pData)
 	if (ch->GetPlayerID() != dwPID)
 		return;
 
-	ch->LoadAffect(dwCount, (TPacketAffectElement *) c_pData);
+	ch->LoadAffect(dwCount, (TPacketAffectElement*)c_pData);
 }
 
 void CInputDB::PartyCreate(const char* c_pData)
 {
-	TPacketPartyCreate* p = (TPacketPartyCreate*) c_pData;
+	TPacketPartyCreate* p = (TPacketPartyCreate*)c_pData;
 	CPartyManager::instance().P2PCreateParty(p->dwLeaderPID);
 }
 
 void CInputDB::PartyDelete(const char* c_pData)
 {
-	TPacketPartyDelete* p = (TPacketPartyDelete*) c_pData;
+	TPacketPartyDelete* p = (TPacketPartyDelete*)c_pData;
 	CPartyManager::instance().P2PDeleteParty(p->dwLeaderPID);
 }
 
 void CInputDB::PartyAdd(const char* c_pData)
 {
-	TPacketPartyAdd* p = (TPacketPartyAdd*) c_pData;
+	TPacketPartyAdd* p = (TPacketPartyAdd*)c_pData;
 	CPartyManager::instance().P2PJoinParty(p->dwLeaderPID, p->dwPID, p->bState);
 }
 
 void CInputDB::PartyRemove(const char* c_pData)
 {
-	TPacketPartyRemove* p = (TPacketPartyRemove*) c_pData;
+	TPacketPartyRemove* p = (TPacketPartyRemove*)c_pData;
 	CPartyManager::instance().P2PQuitParty(p->dwPID);
 }
 
 void CInputDB::PartyStateChange(const char* c_pData)
 {
-	TPacketPartyStateChange * p = (TPacketPartyStateChange *) c_pData;
+	TPacketPartyStateChange* p = (TPacketPartyStateChange*)c_pData;
 	LPPARTY pParty = CPartyManager::instance().P2PCreateParty(p->dwLeaderPID);
 
 	if (!pParty)
@@ -1596,7 +1595,7 @@ void CInputDB::PartyStateChange(const char* c_pData)
 
 void CInputDB::PartySetMemberLevel(const char* c_pData)
 {
-	TPacketPartySetMemberLevel* p = (TPacketPartySetMemberLevel*) c_pData;
+	TPacketPartySetMemberLevel* p = (TPacketPartySetMemberLevel*)c_pData;
 	LPPARTY pParty = CPartyManager::instance().P2PCreateParty(p->dwLeaderPID);
 
 	if (!pParty)
@@ -1605,12 +1604,12 @@ void CInputDB::PartySetMemberLevel(const char* c_pData)
 	pParty->P2PSetMemberLevel(p->dwPID, p->bLevel);
 }
 
-void CInputDB::Time(const char * c_pData)
+void CInputDB::Time(const char* c_pData)
 {
-	set_global_time(*(time_t *) c_pData);
+	set_global_time(*(time_t*)c_pData);
 }
 
-void CInputDB::ReloadProto(const char * c_pData)
+void CInputDB::ReloadProto(const char* c_pData)
 {
 	WORD wSize;
 
@@ -1619,7 +1618,7 @@ void CInputDB::ReloadProto(const char * c_pData)
 	 */
 	wSize = decode_2bytes(c_pData);
 	c_pData += sizeof(WORD);
-	if (wSize) CSkillManager::instance().Initialize((TSkillTable *) c_pData, wSize);
+	if (wSize) CSkillManager::instance().Initialize((TSkillTable*)c_pData, wSize);
 	c_pData += sizeof(TSkillTable) * wSize;
 
 	/*
@@ -1628,7 +1627,7 @@ void CInputDB::ReloadProto(const char * c_pData)
 
 	wSize = decode_2bytes(c_pData);
 	c_pData += sizeof(WORD);
-	CBanwordManager::instance().Initialize((TBanwordTable *) c_pData, wSize);
+	CBanwordManager::instance().Initialize((TBanwordTable*)c_pData, wSize);
 	c_pData += sizeof(TBanwordTable) * wSize;
 
 	/*
@@ -1640,7 +1639,7 @@ void CInputDB::ReloadProto(const char * c_pData)
 
 	if (wSize)
 	{
-		ITEM_MANAGER::instance().Initialize((TItemTable *) c_pData, wSize);
+		ITEM_MANAGER::instance().Initialize((TItemTable*)c_pData, wSize);
 		c_pData += wSize * sizeof(TItemTable);
 	}
 
@@ -1653,7 +1652,7 @@ void CInputDB::ReloadProto(const char * c_pData)
 
 	if (wSize)
 	{
-		CMobManager::instance().Initialize((TMobTable *) c_pData, wSize);
+		CMobManager::instance().Initialize((TMobTable*)c_pData, wSize);
 		c_pData += wSize * sizeof(TMobTable);
 	}
 
@@ -1664,19 +1663,19 @@ void CInputDB::ReloadProto(const char * c_pData)
 
 void CInputDB::GuildSkillUsableChange(const char* c_pData)
 {
-	TPacketGuildSkillUsableChange* p = (TPacketGuildSkillUsableChange*) c_pData;
+	TPacketGuildSkillUsableChange* p = (TPacketGuildSkillUsableChange*)c_pData;
 
 	CGuild* g = CGuildManager::instance().TouchGuild(p->dwGuild);
 
-	g->SkillUsableChange(p->dwSkillVnum, p->bUsable?true:false);
+	g->SkillUsableChange(p->dwSkillVnum, p->bUsable ? true : false);
 }
 
-void CInputDB::AuthLogin(LPDESC d, const char * c_pData)
+void CInputDB::AuthLogin(LPDESC d, const char* c_pData)
 {
 	if (!d)
 		return;
 
-	BYTE bResult = *(BYTE *) c_pData;
+	BYTE bResult = *(BYTE*)c_pData;
 
 	TPacketGCAuthSuccess ptoc;
 
@@ -1706,7 +1705,7 @@ void CInputDB::AuthLogin(LPDESC d, const char * c_pData)
 
 void CInputDB::ChangeEmpirePriv(const char* c_pData)
 {
-	TPacketDGChangeEmpirePriv* p = (TPacketDGChangeEmpirePriv*) c_pData;
+	TPacketDGChangeEmpirePriv* p = (TPacketDGChangeEmpirePriv*)c_pData;
 
 	// ADD_EMPIRE_PRIV_TIME
 	CPrivManager::instance().GiveEmpirePriv(p->empire, p->type, p->value, p->bLog, p->end_time_sec);
@@ -1715,7 +1714,7 @@ void CInputDB::ChangeEmpirePriv(const char* c_pData)
 
 void CInputDB::ChangeGuildPriv(const char* c_pData)
 {
-	TPacketDGChangeGuildPriv* p = (TPacketDGChangeGuildPriv*) c_pData;
+	TPacketDGChangeGuildPriv* p = (TPacketDGChangeGuildPriv*)c_pData;
 
 	// ADD_GUILD_PRIV_TIME
 	CPrivManager::instance().GiveGuildPriv(p->guild_id, p->type, p->value, p->bLog, p->end_time_sec);
@@ -1724,18 +1723,18 @@ void CInputDB::ChangeGuildPriv(const char* c_pData)
 
 void CInputDB::ChangeCharacterPriv(const char* c_pData)
 {
-	TPacketDGChangeCharacterPriv* p = (TPacketDGChangeCharacterPriv*) c_pData;
+	TPacketDGChangeCharacterPriv* p = (TPacketDGChangeCharacterPriv*)c_pData;
 	CPrivManager::instance().GiveCharacterPriv(p->pid, p->type, p->value, p->bLog);
 }
 
 void CInputDB::MoneyLog(const char* c_pData)
 {
-	TPacketMoneyLog * p = (TPacketMoneyLog *) c_pData;
+	TPacketMoneyLog* p = (TPacketMoneyLog*)c_pData;
 
 	if (p->type == 4) // QUEST_MONEY_LOG_SKIP
 		return;
 
-	if (g_bAuthServer ==true )
+	if (g_bAuthServer == true)
 		return;
 
 	LogManager::instance().MoneyLog(p->type, p->vnum, p->gold);
@@ -1743,7 +1742,7 @@ void CInputDB::MoneyLog(const char* c_pData)
 
 void CInputDB::GuildMoneyChange(const char* c_pData)
 {
-	TPacketDGGuildMoneyChange* p = (TPacketDGGuildMoneyChange*) c_pData;
+	TPacketDGGuildMoneyChange* p = (TPacketDGGuildMoneyChange*)c_pData;
 
 	CGuild* g = CGuildManager::instance().TouchGuild(p->dwGuild);
 	if (g)
@@ -1754,7 +1753,7 @@ void CInputDB::GuildMoneyChange(const char* c_pData)
 
 void CInputDB::GuildWithdrawMoney(const char* c_pData)
 {
-	TPacketDGGuildMoneyWithdraw* p = (TPacketDGGuildMoneyWithdraw*) c_pData;
+	TPacketDGGuildMoneyWithdraw* p = (TPacketDGGuildMoneyWithdraw*)c_pData;
 
 	CGuild* g = CGuildManager::instance().TouchGuild(p->dwGuild);
 	if (g)
@@ -1765,31 +1764,31 @@ void CInputDB::GuildWithdrawMoney(const char* c_pData)
 
 void CInputDB::SetEventFlag(const char* c_pData)
 {
-	TPacketSetEventFlag* p = (TPacketSetEventFlag*) c_pData;
+	TPacketSetEventFlag* p = (TPacketSetEventFlag*)c_pData;
 	quest::CQuestManager::instance().SetEventFlag(p->szFlagName, p->lValue);
 }
 
-void CInputDB::CreateObject(const char * c_pData)
+void CInputDB::CreateObject(const char* c_pData)
 {
 	using namespace building;
-	CManager::instance().LoadObject((TObject *) c_pData);
+	CManager::instance().LoadObject((TObject*)c_pData);
 }
 
-void CInputDB::DeleteObject(const char * c_pData)
+void CInputDB::DeleteObject(const char* c_pData)
 {
 	using namespace building;
-	CManager::instance().DeleteObject(*(DWORD *) c_pData);
+	CManager::instance().DeleteObject(*(DWORD*)c_pData);
 }
 
-void CInputDB::UpdateLand(const char * c_pData)
+void CInputDB::UpdateLand(const char* c_pData)
 {
 	using namespace building;
-	CManager::instance().UpdateLand((TLand *) c_pData);
+	CManager::instance().UpdateLand((TLand*)c_pData);
 }
 
-void CInputDB::Notice(const char * c_pData)
+void CInputDB::Notice(const char* c_pData)
 {
-	char szBuf[256+1];
+	char szBuf[256 + 1];
 	strlcpy(szBuf, c_pData, sizeof(szBuf));
 
 	sys_log(0, "InputDB:: Notice: %s", szBuf);
@@ -1798,8 +1797,7 @@ void CInputDB::Notice(const char * c_pData)
 	SendNotice(szBuf);
 }
 
-
-void CInputDB::GuildWarReserveAdd(TGuildWarReserve * p)
+void CInputDB::GuildWarReserveAdd(TGuildWarReserve* p)
 {
 	CGuildManager::instance().ReserveWarAdd(p);
 }
@@ -1809,24 +1807,24 @@ void CInputDB::GuildWarReserveDelete(DWORD dwID)
 	CGuildManager::instance().ReserveWarDelete(dwID);
 }
 
-void CInputDB::GuildWarBet(TPacketGDGuildWarBet * p)
+void CInputDB::GuildWarBet(TPacketGDGuildWarBet* p)
 {
 	CGuildManager::instance().ReserveWarBet(p);
 }
 
-void CInputDB::MarriageAdd(TPacketMarriageAdd * p)
+void CInputDB::MarriageAdd(TPacketMarriageAdd* p)
 {
 	sys_log(0, "MarriageAdd %u %u %u %s %s", p->dwPID1, p->dwPID2, (DWORD)p->tMarryTime, p->szName1, p->szName2);
 	marriage::CManager::instance().Add(p->dwPID1, p->dwPID2, p->tMarryTime, p->szName1, p->szName2);
 }
 
-void CInputDB::MarriageUpdate(TPacketMarriageUpdate * p)
+void CInputDB::MarriageUpdate(TPacketMarriageUpdate* p)
 {
 	sys_log(0, "MarriageUpdate %u %u %d %d", p->dwPID1, p->dwPID2, p->iLovePoint, p->byMarried);
 	marriage::CManager::instance().Update(p->dwPID1, p->dwPID2, p->iLovePoint, p->byMarried);
 }
 
-void CInputDB::MarriageRemove(TPacketMarriageRemove * p)
+void CInputDB::MarriageRemove(TPacketMarriageRemove* p)
 {
 	sys_log(0, "MarriageRemove %u %u", p->dwPID1, p->dwPID2);
 	marriage::CManager::instance().Remove(p->dwPID1, p->dwPID2);
@@ -1856,47 +1854,47 @@ void CInputDB::WeddingEnd(TPacketWeddingEnd* p)
 }
 
 // MYSHOP_PRICE_LIST
-void CInputDB::MyshopPricelistRes(LPDESC d, const TPacketMyshopPricelistHeader* p )
+void CInputDB::MyshopPricelistRes(LPDESC d, const TPacketMyshopPricelistHeader* p)
 {
 	LPCHARACTER ch;
 
-	if (!d || !(ch = d->GetCharacter()) )
+	if (!d || !(ch = d->GetCharacter()))
 		return;
 
 	sys_log(0, "RecvMyshopPricelistRes name[%s]", ch->GetName());
-	ch->UseSilkBotaryReal(p );
+	ch->UseSilkBotaryReal(p);
 }
 // END_OF_MYSHOP_PRICE_LIST
 
 //RELOAD_ADMIN
-void CInputDB::ReloadAdmin(const char * c_pData )
+void CInputDB::ReloadAdmin(const char* c_pData)
 {
 	gm_new_clear();
-	int ChunkSize = decode_2bytes(c_pData );
+	int ChunkSize = decode_2bytes(c_pData);
 	c_pData += 2;
-	int HostSize = decode_2bytes(c_pData );
+	int HostSize = decode_2bytes(c_pData);
 	c_pData += 2;
 
-	for (int n = 0; n < HostSize; ++n )
+	for (int n = 0; n < HostSize; ++n)
 	{
-		gm_new_host_inert(c_pData );
+		gm_new_host_inert(c_pData);
 		c_pData += ChunkSize;
 	}
 
 	c_pData += 2;
-	int size = 	decode_2bytes(c_pData );
+	int size = decode_2bytes(c_pData);
 	c_pData += 2;
 
-	for (int n = 0; n < size; ++n )
+	for (int n = 0; n < size; ++n)
 	{
 		tAdminInfo& rAdminInfo = *(tAdminInfo*)c_pData;
 
-		gm_new_insert(rAdminInfo );
+		gm_new_insert(rAdminInfo);
 
-		c_pData += sizeof (tAdminInfo );
+		c_pData += sizeof(tAdminInfo);
 
-		LPCHARACTER pChar = CHARACTER_MANAGER::instance().FindPC(rAdminInfo.m_szName );
-		if (pChar )
+		LPCHARACTER pChar = CHARACTER_MANAGER::instance().FindPC(rAdminInfo.m_szName);
+		if (pChar)
 		{
 			pChar->SetGMLevel();
 		}
@@ -1907,7 +1905,7 @@ void CInputDB::ReloadAdmin(const char * c_pData )
 ////////////////////////////////////////////////////////////////////
 // Analyze
 ////////////////////////////////////////////////////////////////////
-int CInputDB::Analyze(LPDESC d, BYTE bHeader, const char * c_pData)
+int CInputDB::Analyze(LPDESC d, BYTE bHeader, const char* c_pData)
 {
 	switch (bHeader)
 	{
@@ -2141,97 +2139,97 @@ int CInputDB::Analyze(LPDESC d, BYTE bHeader, const char * c_pData)
 		break;
 
 	case HEADER_DG_GUILD_WAR_RESERVE_ADD:
-		GuildWarReserveAdd((TGuildWarReserve *) c_pData);
+		GuildWarReserveAdd((TGuildWarReserve*)c_pData);
 		break;
 
 	case HEADER_DG_GUILD_WAR_RESERVE_DEL:
-		GuildWarReserveDelete(*(DWORD *) c_pData);
+		GuildWarReserveDelete(*(DWORD*)c_pData);
 		break;
 
 	case HEADER_DG_GUILD_WAR_BET:
-		GuildWarBet((TPacketGDGuildWarBet *) c_pData);
+		GuildWarBet((TPacketGDGuildWarBet*)c_pData);
 		break;
 
 	case HEADER_DG_MARRIAGE_ADD:
-		MarriageAdd((TPacketMarriageAdd*) c_pData);
+		MarriageAdd((TPacketMarriageAdd*)c_pData);
 		break;
 
 	case HEADER_DG_MARRIAGE_UPDATE:
-		MarriageUpdate((TPacketMarriageUpdate*) c_pData);
+		MarriageUpdate((TPacketMarriageUpdate*)c_pData);
 		break;
 
 	case HEADER_DG_MARRIAGE_REMOVE:
-		MarriageRemove((TPacketMarriageRemove*) c_pData);
+		MarriageRemove((TPacketMarriageRemove*)c_pData);
 		break;
 
 	case HEADER_DG_WEDDING_REQUEST:
-		WeddingRequest((TPacketWeddingRequest*) c_pData);
+		WeddingRequest((TPacketWeddingRequest*)c_pData);
 		break;
 
 	case HEADER_DG_WEDDING_READY:
-		WeddingReady((TPacketWeddingReady*) c_pData);
+		WeddingReady((TPacketWeddingReady*)c_pData);
 		break;
 
 	case HEADER_DG_WEDDING_START:
-		WeddingStart((TPacketWeddingStart*) c_pData);
+		WeddingStart((TPacketWeddingStart*)c_pData);
 		break;
 
 	case HEADER_DG_WEDDING_END:
-		WeddingEnd((TPacketWeddingEnd*) c_pData);
+		WeddingEnd((TPacketWeddingEnd*)c_pData);
 		break;
 
 		// MYSHOP_PRICE_LIST
 	case HEADER_DG_MYSHOP_PRICELIST_RES:
-		MyshopPricelistRes(DESC_MANAGER::instance().FindByHandle(m_dwHandle), (TPacketMyshopPricelistHeader*) c_pData );
+		MyshopPricelistRes(DESC_MANAGER::instance().FindByHandle(m_dwHandle), (TPacketMyshopPricelistHeader*)c_pData);
 		break;
 		// END_OF_MYSHOP_PRICE_LIST
 
 	// RELOAD_ADMIN
 	case HEADER_DG_RELOAD_ADMIN:
-		ReloadAdmin(c_pData );
+		ReloadAdmin(c_pData);
 		break;
-	//END_RELOAD_ADMIN
+		//END_RELOAD_ADMIN
 
 	case HEADER_DG_ADD_MONARCH_MONEY:
-		AddMonarchMoney(DESC_MANAGER::instance().FindByHandle(m_dwHandle), c_pData );
+		AddMonarchMoney(DESC_MANAGER::instance().FindByHandle(m_dwHandle), c_pData);
 		break;
 
 	case HEADER_DG_DEC_MONARCH_MONEY:
-		DecMonarchMoney(DESC_MANAGER::instance().FindByHandle(m_dwHandle), c_pData );
+		DecMonarchMoney(DESC_MANAGER::instance().FindByHandle(m_dwHandle), c_pData);
 		break;
 
 	case HEADER_DG_TAKE_MONARCH_MONEY:
-		TakeMonarchMoney(DESC_MANAGER::instance().FindByHandle(m_dwHandle), c_pData );
+		TakeMonarchMoney(DESC_MANAGER::instance().FindByHandle(m_dwHandle), c_pData);
 		break;
 
-	case HEADER_DG_CHANGE_MONARCH_LORD_ACK :
+	case HEADER_DG_CHANGE_MONARCH_LORD_ACK:
 		ChangeMonarchLord((TPacketChangeMonarchLordACK*)c_pData);
 		break;
 
-	case HEADER_DG_UPDATE_MONARCH_INFO :
+	case HEADER_DG_UPDATE_MONARCH_INFO:
 		UpdateMonarchInfo((TMonarchInfo*)c_pData);
 		break;
 
-	case HEADER_DG_ACK_CHANGE_GUILD_MASTER :
-		this->GuildChangeMaster((TPacketChangeGuildMaster*) c_pData);
+	case HEADER_DG_ACK_CHANGE_GUILD_MASTER:
+		this->GuildChangeMaster((TPacketChangeGuildMaster*)c_pData);
 		break;
-	case HEADER_DG_ACK_SPARE_ITEM_ID_RANGE :
-		ITEM_MANAGER::instance().SetMaxSpareItemID(*((TItemIDRangeTable*)c_pData) );
+	case HEADER_DG_ACK_SPARE_ITEM_ID_RANGE:
+		ITEM_MANAGER::instance().SetMaxSpareItemID(*((TItemIDRangeTable*)c_pData));
 		break;
 
-	case HEADER_DG_UPDATE_HORSE_NAME :
-	case HEADER_DG_ACK_HORSE_NAME :
+	case HEADER_DG_UPDATE_HORSE_NAME:
+	case HEADER_DG_ACK_HORSE_NAME:
 		CHorseNameManager::instance().UpdateHorseName(
-				((TPacketUpdateHorseName*)c_pData)->dwPlayerID,
-				((TPacketUpdateHorseName*)c_pData)->szHorseName);
+			((TPacketUpdateHorseName*)c_pData)->dwPlayerID,
+			((TPacketUpdateHorseName*)c_pData)->szHorseName);
 		break;
 
 	case HEADER_DG_NEED_LOGIN_LOG:
-		DetailLog( (TPacketNeedLoginLogInfo*) c_pData );
+		DetailLog((TPacketNeedLoginLogInfo*)c_pData);
 		break;
 
 	case HEADER_DG_ITEMAWARD_INFORMER:
-		ItemAwardInformer((TPacketItemAwardInfromer*) c_pData);
+		ItemAwardInformer((TPacketItemAwardInfromer*)c_pData);
 		break;
 	case HEADER_DG_RESPOND_CHANNELSTATUS:
 		RespondChannelStatus(DESC_MANAGER::instance().FindByHandle(m_dwHandle), c_pData);
@@ -2243,9 +2241,9 @@ int CInputDB::Analyze(LPDESC d, BYTE bHeader, const char * c_pData)
 	return 0;
 }
 
-bool CInputDB::Process(LPDESC d, const void * orig, int bytes, int & r_iBytesProceed)
+bool CInputDB::Process(LPDESC d, const void* orig, int bytes, int& r_iBytesProceed)
 {
-	const char *	c_pData = (const char *) orig;
+	const char* c_pData = (const char*)orig;
 	BYTE		bHeader, bLastHeader = 0;
 	int			iSize;
 	int			iLastPacketLen = 0;
@@ -2255,43 +2253,43 @@ bool CInputDB::Process(LPDESC d, const void * orig, int bytes, int & r_iBytesPro
 		if (m_iBufferLeft < 9)
 			return true;
 
-		bHeader		= *((BYTE *) (c_pData));	// 1
-		m_dwHandle	= *((DWORD *) (c_pData + 1));	// 4
-		iSize		= *((DWORD *) (c_pData + 5));	// 4
+		bHeader = *((BYTE*)(c_pData));	// 1
+		m_dwHandle = *((DWORD*)(c_pData + 1));	// 4
+		iSize = *((DWORD*)(c_pData + 5));	// 4
 
 		sys_log(1, "DBCLIENT: header %d handle %d size %d bytes %d", bHeader, m_dwHandle, iSize, bytes);
 
 		if (m_iBufferLeft - 9 < iSize)
 			return true;
 
-		const char * pRealData = (c_pData + 9);
+		const char* pRealData = (c_pData + 9);
 
 		if (Analyze(d, bHeader, pRealData) < 0)
 		{
 			sys_err("in InputDB: UNKNOWN HEADER: %d, LAST HEADER: %d(%d), REMAIN BYTES: %d, DESC: %d",
-					bHeader, bLastHeader, iLastPacketLen, m_iBufferLeft, d->GetSocket());
+				bHeader, bLastHeader, iLastPacketLen, m_iBufferLeft, d->GetSocket());
 
 			//printdata((BYTE*) orig, bytes);
 			//d->SetPhase(PHASE_CLOSE);
 		}
 
-		c_pData		+= 9 + iSize;
-		m_iBufferLeft	-= 9 + iSize;
-		r_iBytesProceed	+= 9 + iSize;
+		c_pData += 9 + iSize;
+		m_iBufferLeft -= 9 + iSize;
+		r_iBytesProceed += 9 + iSize;
 
-		iLastPacketLen	= 9 + iSize;
-		bLastHeader	= bHeader;
+		iLastPacketLen = 9 + iSize;
+		bLastHeader = bHeader;
 	}
 
 	return true;
 }
 
-void CInputDB::AddMonarchMoney(LPDESC d, const char * data )
+void CInputDB::AddMonarchMoney(LPDESC d, const char* data)
 {
-	int Empire = *(int *) data;
+	int Empire = *(int*)data;
 	data += sizeof(int);
 
-	int Money = *(int *) data;
+	int Money = *(int*)data;
 	data += sizeof(int);
 
 	CMonarch::instance().AddMoney(Money, Empire);
@@ -2307,12 +2305,12 @@ void CInputDB::AddMonarchMoney(LPDESC d, const char * data )
 	}
 }
 
-void CInputDB::DecMonarchMoney(LPDESC d, const char * data)
+void CInputDB::DecMonarchMoney(LPDESC d, const char* data)
 {
-	int Empire = *(int *) data;
+	int Empire = *(int*)data;
 	data += sizeof(int);
 
-	int Money = *(int *) data;
+	int Money = *(int*)data;
 	data += sizeof(int);
 
 	CMonarch::instance().DecMoney(Money, Empire);
@@ -2327,12 +2325,12 @@ void CInputDB::DecMonarchMoney(LPDESC d, const char * data)
 	}
 }
 
-void CInputDB::TakeMonarchMoney(LPDESC d, const char * data)
+void CInputDB::TakeMonarchMoney(LPDESC d, const char* data)
 {
-	int Empire = *(int *) data;
+	int Empire = *(int*)data;
 	data += sizeof(int);
 
-	int Money = *(int *) data;
+	int Money = *(int*)data;
 	data += sizeof(int);
 
 	if (!CMonarch::instance().DecMoney(Money, Empire))
@@ -2368,7 +2366,7 @@ void CInputDB::GuildChangeMaster(TPacketChangeGuildMaster* p)
 
 void CInputDB::DetailLog(const TPacketNeedLoginLogInfo* info)
 {
-	LPCHARACTER pChar = CHARACTER_MANAGER::instance().FindByPID( info->dwPlayerID );
+	LPCHARACTER pChar = CHARACTER_MANAGER::instance().FindByPID(info->dwPlayerID);
 
 	if (NULL != pChar)
 	{
@@ -2376,11 +2374,11 @@ void CInputDB::DetailLog(const TPacketNeedLoginLogInfo* info)
 	}
 }
 
-void CInputDB::ItemAwardInformer(TPacketItemAwardInfromer *data)
+void CInputDB::ItemAwardInformer(TPacketItemAwardInfromer* data)
 {
 	LPDESC d = DESC_MANAGER::instance().FindByLoginName(data->login);
 
-	if(d == NULL)
+	if (d == NULL)
 		return;
 	else
 	{
@@ -2390,9 +2388,9 @@ void CInputDB::ItemAwardInformer(TPacketItemAwardInfromer *data)
 			ch->SetItemAward_vnum(data->vnum);
 			ch->SetItemAward_cmd(data->command);
 
-			if(d->IsPhase(PHASE_GAME))
+			if (d->IsPhase(PHASE_GAME))
 			{
-				quest::CQuestManager::instance().ItemInformer(ch->GetPlayerID(),ch->GetItemAward_vnum());
+				quest::CQuestManager::instance().ItemInformer(ch->GetPlayerID(), ch->GetItemAward_vnum());
 			}
 		}
 	}
@@ -2410,7 +2408,7 @@ void CInputDB::RespondChannelStatus(LPDESC desc, const char* pcData)
 	desc->BufferedPacket(&bHeader, sizeof(BYTE));
 	desc->BufferedPacket(&nSize, sizeof(nSize));
 	if (0 < nSize) {
-		desc->BufferedPacket(pcData, sizeof(TChannelStatus)*nSize);
+		desc->BufferedPacket(pcData, sizeof(TChannelStatus) * nSize);
 	}
 	BYTE bSuccess = 1;
 	desc->Packet(&bSuccess, sizeof(bSuccess));

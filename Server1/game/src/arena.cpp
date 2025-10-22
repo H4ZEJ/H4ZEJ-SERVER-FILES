@@ -52,7 +52,7 @@ void CArena::Clear()
 
 bool CArenaManager::AddArena(DWORD mapIdx, WORD startA_X, WORD startA_Y, WORD startB_X, WORD startB_Y)
 {
-	CArenaMap *pArenaMap = NULL;
+	CArenaMap* pArenaMap = NULL;
 	itertype(m_mapArenaMap) iter = m_mapArenaMap.find(mapIdx);
 
 	if (iter == m_mapArenaMap.end())
@@ -76,7 +76,7 @@ bool CArenaManager::AddArena(DWORD mapIdx, WORD startA_X, WORD startA_Y, WORD st
 
 bool CArenaMap::AddArena(DWORD mapIdx, WORD startA_X, WORD startA_Y, WORD startB_X, WORD startB_Y)
 {
-	for (auto & iter : m_listArena)
+	for (auto& iter : m_listArena)
 	{
 		if (!iter->CheckArea(startA_X, startA_Y, startB_X, startB_Y))
 		{
@@ -87,7 +87,7 @@ bool CArenaMap::AddArena(DWORD mapIdx, WORD startA_X, WORD startA_Y, WORD startB
 
 	m_dwMapIndex = mapIdx;
 
-	CArena *pArena = M2_NEW CArena(startA_X, startA_Y, startB_X, startB_Y);
+	CArena* pArena = M2_NEW CArena(startA_X, startA_Y, startB_X, startB_Y);
 	m_listArena.emplace_back(pArena);
 
 	return true;
@@ -126,7 +126,7 @@ void CArenaMap::Destroy()
 bool CArena::CheckArea(WORD startA_X, WORD startA_Y, WORD startB_X, WORD startB_Y)
 {
 	if (m_StartPointA.x == startA_X && m_StartPointA.y == startA_Y &&
-			m_StartPointB.x == startB_X && m_StartPointB.y == startB_Y)
+		m_StartPointB.x == startB_X && m_StartPointB.y == startB_Y)
 		return false;
 	return true;
 }
@@ -151,8 +151,8 @@ void CArenaMap::SendArenaMapListTo(LPCHARACTER pChar, DWORD mapIdx)
 	for (; iter != m_listArena.end(); iter++)
 	{
 		pChar->ChatPacket(CHAT_TYPE_INFO, "ArenaMapInfo Map: %d stA(%d, %d) stB(%d, %d)", mapIdx,
-				(CArena*)(*iter)->GetStartPointA().x, (CArena*)(*iter)->GetStartPointA().y,
-				(CArena*)(*iter)->GetStartPointB().x, (CArena*)(*iter)->GetStartPointB().y);
+			(CArena*)(*iter)->GetStartPointA().x, (CArena*)(*iter)->GetStartPointA().y,
+			(CArena*)(*iter)->GetStartPointB().x, (CArena*)(*iter)->GetStartPointB().y);
 	}
 }
 
@@ -192,12 +192,12 @@ bool CArenaMap::StartDuel(LPCHARACTER pCharFrom, LPCHARACTER pCharTo, int nSetPo
 
 EVENTINFO(TArenaEventInfo)
 {
-	CArena *pArena;
+	CArena* pArena;
 	BYTE state;
 
 	TArenaEventInfo()
-	: pArena(0)
-	, state(0)
+		: pArena(0)
+		, state(0)
 	{
 	}
 };
@@ -212,9 +212,9 @@ EVENTFUNC(ready_to_start_event)
 
 	TArenaEventInfo* info = dynamic_cast<TArenaEventInfo*>(event->info);
 
-	if ( info == NULL )
+	if (info == NULL)
 	{
-		sys_err( "ready_to_start_event> <Factor> Null pointer" );
+		sys_err("ready_to_start_event> <Factor> Null pointer");
 		return 0;
 	}
 
@@ -253,130 +253,130 @@ EVENTFUNC(ready_to_start_event)
 
 	switch (info->state)
 	{
-		case 0:
-			{
-				chA->SetArena(pArena);
-				chB->SetArena(pArena);
+	case 0:
+	{
+		chA->SetArena(pArena);
+		chB->SetArena(pArena);
 
-				int count = quest::CQuestManager::instance().GetEventFlag("arena_potion_limit_count");
+		int count = quest::CQuestManager::instance().GetEventFlag("arena_potion_limit_count");
 
-				if (count > 10000)
-				{
-					chA->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("물약 제한이 없습니다."));
-					chB->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("물약 제한이 없습니다."));
-				}
-				else
-				{
-					chA->SetPotionLimit(count);
-					chB->SetPotionLimit(count);
+		if (count > 10000)
+		{
+			chA->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("물약 제한이 없습니다."));
+			chB->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("물약 제한이 없습니다."));
+		}
+		else
+		{
+			chA->SetPotionLimit(count);
+			chB->SetPotionLimit(count);
 
-					chA->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("물약을 %d 개 까지 사용 가능합니다."), chA->GetPotionLimit());
-					chB->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("물약을 %d 개 까지 사용 가능합니다."), chB->GetPotionLimit());
-				}
-				chA->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("10초뒤 대련이 시작됩니다."));
-				chB->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("10초뒤 대련이 시작됩니다."));
-				pArena->SendChatPacketToObserver(CHAT_TYPE_INFO, LC_TEXT("10초뒤 대련이 시작됩니다."));
+			chA->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("물약을 %d 개 까지 사용 가능합니다."), chA->GetPotionLimit());
+			chB->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("물약을 %d 개 까지 사용 가능합니다."), chB->GetPotionLimit());
+		}
+		chA->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("10초뒤 대련이 시작됩니다."));
+		chB->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("10초뒤 대련이 시작됩니다."));
+		pArena->SendChatPacketToObserver(CHAT_TYPE_INFO, LC_TEXT("10초뒤 대련이 시작됩니다."));
 
-				info->state++;
-				return PASSES_PER_SEC(10);
-			}
-			break;
+		info->state++;
+		return PASSES_PER_SEC(10);
+	}
+	break;
 
-		case 1:
-			{
-				chA->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("대련이 시작되었습니다."));
-				chB->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("대련이 시작되었습니다."));
-				pArena->SendChatPacketToObserver(CHAT_TYPE_INFO, LC_TEXT("대련이 시작되었습니다."));
+	case 1:
+	{
+		chA->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("대련이 시작되었습니다."));
+		chB->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("대련이 시작되었습니다."));
+		pArena->SendChatPacketToObserver(CHAT_TYPE_INFO, LC_TEXT("대련이 시작되었습니다."));
 
-				TPacketGCDuelStart duelStart;
-				duelStart.header = HEADER_GC_DUEL_START;
-				duelStart.wSize = sizeof(TPacketGCDuelStart) + 4;
+		TPacketGCDuelStart duelStart;
+		duelStart.header = HEADER_GC_DUEL_START;
+		duelStart.wSize = sizeof(TPacketGCDuelStart) + 4;
 
-				DWORD dwOppList[8];
+		DWORD dwOppList[8];
 
-				dwOppList[0] = (DWORD)chB->GetVID();
-				TEMP_BUFFER buf;
+		dwOppList[0] = (DWORD)chB->GetVID();
+		TEMP_BUFFER buf;
 
-				buf.write(&duelStart, sizeof(TPacketGCDuelStart));
-				buf.write(&dwOppList[0], 4);
-				chA->GetDesc()->Packet(buf.read_peek(), buf.size());
+		buf.write(&duelStart, sizeof(TPacketGCDuelStart));
+		buf.write(&dwOppList[0], 4);
+		chA->GetDesc()->Packet(buf.read_peek(), buf.size());
 
-				dwOppList[0] = (DWORD)chA->GetVID();
-				TEMP_BUFFER buf2;
+		dwOppList[0] = (DWORD)chA->GetVID();
+		TEMP_BUFFER buf2;
 
-				buf2.write(&duelStart, sizeof(TPacketGCDuelStart));
-				buf2.write(&dwOppList[0], 4);
-				chB->GetDesc()->Packet(buf2.read_peek(), buf2.size());
+		buf2.write(&duelStart, sizeof(TPacketGCDuelStart));
+		buf2.write(&dwOppList[0], 4);
+		chB->GetDesc()->Packet(buf2.read_peek(), buf2.size());
 
-				return 0;
-			}
-			break;
+		return 0;
+	}
+	break;
 
-		case 2:
-			{
-				pArena->EndDuel();
-				return 0;
-			}
-			break;
+	case 2:
+	{
+		pArena->EndDuel();
+		return 0;
+	}
+	break;
 
-		case 3:
-			{
-				chA->Show(chA->GetMapIndex(), pArena->GetStartPointA().x * 100, pArena->GetStartPointA().y * 100);
-				chB->Show(chB->GetMapIndex(), pArena->GetStartPointB().x * 100, pArena->GetStartPointB().y * 100);
+	case 3:
+	{
+		chA->Show(chA->GetMapIndex(), pArena->GetStartPointA().x * 100, pArena->GetStartPointA().y * 100);
+		chB->Show(chB->GetMapIndex(), pArena->GetStartPointB().x * 100, pArena->GetStartPointB().y * 100);
 
-				chA->GetDesc()->SetPhase(PHASE_GAME);
-				chA->StartRecoveryEvent();
-				chA->SetPosition(POS_STANDING);
-				chA->PointChange(POINT_HP, chA->GetMaxHP() - chA->GetHP());
-				chA->PointChange(POINT_SP, chA->GetMaxSP() - chA->GetSP());
-				chA->ViewReencode();
+		chA->GetDesc()->SetPhase(PHASE_GAME);
+		chA->StartRecoveryEvent();
+		chA->SetPosition(POS_STANDING);
+		chA->PointChange(POINT_HP, chA->GetMaxHP() - chA->GetHP());
+		chA->PointChange(POINT_SP, chA->GetMaxSP() - chA->GetSP());
+		chA->ViewReencode();
 
-				chB->GetDesc()->SetPhase(PHASE_GAME);
-				chB->StartRecoveryEvent();
-				chB->SetPosition(POS_STANDING);
-				chB->PointChange(POINT_HP, chB->GetMaxHP() - chB->GetHP());
-				chB->PointChange(POINT_SP, chB->GetMaxSP() - chB->GetSP());
-				chB->ViewReencode();
+		chB->GetDesc()->SetPhase(PHASE_GAME);
+		chB->StartRecoveryEvent();
+		chB->SetPosition(POS_STANDING);
+		chB->PointChange(POINT_HP, chB->GetMaxHP() - chB->GetHP());
+		chB->PointChange(POINT_SP, chB->GetMaxSP() - chB->GetSP());
+		chB->ViewReencode();
 
-				TEMP_BUFFER buf;
-				TEMP_BUFFER buf2;
-				DWORD dwOppList[8];
-				TPacketGCDuelStart duelStart;
-				duelStart.header = HEADER_GC_DUEL_START;
-				duelStart.wSize = sizeof(TPacketGCDuelStart) + 4;
+		TEMP_BUFFER buf;
+		TEMP_BUFFER buf2;
+		DWORD dwOppList[8];
+		TPacketGCDuelStart duelStart;
+		duelStart.header = HEADER_GC_DUEL_START;
+		duelStart.wSize = sizeof(TPacketGCDuelStart) + 4;
 
-				dwOppList[0] = (DWORD)chB->GetVID();
-				buf.write(&duelStart, sizeof(TPacketGCDuelStart));
-				buf.write(&dwOppList[0], 4);
-				chA->GetDesc()->Packet(buf.read_peek(), buf.size());
+		dwOppList[0] = (DWORD)chB->GetVID();
+		buf.write(&duelStart, sizeof(TPacketGCDuelStart));
+		buf.write(&dwOppList[0], 4);
+		chA->GetDesc()->Packet(buf.read_peek(), buf.size());
 
-				dwOppList[0] = (DWORD)chA->GetVID();
-				buf2.write(&duelStart, sizeof(TPacketGCDuelStart));
-				buf2.write(&dwOppList[0], 4);
-				chB->GetDesc()->Packet(buf2.read_peek(), buf2.size());
+		dwOppList[0] = (DWORD)chA->GetVID();
+		buf2.write(&duelStart, sizeof(TPacketGCDuelStart));
+		buf2.write(&dwOppList[0], 4);
+		chB->GetDesc()->Packet(buf2.read_peek(), buf2.size());
 
-				chA->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("대련이 시작되었습니다."));
-				chB->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("대련이 시작되었습니다."));
-				pArena->SendChatPacketToObserver(CHAT_TYPE_INFO, LC_TEXT("대련이 시작되었습니다."));
+		chA->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("대련이 시작되었습니다."));
+		chB->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("대련이 시작되었습니다."));
+		pArena->SendChatPacketToObserver(CHAT_TYPE_INFO, LC_TEXT("대련이 시작되었습니다."));
 
-				pArena->ClearEvent();
+		pArena->ClearEvent();
 
-				return 0;
-			}
-			break;
+		return 0;
+	}
+	break;
 
-		default:
-			{
-				chA->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("대련장 문제로 인하여 대련을 종료합니다."));
-				chB->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("대련장 문제로 인하여 대련을 종료합니다."));
-				pArena->SendChatPacketToObserver(CHAT_TYPE_INFO, LC_TEXT("대련장 문제로 인하여 대련을 종료합니다."));
+	default:
+	{
+		chA->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("대련장 문제로 인하여 대련을 종료합니다."));
+		chB->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("대련장 문제로 인하여 대련을 종료합니다."));
+		pArena->SendChatPacketToObserver(CHAT_TYPE_INFO, LC_TEXT("대련장 문제로 인하여 대련을 종료합니다."));
 
-				sys_log(0, "ARENA: Something wrong in event func. info->state(%d)", info->state);
+		sys_log(0, "ARENA: Something wrong in event func. info->state(%d)", info->state);
 
-				pArena->EndDuel();
+		pArena->EndDuel();
 
-				return 0;
-			}
+		return 0;
+	}
 	}
 }
 
@@ -387,9 +387,9 @@ EVENTFUNC(duel_time_out)
 
 	TArenaEventInfo* info = dynamic_cast<TArenaEventInfo*>(event->info);
 
-	if ( info == NULL )
+	if (info == NULL)
 	{
-		sys_err( "duel_time_out> <Factor> Null pointer" );
+		sys_err("duel_time_out> <Factor> Null pointer");
 		return 0;
 	}
 
@@ -427,33 +427,33 @@ EVENTFUNC(duel_time_out)
 	{
 		switch (info->state)
 		{
-			case 0:
-				pArena->SendChatPacketToObserver(CHAT_TYPE_NOTICE, LC_TEXT("대련 시간 초과로 대련을 중단합니다."));
-				pArena->SendChatPacketToObserver(CHAT_TYPE_NOTICE, LC_TEXT("10초뒤 마을로 이동합니다."));
+		case 0:
+			pArena->SendChatPacketToObserver(CHAT_TYPE_NOTICE, LC_TEXT("대련 시간 초과로 대련을 중단합니다."));
+			pArena->SendChatPacketToObserver(CHAT_TYPE_NOTICE, LC_TEXT("10초뒤 마을로 이동합니다."));
 
-				chA->ChatPacket(CHAT_TYPE_NOTICE, LC_TEXT("대련 시간 초과로 대련을 중단합니다."));
-				chA->ChatPacket(CHAT_TYPE_NOTICE, LC_TEXT("10초뒤 마을로 이동합니다."));
+			chA->ChatPacket(CHAT_TYPE_NOTICE, LC_TEXT("대련 시간 초과로 대련을 중단합니다."));
+			chA->ChatPacket(CHAT_TYPE_NOTICE, LC_TEXT("10초뒤 마을로 이동합니다."));
 
-				chB->ChatPacket(CHAT_TYPE_NOTICE, LC_TEXT("대련 시간 초과로 대련을 중단합니다."));
-				chB->ChatPacket(CHAT_TYPE_NOTICE, LC_TEXT("10초뒤 마을로 이동합니다."));
+			chB->ChatPacket(CHAT_TYPE_NOTICE, LC_TEXT("대련 시간 초과로 대련을 중단합니다."));
+			chB->ChatPacket(CHAT_TYPE_NOTICE, LC_TEXT("10초뒤 마을로 이동합니다."));
 
-				TPacketGCDuelStart duelStart;
-				duelStart.header = HEADER_GC_DUEL_START;
-				duelStart.wSize = sizeof(TPacketGCDuelStart);
+			TPacketGCDuelStart duelStart;
+			duelStart.header = HEADER_GC_DUEL_START;
+			duelStart.wSize = sizeof(TPacketGCDuelStart);
 
-				chA->GetDesc()->Packet(&duelStart, sizeof(TPacketGCDuelStart));
-				chA->GetDesc()->Packet(&duelStart, sizeof(TPacketGCDuelStart));
+			chA->GetDesc()->Packet(&duelStart, sizeof(TPacketGCDuelStart));
+			chA->GetDesc()->Packet(&duelStart, sizeof(TPacketGCDuelStart));
 
-				info->state++;
+			info->state++;
 
-				sys_log(0, "ARENA: Because of time over, duel is end. PIDA(%d) vs PIDB(%d)", pArena->GetPlayerAPID(), pArena->GetPlayerBPID());
+			sys_log(0, "ARENA: Because of time over, duel is end. PIDA(%d) vs PIDB(%d)", pArena->GetPlayerAPID(), pArena->GetPlayerBPID());
 
-				return PASSES_PER_SEC(10);
-				break;
+			return PASSES_PER_SEC(10);
+			break;
 
-			case 1:
-				pArena->EndDuel();
-				break;
+		case 1:
+			pArena->EndDuel();
+			break;
 		}
 	}
 
@@ -489,7 +489,7 @@ bool CArena::StartDuel(LPCHARACTER pCharFrom, LPCHARACTER pCharTo, int nSetPoint
 	info->pArena = this;
 	info->state = 0;
 
-	m_pTimeOutEvent = event_create(duel_time_out, info, PASSES_PER_SEC(nMinute*60));
+	m_pTimeOutEvent = event_create(duel_time_out, info, PASSES_PER_SEC(nMinute * 60));
 
 	pCharFrom->PointChange(POINT_HP, pCharFrom->GetMaxHP() - pCharFrom->GetHP());
 	pCharFrom->PointChange(POINT_SP, pCharFrom->GetMaxSP() - pCharFrom->GetSP());
@@ -507,7 +507,7 @@ void CArenaManager::EndAllDuel()
 
 	for (; iter != m_mapArenaMap.end(); iter++)
 	{
-		CArenaMap *pArenaMap = iter->second;
+		CArenaMap* pArenaMap = iter->second;
 		if (pArenaMap != NULL)
 			pArenaMap->EndAllDuel();
 	}
@@ -521,7 +521,7 @@ void CArenaMap::EndAllDuel()
 
 	for (; iter != m_listArena.end(); iter++)
 	{
-		CArena *pArena = *iter;
+		CArena* pArena = *iter;
 		if (pArena != NULL)
 			pArena->EndDuel();
 	}
@@ -696,7 +696,7 @@ bool CArenaManager::OnDead(LPCHARACTER pCharKiller, LPCHARACTER pCharVictim)
 	if (iter == m_mapArenaMap.end()) return false;
 
 	CArenaMap* pArenaMap = (CArenaMap*)(iter->second);
-	return pArenaMap->OnDead(pCharKiller,  pCharVictim);
+	return pArenaMap->OnDead(pCharKiller, pCharVictim);
 }
 
 bool CArenaMap::OnDead(LPCHARACTER pCharKiller, LPCHARACTER pCharVictim)
@@ -756,7 +756,7 @@ bool CArena::OnDead(DWORD dwPIDA, DWORD dwPIDB)
 				SendChatPacketToObserver(CHAT_TYPE_NOTICE, LC_TEXT("%s 님이 대련에서 승리하였습니다."), pCharA->GetName());
 
 				sys_log(0, "ARENA: Duel is end. Winner %s(%d) Loser %s(%d)",
-						pCharA->GetName(), GetPlayerAPID(), pCharB->GetName(), GetPlayerBPID());
+					pCharA->GetName(), GetPlayerAPID(), pCharB->GetName(), GetPlayerBPID());
 			}
 			else
 			{
@@ -770,7 +770,7 @@ bool CArena::OnDead(DWORD dwPIDA, DWORD dwPIDB)
 				SendChatPacketToObserver(CHAT_TYPE_NOTICE, "%s %d : %d %s", pCharA->GetName(), m_dwSetPointOfA, m_dwSetPointOfB, pCharB->GetName());
 
 				sys_log(0, "ARENA: %s(%d) won a round vs %s(%d)",
-						pCharA->GetName(), GetPlayerAPID(), pCharB->GetName(), GetPlayerBPID());
+					pCharA->GetName(), GetPlayerAPID(), pCharB->GetName(), GetPlayerBPID());
 			}
 		}
 		else if (m_dwPIDB == dwPIDA)
@@ -817,7 +817,7 @@ bool CArena::OnDead(DWORD dwPIDA, DWORD dwPIDB)
 		if (pCharA != NULL)
 			pCharA->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("10초뒤 마을로 되돌아갑니다."));
 
-		if (	pCharB != NULL)
+		if (pCharB != NULL)
 			pCharB->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("10초뒤 마을로 되돌아갑니다."));
 
 		SendChatPacketToObserver(CHAT_TYPE_INFO, LC_TEXT("10초뒤 마을로 되돌아갑니다."));
@@ -972,7 +972,7 @@ void CArena::RemoveObserver(DWORD pid)
 	}
 }
 
-void CArena::SendPacketToObserver(const void * c_pvData, int iSize)
+void CArena::SendPacketToObserver(const void* c_pvData, int iSize)
 {
 	/*
 	itertype(m_mapObserver) iter = m_mapObserver.begin();
@@ -992,7 +992,7 @@ void CArena::SendPacketToObserver(const void * c_pvData, int iSize)
 	*/
 }
 
-void CArena::SendChatPacketToObserver(BYTE type, const char * format, ...)
+void CArena::SendChatPacketToObserver(BYTE type, const char* format, ...)
 {
 	/*
 	char chatbuf[CHAT_MAX_LEN + 1];
@@ -1101,18 +1101,18 @@ bool IsAllowedPotionOnPVP(DWORD dwVnum)
 	switch (dwVnum)
 	{
 		// blue potions
-		case 27004:
-		case 27005:
-		case 27006:
+	case 27004:
+	case 27005:
+	case 27006:
 		// auto blue potions
-		case 39040:
-		case 39041:
-		case 39042:
-		case 72727:
-		case 72728:
-		case 72729:
-		case 72730:
-			return true;
+	case 39040:
+	case 39041:
+	case 39042:
+	case 72727:
+	case 72728:
+	case 72729:
+	case 72730:
+		return true;
 	}
 	return false;
 }
@@ -1131,26 +1131,26 @@ bool IsLimitedPotion(DWORD dwVnum)
 	// @warme005
 	switch (dwVnum)
 	{
-		case 50020:
-		case 50021:
-		case 50022:
-		case 50801:
-		case 50802:
-		case 50813:
-		case 50814:
-		case 50817:
-		case 50818:
-		case 50819:
-		case 50820:
-		case 50821:
-		case 50822:
-		case 50823:
-		case 50824:
-		case 50825:
-		case 50826:
-		case 71044:
-		case 71055:
-			return true;
+	case 50020:
+	case 50021:
+	case 50022:
+	case 50801:
+	case 50802:
+	case 50813:
+	case 50814:
+	case 50817:
+	case 50818:
+	case 50819:
+	case 50820:
+	case 50821:
+	case 50822:
+	case 50823:
+	case 50824:
+	case 50825:
+	case 50826:
+	case 71044:
+	case 71055:
+		return true;
 	}
 	return false;
 }

@@ -10,7 +10,7 @@
 
 enum
 {
-    GUILD_WARP_WAR_CHANNEL = 99
+	GUILD_WARP_WAR_CHANNEL = 99
 };
 
 class CGuildWarReserve;
@@ -47,14 +47,14 @@ struct TGuildWaitStartInfo
 	DWORD			GID[2];
 	long			lWarPrice;
 	long			lInitialScore;
-	CGuildWarReserve *	pkReserve;
+	CGuildWarReserve* pkReserve;
 
 	TGuildWaitStartInfo(BYTE _bType,
-			DWORD _g1,
-			DWORD _g2,
-			long _lWarPrice,
-			long _lInitialScore,
-			CGuildWarReserve * _pkReserve)
+		DWORD _g1,
+		DWORD _g2,
+		long _lWarPrice,
+		long _lInitialScore,
+		CGuildWarReserve* _pkReserve)
 		: bType(_bType), lWarPrice(_lWarPrice), lInitialScore(_lInitialScore), pkReserve(_pkReserve)
 	{
 		GID[0] = _g1;
@@ -87,19 +87,19 @@ struct TGuildWarPQElement
 
 struct TGuildSkillUsed
 {
-    DWORD GID;
-    DWORD dwSkillVnum;
+	DWORD GID;
+	DWORD dwSkillVnum;
 
-    // GUILD_SKILL_COOLTIME_BUG_FIX
-    TGuildSkillUsed(DWORD _GID, DWORD _dwSkillVnum) : GID(_GID), dwSkillVnum(_dwSkillVnum)
-    {
-    }
-    // END_OF_GUILD_SKILL_COOLTIME_BUG_FIX
+	// GUILD_SKILL_COOLTIME_BUG_FIX
+	TGuildSkillUsed(DWORD _GID, DWORD _dwSkillVnum) : GID(_GID), dwSkillVnum(_dwSkillVnum)
+	{
+	}
+	// END_OF_GUILD_SKILL_COOLTIME_BUG_FIX
 };
 
 inline bool operator < (const TGuildSkillUsed& a, const TGuildSkillUsed& b)
 {
-    return ((a.GID < b.GID) || ((a.GID == b.GID) && (a.dwSkillVnum < b.dwSkillVnum)));
+	return ((a.GID < b.GID) || ((a.GID == b.GID) && (a.dwSkillVnum < b.dwSkillVnum)));
 }
 
 typedef struct SGuild
@@ -109,7 +109,7 @@ typedef struct SGuild
 		memset(szName, 0, sizeof(szName));
 	}
 
-	char szName[GUILD_NAME_MAX_LEN+1];
+	char szName[GUILD_NAME_MAX_LEN + 1];
 	int	ladder_point;
 	int	win;
 	int	draw;
@@ -120,36 +120,36 @@ typedef struct SGuild
 
 typedef struct SGuildWarInfo
 {
-    time_t		tEndTime;
-    TGuildWarPQElement * pElement;
-    CGuildWarReserve * pkReserve;
+	time_t		tEndTime;
+	TGuildWarPQElement* pElement;
+	CGuildWarReserve* pkReserve;
 
-    SGuildWarInfo() : pElement(NULL)
-    {
-    }
+	SGuildWarInfo() : pElement(NULL)
+	{
+	}
 } TGuildWarInfo;
 
 class CGuildWarReserve
 {
-    public:
+public:
 	CGuildWarReserve(const TGuildWarReserve& rTable);
 
 	void Initialize();
 
-	TGuildWarReserve & GetDataRef()
+	TGuildWarReserve& GetDataRef()
 	{
-	    return m_data;
+		return m_data;
 	}
 
-	void	OnSetup(CPeer * peer);
-	bool	Bet(const char * pszLogin, DWORD dwGold, DWORD dwGuild);
+	void	OnSetup(CPeer* peer);
+	bool	Bet(const char* pszLogin, DWORD dwGold, DWORD dwGuild);
 	void	Draw();
 	void	End(int iScoreFrom, int iScoreTo);
 
 	int	GetLastNoticeMin() { return m_iLastNoticeMin; }
 	void	SetLastNoticeMin(int iMin) { m_iLastNoticeMin = iMin; }
 
-    private:
+private:
 	CGuildWarReserve();
 
 	TGuildWarReserve				m_data;
@@ -160,7 +160,7 @@ class CGuildWarReserve
 
 class CGuildManager : public singleton<CGuildManager>
 {
-    public:
+public:
 	CGuildManager();
 	virtual ~CGuildManager();
 
@@ -168,12 +168,12 @@ class CGuildManager : public singleton<CGuildManager>
 
 	void	Load(DWORD dwGuildID);
 
-	TGuild & TouchGuild(DWORD GID);
+	TGuild& TouchGuild(DWORD GID);
 
 	void	Update();
 
-	void	OnSetup(CPeer * peer);
-	void	StartWar(BYTE bType, DWORD GID1, DWORD GID2, CGuildWarReserve * pkReserve = NULL);
+	void	OnSetup(CPeer* peer);
+	void	StartWar(BYTE bType, DWORD GID1, DWORD GID2, CGuildWarReserve* pkReserve = NULL);
 
 	void	UpdateScore(DWORD guild_gain_point, DWORD guild_opponent, int iScore, int iBetScore);
 
@@ -182,7 +182,7 @@ class CGuildManager : public singleton<CGuildManager>
 
 	bool	TakeBetPrice(DWORD dwGuildTo, DWORD dwGuildFrom, long lWarPrice);
 
-	bool	WaitStart(TPacketGuildWar * p);
+	bool	WaitStart(TPacketGuildWar* p);
 
 	void	RecvWarEnd(DWORD GID1, DWORD GID2);
 	void	RecvWarOver(DWORD dwGuildWinner, DWORD dwGuildLoser, bool bDraw, long lWarPrice);
@@ -199,22 +199,22 @@ class CGuildManager : public singleton<CGuildManager>
 	void	MoneyChange(DWORD dwGuild, DWORD dwGold);
 
 	void	QueryRanking();
-	void	ResultRanking(MYSQL_RES * pRes);
+	void	ResultRanking(MYSQL_RES* pRes);
 	int	GetRanking(DWORD dwGID);
 
 	// Reserve War
 
 	void	BootReserveWar();
-	bool	ReserveWar(TPacketGuildWar * p);
+	bool	ReserveWar(TPacketGuildWar* p);
 	void	ProcessReserveWar();
-	bool	Bet(DWORD dwID, const char * c_pszLogin, DWORD dwGold, DWORD dwGuild);
+	bool	Bet(DWORD dwID, const char* c_pszLogin, DWORD dwGold, DWORD dwGuild);
 
 	void	CancelWar(DWORD GID1, DWORD GID2);
 
 	bool	ChangeMaster(DWORD dwGID, DWORD dwFrom, DWORD dwTo);
 
-    private:
-	void ParseResult(SQLResult * pRes);
+private:
+	void ParseResult(SQLResult* pRes);
 
 	void RemoveWar(DWORD GID1, DWORD GID2);	// erase war from m_WarMap and set end on priority queue
 
@@ -237,18 +237,18 @@ class CGuildManager : public singleton<CGuildManager>
 	std::set<TGuildDeclareInfo>				m_DeclareMap;
 	std::map<DWORD, std::map<DWORD, TGuildWarInfo> >	m_WarMap;
 
-	typedef std::pair<time_t, TGuildWarPQElement *>	stPairGuildWar;
+	typedef std::pair<time_t, TGuildWarPQElement*>	stPairGuildWar;
 	typedef std::pair<time_t, TGuildSkillUsed>	stPairSkillUsed;
 	typedef std::pair<time_t, TGuildWaitStartInfo>	stPairWaitStart;
 
 	std::priority_queue<stPairGuildWar, std::vector<stPairGuildWar>, std::greater<stPairGuildWar> >
-	    m_pqOnWar;
+		m_pqOnWar;
 	std::priority_queue<stPairWaitStart, std::vector<stPairWaitStart>, std::greater<stPairWaitStart> >
-	    m_pqWaitStart;
+		m_pqWaitStart;
 	std::priority_queue<stPairSkillUsed, std::vector<stPairSkillUsed>, std::greater<stPairSkillUsed> >
-	    m_pqSkill;
+		m_pqSkill;
 
-	std::map<DWORD, CGuildWarReserve *>			m_map_kWarReserve;
+	std::map<DWORD, CGuildWarReserve*>			m_map_kWarReserve;
 	CPoly							polyPower;
 	CPoly							polyHandicap;
 

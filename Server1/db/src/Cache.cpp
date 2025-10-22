@@ -52,35 +52,35 @@ void CItemCache::OnFlush()
 	}
 	else
 	{
-		TPlayerItem *p = &m_data;
+		TPlayerItem* p = &m_data;
 		const auto setQuery = fmt::format(FMT_COMPILE("id={}, owner_id={}, `window`={}, pos={}, count={}, vnum={}, socket0={}, socket1={}, socket2={}, "
-														"attrtype0={}, attrvalue0={}, "
-														"attrtype1={}, attrvalue1={}, "
-														"attrtype2={}, attrvalue2={}, "
-														"attrtype3={}, attrvalue3={}, "
-														"attrtype4={}, attrvalue4={}, "
-														"attrtype5={}, attrvalue5={}, "
-														"attrtype6={}, attrvalue6={} ")
-														, p->id,
-														p->owner,
-														p->window,
-														p->pos,
-														p->count,
-														p->vnum,
-														p->alSockets[0],
-														p->alSockets[1],
-														p->alSockets[2],
-														p->aAttr[0].bType, p->aAttr[0].sValue,
-														p->aAttr[1].bType, p->aAttr[1].sValue,
-														p->aAttr[2].bType, p->aAttr[2].sValue,
-														p->aAttr[3].bType, p->aAttr[3].sValue,
-														p->aAttr[4].bType, p->aAttr[4].sValue,
-														p->aAttr[5].bType, p->aAttr[5].sValue,
-														p->aAttr[6].bType, p->aAttr[6].sValue
+			"attrtype0={}, attrvalue0={}, "
+			"attrtype1={}, attrvalue1={}, "
+			"attrtype2={}, attrvalue2={}, "
+			"attrtype3={}, attrvalue3={}, "
+			"attrtype4={}, attrvalue4={}, "
+			"attrtype5={}, attrvalue5={}, "
+			"attrtype6={}, attrvalue6={} ")
+			, p->id,
+			p->owner,
+			p->window,
+			p->pos,
+			p->count,
+			p->vnum,
+			p->alSockets[0],
+			p->alSockets[1],
+			p->alSockets[2],
+			p->aAttr[0].bType, p->aAttr[0].sValue,
+			p->aAttr[1].bType, p->aAttr[1].sValue,
+			p->aAttr[2].bType, p->aAttr[2].sValue,
+			p->aAttr[3].bType, p->aAttr[3].sValue,
+			p->aAttr[4].bType, p->aAttr[4].sValue,
+			p->aAttr[5].bType, p->aAttr[5].sValue,
+			p->aAttr[6].bType, p->aAttr[6].sValue
 		); // @fixme205
 
 		const auto itemQuery = fmt::format(FMT_COMPILE("INSERT INTO item{} SET {} ON DUPLICATE KEY UPDATE {}"),
-														GetTablePostfix(), setQuery, setQuery);
+			GetTablePostfix(), setQuery, setQuery);
 
 		if (g_test_server)
 			sys_log(0, "ItemCache::Flush :REPLACE  (%s)", itemQuery.c_str());
@@ -172,8 +172,8 @@ void CItemPriceListTableCache::UpdateList(const TItemPriceListTable* pUpdateList
 	m_bNeedQuery = true;
 
 	sys_log(0,
-			"ItemPriceListTableCache::UpdateList : OwnerID[%u] Update [%u] Items, Delete [%u] Items, Total [%u] Items",
-			m_data.dwOwnerID, pUpdateList->byCount, nDeletedNum, m_data.byCount);
+		"ItemPriceListTableCache::UpdateList : OwnerID[%u] Update [%u] Items, Delete [%u] Items, Total [%u] Items",
+		m_data.dwOwnerID, pUpdateList->byCount, nDeletedNum, m_data.byCount);
 }
 
 void CItemPriceListTableCache::OnFlush()
@@ -186,8 +186,8 @@ void CItemPriceListTableCache::OnFlush()
 	for (int idx = 0; idx < m_data.byCount; ++idx)
 	{
 		snprintf(szQuery, sizeof(szQuery),
-				"REPLACE myshop_pricelist%s(owner_id, item_vnum, price) VALUES(%u, %u, %u)", // @fixme204 (INSERT INTO -> REPLACE)
-				GetTablePostfix(), m_data.dwOwnerID, m_data.aPriceInfo[idx].dwVnum, m_data.aPriceInfo[idx].dwPrice);
+			"REPLACE myshop_pricelist%s(owner_id, item_vnum, price) VALUES(%u, %u, %u)", // @fixme204 (INSERT INTO -> REPLACE)
+			GetTablePostfix(), m_data.dwOwnerID, m_data.aPriceInfo[idx].dwVnum, m_data.aPriceInfo[idx].dwPrice);
 		CDBManager::instance().ReturnQuery(szQuery, QID_ITEMPRICE_SAVE, 0, NULL);
 	}
 

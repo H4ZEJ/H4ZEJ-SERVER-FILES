@@ -72,7 +72,7 @@ struct SStoneDropInfo
 {
 	DWORD dwMobVnum;
 	int iDropPct;
-	int iLevelPct[STONE_LEVEL_MAX_NUM+1];
+	int iLevelPct[STONE_LEVEL_MAX_NUM + 1];
 };
 
 inline bool operator < (const SStoneDropInfo& l, DWORD r)
@@ -99,7 +99,7 @@ extern const DWORD		party_exp_distribute_table[PLAYER_EXP_TABLE_MAX + 1];
 
 extern const DWORD		exp_table_common[PLAYER_MAX_LEVEL_CONST + 1];
 
-extern const DWORD*		exp_table;
+extern const DWORD* exp_table;
 
 extern const DWORD		guild_exp_table[GUILD_MAX_LEVEL + 1];
 extern const DWORD		guild_exp_table2[GUILD_MAX_LEVEL + 1];
@@ -110,8 +110,8 @@ extern const DWORD		guild_exp_table2[GUILD_MAX_LEVEL + 1];
 #define CALCULATE_VALUE_LVDELTA(me, victim, val) ((val * PERCENT_LVDELTA(me, victim)) / 100)
 extern const int		aiPercentByDeltaLev_euckr[MAX_EXP_DELTA_OF_LEV];
 extern const int		aiPercentByDeltaLevForBoss_euckr[MAX_EXP_DELTA_OF_LEV];
-extern const int *		aiPercentByDeltaLev;
-extern const int *		aiPercentByDeltaLevForBoss;
+extern const int* aiPercentByDeltaLev;
+extern const int* aiPercentByDeltaLevForBoss;
 
 #define ARROUND_COORD_MAX_NUM	161
 extern Coord			aArroundCoords[ARROUND_COORD_MAX_NUM];
@@ -133,7 +133,7 @@ extern const int aiSocketPercentByQty[5][4];
 
 extern const int aiExpLossPercents[PLAYER_EXP_TABLE_MAX + 1];
 
-extern const int * aiSkillPowerByLevel;
+extern const int* aiSkillPowerByLevel;
 extern const int aiSkillPowerByLevel_euckr[SKILL_MAX_LEVEL + 1];
 
 extern const int aiPolymorphPowerByLevel[SKILL_MAX_LEVEL + 1];
@@ -150,11 +150,11 @@ typedef std::map<DWORD, TItemAttrTable> TItemAttrMap;
 extern TItemAttrMap g_map_itemAttr;
 extern TItemAttrMap g_map_itemRare;
 
-extern const int * aiChainLightningCountBySkillLevel;
+extern const int* aiChainLightningCountBySkillLevel;
 extern const int aiChainLightningCountBySkillLevel_euckr[SKILL_MAX_LEVEL + 1];
 
-extern const char * c_apszEmpireNames[EMPIRE_MAX_NUM];
-extern const char * c_apszPrivNames[MAX_PRIV_NUM];
+extern const char* c_apszEmpireNames[EMPIRE_MAX_NUM];
+extern const char* c_apszPrivNames[MAX_PRIV_NUM];
 extern const SStoneDropInfo aStoneDrop[STONE_INFO_MAX_NUM];
 
 typedef struct SGuildWarInfo
@@ -179,10 +179,10 @@ extern const int aiAccessorySocketAddPct[ITEM_ACCESSORY_SOCKET_MAX_NUM];
 extern const int aiAccessorySocketEffectivePct[ITEM_ACCESSORY_SOCKET_MAX_NUM + 1];
 extern const int aiAccessorySocketDegradeTime[ITEM_ACCESSORY_SOCKET_MAX_NUM + 1];
 extern const int aiAccessorySocketPutPct[ITEM_ACCESSORY_SOCKET_MAX_NUM + 1];
-long FN_get_apply_type(const char *apply_type_string);
+long FN_get_apply_type(const char* apply_type_string);
 
 // END_OF_ACCESSORY_REFINE
 
-long FN_get_apply_type(const char *apply_type_string);
+long FN_get_apply_type(const char* apply_type_string);
 #endif
 //martysama0134's 8e0aa8057d3f54320e391131a48866b4

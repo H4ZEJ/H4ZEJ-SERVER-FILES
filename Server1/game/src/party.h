@@ -37,44 +37,44 @@ class CDungeon;
 
 class CPartyManager : public singleton<CPartyManager>
 {
-	public:
-		typedef std::map<DWORD, LPPARTY> TPartyMap;
-		typedef std::set<LPPARTY> TPCPartySet;
+public:
+	typedef std::map<DWORD, LPPARTY> TPartyMap;
+	typedef std::set<LPPARTY> TPCPartySet;
 
-	public:
-		CPartyManager();
-		virtual ~CPartyManager();
+public:
+	CPartyManager();
+	virtual ~CPartyManager();
 
-		void		Initialize();
+	void		Initialize();
 
-		//void		SendPartyToDB();
+	//void		SendPartyToDB();
 
-		void		EnablePCParty() { m_bEnablePCParty = true; sys_log(0,"PARTY Enable"); }
-		void		DisablePCParty() { m_bEnablePCParty = false; sys_log(0,"PARTY Disable"); }
-		bool		IsEnablePCParty() { return m_bEnablePCParty; }
+	void		EnablePCParty() { m_bEnablePCParty = true; sys_log(0, "PARTY Enable"); }
+	void		DisablePCParty() { m_bEnablePCParty = false; sys_log(0, "PARTY Disable"); }
+	bool		IsEnablePCParty() { return m_bEnablePCParty; }
 
-		LPPARTY		CreateParty(LPCHARACTER pkLeader);
-		void		DeleteParty(LPPARTY pParty);
-		void		DeleteAllParty();
-		bool		SetParty(LPCHARACTER pkChr);
+	LPPARTY		CreateParty(LPCHARACTER pkLeader);
+	void		DeleteParty(LPPARTY pParty);
+	void		DeleteAllParty();
+	bool		SetParty(LPCHARACTER pkChr);
 
-		void		SetPartyMember(DWORD dwPID, LPPARTY pParty);
+	void		SetPartyMember(DWORD dwPID, LPPARTY pParty);
 
-		void		P2PLogin(DWORD pid, const char* name);
-		void		P2PLogout(DWORD pid);
+	void		P2PLogin(DWORD pid, const char* name);
+	void		P2PLogout(DWORD pid);
 
-		LPPARTY		P2PCreateParty(DWORD pid);
-		void		P2PDeleteParty(DWORD pid);
-		void		P2PJoinParty(DWORD leader, DWORD pid, BYTE role = 0);
-		void		P2PQuitParty(DWORD pid);
+	LPPARTY		P2PCreateParty(DWORD pid);
+	void		P2PDeleteParty(DWORD pid);
+	void		P2PJoinParty(DWORD leader, DWORD pid, BYTE role = 0);
+	void		P2PQuitParty(DWORD pid);
 
-	private:
-		TPartyMap	m_map_pkParty;
-		TPartyMap	m_map_pkMobParty;
+private:
+	TPartyMap	m_map_pkParty;
+	TPartyMap	m_map_pkMobParty;
 
-		TPCPartySet	m_set_pkPCParty;
+	TPCPartySet	m_set_pkPCParty;
 
-		bool		m_bEnablePCParty;
+	bool		m_bEnablePCParty;
 };
 
 enum EPartyMessages
@@ -87,176 +87,176 @@ enum EPartyMessages
 
 class CParty
 {
-	public:
-		typedef struct SMember
-		{
-			LPCHARACTER	pCharacter;
-			bool	bNear;
-			BYTE	bRole;
-			BYTE	bLevel;
-			std::string strName;
-		} TMember;
+public:
+	typedef struct SMember
+	{
+		LPCHARACTER	pCharacter;
+		bool	bNear;
+		BYTE	bRole;
+		BYTE	bLevel;
+		std::string strName;
+	} TMember;
 
-		typedef std::map<DWORD, TMember> TMemberMap;
+	typedef std::map<DWORD, TMember> TMemberMap;
 
-		typedef std::map<std::string, int> TFlagMap;
+	typedef std::map<std::string, int> TFlagMap;
 
-	public:
-		CParty();
-		virtual ~CParty();
+public:
+	CParty();
+	virtual ~CParty();
 
-		void		P2PJoin(DWORD dwPID);
-		void		P2PQuit(DWORD dwPID);
-		virtual void	Join(DWORD dwPID);
-		void		Quit(DWORD dwPID);
-		void		Link(LPCHARACTER pkChr);
-		void		Unlink(LPCHARACTER pkChr);
+	void		P2PJoin(DWORD dwPID);
+	void		P2PQuit(DWORD dwPID);
+	virtual void	Join(DWORD dwPID);
+	void		Quit(DWORD dwPID);
+	void		Link(LPCHARACTER pkChr);
+	void		Unlink(LPCHARACTER pkChr);
 
-		void		ChatPacketToAllMember(BYTE type, const char* format, ...);
+	void		ChatPacketToAllMember(BYTE type, const char* format, ...);
 
-		void		UpdateOnlineState(DWORD dwPID, const char* name);
-		void		UpdateOfflineState(DWORD dwPID);
+	void		UpdateOnlineState(DWORD dwPID, const char* name);
+	void		UpdateOfflineState(DWORD dwPID);
 
-		DWORD		GetLeaderPID();
-		LPCHARACTER	GetLeaderCharacter();
-		LPCHARACTER	GetLeader() { return m_pkChrLeader; }
+	DWORD		GetLeaderPID();
+	LPCHARACTER	GetLeaderCharacter();
+	LPCHARACTER	GetLeader() { return m_pkChrLeader; }
 
-		DWORD		GetMemberCount();
-		DWORD		GetNearMemberCount()	{ return m_iCountNearPartyMember; }
+	DWORD		GetMemberCount();
+	DWORD		GetNearMemberCount() { return m_iCountNearPartyMember; }
 
-		bool		IsMember(DWORD pid) { return m_memberMap.find(pid) != m_memberMap.end(); }
+	bool		IsMember(DWORD pid) { return m_memberMap.find(pid) != m_memberMap.end(); }
 
-		bool		IsNearLeader(DWORD pid);
+	bool		IsNearLeader(DWORD pid);
 
-		bool		IsPositionNearLeader(LPCHARACTER ch);
+	bool		IsPositionNearLeader(LPCHARACTER ch);
 
-		void		SendMessage(LPCHARACTER ch, BYTE bMsg, DWORD dwArg1, DWORD dwArg2);
+	void		SendMessage(LPCHARACTER ch, BYTE bMsg, DWORD dwArg1, DWORD dwArg2);
 
-		void		SendPartyJoinOneToAll(DWORD dwPID);
-		void		SendPartyJoinAllToOne(LPCHARACTER ch);
-		void		SendPartyRemoveOneToAll(DWORD dwPID);
+	void		SendPartyJoinOneToAll(DWORD dwPID);
+	void		SendPartyJoinAllToOne(LPCHARACTER ch);
+	void		SendPartyRemoveOneToAll(DWORD dwPID);
 
-		void		SendPartyInfoOneToAll(DWORD pid);
-		void		SendPartyInfoOneToAll(LPCHARACTER ch);
-		void		SendPartyInfoAllToOne(LPCHARACTER ch);
+	void		SendPartyInfoOneToAll(DWORD pid);
+	void		SendPartyInfoOneToAll(LPCHARACTER ch);
+	void		SendPartyInfoAllToOne(LPCHARACTER ch);
 
-		void		SendPartyLinkOneToAll(LPCHARACTER ch);
-		void		SendPartyLinkAllToOne(LPCHARACTER ch);
-		void		SendPartyUnlinkOneToAll(LPCHARACTER ch);
+	void		SendPartyLinkOneToAll(LPCHARACTER ch);
+	void		SendPartyLinkAllToOne(LPCHARACTER ch);
+	void		SendPartyUnlinkOneToAll(LPCHARACTER ch);
 
-		int		GetPartyBonusExpPercent()	{ return m_iExpBonus; }
-		int		GetPartyBonusAttackGrade()	{ return m_iAttBonus; }
-		int		GetPartyBonusDefenseGrade()	{ return m_iDefBonus; }
+	int		GetPartyBonusExpPercent() { return m_iExpBonus; }
+	int		GetPartyBonusAttackGrade() { return m_iAttBonus; }
+	int		GetPartyBonusDefenseGrade() { return m_iDefBonus; }
 
-		int	ComputePartyBonusExpPercent();
-		inline int	ComputePartyBonusAttackGrade();
-		inline int	ComputePartyBonusDefenseGrade();
+	int	ComputePartyBonusExpPercent();
+	inline int	ComputePartyBonusAttackGrade();
+	inline int	ComputePartyBonusDefenseGrade();
 
-		template <class Func> void ForEachMember(Func & f);
-		template <class Func> void ForEachMemberPtr(Func & f);
-		template <class Func> void ForEachOnlineMember(Func & f);
-		template <class Func> void ForEachNearMember(Func & f);
-		template <class Func> void ForEachOnMapMember (Func & f, long lMapIndex);
-		template <class Func> bool ForEachOnMapMemberBool (Func & f, long lMapIndex);
+	template <class Func> void ForEachMember(Func& f);
+	template <class Func> void ForEachMemberPtr(Func& f);
+	template <class Func> void ForEachOnlineMember(Func& f);
+	template <class Func> void ForEachNearMember(Func& f);
+	template <class Func> void ForEachOnMapMember(Func& f, long lMapIndex);
+	template <class Func> bool ForEachOnMapMemberBool(Func& f, long lMapIndex);
 
-		void		Update();
+	void		Update();
 
-		int		GetExpBonusPercent();
+	int		GetExpBonusPercent();
 
-		bool		SetRole(DWORD pid, BYTE bRole, bool on);
-		BYTE		GetRole(DWORD pid);
-		bool		IsRole(DWORD pid, BYTE bRole);
+	bool		SetRole(DWORD pid, BYTE bRole, bool on);
+	BYTE		GetRole(DWORD pid);
+	bool		IsRole(DWORD pid, BYTE bRole);
 
-		BYTE		GetMemberMaxLevel();
-		BYTE		GetMemberMinLevel();
+	BYTE		GetMemberMaxLevel();
+	BYTE		GetMemberMinLevel();
 
-		void		ComputeRolePoint(LPCHARACTER ch, BYTE bRole, bool bAdd);
+	void		ComputeRolePoint(LPCHARACTER ch, BYTE bRole, bool bAdd);
 
-		void		HealParty();
-		void		SummonToLeader(DWORD pid);
+	void		HealParty();
+	void		SummonToLeader(DWORD pid);
 
-		void		SetPCParty(bool b) { m_bPCParty = b; }
+	void		SetPCParty(bool b) { m_bPCParty = b; }
 
-		LPCHARACTER	GetNextOwnership(LPCHARACTER ch, long x, long y);
+	LPCHARACTER	GetNextOwnership(LPCHARACTER ch, long x, long y);
 
-		void		SetFlag(const std::string& name, int value);
-		int		GetFlag(const std::string& name);
+	void		SetFlag(const std::string& name, int value);
+	int		GetFlag(const std::string& name);
 
-		void		SetDungeon(LPDUNGEON pDungeon);
-		LPDUNGEON	GetDungeon();
+	void		SetDungeon(LPDUNGEON pDungeon);
+	LPDUNGEON	GetDungeon();
 
-		BYTE		CountMemberByVnum(DWORD dwVnum);
+	BYTE		CountMemberByVnum(DWORD dwVnum);
 
-		void		SetParameter(int iMode);
-		int		GetExpDistributionMode();
+	void		SetParameter(int iMode);
+	int		GetExpDistributionMode();
 
-		void		SetExpCentralizeCharacter(DWORD pid);
-		LPCHARACTER	GetExpCentralizeCharacter();
+	void		SetExpCentralizeCharacter(DWORD pid);
+	LPCHARACTER	GetExpCentralizeCharacter();
 
-		void		RequestSetMemberLevel(DWORD pid, BYTE level);
-		void		P2PSetMemberLevel(DWORD pid, BYTE level);
+	void		RequestSetMemberLevel(DWORD pid, BYTE level);
+	void		P2PSetMemberLevel(DWORD pid, BYTE level);
 
-		bool		IsPartyInDungeon(int mapIndex);
-		bool		IsPartyInAnyDungeon();
+	bool		IsPartyInDungeon(int mapIndex);
+	bool		IsPartyInAnyDungeon();
 
-	protected:
-		void		IncreaseOwnership();
+protected:
+	void		IncreaseOwnership();
 
-		virtual void	Initialize();
-		void		Destroy();
-		void		RemovePartyBonus();
+	virtual void	Initialize();
+	void		Destroy();
+	void		RemovePartyBonus();
 
-		void		RemoveBonus();
-		void		RemoveBonusForOne(DWORD pid);
+	void		RemoveBonus();
+	void		RemoveBonusForOne(DWORD pid);
 
-		void		SendParameter(LPCHARACTER ch);
-		void		SendParameterToAll();
+	void		SendParameter(LPCHARACTER ch);
+	void		SendParameterToAll();
 
-		TMemberMap	m_memberMap;
-		DWORD		m_dwLeaderPID;
-		LPCHARACTER	m_pkChrLeader;
+	TMemberMap	m_memberMap;
+	DWORD		m_dwLeaderPID;
+	LPCHARACTER	m_pkChrLeader;
 
-		LPEVENT		m_eventUpdate;
+	LPEVENT		m_eventUpdate;
 
-		TMemberMap::iterator m_itNextOwner;
+	TMemberMap::iterator m_itNextOwner;
 
-	private:
-		int		m_iExpDistributionMode;
-		LPCHARACTER	m_pkChrExpCentralize;
+private:
+	int		m_iExpDistributionMode;
+	LPCHARACTER	m_pkChrExpCentralize;
 
-		DWORD		m_dwPartyStartTime;
+	DWORD		m_dwPartyStartTime;
 
-		DWORD		m_dwPartyHealTime;
-		bool		m_bPartyHealReady;
-		bool		m_bCanUsePartyHeal;
+	DWORD		m_dwPartyHealTime;
+	bool		m_bPartyHealReady;
+	bool		m_bCanUsePartyHeal;
 
-		int		m_anRoleCount[PARTY_ROLE_MAX_NUM];
-		int		m_anMaxRole[PARTY_ROLE_MAX_NUM];
+	int		m_anRoleCount[PARTY_ROLE_MAX_NUM];
+	int		m_anMaxRole[PARTY_ROLE_MAX_NUM];
 
-		int		m_iLongTimeExpBonus;
+	int		m_iLongTimeExpBonus;
 
-		// used in Update
-		int		m_iLeadership;
-		int		m_iExpBonus;
-		int		m_iAttBonus;
-		int		m_iDefBonus;
+	// used in Update
+	int		m_iLeadership;
+	int		m_iExpBonus;
+	int		m_iAttBonus;
+	int		m_iDefBonus;
 
-		// changed only in Update
-		int		m_iCountNearPartyMember;
+	// changed only in Update
+	int		m_iCountNearPartyMember;
 
-		bool		m_bPCParty;
+	bool		m_bPCParty;
 
-		TFlagMap	m_map_iFlag;
+	TFlagMap	m_map_iFlag;
 
-		LPDUNGEON	m_pkDungeon;
+	LPDUNGEON	m_pkDungeon;
 
-		LPDUNGEON	m_pkDungeon_for_Only_party;
-	public:
-		void SetDungeon_for_Only_party(LPDUNGEON pDungeon);
-		LPDUNGEON GetDungeon_for_Only_party();
+	LPDUNGEON	m_pkDungeon_for_Only_party;
+public:
+	void SetDungeon_for_Only_party(LPDUNGEON pDungeon);
+	LPDUNGEON GetDungeon_for_Only_party();
 };
 
-template <class Func> void CParty::ForEachMember(Func & f)
+template <class Func> void CParty::ForEachMember(Func& f)
 {
 	TMemberMap::iterator it;
 
@@ -264,7 +264,7 @@ template <class Func> void CParty::ForEachMember(Func & f)
 		f(it->first);
 }
 
-template <class Func> void CParty::ForEachMemberPtr(Func & f)
+template <class Func> void CParty::ForEachMemberPtr(Func& f)
 {
 	TMemberMap::iterator it;
 
@@ -272,7 +272,7 @@ template <class Func> void CParty::ForEachMemberPtr(Func & f)
 		f(it->second.pCharacter);
 }
 
-template <class Func> void CParty::ForEachOnlineMember(Func & f)
+template <class Func> void CParty::ForEachOnlineMember(Func& f)
 {
 	TMemberMap::iterator it;
 
@@ -281,7 +281,7 @@ template <class Func> void CParty::ForEachOnlineMember(Func & f)
 			f(it->second.pCharacter);
 }
 
-template <class Func> void CParty::ForEachNearMember(Func & f)
+template <class Func> void CParty::ForEachNearMember(Func& f)
 {
 	TMemberMap::iterator it;
 
@@ -290,7 +290,7 @@ template <class Func> void CParty::ForEachNearMember(Func & f)
 			f(it->second.pCharacter);
 }
 
-template <class Func> void CParty::ForEachOnMapMember (Func & f, long lMapIndex)
+template <class Func> void CParty::ForEachOnMapMember(Func& f, long lMapIndex)
 {
 	TMemberMap::iterator it;
 
@@ -299,13 +299,13 @@ template <class Func> void CParty::ForEachOnMapMember (Func & f, long lMapIndex)
 		LPCHARACTER ch = it->second.pCharacter;
 		if (ch)
 		{
-			if (ch->GetMapIndex () == lMapIndex)
+			if (ch->GetMapIndex() == lMapIndex)
 				f(ch);
 		}
 	}
 }
 
-template <class Func> bool CParty::ForEachOnMapMemberBool(Func & f, long lMapIndex)
+template <class Func> bool CParty::ForEachOnMapMemberBool(Func& f, long lMapIndex)
 {
 	TMemberMap::iterator it;
 
@@ -314,12 +314,11 @@ template <class Func> bool CParty::ForEachOnMapMemberBool(Func & f, long lMapInd
 		LPCHARACTER ch = it->second.pCharacter;
 		if (ch)
 		{
-			if (ch->GetMapIndex () == lMapIndex)
+			if (ch->GetMapIndex() == lMapIndex)
 			{
-				if(f(ch) == false)
+				if (f(ch) == false)
 				{
 					return false;
-
 				}
 			}
 		}

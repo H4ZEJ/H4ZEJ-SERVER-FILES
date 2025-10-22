@@ -24,7 +24,7 @@ enum ERegenModes
 	MODE_VNUM
 };
 
-static bool get_word(FILE *fp, char *buf)
+static bool get_word(FILE* fp, char* buf)
 {
 	int i = 0;
 	int c;
@@ -77,7 +77,7 @@ static bool get_word(FILE *fp, char *buf)
 	return (i != 0);
 }
 
-static void next_line(FILE *fp)
+static void next_line(FILE* fp)
 {
 	int c;
 
@@ -86,7 +86,7 @@ static void next_line(FILE *fp)
 			return;
 }
 
-static bool read_line(FILE *fp, LPREGEN regen)
+static bool read_line(FILE* fp, LPREGEN regen)
 {
 	char szTmp[256];
 
@@ -104,132 +104,132 @@ static bool read_line(FILE *fp, LPREGEN regen)
 
 		switch (mode)
 		{
-			case MODE_TYPE:
-				if (szTmp[0] == 'm')
-					regen->type = REGEN_TYPE_MOB;
-				else if (szTmp[0] == 'g')
-					regen->type = REGEN_TYPE_GROUP;
-				else if (szTmp[0] == 'e')
-					regen->type = REGEN_TYPE_EXCEPTION;
-				else if (szTmp[0] == 'r')
-					regen->type = REGEN_TYPE_GROUP_GROUP;
-				else if (szTmp[0] == 's')
-					regen->type = REGEN_TYPE_ANYWHERE;
-				else
+		case MODE_TYPE:
+			if (szTmp[0] == 'm')
+				regen->type = REGEN_TYPE_MOB;
+			else if (szTmp[0] == 'g')
+				regen->type = REGEN_TYPE_GROUP;
+			else if (szTmp[0] == 'e')
+				regen->type = REGEN_TYPE_EXCEPTION;
+			else if (szTmp[0] == 'r')
+				regen->type = REGEN_TYPE_GROUP_GROUP;
+			else if (szTmp[0] == 's')
+				regen->type = REGEN_TYPE_ANYWHERE;
+			else
+			{
+				sys_err("read_line: unknown regen type %c", szTmp[0]);
+				exit(1);
+			}
+
+			if (szTmp[1] == 'a') //@fixme195
+				regen->is_aggressive = true;
+
+			++mode;
+			break;
+
+		case MODE_SX:
+			str_to_number(regen->sx, szTmp);
+			++mode;
+			break;
+
+		case MODE_SY:
+			str_to_number(regen->sy, szTmp);
+			++mode;
+			break;
+
+		case MODE_EX:
+		{
+			int iX = 0;
+			str_to_number(iX, szTmp);
+
+			regen->sx -= iX;
+			regen->ex = regen->sx + iX * 2;
+
+			regen->sx *= 100;
+			regen->ex *= 100;
+
+			++mode;
+		}
+		break;
+
+		case MODE_EY:
+		{
+			int iY = 0;
+			str_to_number(iY, szTmp);
+
+			regen->sy -= iY;
+			regen->ey = regen->sy + iY * 2;
+
+			regen->sy *= 100;
+			regen->ey *= 100;
+
+			++mode;
+		}
+		break;
+
+		case MODE_Z_SECTION:
+			str_to_number(regen->z_section, szTmp);
+
+			if (regen->type == REGEN_TYPE_EXCEPTION)
+				return true;
+
+			++mode;
+			break;
+
+		case MODE_DIRECTION:
+			str_to_number(regen->direction, szTmp);
+			++mode;
+			break;
+
+		case MODE_REGEN_TIME:
+			regen->time = 0;
+			tmpTime = 0;
+
+			for (i = 0; i < strlen(szTmp); ++i)
+			{
+				switch (szTmp[i])
 				{
-					sys_err("read_line: unknown regen type %c", szTmp[0]);
-					exit(1);
-				}
+				case 'h':
+					regen->time += tmpTime * 3600;
+					tmpTime = 0;
+					break;
 
-				if (szTmp[1] == 'a') //@fixme195
-					regen->is_aggressive = true;
+				case 'm':
+					regen->time += tmpTime * 60;
+					tmpTime = 0;
+					break;
 
-				++mode;
-				break;
+				case 's':
+					regen->time += tmpTime;
+					tmpTime = 0;
+					break;
 
-			case MODE_SX:
-				str_to_number(regen->sx, szTmp);
-				++mode;
-				break;
-
-			case MODE_SY:
-				str_to_number(regen->sy, szTmp);
-				++mode;
-				break;
-
-			case MODE_EX:
-				{
-					int iX = 0;
-					str_to_number(iX, szTmp);
-
-					regen->sx -= iX;
-					regen->ex = regen->sx + iX * 2;
-
-					regen->sx *= 100;
-					regen->ex *= 100;
-
-					++mode;
-				}
-				break;
-
-			case MODE_EY:
-				{
-					int iY = 0;
-					str_to_number(iY, szTmp);
-
-					regen->sy -= iY;
-					regen->ey = regen->sy + iY * 2;
-
-					regen->sy *= 100;
-					regen->ey *= 100;
-
-					++mode;
-				}
-				break;
-
-			case MODE_Z_SECTION:
-				str_to_number(regen->z_section, szTmp);
-
-				if (regen->type == REGEN_TYPE_EXCEPTION)
-					return true;
-
-				++mode;
-				break;
-
-			case MODE_DIRECTION:
-				str_to_number(regen->direction, szTmp);
-				++mode;
-				break;
-
-			case MODE_REGEN_TIME:
-				regen->time = 0;
-				tmpTime = 0;
-
-				for (i = 0; i < strlen(szTmp); ++i)
-				{
-					switch (szTmp[i])
+				default:
+					if (szTmp[i] >= '0' && szTmp[i] <= '9')
 					{
-						case 'h':
-							regen->time += tmpTime * 3600;
-							tmpTime = 0;
-							break;
-
-						case 'm':
-							regen->time += tmpTime * 60;
-							tmpTime = 0;
-							break;
-
-						case 's':
-							regen->time += tmpTime;
-							tmpTime = 0;
-							break;
-
-						default:
-							if (szTmp[i] >= '0' && szTmp[i] <= '9')
-							{
-								tmpTime *= 10;
-								tmpTime += (szTmp[i] - '0');
-							}
+						tmpTime *= 10;
+						tmpTime += (szTmp[i] - '0');
 					}
 				}
+			}
 
-				++mode;
-				break;
+			++mode;
+			break;
 
-			case MODE_REGEN_PERCENT:
-				++mode;
-				break;
+		case MODE_REGEN_PERCENT:
+			++mode;
+			break;
 
-			case MODE_MAX_COUNT:
-				regen->count = 0;
-				str_to_number(regen->max_count, szTmp);
-				++mode;
-				break;
+		case MODE_MAX_COUNT:
+			regen->count = 0;
+			str_to_number(regen->max_count, szTmp);
+			++mode;
+			break;
 
-			case MODE_VNUM:
-				str_to_number(regen->vnum, szTmp);
-				++mode;
-				return true;
+		case MODE_VNUM:
+			str_to_number(regen->vnum, szTmp);
+			++mode;
+			return true;
 		}
 	}
 
@@ -277,12 +277,12 @@ static void regen_spawn_dungeon(LPREGEN regen, LPDUNGEON pDungeon, bool bOnce)
 		else if (regen->sx == regen->ex && regen->sy == regen->ey)
 		{
 			ch = CHARACTER_MANAGER::instance().SpawnMob(regen->vnum,
-					regen->lMapIndex,
-					regen->sx,
-					regen->sy,
-					regen->z_section,
-					false,
-					regen->direction == 0 ? number(0, 7) * 45 : (regen->direction - 1) * 45);
+				regen->lMapIndex,
+				regen->sx,
+				regen->sy,
+				regen->z_section,
+				false,
+				regen->direction == 0 ? number(0, 7) * 45 : (regen->direction - 1) * 45);
 
 			if (ch)
 			{
@@ -343,12 +343,12 @@ static void regen_spawn(LPREGEN regen, bool bOnce)
 		else if (regen->sx == regen->ex && regen->sy == regen->ey)
 		{
 			ch = CHARACTER_MANAGER::instance().SpawnMob(regen->vnum,
-					regen->lMapIndex,
-					regen->sx,
-					regen->sy,
-					regen->z_section,
-					false,
-					regen->direction == 0 ? number(0, 7) * 45 : (regen->direction - 1) * 45);
+				regen->lMapIndex,
+				regen->sx,
+				regen->sy,
+				regen->z_section,
+				false,
+				regen->direction == 0 ? number(0, 7) * 45 : (regen->direction - 1) * 45);
 
 			if (ch)
 				++regen->count;
@@ -357,7 +357,7 @@ static void regen_spawn(LPREGEN regen, bool bOnce)
 		{
 			if (regen->type == REGEN_TYPE_MOB)
 			{
-				ch = CHARACTER_MANAGER::Instance().SpawnMobRange(regen->vnum, regen->lMapIndex, regen->sx, regen->sy, regen->ex, regen->ey, true, regen->is_aggressive, regen->is_aggressive );
+				ch = CHARACTER_MANAGER::Instance().SpawnMobRange(regen->vnum, regen->lMapIndex, regen->sx, regen->sy, regen->ex, regen->ey, true, regen->is_aggressive, regen->is_aggressive);
 
 				if (ch)
 					++regen->count;
@@ -381,11 +381,11 @@ static void regen_spawn(LPREGEN regen, bool bOnce)
 
 EVENTFUNC(dungeon_regen_event)
 {
-	dungeon_regen_event_info* info = dynamic_cast<dungeon_regen_event_info*>( event->info );
+	dungeon_regen_event_info* info = dynamic_cast<dungeon_regen_event_info*>(event->info);
 
-	if ( info == NULL )
+	if (info == NULL)
 	{
-		sys_err( "dungeon_regen_event> <Factor> Null pointer" );
+		sys_err("dungeon_regen_event> <Factor> Null pointer");
 		return 0;
 	}
 
@@ -409,7 +409,7 @@ bool regen_do(const char* filename, long lMapIndex, int base_x, int base_y, LPDU
 	if (g_bNoRegen)
 		return true;
 
-	if ( lMapIndex >= 114 && lMapIndex <= 117 )
+	if (lMapIndex >= 114 && lMapIndex <= 117)
 		return true;
 
 	LPREGEN regen = NULL;
@@ -469,7 +469,7 @@ bool regen_do(const char* filename, long lMapIndex, int base_x, int base_y, LPDU
 
 			if (regen->type == REGEN_TYPE_MOB)
 			{
-				const CMob * p = CMobManager::instance().Get(regen->vnum);
+				const CMob* p = CMobManager::instance().Get(regen->vnum);
 
 				if (!p)
 				{
@@ -496,7 +496,6 @@ bool regen_do(const char* filename, long lMapIndex, int base_x, int base_y, LPDU
 			}
 
 			regen_spawn_dungeon(regen, pDungeon, bOnce);
-
 		}
 	}
 
@@ -510,7 +509,7 @@ bool regen_load_in_file(const char* filename, long lMapIndex, int base_x, int ba
 		return true;
 
 	LPREGEN regen = NULL;
-	FILE * fp = fopen(filename, "rt");
+	FILE* fp = fopen(filename, "rt");
 
 	if (NULL == fp)
 	{
@@ -559,7 +558,7 @@ bool regen_load_in_file(const char* filename, long lMapIndex, int base_x, int ba
 
 			if (regen->type == REGEN_TYPE_MOB)
 			{
-				const CMob * p = CMobManager::instance().Get(regen->vnum);
+				const CMob* p = CMobManager::instance().Get(regen->vnum);
 
 				if (!p)
 				{
@@ -578,11 +577,11 @@ bool regen_load_in_file(const char* filename, long lMapIndex, int base_x, int ba
 
 EVENTFUNC(regen_event)
 {
-	regen_event_info* info = dynamic_cast<regen_event_info*>( event->info );
+	regen_event_info* info = dynamic_cast<regen_event_info*>(event->info);
 
-	if ( info == NULL )
+	if (info == NULL)
 	{
-		sys_err( "regen_event> <Factor> Null pointer" );
+		sys_err("regen_event> <Factor> Null pointer");
 		return 0;
 	}
 
@@ -655,7 +654,7 @@ bool regen_load(const char* filename, long lMapIndex, int base_x, int base_y)
 
 			if (regen->type == REGEN_TYPE_MOB)
 			{
-				const CMob * p = CMobManager::instance().Get(regen->vnum);
+				const CMob* p = CMobManager::instance().Get(regen->vnum);
 
 				if (!p)
 				{
@@ -664,10 +663,10 @@ bool regen_load(const char* filename, long lMapIndex, int base_x, int base_y)
 				else if (p->m_table.bType == CHAR_TYPE_NPC || p->m_table.bType == CHAR_TYPE_WARP || p->m_table.bType == CHAR_TYPE_GOTO)
 				{
 					SECTREE_MANAGER::instance().InsertNPCPosition(lMapIndex,
-							p->m_table.bType,
-							p->m_table.szLocaleName,
-							(regen->sx+regen->ex) / 2 - base_x,
-							(regen->sy+regen->ey) / 2 - base_y);
+						p->m_table.bType,
+						p->m_table.szLocaleName,
+						(regen->sx + regen->ex) / 2 - base_x,
+						(regen->sy + regen->ey) / 2 - base_y);
 				}
 			}
 

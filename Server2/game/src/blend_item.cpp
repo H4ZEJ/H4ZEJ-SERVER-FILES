@@ -20,10 +20,10 @@ T_BLEND_ITEM_INFO	s_blend_info;
 
 bool	Blend_Item_init()
 {
-	BLEND_ITEM_INFO	*blend_item_info = NULL;
+	BLEND_ITEM_INFO* blend_item_info = NULL;
 	T_BLEND_ITEM_INFO::iterator			iter;
 	char	file_name[256];
-	snprintf (file_name, sizeof(file_name), "%s/blend.txt", LocaleService_GetBasePath().c_str());
+	snprintf(file_name, sizeof(file_name), "%s/blend.txt", LocaleService_GetBasePath().c_str());
 
 	sys_log(0, "Blend_Item_init %s ", file_name);
 
@@ -34,7 +34,7 @@ bool	Blend_Item_init()
 	}
 	s_blend_info.clear();
 
-	if (false==Blend_Item_load(file_name))
+	if (false == Blend_Item_load(file_name))
 	{
 		sys_err("<Blend_Item_init> fail");
 		return false;
@@ -42,29 +42,29 @@ bool	Blend_Item_init()
 	return true;
 }
 
-bool	Blend_Item_load(char *file)
+bool	Blend_Item_load(char* file)
 {
-	FILE	*fp;
+	FILE* fp;
 	char	one_line[256];
-	const char	*delim = " \t\r\n";
-	char	*v;
+	const char* delim = " \t\r\n";
+	char* v;
 
-	BLEND_ITEM_INFO	*blend_item_info{};
+	BLEND_ITEM_INFO* blend_item_info{};
 
-	if (0==file || 0==file[0])
+	if (0 == file || 0 == file[0])
 		return false;
 
-	if ((fp = fopen(file, "r"))==0)
+	if ((fp = fopen(file, "r")) == 0)
 		return false;
 
 	while (fgets(one_line, 256, fp))
 	{
-		if (one_line[0]=='#')
+		if (one_line[0] == '#')
 			continue;
 
 		const char* token_string = strtok(one_line, delim);
 
-		if (NULL==token_string)
+		if (NULL == token_string)
 			continue;
 
 		TOKEN("section")
@@ -76,7 +76,7 @@ bool	Blend_Item_load(char *file)
 		{
 			v = strtok(NULL, delim);
 
-			if (NULL==v)
+			if (NULL == v)
 			{
 				fclose(fp);
 				return false;
@@ -88,7 +88,7 @@ bool	Blend_Item_load(char *file)
 		{
 			v = strtok(NULL, delim);
 
-			if (NULL==v)
+			if (NULL == v)
 			{
 				fclose(fp);
 				return false;
@@ -96,40 +96,40 @@ bool	Blend_Item_load(char *file)
 
 			blend_item_info->apply_type = FN_get_apply_type(v);
 		}
-		else TOKEN("apply_value")
+	else TOKEN("apply_value")
+	{
+		for (int i = 0; i < MAX_BLEND_ITEM_VALUE; ++i)
 		{
-			for (int i=0; i<MAX_BLEND_ITEM_VALUE; ++i)
+			v = strtok(NULL, delim);
+
+			if (NULL == v)
 			{
-				v = strtok(NULL, delim);
-
-				if (NULL==v)
-				{
-					fclose(fp);
-					return false;
-				}
-
-				str_to_number(blend_item_info->apply_value[i], v);
+				fclose(fp);
+				return false;
 			}
+
+			str_to_number(blend_item_info->apply_value[i], v);
 		}
-		else TOKEN("apply_duration")
+	}
+	else TOKEN("apply_duration")
+	{
+		for (int i = 0; i < MAX_BLEND_ITEM_VALUE; ++i)
 		{
-			for (int i=0; i<MAX_BLEND_ITEM_VALUE; ++i)
+			v = strtok(NULL, delim);
+
+			if (NULL == v)
 			{
-				v = strtok(NULL, delim);
-
-				if (NULL==v)
-				{
-					fclose(fp);
-					return false;
-				}
-
-				str_to_number(blend_item_info->apply_duration[i], v);
+				fclose(fp);
+				return false;
 			}
+
+			str_to_number(blend_item_info->apply_duration[i], v);
 		}
+	}
 		else TOKEN("end")
 		{
 			s_blend_info.emplace_back(blend_item_info);
-		}
+			}
 	}
 
 	fclose(fp);
@@ -139,15 +139,15 @@ bool	Blend_Item_load(char *file)
 
 static int FN_random_index()
 {
-	int	percent = number(1,100);
+	int	percent = number(1, 100);
 
-	if (percent<=10)			// level 1 :10%
+	if (percent <= 10)			// level 1 :10%
 		return 0;
-	else if (percent<=30)		// level 2 : 20%
+	else if (percent <= 30)		// level 2 : 20%
 		return 1;
-	else if (percent<=70)		// level 3 : 40%
+	else if (percent <= 70)		// level 3 : 40%
 		return 2;
-	else if (percent<=90)		// level 4 : 20%
+	else if (percent <= 90)		// level 4 : 20%
 		return 3;
 	else
 		return 4;				// level 5 : 10%
@@ -157,15 +157,15 @@ static int FN_random_index()
 
 static int FN_ECS_random_index()
 {
-	int	percent = number(1,100);
+	int	percent = number(1, 100);
 
-	if (percent<=5)			// level 1 : 5%
+	if (percent <= 5)			// level 1 : 5%
 		return 0;
-	else if (percent<=15)		// level 2 : 10%
+	else if (percent <= 15)		// level 2 : 10%
 		return 1;
-	else if (percent<=60)		// level 3 : 45%
+	else if (percent <= 60)		// level 3 : 45%
 		return 2;
-	else if (percent<=85)		// level 4 : 25%
+	else if (percent <= 85)		// level 4 : 25%
 		return 3;
 	else
 		return 4;				// level 5 : 15%
@@ -175,7 +175,7 @@ static int FN_ECS_random_index()
 
 bool	Blend_Item_set_value(LPITEM item)
 {
-	BLEND_ITEM_INFO	*blend_info;
+	BLEND_ITEM_INFO* blend_info;
 	T_BLEND_ITEM_INFO::iterator	iter;
 
 	DO_ALL_BLEND_INFO(iter)
@@ -189,30 +189,29 @@ bool	Blend_Item_set_value(LPITEM item)
 
 			if (item->GetVnum() == 51002)
 			{
-				apply_type		= blend_info->apply_type;
-				apply_value		= blend_info->apply_value		[FN_ECS_random_index()];
-				apply_duration	= blend_info->apply_duration	[FN_ECS_random_index()];
+				apply_type = blend_info->apply_type;
+				apply_value = blend_info->apply_value[FN_ECS_random_index()];
+				apply_duration = blend_info->apply_duration[FN_ECS_random_index()];
 			}
 			else
 			{
-				apply_type		= blend_info->apply_type;
-				apply_value		= blend_info->apply_value		[FN_random_index()];
-				apply_duration	= blend_info->apply_duration	[FN_random_index()];
+				apply_type = blend_info->apply_type;
+				apply_value = blend_info->apply_value[FN_random_index()];
+				apply_duration = blend_info->apply_duration[FN_random_index()];
 			}
-			sys_log (0, "blend_item : type : %d, value : %d, du : %d", apply_type, apply_value, apply_duration);
+			sys_log(0, "blend_item : type : %d, value : %d, du : %d", apply_type, apply_value, apply_duration);
 			item->SetSocket(0, apply_type);
 			item->SetSocket(1, apply_value);
 			item->SetSocket(2, apply_duration);
 			return true;
 		}
-
 	}
 	return false;
 }
 
 bool	Blend_Item_find(DWORD item_vnum)
 {
-	BLEND_ITEM_INFO	*blend_info;
+	BLEND_ITEM_INFO* blend_info;
 	T_BLEND_ITEM_INFO::iterator	iter;
 
 	DO_ALL_BLEND_INFO(iter)

@@ -22,59 +22,59 @@ struct ForkedPassMapInfo
 
 class CThreeWayWar : public singleton<CThreeWayWar>
 {
-	public:
-		CThreeWayWar ();
-		virtual ~CThreeWayWar ();
+public:
+	CThreeWayWar();
+	virtual ~CThreeWayWar();
 
-		void Initialize ();
-		bool LoadSetting (const char* szFileName);
+	void Initialize();
+	bool LoadSetting(const char* szFileName);
 
-		int GetKillScore (BYTE empire) const;
-		void SetKillScore (BYTE empire, int count);
+	int GetKillScore(BYTE empire) const;
+	void SetKillScore(BYTE empire, int count);
 
-		void SetReviveTokenForPlayer (DWORD PlayerID, int count);
-		int GetReviveTokenForPlayer (DWORD PlayerID);
-		void DecreaseReviveTokenForPlayer (DWORD PlayerID);
+	void SetReviveTokenForPlayer(DWORD PlayerID, int count);
+	int GetReviveTokenForPlayer(DWORD PlayerID);
+	void DecreaseReviveTokenForPlayer(DWORD PlayerID);
 
-		const ForkedPassMapInfo& GetEventPassMapInfo () const;
-		const ForkedSungziMapInfo& GetEventSungZiMapInfo () const;
+	const ForkedPassMapInfo& GetEventPassMapInfo() const;
+	const ForkedSungziMapInfo& GetEventSungZiMapInfo() const;
 
-		bool IsThreeWayWarMapIndex (int iMapIndex) const;
-		bool IsSungZiMapIndex (int iMapIndex) const;
+	bool IsThreeWayWarMapIndex(int iMapIndex) const;
+	bool IsSungZiMapIndex(int iMapIndex) const;
 
-		void RandomEventMapSet ();
+	void RandomEventMapSet();
 
-		void RegisterUser (DWORD PlayerID);
-		bool IsRegisteredUser (DWORD PlayerID) const;
+	void RegisterUser(DWORD PlayerID);
+	bool IsRegisteredUser(DWORD PlayerID) const;
 
-		void onDead (LPCHARACTER pChar, LPCHARACTER pKiller);
+	void onDead(LPCHARACTER pChar, LPCHARACTER pKiller);
 
-		void SetRegenFlag (int flag) { RegenFlag_ = flag; }
-		int GetRegenFlag () const { return RegenFlag_; }
+	void SetRegenFlag(int flag) { RegenFlag_ = flag; }
+	int GetRegenFlag() const { return RegenFlag_; }
 
-		void RemoveAllMonstersInThreeWay () const;
+	void RemoveAllMonstersInThreeWay() const;
 
-	private:
-		int KillScore_[3];
-		int RegenFlag_;
+private:
+	int KillScore_[3];
+	int RegenFlag_;
 
-		std::set<int>	MapIndexSet_;
-		std::vector<ForkedPassMapInfo>	PassInfoMap_;
-		std::vector<ForkedSungziMapInfo>	SungZiInfoMap_;
+	std::set<int>	MapIndexSet_;
+	std::vector<ForkedPassMapInfo>	PassInfoMap_;
+	std::vector<ForkedSungziMapInfo>	SungZiInfoMap_;
 
-		boost::unordered_map<DWORD, DWORD>	RegisterUserMap_;
-		boost::unordered_map<DWORD, int>	ReviveTokenMap_;
+	boost::unordered_map<DWORD, DWORD>	RegisterUserMap_;
+	boost::unordered_map<DWORD, int>	ReviveTokenMap_;
 };
 
 const char* GetSungziMapPath();
-const char* GetPassMapPath( BYTE bEmpire );
-int GetPassMapIndex( BYTE bEmpire );
+const char* GetPassMapPath(BYTE bEmpire);
+int GetPassMapIndex(BYTE bEmpire);
 int GetSungziMapIndex();
 
-int GetSungziStartX( BYTE bEmpire );
-int GetSungziStartY( BYTE bEmpire );
-int GetPassStartX( BYTE bEmpire );
-int GetPassStartY( BYTE bEmpire );
+int GetSungziStartX(BYTE bEmpire);
+int GetSungziStartY(BYTE bEmpire);
+int GetPassStartX(BYTE bEmpire);
+int GetPassStartY(BYTE bEmpire);
 
 #endif /* THREE_WAY_WAR_EVENT_ */
 //martysama0134's 8e0aa8057d3f54320e391131a48866b4

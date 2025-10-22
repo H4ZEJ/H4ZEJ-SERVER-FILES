@@ -13,7 +13,7 @@ class CDungeon
 	typedef TR1_NS::unordered_map<LPPARTY, int> TPartyMap;
 	typedef std::map<std::string, LPCHARACTER> TUniqueMobMap;
 
-	public:
+public:
 	// <Factor> Non-persistent identifier type
 	typedef uint32_t IdType;
 
@@ -60,7 +60,7 @@ class CDungeon
 	void	Spawn(DWORD vnum, const char* pos);
 	LPCHARACTER	SpawnMob(DWORD vnum, int x, int y, int dir = 0);
 	LPCHARACTER	SpawnMob_ac_dir(DWORD vnum, int x, int y, int dir = 0);
-	LPCHARACTER	SpawnGroup(DWORD vnum, long x, long y, float radius, bool bAggressive=false, int count=1);
+	LPCHARACTER	SpawnGroup(DWORD vnum, long x, long y, float radius, bool bAggressive = false, int count = 1);
 
 	void	SpawnNameMob(DWORD vnum, int x, int y, const char* name);
 	void	SpawnGotoMob(long lFromX, long lFromY, long lToX, long lToY);
@@ -72,7 +72,7 @@ class CDungeon
 
 	void	SetUnique(const char* key, DWORD vid);
 	void	SpawnMoveUnique(const char* key, DWORD vnum, const char* pos_from, const char* pos_to);
-	void	SpawnMoveGroup(DWORD vnum, const char* pos_from, const char* pos_to, int count=1);
+	void	SpawnMoveGroup(DWORD vnum, const char* pos_from, const char* pos_to, int count = 1);
 	void	SpawnUnique(const char* key, DWORD vnum, const char* pos);
 	void	SpawnStoneDoor(const char* key, const char* pos);
 	void	SpawnWoodenDoor(const char* key, const char* pos);
@@ -107,24 +107,24 @@ class CDungeon
 
 	int	GetFlag(std::string name);
 	void	SetFlag(std::string name, int value);
-	void	SetWarpLocation (long map_index, int x, int y);
+	void	SetWarpLocation(long map_index, int x, int y);
 
 	typedef std::vector <std::pair <DWORD, int> > ItemGroup;
-	void	CreateItemGroup (std::string& group_name, ItemGroup& item_group);
-	const ItemGroup* GetItemGroup (std::string& group_name);
+	void	CreateItemGroup(std::string& group_name, ItemGroup& item_group);
+	const ItemGroup* GetItemGroup(std::string& group_name);
 	//void	InsertItemGroup (std::string& group_name, DWORD item_vnum);
 
 	template <class Func> Func ForEachMember(Func f);
 
-	bool IsAllPCNearTo( int x, int y, int dist );
+	bool IsAllPCNearTo(int x, int y, int dist);
 
-	protected:
+protected:
 	CDungeon(IdType id, long lOriginalMapIndex, long lMapIndex);
 
 	void	Initialize();
 	void	CheckDestroy();
 
-	private:
+private:
 	IdType 		m_id; // <Factor>
 	DWORD		m_lOrigMapIndex;
 	DWORD		m_lMapIndex;
@@ -134,7 +134,7 @@ class CDungeon
 	typedef std::map<std::string, ItemGroup> ItemGroupMap;
 	ItemGroupMap m_map_ItemGroup;
 	TPartyMap	m_map_pkParty;
-	TAreaMap&	m_map_Area;
+	TAreaMap& m_map_Area;
 	TUniqueMobMap	m_map_UniqueMob;
 
 	int		m_iMobKill;
@@ -171,7 +171,7 @@ class CDungeon
 #ifdef ENABLE_D_NJGUILD
 	CGuild* m_pGuild;
 #endif
-	public :
+public:
 	void SetPartyNull();
 };
 
@@ -180,7 +180,7 @@ class CDungeonManager : public singleton<CDungeonManager>
 	typedef std::map<CDungeon::IdType, LPDUNGEON> TDungeonMap;
 	typedef std::map<long, LPDUNGEON> TMapDungeon;
 
-	public:
+public:
 	CDungeonManager();
 	virtual ~CDungeonManager();
 
@@ -189,7 +189,7 @@ class CDungeonManager : public singleton<CDungeonManager>
 	LPDUNGEON	Find(CDungeon::IdType dungeon_id);
 	LPDUNGEON	FindByMapIndex(long lMapIndex);
 
-	private:
+private:
 	TDungeonMap	m_map_pkDungeon;
 	TMapDungeon m_map_pkMapDungeon;
 

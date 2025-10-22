@@ -1,47 +1,47 @@
 #ifndef __PROTOCOL_H__
 #define __PROTOCOL_H__
 
-inline const char *encode_byte(char ind)
+inline const char* encode_byte(char ind)
 {
 	static char a[8];
-	*((char *) a) = ind;
+	*((char*)a) = ind;
 	return (a);
 }
 
-inline const char *encode_2bytes(sh_int ind)
+inline const char* encode_2bytes(sh_int ind)
 {
 	static char a[8];
-	*((sh_int *) a) = ind;
+	*((sh_int*)a) = ind;
 	return (a);
 }
 
-inline const char *encode_4bytes(int ind)
+inline const char* encode_4bytes(int ind)
 {
 	static char a[8];
-	*((int *) a) = ind;
+	*((int*)a) = ind;
 	return (a);
 }
 
-inline BYTE decode_byte(const void * a)
+inline BYTE decode_byte(const void* a)
 {
-	return (*(BYTE *) a);
+	return (*(BYTE*)a);
 }
 
-inline WORD decode_2bytes(const void * a)
+inline WORD decode_2bytes(const void* a)
 {
-	return (*((WORD *) a));
+	return (*((WORD*)a));
 }
 
-inline INT decode_4bytes(const void *a)
+inline INT decode_4bytes(const void* a)
 {
-	return (*((INT *) a));
+	return (*((INT*)a));
 }
 
 #define packet_encode(buf, data, len) __packet_encode(buf, data, len, __FILE__, __LINE__)
 
 #define DEFAULT_PACKET_BUFFER_SIZE (150*1024) //@warme015 prevent dc if there are many entities
 
-inline bool __packet_encode(LPBUFFER pbuf, const void * data, int length, const char * file, int line)
+inline bool __packet_encode(LPBUFFER pbuf, const void* data, int length, const char* file, int line)
 {
 	assert(NULL != pbuf);
 	assert(NULL != data);

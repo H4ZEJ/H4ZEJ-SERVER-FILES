@@ -47,123 +47,123 @@ namespace warmap
 
 class CWarMap
 {
-	public:
-		friend class CGuild;
+public:
+	friend class CGuild;
 
-		CWarMap(long lMapIndex, const TGuildWarInfo & r_info, TWarMapInfo * pkWarMapInfo, DWORD dwGuildID1, DWORD dwGuildID2);
-		~CWarMap();
+	CWarMap(long lMapIndex, const TGuildWarInfo& r_info, TWarMapInfo* pkWarMapInfo, DWORD dwGuildID1, DWORD dwGuildID2);
+	~CWarMap();
 
-		bool	GetTeamIndex(DWORD dwGuild, BYTE & bIdx);
+	bool	GetTeamIndex(DWORD dwGuild, BYTE& bIdx);
 
-		void	IncMember(LPCHARACTER ch);
-		void	DecMember(LPCHARACTER ch);
+	void	IncMember(LPCHARACTER ch);
+	void	DecMember(LPCHARACTER ch);
 
-		CGuild * GetGuild(BYTE bIdx);
-		DWORD	GetGuildID(BYTE bIdx);
+	CGuild* GetGuild(BYTE bIdx);
+	DWORD	GetGuildID(BYTE bIdx);
 
-		BYTE	GetType();
-		long	GetMapIndex();
-		DWORD	GetGuildOpponent(LPCHARACTER ch);
+	BYTE	GetType();
+	long	GetMapIndex();
+	DWORD	GetGuildOpponent(LPCHARACTER ch);
 
-		DWORD	GetWinnerGuild();
-		void	UsePotion(LPCHARACTER ch, LPITEM item);
+	DWORD	GetWinnerGuild();
+	void	UsePotion(LPCHARACTER ch, LPITEM item);
 
-		void	Draw();
-		void	Timeout();
-		void	CheckWarEnd();
-		bool	SetEnded();
-		void	ExitAll();
+	void	Draw();
+	void	Timeout();
+	void	CheckWarEnd();
+	bool	SetEnded();
+	void	ExitAll();
 
-		void	SetBeginEvent(LPEVENT pkEv);
-		void	SetTimeoutEvent(LPEVENT pkEv);
-		void	SetEndEvent(LPEVENT pkEv);
-		void	SetResetFlagEvent(LPEVENT pkEv);
+	void	SetBeginEvent(LPEVENT pkEv);
+	void	SetTimeoutEvent(LPEVENT pkEv);
+	void	SetEndEvent(LPEVENT pkEv);
+	void	SetResetFlagEvent(LPEVENT pkEv);
 
-		void	UpdateScore(DWORD g1, int score1, DWORD g2, int score2);
-		bool	CheckScore();
+	void	UpdateScore(DWORD g1, int score1, DWORD g2, int score2);
+	bool	CheckScore();
 
-		int	GetRewardGold(BYTE bWinnerIdx);
+	int	GetRewardGold(BYTE bWinnerIdx);
 
-		bool	GetGuildIndex(DWORD dwGuild, int& iIndex);
+	bool	GetGuildIndex(DWORD dwGuild, int& iIndex);
 
-		void	Packet(const void * pv, int size);
-		void	Notice(const char * psz);
-		void	SendWarPacket(LPDESC d);
-		void	SendScorePacket(BYTE bIdx, LPDESC d = NULL);
+	void	Packet(const void* pv, int size);
+	void	Notice(const char* psz);
+	void	SendWarPacket(LPDESC d);
+	void	SendScorePacket(BYTE bIdx, LPDESC d = NULL);
 
-		void	OnKill(LPCHARACTER killer, LPCHARACTER ch);
+	void	OnKill(LPCHARACTER killer, LPCHARACTER ch);
 
-		void	AddFlag(BYTE bIdx, DWORD x=0, DWORD y=0);
-		void	AddFlagBase(BYTE bIdx, DWORD x=0, DWORD y=0);
-		void	RemoveFlag(BYTE bIdx);
-		bool	IsFlagOnBase(BYTE bIdx);
-		void	ResetFlag();
+	void	AddFlag(BYTE bIdx, DWORD x = 0, DWORD y = 0);
+	void	AddFlagBase(BYTE bIdx, DWORD x = 0, DWORD y = 0);
+	void	RemoveFlag(BYTE bIdx);
+	bool	IsFlagOnBase(BYTE bIdx);
+	void	ResetFlag();
 
-	private:
-		void	UpdateUserCount();
+private:
+	void	UpdateUserCount();
 
-	private:
-		TWarMapInfo	m_kMapInfo;
-		bool		m_bEnded;
+private:
+	TWarMapInfo	m_kMapInfo;
+	bool		m_bEnded;
 
-		LPEVENT m_pkBeginEvent;
-		LPEVENT m_pkTimeoutEvent;
-		LPEVENT m_pkEndEvent;
-		LPEVENT	m_pkResetFlagEvent;
+	LPEVENT m_pkBeginEvent;
+	LPEVENT m_pkTimeoutEvent;
+	LPEVENT m_pkEndEvent;
+	LPEVENT	m_pkResetFlagEvent;
 
-		typedef struct STeamData
-		{
-			DWORD	dwID;
-			CGuild * pkGuild;
-			int		iMemberCount;
-			int		iUsePotionPrice;
-			int		iScore;
-			LPCHARACTER pkChrFlag;
-			LPCHARACTER pkChrFlagBase;
+	typedef struct STeamData
+	{
+		DWORD	dwID;
+		CGuild* pkGuild;
+		int		iMemberCount;
+		int		iUsePotionPrice;
+		int		iScore;
+		LPCHARACTER pkChrFlag;
+		LPCHARACTER pkChrFlagBase;
 
-			std::set<DWORD> set_pidJoiner;
+		std::set<DWORD> set_pidJoiner;
 
-			void Initialize();
+		void Initialize();
 
-			int GetAccumulatedJoinerCount();
-			int GetCurJointerCount();
+		int GetAccumulatedJoinerCount();
+		int GetCurJointerCount();
 
-			void AppendMember(LPCHARACTER ch);
-			void RemoveMember(LPCHARACTER ch);
-		} TeamData;
+		void AppendMember(LPCHARACTER ch);
+		void RemoveMember(LPCHARACTER ch);
+	} TeamData;
 
-		TeamData	m_TeamData[2];
-		int		m_iObserverCount;
-		DWORD		m_dwStartTime;
-		BYTE		m_bTimeout;
+	TeamData	m_TeamData[2];
+	int		m_iObserverCount;
+	DWORD		m_dwStartTime;
+	BYTE		m_bTimeout;
 
-		TGuildWarInfo	m_WarInfo;
+	TGuildWarInfo	m_WarInfo;
 
-		CHARACTER_SET m_set_pkChr;
+	CHARACTER_SET m_set_pkChr;
 };
 
 class CWarMapManager : public singleton<CWarMapManager>
 {
-	public:
-		CWarMapManager();
-		virtual ~CWarMapManager();
+public:
+	CWarMapManager();
+	virtual ~CWarMapManager();
 
-		bool		LoadWarMapInfo(const char * c_pszFileName);
-		bool		IsWarMap(long lMapIndex);
-		TWarMapInfo *	GetWarMapInfo(long lMapIndex);
-		bool		GetStartPosition(long lMapIndex, BYTE bIdx, PIXEL_POSITION & pos);
+	bool		LoadWarMapInfo(const char* c_pszFileName);
+	bool		IsWarMap(long lMapIndex);
+	TWarMapInfo* GetWarMapInfo(long lMapIndex);
+	bool		GetStartPosition(long lMapIndex, BYTE bIdx, PIXEL_POSITION& pos);
 
-		template <typename Func> Func for_each(Func f);
-		long		CreateWarMap(const TGuildWarInfo & r_WarInfo, DWORD dwGuildID1, DWORD dwGuildID2);
-		void		DestroyWarMap(CWarMap* pMap);
-		CWarMap *	Find(long lMapIndex);
-		int		CountWarMap() { return m_mapWarMap.size(); }
+	template <typename Func> Func for_each(Func f);
+	long		CreateWarMap(const TGuildWarInfo& r_WarInfo, DWORD dwGuildID1, DWORD dwGuildID2);
+	void		DestroyWarMap(CWarMap* pMap);
+	CWarMap* Find(long lMapIndex);
+	int		CountWarMap() { return m_mapWarMap.size(); }
 
-		void		OnShutdown();
+	void		OnShutdown();
 
-	private:
-		std::map<long, TWarMapInfo *> m_map_kWarMapInfo;
-		std::map<long, CWarMap *> m_mapWarMap;
+private:
+	std::map<long, TWarMapInfo*> m_map_kWarMapInfo;
+	std::map<long, CWarMap*> m_mapWarMap;
 };
 
 template <typename Func> Func CWarMapManager::for_each(Func f)

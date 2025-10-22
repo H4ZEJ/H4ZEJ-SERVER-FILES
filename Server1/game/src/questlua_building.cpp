@@ -22,7 +22,7 @@ namespace quest
 			return 1;
 		}
 
-		CLand * pkLand = CManager::instance().FindLand((int) lua_tonumber(L, 1), (int) lua_tonumber(L, 2), (int) lua_tonumber(L, 3));
+		CLand* pkLand = CManager::instance().FindLand((int)lua_tonumber(L, 1), (int)lua_tonumber(L, 2), (int)lua_tonumber(L, 3));
 		lua_pushnumber(L, pkLand ? pkLand->GetID() : 0);
 		return 1;
 	}
@@ -37,11 +37,11 @@ namespace quest
 		{
 			using namespace building;
 
-			CLand * pkLand = CManager::instance().FindLand((DWORD) lua_tonumber(L, 1));
+			CLand* pkLand = CManager::instance().FindLand((DWORD)lua_tonumber(L, 1));
 
 			if (pkLand)
 			{
-				const TLand & t = pkLand->GetData();
+				const TLand& t = pkLand->GetData();
 
 				price = t.dwPrice;
 				owner = t.dwGuildID;
@@ -67,12 +67,12 @@ namespace quest
 
 		using namespace building;
 
-		CLand * pkLand = CManager::instance().FindLand((DWORD) lua_tonumber(L, 1));
+		CLand* pkLand = CManager::instance().FindLand((DWORD)lua_tonumber(L, 1));
 
 		if (pkLand)
 		{
 			if (pkLand->GetData().dwGuildID == 0)
-				pkLand->SetOwner((DWORD) lua_tonumber(L, 2));
+				pkLand->SetOwner((DWORD)lua_tonumber(L, 2));
 		}
 
 		return 0;
@@ -89,7 +89,7 @@ namespace quest
 			return 1;
 		}
 
-		auto pmsg(DBManager::instance().DirectQuery("SELECT COUNT(*) FROM land%s WHERE guild_id = %d", get_table_postfix(), (DWORD)lua_tonumber(L,1)));
+		auto pmsg(DBManager::instance().DirectQuery("SELECT COUNT(*) FROM land%s WHERE guild_id = %d", get_table_postfix(), (DWORD)lua_tonumber(L, 1)));
 		if (pmsg->Get()->uiNumRows > 0)
 		{
 			MYSQL_ROW row = mysql_fetch_row(pmsg->Get()->pSQLResult);

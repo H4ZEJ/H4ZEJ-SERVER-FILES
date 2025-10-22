@@ -14,7 +14,7 @@ extern std::string g_stLocaleNameColumn;
 bool CClientManager::InitializeTables()
 {
 #ifdef ENABLE_PROTO_FROM_DB
-	if (!(bIsProtoReadFromDB?InitializeMobTableFromDB():InitializeMobTable()))
+	if (!(bIsProtoReadFromDB ? InitializeMobTableFromDB() : InitializeMobTable()))
 #else
 	if (!InitializeMobTable())
 #endif
@@ -23,7 +23,7 @@ bool CClientManager::InitializeTables()
 		return false;
 	}
 #ifdef ENABLE_PROTO_FROM_DB
-	if (!(bIsProtoReadFromDB?InitializeItemTableFromDB():InitializeItemTable()))
+	if (!(bIsProtoReadFromDB ? InitializeItemTableFromDB() : InitializeItemTable()))
 #else
 	if (!InitializeItemTable())
 #endif
@@ -117,11 +117,11 @@ bool CClientManager::InitializeRefineTable()
 	char query[2048];
 
 	snprintf(query, sizeof(query),
-			"SELECT id, cost, prob, vnum0, count0, vnum1, count1, vnum2, count2,  vnum3, count3, vnum4, count4 FROM refine_proto%s",
-			GetTablePostfix());
+		"SELECT id, cost, prob, vnum0, count0, vnum1, count1, vnum2, count2,  vnum3, count3, vnum4, count4 FROM refine_proto%s",
+		GetTablePostfix());
 
 	auto pkMsg(CDBManager::instance().DirectQuery(query));
-	SQLResult * pRes = pkMsg->Get();
+	SQLResult* pRes = pkMsg->Get();
 
 	if (!pRes->uiNumRows)
 		return true;
@@ -129,13 +129,13 @@ bool CClientManager::InitializeRefineTable()
 	if (m_pRefineTable)
 	{
 		sys_log(0, "RELOAD: refine_proto");
-		delete [] m_pRefineTable;
+		delete[] m_pRefineTable;
 		m_pRefineTable = NULL;
 	}
 
 	m_iRefineTableSize = pRes->uiNumRows;
 
-	m_pRefineTable	= new TRefineTable[m_iRefineTableSize];
+	m_pRefineTable = new TRefineTable[m_iRefineTableSize];
 	memset(m_pRefineTable, 0, sizeof(TRefineTable) * m_iRefineTableSize);
 
 	TRefineTable* prt = m_pRefineTable;
@@ -174,11 +174,11 @@ bool CClientManager::InitializeRefineTable()
 
 class FCompareVnum
 {
-	public:
-		bool operator () (const TEntityTable & a, const TEntityTable & b) const
-		{
-			return (a.dwVnum < b.dwVnum);
-		}
+public:
+	bool operator () (const TEntityTable& a, const TEntityTable& b) const
+	{
+		return (a.dwVnum < b.dwVnum);
+	}
 };
 
 bool CClientManager::InitializeMobTable()
@@ -187,16 +187,17 @@ bool CClientManager::InitializeMobTable()
 
 	//===============================================//
 
-	map<int,const char*> localMap;
+	map<int, const char*> localMap;
 	//bool isNameFile = true;
 
 	cCsvTable nameData;
-	if(!nameData.Load("mob_names.txt",'\t'))
+	if (!nameData.Load("mob_names.txt", '\t'))
 	{
 		fprintf(stderr, "Could not load mob_names.txt\n");
-	} else {
+	}
+	else {
 		nameData.Next();
-		while(nameData.Next()) {
+		while (nameData.Next()) {
 			if (nameData.ColCount() >= 2) // skip noname
 				localMap[atoi(nameData.AsStringByIndex(0))] = nameData.AsStringByIndex(1);
 		}
@@ -205,7 +206,7 @@ bool CClientManager::InitializeMobTable()
 
 	cCsvTable data;
 
-	if(!data.Load("mob_proto.txt",'\t'))
+	if (!data.Load("mob_proto.txt", '\t'))
 	{
 		fprintf(stderr, "Could not load mob_proto.txt. Wrong file format?\n");
 		return false;
@@ -217,9 +218,9 @@ bool CClientManager::InitializeMobTable()
 		sys_log(0, "RELOAD: mob_proto");
 		m_vec_mobTable.clear();
 	}
-	m_vec_mobTable.resize(data.m_File.GetRowCount()-1);
+	m_vec_mobTable.resize(data.m_File.GetRowCount() - 1);
 	memset(&m_vec_mobTable[0], 0, sizeof(TMobTable) * m_vec_mobTable.size());
-	TMobTable * mob_table = &m_vec_mobTable[0];
+	TMobTable* mob_table = &m_vec_mobTable[0];
 
 	while (data.Next())
 	{
@@ -230,7 +231,6 @@ bool CClientManager::InitializeMobTable()
 
 		sys_log(1, "MOB #%-5d %-24s %-24s level: %-3u rank: %u empire: %d", mob_table->dwVnum, mob_table->szName, mob_table->szLocaleName, mob_table->bLevel, mob_table->bRank, mob_table->bEmpire);
 		++mob_table;
-
 	}
 	//_____________________________________________________//
 
@@ -243,7 +243,7 @@ bool CClientManager::InitializeShopTable()
 	MYSQL_ROW	data;
 	int		col;
 
-	static const char * s_szQuery =
+	static const char* s_szQuery =
 		"SELECT "
 		"shop.vnum, "
 		"shop.npc_vnum, "
@@ -254,7 +254,7 @@ bool CClientManager::InitializeShopTable()
 
 	auto pkMsg2(CDBManager::instance().DirectQuery(s_szQuery));
 
-	SQLResult * pRes2 = pkMsg2->Get();
+	SQLResult* pRes2 = pkMsg2->Get();
 
 	if (!pRes2->uiNumRows)
 	{
@@ -262,15 +262,15 @@ bool CClientManager::InitializeShopTable()
 		return false;
 	}
 
-	std::map<int, TShopTable *> map_shop;
+	std::map<int, TShopTable*> map_shop;
 
 	if (m_pShopTable)
 	{
-		delete [] (m_pShopTable);
+		delete[](m_pShopTable);
 		m_pShopTable = NULL;
 	}
 
-	TShopTable * shop_table = m_pShopTable;
+	TShopTable* shop_table = m_pShopTable;
 
 	while ((data = mysql_fetch_row(pRes2->pSQLResult)))
 	{
@@ -282,7 +282,7 @@ bool CClientManager::InitializeShopTable()
 		if (map_shop.end() == map_shop.find(iShopVnum))
 		{
 			shop_table = new TShopTable{};
-			shop_table->dwVnum	= iShopVnum;
+			shop_table->dwVnum = iShopVnum;
 
 			map_shop[iShopVnum] = shop_table;
 		}
@@ -294,7 +294,7 @@ bool CClientManager::InitializeShopTable()
 		if (!data[col])
 			continue;
 
-		TShopItemTable * pItem = &shop_table->items[shop_table->byItemCount];
+		TShopItemTable* pItem = &shop_table->items[shop_table->byItemCount];
 
 		str_to_number(pItem->vnum, data[col++]);
 		str_to_number(pItem->count, data[col++]);
@@ -323,13 +323,13 @@ bool CClientManager::InitializeQuestItemTable()
 {
 	using namespace std;
 
-	static const char * s_szQuery = "SELECT vnum, name, %s FROM quest_item_proto ORDER BY vnum";
+	static const char* s_szQuery = "SELECT vnum, name, %s FROM quest_item_proto ORDER BY vnum";
 
 	char query[1024];
 	snprintf(query, sizeof(query), s_szQuery, g_stLocaleNameColumn.c_str());
 
 	auto pkMsg(CDBManager::instance().DirectQuery(query));
-	SQLResult * pRes = pkMsg->Get();
+	SQLResult* pRes = pkMsg->Get();
 
 	if (!pRes->uiNumRows)
 	{
@@ -379,14 +379,15 @@ bool CClientManager::InitializeItemTable()
 
 	//=================================================================================//
 	//=================================================================================//
-	map<int,const char*> localMap;
+	map<int, const char*> localMap;
 	cCsvTable nameData;
-	if(!nameData.Load("item_names.txt",'\t'))
+	if (!nameData.Load("item_names.txt", '\t'))
 	{
 		fprintf(stderr, "Could not load item_names.txt.\n");
-	} else {
+	}
+	else {
 		nameData.Next();
-		while(nameData.Next()) {
+		while (nameData.Next()) {
 			if (nameData.ColCount() >= 2) // skip noname
 				localMap[atoi(nameData.AsStringByIndex(0))] = nameData.AsStringByIndex(1);
 		}
@@ -394,7 +395,7 @@ bool CClientManager::InitializeItemTable()
 	//_________________________________________________________________//
 
 	cCsvTable data;
-	if(!data.Load("item_proto.txt",'\t'))
+	if (!data.Load("item_proto.txt", '\t'))
 	{
 		fprintf(stderr, "Could not load item_proto.txt. Wrong file format?\n");
 		return false;
@@ -409,7 +410,7 @@ bool CClientManager::InitializeItemTable()
 	}
 
 	data.Destroy();
-	if(!data.Load("item_proto.txt",'\t'))
+	if (!data.Load("item_proto.txt", '\t'))
 	{
 		fprintf(stderr, "Could not load item_proto.txt. Wrong file format?\n");
 		return false;
@@ -419,7 +420,7 @@ bool CClientManager::InitializeItemTable()
 	m_vec_itemTable.resize(data.m_File.GetRowCount() - 1);
 	memset(&m_vec_itemTable[0], 0, sizeof(TItemTable) * m_vec_itemTable.size());
 
-	TItemTable * item_table = &m_vec_itemTable[0];
+	TItemTable* item_table = &m_vec_itemTable[0];
 
 	while (data.Next())
 	{
@@ -443,24 +444,24 @@ bool CClientManager::InitializeItemTable()
 
 	while (it != m_vec_itemTable.end())
 	{
-		TItemTable * item_table = &(*(it++));
+		TItemTable* item_table = &(*(it++));
 
 		sys_log(1, "ITEM: #%-5lu %-24s %-24s VAL: %ld %ld %ld %ld %ld %ld WEAR %lu ANTI %lu IMMUNE %lu REFINE %lu REFINE_SET %u MAGIC_PCT %u",
-				item_table->dwVnum,
-				item_table->szName,
-				item_table->szLocaleName,
-				item_table->alValues[0],
-				item_table->alValues[1],
-				item_table->alValues[2],
-				item_table->alValues[3],
-				item_table->alValues[4],
-				item_table->alValues[5],
-				item_table->dwWearFlags,
-				item_table->dwAntiFlags,
-				item_table->dwImmuneFlag,
-				item_table->dwRefinedVnum,
-				item_table->wRefineSet,
-				item_table->bAlterToMagicItemPct);
+			item_table->dwVnum,
+			item_table->szName,
+			item_table->szLocaleName,
+			item_table->alValues[0],
+			item_table->alValues[1],
+			item_table->alValues[2],
+			item_table->alValues[3],
+			item_table->alValues[4],
+			item_table->alValues[5],
+			item_table->dwWearFlags,
+			item_table->dwAntiFlags,
+			item_table->dwImmuneFlag,
+			item_table->dwRefinedVnum,
+			item_table->wRefineSet,
+			item_table->bAlterToMagicItemPct);
 
 		m_map_itemTableByVnum.emplace(item_table->dwVnum, item_table);
 	}
@@ -482,7 +483,7 @@ bool CClientManager::InitializeSkillTable()
 		GetTablePostfix());
 
 	auto pkMsg(CDBManager::instance().DirectQuery(query));
-	SQLResult * pRes = pkMsg->Get();
+	SQLResult* pRes = pkMsg->Get();
 
 	if (!pRes->uiNumRows)
 	{
@@ -564,7 +565,7 @@ bool CClientManager::InitializeBanwordTable()
 
 	auto pkMsg(CDBManager::instance().DirectQuery("SELECT word FROM banword"));
 
-	SQLResult * pRes = pkMsg->Get();
+	SQLResult* pRes = pkMsg->Get();
 
 	if (pRes->uiNumRows == 0)
 		return true;
@@ -590,18 +591,18 @@ bool CClientManager::InitializeItemAttrTable()
 {
 	char query[4096];
 	snprintf(query, sizeof(query),
-			"SELECT apply, apply+0, prob, lv1, lv2, lv3, lv4, lv5, weapon, body, wrist, foots, neck, head, shield, ear "
+		"SELECT apply, apply+0, prob, lv1, lv2, lv3, lv4, lv5, weapon, body, wrist, foots, neck, head, shield, ear "
 #ifdef ENABLE_ITEM_ATTR_COSTUME
-			", costume_body, costume_hair"
+		", costume_body, costume_hair"
 #if defined(ENABLE_ITEM_ATTR_COSTUME) && defined(ENABLE_WEAPON_COSTUME_SYSTEM)
-			", costume_weapon"
+		", costume_weapon"
 #endif
 #endif
-			" FROM item_attr%s ORDER BY apply",
-			GetTablePostfix());
+		" FROM item_attr%s ORDER BY apply",
+		GetTablePostfix());
 
 	auto pkMsg(CDBManager::instance().DirectQuery(query));
-	SQLResult * pRes = pkMsg->Get();
+	SQLResult* pRes = pkMsg->Get();
 
 	if (!pRes->uiNumRows)
 	{
@@ -650,35 +651,35 @@ bool CClientManager::InitializeItemAttrTable()
 #endif
 
 		sys_log(0, "ITEM_ATTR: %-20s %4lu { %3d %3d %3d %3d %3d } { %d %d %d %d %d %d %d"
-					#ifdef ENABLE_ITEM_ATTR_COSTUME
-					" %d %d"
-					#if defined(ENABLE_ITEM_ATTR_COSTUME) && defined(ENABLE_WEAPON_COSTUME_SYSTEM)
-					" %d"
-					#endif
-					#endif
-				" }",
-				t.szApply,
-				t.dwProb,
-				t.lValues[0],
-				t.lValues[1],
-				t.lValues[2],
-				t.lValues[3],
-				t.lValues[4],
-				t.bMaxLevelBySet[ATTRIBUTE_SET_WEAPON],
-				t.bMaxLevelBySet[ATTRIBUTE_SET_BODY],
-				t.bMaxLevelBySet[ATTRIBUTE_SET_WRIST],
-				t.bMaxLevelBySet[ATTRIBUTE_SET_FOOTS],
-				t.bMaxLevelBySet[ATTRIBUTE_SET_NECK],
-				t.bMaxLevelBySet[ATTRIBUTE_SET_HEAD],
-				t.bMaxLevelBySet[ATTRIBUTE_SET_SHIELD],
-				t.bMaxLevelBySet[ATTRIBUTE_SET_EAR]
-				#ifdef ENABLE_ITEM_ATTR_COSTUME
-				, t.bMaxLevelBySet[ATTRIBUTE_SET_COSTUME_BODY]
-				, t.bMaxLevelBySet[ATTRIBUTE_SET_COSTUME_HAIR]
-				#if defined(ENABLE_ITEM_ATTR_COSTUME) && defined(ENABLE_WEAPON_COSTUME_SYSTEM)
-				, t.bMaxLevelBySet[ATTRIBUTE_SET_COSTUME_WEAPON]
-				#endif
-				#endif
+#ifdef ENABLE_ITEM_ATTR_COSTUME
+			" %d %d"
+#if defined(ENABLE_ITEM_ATTR_COSTUME) && defined(ENABLE_WEAPON_COSTUME_SYSTEM)
+			" %d"
+#endif
+#endif
+			" }",
+			t.szApply,
+			t.dwProb,
+			t.lValues[0],
+			t.lValues[1],
+			t.lValues[2],
+			t.lValues[3],
+			t.lValues[4],
+			t.bMaxLevelBySet[ATTRIBUTE_SET_WEAPON],
+			t.bMaxLevelBySet[ATTRIBUTE_SET_BODY],
+			t.bMaxLevelBySet[ATTRIBUTE_SET_WRIST],
+			t.bMaxLevelBySet[ATTRIBUTE_SET_FOOTS],
+			t.bMaxLevelBySet[ATTRIBUTE_SET_NECK],
+			t.bMaxLevelBySet[ATTRIBUTE_SET_HEAD],
+			t.bMaxLevelBySet[ATTRIBUTE_SET_SHIELD],
+			t.bMaxLevelBySet[ATTRIBUTE_SET_EAR]
+#ifdef ENABLE_ITEM_ATTR_COSTUME
+			, t.bMaxLevelBySet[ATTRIBUTE_SET_COSTUME_BODY]
+			, t.bMaxLevelBySet[ATTRIBUTE_SET_COSTUME_HAIR]
+#if defined(ENABLE_ITEM_ATTR_COSTUME) && defined(ENABLE_WEAPON_COSTUME_SYSTEM)
+			, t.bMaxLevelBySet[ATTRIBUTE_SET_COSTUME_WEAPON]
+#endif
+#endif
 		);
 
 		m_vec_itemAttrTable.emplace_back(t);
@@ -691,18 +692,18 @@ bool CClientManager::InitializeItemRareTable()
 {
 	char query[4096];
 	snprintf(query, sizeof(query),
-			"SELECT apply, apply+0, prob, lv1, lv2, lv3, lv4, lv5, weapon, body, wrist, foots, neck, head, shield, ear "
+		"SELECT apply, apply+0, prob, lv1, lv2, lv3, lv4, lv5, weapon, body, wrist, foots, neck, head, shield, ear "
 #ifdef ENABLE_ITEM_ATTR_COSTUME
-			", costume_body, costume_hair"
+		", costume_body, costume_hair"
 #if defined(ENABLE_ITEM_ATTR_COSTUME) && defined(ENABLE_WEAPON_COSTUME_SYSTEM)
-			", costume_weapon"
+		", costume_weapon"
 #endif
 #endif
-			" FROM item_attr_rare%s ORDER BY apply",
-			GetTablePostfix());
+		" FROM item_attr_rare%s ORDER BY apply",
+		GetTablePostfix());
 
 	auto pkMsg(CDBManager::instance().DirectQuery(query));
-	SQLResult * pRes = pkMsg->Get();
+	SQLResult* pRes = pkMsg->Get();
 
 	if (!pRes->uiNumRows)
 	{
@@ -742,44 +743,44 @@ bool CClientManager::InitializeItemRareTable()
 		str_to_number(t.bMaxLevelBySet[ATTRIBUTE_SET_HEAD], data[col++]);
 		str_to_number(t.bMaxLevelBySet[ATTRIBUTE_SET_SHIELD], data[col++]);
 		str_to_number(t.bMaxLevelBySet[ATTRIBUTE_SET_EAR], data[col++]);
-		#ifdef ENABLE_ITEM_ATTR_COSTUME
+#ifdef ENABLE_ITEM_ATTR_COSTUME
 		str_to_number(t.bMaxLevelBySet[ATTRIBUTE_SET_COSTUME_BODY], data[col++]);
 		str_to_number(t.bMaxLevelBySet[ATTRIBUTE_SET_COSTUME_HAIR], data[col++]);
-		#if defined(ENABLE_ITEM_ATTR_COSTUME) && defined(ENABLE_WEAPON_COSTUME_SYSTEM)
+#if defined(ENABLE_ITEM_ATTR_COSTUME) && defined(ENABLE_WEAPON_COSTUME_SYSTEM)
 		str_to_number(t.bMaxLevelBySet[ATTRIBUTE_SET_COSTUME_WEAPON], data[col++]);
-		#endif
-		#endif
+#endif
+#endif
 
 		sys_log(0, "ITEM_RARE: %-20s %4lu { %3d %3d %3d %3d %3d } { %d %d %d %d %d %d %d"
-					#ifdef ENABLE_ITEM_ATTR_COSTUME
-					" %d %d"
-					#if defined(ENABLE_ITEM_ATTR_COSTUME) && defined(ENABLE_WEAPON_COSTUME_SYSTEM)
-					" %d"
-					#endif
-					#endif
-				" }",
-				t.szApply,
-				t.dwProb,
-				t.lValues[0],
-				t.lValues[1],
-				t.lValues[2],
-				t.lValues[3],
-				t.lValues[4],
-				t.bMaxLevelBySet[ATTRIBUTE_SET_WEAPON],
-				t.bMaxLevelBySet[ATTRIBUTE_SET_BODY],
-				t.bMaxLevelBySet[ATTRIBUTE_SET_WRIST],
-				t.bMaxLevelBySet[ATTRIBUTE_SET_FOOTS],
-				t.bMaxLevelBySet[ATTRIBUTE_SET_NECK],
-				t.bMaxLevelBySet[ATTRIBUTE_SET_HEAD],
-				t.bMaxLevelBySet[ATTRIBUTE_SET_SHIELD],
-				t.bMaxLevelBySet[ATTRIBUTE_SET_EAR]
-				#ifdef ENABLE_ITEM_ATTR_COSTUME
-				, t.bMaxLevelBySet[ATTRIBUTE_SET_COSTUME_BODY]
-				, t.bMaxLevelBySet[ATTRIBUTE_SET_COSTUME_HAIR]
-				#if defined(ENABLE_ITEM_ATTR_COSTUME) && defined(ENABLE_WEAPON_COSTUME_SYSTEM)
-				, t.bMaxLevelBySet[ATTRIBUTE_SET_COSTUME_WEAPON]
-				#endif
-				#endif
+#ifdef ENABLE_ITEM_ATTR_COSTUME
+			" %d %d"
+#if defined(ENABLE_ITEM_ATTR_COSTUME) && defined(ENABLE_WEAPON_COSTUME_SYSTEM)
+			" %d"
+#endif
+#endif
+			" }",
+			t.szApply,
+			t.dwProb,
+			t.lValues[0],
+			t.lValues[1],
+			t.lValues[2],
+			t.lValues[3],
+			t.lValues[4],
+			t.bMaxLevelBySet[ATTRIBUTE_SET_WEAPON],
+			t.bMaxLevelBySet[ATTRIBUTE_SET_BODY],
+			t.bMaxLevelBySet[ATTRIBUTE_SET_WRIST],
+			t.bMaxLevelBySet[ATTRIBUTE_SET_FOOTS],
+			t.bMaxLevelBySet[ATTRIBUTE_SET_NECK],
+			t.bMaxLevelBySet[ATTRIBUTE_SET_HEAD],
+			t.bMaxLevelBySet[ATTRIBUTE_SET_SHIELD],
+			t.bMaxLevelBySet[ATTRIBUTE_SET_EAR]
+#ifdef ENABLE_ITEM_ATTR_COSTUME
+			, t.bMaxLevelBySet[ATTRIBUTE_SET_COSTUME_BODY]
+			, t.bMaxLevelBySet[ATTRIBUTE_SET_COSTUME_HAIR]
+#if defined(ENABLE_ITEM_ATTR_COSTUME) && defined(ENABLE_WEAPON_COSTUME_SYSTEM)
+			, t.bMaxLevelBySet[ATTRIBUTE_SET_COSTUME_WEAPON]
+#endif
+#endif
 		);
 
 		m_vec_itemRareTable.emplace_back(t);
@@ -800,7 +801,7 @@ bool CClientManager::InitializeLandTable()
 		GetTablePostfix());
 
 	auto pkMsg(CDBManager::instance().DirectQuery(query));
-	SQLResult * pRes = pkMsg->Get();
+	SQLResult* pRes = pkMsg->Get();
 
 	if (!m_vec_kLandTable.empty())
 	{
@@ -839,28 +840,28 @@ bool CClientManager::InitializeLandTable()
 	return true;
 }
 
-void parse_pair_number_string(const char * c_pszString, std::vector<std::pair<int, int> > & vec)
+void parse_pair_number_string(const char* c_pszString, std::vector<std::pair<int, int> >& vec)
 {
 	// format: 10,1/20,3/300,50
-	const char * t = c_pszString;
-	const char * p = strchr(t, '/');
+	const char* t = c_pszString;
+	const char* p = strchr(t, '/');
 	std::pair<int, int> k;
 
 	char szNum[32 + 1];
-	char * comma;
+	char* comma;
 
 	while (p)
 	{
 		if (isnhdigit(*t))
 		{
-			strlcpy(szNum, t, MIN(sizeof(szNum), (p-t)+1));
+			strlcpy(szNum, t, MIN(sizeof(szNum), (p - t) + 1));
 
 			comma = strchr(szNum, ',');
 
 			if (comma)
 			{
 				*comma = '\0';
-				str_to_number(k.second, comma+1);
+				str_to_number(k.second, comma + 1);
 			}
 			else
 				k.second = 0;
@@ -882,7 +883,7 @@ void parse_pair_number_string(const char * c_pszString, std::vector<std::pair<in
 		if (comma)
 		{
 			*comma = '\0';
-			str_to_number(k.second, comma+1);
+			str_to_number(k.second, comma + 1);
 		}
 		else
 			k.second = 0;
@@ -898,12 +899,12 @@ bool CClientManager::InitializeObjectProto()
 
 	char query[4096];
 	snprintf(query, sizeof(query),
-			"SELECT vnum, price, materials, upgrade_vnum, upgrade_limit_time, life, reg_1, reg_2, reg_3, reg_4, npc, group_vnum, dependent_group "
-			"FROM object_proto%s ORDER BY vnum",
-			GetTablePostfix());
+		"SELECT vnum, price, materials, upgrade_vnum, upgrade_limit_time, life, reg_1, reg_2, reg_3, reg_4, npc, group_vnum, dependent_group "
+		"FROM object_proto%s ORDER BY vnum",
+		GetTablePostfix());
 
 	auto pkMsg(CDBManager::instance().DirectQuery(query));
-	SQLResult * pRes = pkMsg->Get();
+	SQLResult* pRes = pkMsg->Get();
 
 	if (!m_vec_kObjectProto.empty())
 	{
@@ -932,7 +933,7 @@ bool CClientManager::InitializeObjectProto()
 
 			for (unsigned int i = 0; i < OBJECT_MATERIAL_MAX_NUM && i < vec.size(); ++i)
 			{
-				std::pair<int, int> & r = vec[i];
+				std::pair<int, int>& r = vec[i];
 
 				t.kMaterials[i].dwItemVnum = r.first;
 				t.kMaterials[i].dwCount = r.second;
@@ -952,11 +953,11 @@ bool CClientManager::InitializeObjectProto()
 			str_to_number(t.dwDependOnGroupVnum, data[col++]);
 
 			t.lNPCX = 0;
-			t.lNPCY = MAX(t.lRegion[1], t.lRegion[3])+300;
+			t.lNPCY = MAX(t.lRegion[1], t.lRegion[3]) + 300;
 			// END_OF_ADD_BUILDING_NPC
 
 			sys_log(0, "OBJ_PROTO: vnum %lu price %lu mat %lu %lu",
-					t.dwVnum, t.dwPrice, t.kMaterials[0].dwItemVnum, t.kMaterials[0].dwCount);
+				t.dwVnum, t.dwPrice, t.kMaterials[0].dwItemVnum, t.kMaterials[0].dwCount);
 
 			m_vec_kObjectProto.emplace_back(t);
 		}
@@ -972,7 +973,7 @@ bool CClientManager::InitializeObjectTable()
 	snprintf(query, sizeof(query), "SELECT id, land_id, vnum, map_index, x, y, x_rot, y_rot, z_rot, life FROM object%s ORDER BY id", GetTablePostfix());
 
 	auto pkMsg(CDBManager::instance().DirectQuery(query));
-	SQLResult * pRes = pkMsg->Get();
+	SQLResult* pRes = pkMsg->Get();
 
 	if (!m_map_pkObjectTable.empty())
 	{
@@ -985,7 +986,7 @@ bool CClientManager::InitializeObjectTable()
 	if (pRes->uiNumRows > 0)
 		while ((data = mysql_fetch_row(pRes->pSQLResult)))
 		{
-			TObject * k = new TObject;
+			TObject* k = new TObject;
 
 			memset(k, 0, sizeof(TObject));
 
@@ -1003,7 +1004,7 @@ bool CClientManager::InitializeObjectTable()
 			str_to_number(k->lLife, data[col++]);
 
 			sys_log(0, "OBJ: %lu vnum %lu map %-4ld %7ldx%-7ld life %ld",
-					k->dwID, k->dwVnum, k->lMapIndex, k->x, k->y, k->lLife);
+				k->dwID, k->dwVnum, k->lMapIndex, k->x, k->y, k->lLife);
 
 			m_map_pkObjectTable.emplace(k->dwID, k);
 		}
@@ -1206,23 +1207,24 @@ bool CClientManager::MirrorItemTableIntoDB()
 
 namespace MProto
 {
-enum MProtoT
-{
-	vnum, name, locale_name, type, rank, battle_type, level, size,
-	ai_flag, setRaceFlag, setImmuneFlag, on_click, empire, drop_item,
-	resurrection_vnum, folder, st, dx, ht, iq, damage_min, damage_max, max_hp,
-	regen_cycle, regen_percent, exp, gold_min, gold_max, def,
-	attack_speed, move_speed, aggressive_hp_pct, aggressive_sight, attack_range, polymorph_item,
-	enchant_curse, enchant_slow, enchant_poison, enchant_stun, enchant_critical, enchant_penetrate,
-	resist_sword, resist_twohand, resist_dagger, resist_bell, resist_fan, resist_bow,
-	resist_fire, resist_elect, resist_magic, resist_wind, resist_poison, dam_multiply, summon, drain_sp,
-	skill_vnum0, skill_level0, skill_vnum1, skill_level1, skill_vnum2, skill_level2, skill_vnum3, skill_level3,
-	skill_vnum4, skill_level4, sp_berserk, sp_stoneskin, sp_godspeed, sp_deathblow, sp_revive
-};
+	enum MProtoT
+	{
+		vnum, name, locale_name, type, rank, battle_type, level, size,
+		ai_flag, setRaceFlag, setImmuneFlag, on_click, empire, drop_item,
+		resurrection_vnum, folder, st, dx, ht, iq, damage_min, damage_max, max_hp,
+		regen_cycle, regen_percent, exp, gold_min, gold_max, def,
+		attack_speed, move_speed, aggressive_hp_pct, aggressive_sight, attack_range, polymorph_item,
+		enchant_curse, enchant_slow, enchant_poison, enchant_stun, enchant_critical, enchant_penetrate,
+		resist_sword, resist_twohand, resist_dagger, resist_bell, resist_fan, resist_bow,
+		resist_fire, resist_elect, resist_magic, resist_wind, resist_poison, dam_multiply, summon, drain_sp,
+		skill_vnum0, skill_level0, skill_vnum1, skill_level1, skill_vnum2, skill_level2, skill_vnum3, skill_level3,
+		skill_vnum4, skill_level4, sp_berserk, sp_stoneskin, sp_godspeed, sp_deathblow, sp_revive
+	};
 }
 
 bool CClientManager::InitializeMobTableFromDB()
-{	char query[2048];
+{
+	char query[2048];
 	fprintf(stdout, "Loading mob_proto from MySQL\n");
 	snprintf(query, sizeof(query),
 		"SELECT vnum, name, %s, type, `rank`, battle_type, level, size+0,"
@@ -1241,7 +1243,7 @@ bool CClientManager::InitializeMobTableFromDB()
 	);
 
 	auto pkMsg(CDBManager::instance().DirectQuery(query));
-	SQLResult * pRes = pkMsg->Get();
+	SQLResult* pRes = pkMsg->Get();
 
 	DWORD addNumber = pRes->uiNumRows;
 	if (addNumber == 0)
@@ -1255,99 +1257,97 @@ bool CClientManager::InitializeMobTableFromDB()
 
 	m_vec_mobTable.resize(addNumber);
 	memset(&m_vec_mobTable[0], 0, sizeof(TMobTable) * m_vec_mobTable.size());
-	TMobTable * mob_table = &m_vec_mobTable[0];
+	TMobTable* mob_table = &m_vec_mobTable[0];
 
 	MYSQL_ROW data = NULL;
 	while ((data = mysql_fetch_row(pRes->pSQLResult)))
 	{
 		// check whether or not the field is NULL or that contains an empty string
 		// ## GENERAL
-		VERIFY_IFIELD(MProto::vnum,				mob_table->dwVnum);
-		VERIFY_SFIELD(MProto::name,				mob_table->szName);
-		VERIFY_SFIELD(MProto::locale_name,		mob_table->szLocaleName);
-		VERIFY_IFIELD(MProto::rank,				mob_table->bRank);
-		VERIFY_IFIELD(MProto::type,				mob_table->bType);
-		VERIFY_IFIELD(MProto::battle_type,		mob_table->bBattleType);
-		VERIFY_IFIELD(MProto::level,			mob_table->bLevel);
-		VERIFY_IFIELD(MProto::size,				mob_table->bSize);
+		VERIFY_IFIELD(MProto::vnum, mob_table->dwVnum);
+		VERIFY_SFIELD(MProto::name, mob_table->szName);
+		VERIFY_SFIELD(MProto::locale_name, mob_table->szLocaleName);
+		VERIFY_IFIELD(MProto::rank, mob_table->bRank);
+		VERIFY_IFIELD(MProto::type, mob_table->bType);
+		VERIFY_IFIELD(MProto::battle_type, mob_table->bBattleType);
+		VERIFY_IFIELD(MProto::level, mob_table->bLevel);
+		VERIFY_IFIELD(MProto::size, mob_table->bSize);
 
 		// ## FLAG
-		VERIFY_IFIELD(MProto::ai_flag,			mob_table->dwAIFlag);
-		VERIFY_IFIELD(MProto::setRaceFlag,		mob_table->dwRaceFlag);
-		VERIFY_IFIELD(MProto::setImmuneFlag,	mob_table->dwImmuneFlag);
+		VERIFY_IFIELD(MProto::ai_flag, mob_table->dwAIFlag);
+		VERIFY_IFIELD(MProto::setRaceFlag, mob_table->dwRaceFlag);
+		VERIFY_IFIELD(MProto::setImmuneFlag, mob_table->dwImmuneFlag);
 
 		// ## OTHERS
-		VERIFY_IFIELD(MProto::empire,			mob_table->bEmpire);
-		VERIFY_SFIELD(MProto::folder,			mob_table->szFolder);
-		VERIFY_IFIELD(MProto::on_click,			mob_table->bOnClickType);
-		VERIFY_IFIELD(MProto::st,				mob_table->bStr);
-		VERIFY_IFIELD(MProto::dx,				mob_table->bDex);
-		VERIFY_IFIELD(MProto::ht,				mob_table->bCon);
-		VERIFY_IFIELD(MProto::iq,				mob_table->bInt);
-		VERIFY_IFIELD(MProto::damage_min,		mob_table->dwDamageRange[0]);
-		VERIFY_IFIELD(MProto::damage_max,		mob_table->dwDamageRange[1]);
-		VERIFY_IFIELD(MProto::max_hp,			mob_table->dwMaxHP);
-		VERIFY_IFIELD(MProto::regen_cycle,		mob_table->bRegenCycle);
-		VERIFY_IFIELD(MProto::regen_percent,	mob_table->bRegenPercent);
-		VERIFY_IFIELD(MProto::gold_min,			mob_table->dwGoldMin);
-		VERIFY_IFIELD(MProto::gold_max,			mob_table->dwGoldMax);
-		VERIFY_IFIELD(MProto::exp,				mob_table->dwExp);
-		VERIFY_IFIELD(MProto::def,				mob_table->wDef);
-		VERIFY_IFIELD(MProto::attack_speed,		mob_table->sAttackSpeed);
-		VERIFY_IFIELD(MProto::move_speed,		mob_table->sMovingSpeed);
-		VERIFY_IFIELD(MProto::aggressive_hp_pct,mob_table->bAggresiveHPPct);
-		VERIFY_IFIELD(MProto::aggressive_sight,	mob_table->wAggressiveSight);
-		VERIFY_IFIELD(MProto::attack_range,		mob_table->wAttackRange);
-		VERIFY_IFIELD(MProto::drop_item,		mob_table->dwDropItemVnum);
-		VERIFY_IFIELD(MProto::resurrection_vnum,mob_table->dwResurrectionVnum);
+		VERIFY_IFIELD(MProto::empire, mob_table->bEmpire);
+		VERIFY_SFIELD(MProto::folder, mob_table->szFolder);
+		VERIFY_IFIELD(MProto::on_click, mob_table->bOnClickType);
+		VERIFY_IFIELD(MProto::st, mob_table->bStr);
+		VERIFY_IFIELD(MProto::dx, mob_table->bDex);
+		VERIFY_IFIELD(MProto::ht, mob_table->bCon);
+		VERIFY_IFIELD(MProto::iq, mob_table->bInt);
+		VERIFY_IFIELD(MProto::damage_min, mob_table->dwDamageRange[0]);
+		VERIFY_IFIELD(MProto::damage_max, mob_table->dwDamageRange[1]);
+		VERIFY_IFIELD(MProto::max_hp, mob_table->dwMaxHP);
+		VERIFY_IFIELD(MProto::regen_cycle, mob_table->bRegenCycle);
+		VERIFY_IFIELD(MProto::regen_percent, mob_table->bRegenPercent);
+		VERIFY_IFIELD(MProto::gold_min, mob_table->dwGoldMin);
+		VERIFY_IFIELD(MProto::gold_max, mob_table->dwGoldMax);
+		VERIFY_IFIELD(MProto::exp, mob_table->dwExp);
+		VERIFY_IFIELD(MProto::def, mob_table->wDef);
+		VERIFY_IFIELD(MProto::attack_speed, mob_table->sAttackSpeed);
+		VERIFY_IFIELD(MProto::move_speed, mob_table->sMovingSpeed);
+		VERIFY_IFIELD(MProto::aggressive_hp_pct, mob_table->bAggresiveHPPct);
+		VERIFY_IFIELD(MProto::aggressive_sight, mob_table->wAggressiveSight);
+		VERIFY_IFIELD(MProto::attack_range, mob_table->wAttackRange);
+		VERIFY_IFIELD(MProto::drop_item, mob_table->dwDropItemVnum);
+		VERIFY_IFIELD(MProto::resurrection_vnum, mob_table->dwResurrectionVnum);
 
 		// ## ENCHANT 6
-		VERIFY_IFIELD(MProto::enchant_curse,	mob_table->cEnchants[MOB_ENCHANT_CURSE]);
-		VERIFY_IFIELD(MProto::enchant_slow,		mob_table->cEnchants[MOB_ENCHANT_SLOW]);
-		VERIFY_IFIELD(MProto::enchant_poison,	mob_table->cEnchants[MOB_ENCHANT_POISON]);
-		VERIFY_IFIELD(MProto::enchant_stun,		mob_table->cEnchants[MOB_ENCHANT_STUN]);
-		VERIFY_IFIELD(MProto::enchant_critical,	mob_table->cEnchants[MOB_ENCHANT_CRITICAL]);
-		VERIFY_IFIELD(MProto::enchant_penetrate,mob_table->cEnchants[MOB_ENCHANT_PENETRATE]);
-
+		VERIFY_IFIELD(MProto::enchant_curse, mob_table->cEnchants[MOB_ENCHANT_CURSE]);
+		VERIFY_IFIELD(MProto::enchant_slow, mob_table->cEnchants[MOB_ENCHANT_SLOW]);
+		VERIFY_IFIELD(MProto::enchant_poison, mob_table->cEnchants[MOB_ENCHANT_POISON]);
+		VERIFY_IFIELD(MProto::enchant_stun, mob_table->cEnchants[MOB_ENCHANT_STUN]);
+		VERIFY_IFIELD(MProto::enchant_critical, mob_table->cEnchants[MOB_ENCHANT_CRITICAL]);
+		VERIFY_IFIELD(MProto::enchant_penetrate, mob_table->cEnchants[MOB_ENCHANT_PENETRATE]);
 
 		// ## RESIST 11
-		VERIFY_IFIELD(MProto::resist_sword,		mob_table->cResists[MOB_RESIST_SWORD]);
-		VERIFY_IFIELD(MProto::resist_twohand,	mob_table->cResists[MOB_RESIST_TWOHAND]);
-		VERIFY_IFIELD(MProto::resist_dagger,	mob_table->cResists[MOB_RESIST_DAGGER]);
-		VERIFY_IFIELD(MProto::resist_bell,		mob_table->cResists[MOB_RESIST_BELL]);
-		VERIFY_IFIELD(MProto::resist_fan,		mob_table->cResists[MOB_RESIST_FAN]);
-		VERIFY_IFIELD(MProto::resist_bow,		mob_table->cResists[MOB_RESIST_BOW]);
-		VERIFY_IFIELD(MProto::resist_fire,		mob_table->cResists[MOB_RESIST_FIRE]);
-		VERIFY_IFIELD(MProto::resist_elect,		mob_table->cResists[MOB_RESIST_ELECT]);
-		VERIFY_IFIELD(MProto::resist_magic,		mob_table->cResists[MOB_RESIST_MAGIC]);
-		VERIFY_IFIELD(MProto::resist_wind,		mob_table->cResists[MOB_RESIST_WIND]);
-		VERIFY_IFIELD(MProto::resist_poison,	mob_table->cResists[MOB_RESIST_POISON]);
-
+		VERIFY_IFIELD(MProto::resist_sword, mob_table->cResists[MOB_RESIST_SWORD]);
+		VERIFY_IFIELD(MProto::resist_twohand, mob_table->cResists[MOB_RESIST_TWOHAND]);
+		VERIFY_IFIELD(MProto::resist_dagger, mob_table->cResists[MOB_RESIST_DAGGER]);
+		VERIFY_IFIELD(MProto::resist_bell, mob_table->cResists[MOB_RESIST_BELL]);
+		VERIFY_IFIELD(MProto::resist_fan, mob_table->cResists[MOB_RESIST_FAN]);
+		VERIFY_IFIELD(MProto::resist_bow, mob_table->cResists[MOB_RESIST_BOW]);
+		VERIFY_IFIELD(MProto::resist_fire, mob_table->cResists[MOB_RESIST_FIRE]);
+		VERIFY_IFIELD(MProto::resist_elect, mob_table->cResists[MOB_RESIST_ELECT]);
+		VERIFY_IFIELD(MProto::resist_magic, mob_table->cResists[MOB_RESIST_MAGIC]);
+		VERIFY_IFIELD(MProto::resist_wind, mob_table->cResists[MOB_RESIST_WIND]);
+		VERIFY_IFIELD(MProto::resist_poison, mob_table->cResists[MOB_RESIST_POISON]);
 
 		// ## OTHERS #2
-		VERIFY_IFIELD(MProto::dam_multiply,		mob_table->fDamMultiply);
-		VERIFY_IFIELD(MProto::summon,			mob_table->dwSummonVnum);
-		VERIFY_IFIELD(MProto::drain_sp,			mob_table->dwDrainSP);
+		VERIFY_IFIELD(MProto::dam_multiply, mob_table->fDamMultiply);
+		VERIFY_IFIELD(MProto::summon, mob_table->dwSummonVnum);
+		VERIFY_IFIELD(MProto::drain_sp, mob_table->dwDrainSP);
 
-		VERIFY_IFIELD(MProto::polymorph_item,	mob_table->dwPolymorphItemVnum);
+		VERIFY_IFIELD(MProto::polymorph_item, mob_table->dwPolymorphItemVnum);
 
-		VERIFY_IFIELD(MProto::skill_vnum0,		mob_table->Skills[0].dwVnum);
-		VERIFY_IFIELD(MProto::skill_level0,		mob_table->Skills[0].bLevel);
-		VERIFY_IFIELD(MProto::skill_vnum1,		mob_table->Skills[1].dwVnum);
-		VERIFY_IFIELD(MProto::skill_level1,		mob_table->Skills[1].bLevel);
-		VERIFY_IFIELD(MProto::skill_vnum2,		mob_table->Skills[2].dwVnum);
-		VERIFY_IFIELD(MProto::skill_level2,		mob_table->Skills[2].bLevel);
-		VERIFY_IFIELD(MProto::skill_vnum3,		mob_table->Skills[3].dwVnum);
-		VERIFY_IFIELD(MProto::skill_level3,		mob_table->Skills[3].bLevel);
-		VERIFY_IFIELD(MProto::skill_vnum4,		mob_table->Skills[4].dwVnum);
-		VERIFY_IFIELD(MProto::skill_level4,		mob_table->Skills[4].bLevel);
+		VERIFY_IFIELD(MProto::skill_vnum0, mob_table->Skills[0].dwVnum);
+		VERIFY_IFIELD(MProto::skill_level0, mob_table->Skills[0].bLevel);
+		VERIFY_IFIELD(MProto::skill_vnum1, mob_table->Skills[1].dwVnum);
+		VERIFY_IFIELD(MProto::skill_level1, mob_table->Skills[1].bLevel);
+		VERIFY_IFIELD(MProto::skill_vnum2, mob_table->Skills[2].dwVnum);
+		VERIFY_IFIELD(MProto::skill_level2, mob_table->Skills[2].bLevel);
+		VERIFY_IFIELD(MProto::skill_vnum3, mob_table->Skills[3].dwVnum);
+		VERIFY_IFIELD(MProto::skill_level3, mob_table->Skills[3].bLevel);
+		VERIFY_IFIELD(MProto::skill_vnum4, mob_table->Skills[4].dwVnum);
+		VERIFY_IFIELD(MProto::skill_level4, mob_table->Skills[4].bLevel);
 
 		// ## SPECIAL
-		VERIFY_IFIELD(MProto::sp_berserk,		mob_table->bBerserkPoint);
-		VERIFY_IFIELD(MProto::sp_stoneskin,		mob_table->bStoneSkinPoint);
-		VERIFY_IFIELD(MProto::sp_godspeed,		mob_table->bGodSpeedPoint);
-		VERIFY_IFIELD(MProto::sp_deathblow,		mob_table->bDeathBlowPoint);
-		VERIFY_IFIELD(MProto::sp_revive,		mob_table->bRevivePoint);
+		VERIFY_IFIELD(MProto::sp_berserk, mob_table->bBerserkPoint);
+		VERIFY_IFIELD(MProto::sp_stoneskin, mob_table->bStoneSkinPoint);
+		VERIFY_IFIELD(MProto::sp_godspeed, mob_table->bGodSpeedPoint);
+		VERIFY_IFIELD(MProto::sp_deathblow, mob_table->bDeathBlowPoint);
+		VERIFY_IFIELD(MProto::sp_revive, mob_table->bRevivePoint);
 
 		sys_log(0, "MOB #%-5d %-24s %-24s level: %-3u rank: %u empire: %d",
 			mob_table->dwVnum,
@@ -1367,17 +1367,17 @@ bool CClientManager::InitializeMobTableFromDB()
 
 namespace IProto
 {
-enum IProtoT
-{
-	vnum, type, subtype, name, locale_name, gold, shop_buy_price, weight, size,
-	flag, wearflag, antiflag, immuneflag, refined_vnum, refine_set, magic_pct,
-	socket_pct, addon_type, limittype0, limitvalue0, limittype1, limitvalue1,
-	applytype0, applyvalue0, applytype1, applyvalue1, applytype2, applyvalue2,
-	value0, value1, value2, value3, value4, value5
+	enum IProtoT
+	{
+		vnum, type, subtype, name, locale_name, gold, shop_buy_price, weight, size,
+		flag, wearflag, antiflag, immuneflag, refined_vnum, refine_set, magic_pct,
+		socket_pct, addon_type, limittype0, limitvalue0, limittype1, limitvalue1,
+		applytype0, applyvalue0, applytype1, applyvalue1, applytype2, applyvalue2,
+		value0, value1, value2, value3, value4, value5
 #if !defined(ENABLE_AUTODETECT_VNUMRANGE)
-	, vnum_range
+		, vnum_range
 #endif
-};
+	};
 }
 
 bool CClientManager::InitializeItemTableFromDB()
@@ -1399,7 +1399,7 @@ bool CClientManager::InitializeItemTableFromDB()
 	);
 
 	auto pkMsg(CDBManager::instance().DirectQuery(query));
-	SQLResult * pRes = pkMsg->Get();
+	SQLResult* pRes = pkMsg->Get();
 
 	DWORD addNumber = pRes->uiNumRows;
 	if (addNumber == 0)
@@ -1414,94 +1414,94 @@ bool CClientManager::InitializeItemTableFromDB()
 
 	m_vec_itemTable.resize(addNumber);
 	memset(&m_vec_itemTable[0], 0, sizeof(TItemTable) * m_vec_itemTable.size());
-	TItemTable * item_table = &m_vec_itemTable[0];
+	TItemTable* item_table = &m_vec_itemTable[0];
 
 	MYSQL_ROW data = NULL;
 	while ((data = mysql_fetch_row(pRes->pSQLResult)))
 	{
 		// check whether or not the field is NULL or that contains an empty string
 		// ## GENERAL
-		VERIFY_IFIELD(IProto::vnum,				item_table->dwVnum);
-		VERIFY_SFIELD(IProto::name,				item_table->szName);
-		VERIFY_SFIELD(IProto::locale_name,		item_table->szLocaleName);
-		VERIFY_IFIELD(IProto::type,				item_table->bType);
-		VERIFY_IFIELD(IProto::subtype,			item_table->bSubType);
-		VERIFY_IFIELD(IProto::weight,			item_table->bWeight);
-		VERIFY_IFIELD(IProto::size,				item_table->bSize);
+		VERIFY_IFIELD(IProto::vnum, item_table->dwVnum);
+		VERIFY_SFIELD(IProto::name, item_table->szName);
+		VERIFY_SFIELD(IProto::locale_name, item_table->szLocaleName);
+		VERIFY_IFIELD(IProto::type, item_table->bType);
+		VERIFY_IFIELD(IProto::subtype, item_table->bSubType);
+		VERIFY_IFIELD(IProto::weight, item_table->bWeight);
+		VERIFY_IFIELD(IProto::size, item_table->bSize);
 		item_table->bSize = MINMAX(1, item_table->bSize, 3); // @fixme179
-		VERIFY_IFIELD(IProto::antiflag,			item_table->dwAntiFlags);
-		VERIFY_IFIELD(IProto::flag,				item_table->dwFlags);
-		VERIFY_IFIELD(IProto::wearflag,			item_table->dwWearFlags);
-		VERIFY_IFIELD(IProto::immuneflag,		item_table->dwImmuneFlag);
-		VERIFY_IFIELD(IProto::gold,				item_table->dwGold);
-		VERIFY_IFIELD(IProto::shop_buy_price,	item_table->dwShopBuyPrice);
-		VERIFY_IFIELD(IProto::refined_vnum,		item_table->dwRefinedVnum);
-		VERIFY_IFIELD(IProto::refine_set,		item_table->wRefineSet);
-		VERIFY_IFIELD(IProto::magic_pct,		item_table->bAlterToMagicItemPct);
+		VERIFY_IFIELD(IProto::antiflag, item_table->dwAntiFlags);
+		VERIFY_IFIELD(IProto::flag, item_table->dwFlags);
+		VERIFY_IFIELD(IProto::wearflag, item_table->dwWearFlags);
+		VERIFY_IFIELD(IProto::immuneflag, item_table->dwImmuneFlag);
+		VERIFY_IFIELD(IProto::gold, item_table->dwGold);
+		VERIFY_IFIELD(IProto::shop_buy_price, item_table->dwShopBuyPrice);
+		VERIFY_IFIELD(IProto::refined_vnum, item_table->dwRefinedVnum);
+		VERIFY_IFIELD(IProto::refine_set, item_table->wRefineSet);
+		VERIFY_IFIELD(IProto::magic_pct, item_table->bAlterToMagicItemPct);
 
 		// ## LIMIT
 		item_table->cLimitRealTimeFirstUseIndex = -1;
 		item_table->cLimitTimerBasedOnWearIndex = -1;
 
-		VERIFY_IFIELD(IProto::limittype0,		item_table->aLimits[0].bType);
-		VERIFY_IFIELD(IProto::limitvalue0,		item_table->aLimits[0].lValue);
+		VERIFY_IFIELD(IProto::limittype0, item_table->aLimits[0].bType);
+		VERIFY_IFIELD(IProto::limitvalue0, item_table->aLimits[0].lValue);
 		if (LIMIT_REAL_TIME_START_FIRST_USE == item_table->aLimits[0].bType)
 			item_table->cLimitRealTimeFirstUseIndex = 0;
 		else if (LIMIT_TIMER_BASED_ON_WEAR == item_table->aLimits[0].bType)
 			item_table->cLimitTimerBasedOnWearIndex = 0;
 
-		VERIFY_IFIELD(IProto::limittype1,		item_table->aLimits[1].bType);
-		VERIFY_IFIELD(IProto::limitvalue1,		item_table->aLimits[1].lValue);
+		VERIFY_IFIELD(IProto::limittype1, item_table->aLimits[1].bType);
+		VERIFY_IFIELD(IProto::limitvalue1, item_table->aLimits[1].lValue);
 		if (LIMIT_REAL_TIME_START_FIRST_USE == item_table->aLimits[1].bType)
 			item_table->cLimitRealTimeFirstUseIndex = 1;
 		else if (LIMIT_TIMER_BASED_ON_WEAR == item_table->aLimits[1].bType)
 			item_table->cLimitTimerBasedOnWearIndex = 1;
 
-		if ((LIMIT_NONE!=item_table->aLimits[0].bType) && // just checking the first limit one is enough
+		if ((LIMIT_NONE != item_table->aLimits[0].bType) && // just checking the first limit one is enough
 			(item_table->aLimits[0].bType == item_table->aLimits[1].bType))
 			sys_log(0, "vnum(%u): limittype0(%u)==limittype1(%u)", item_table->dwVnum, item_table->aLimits[0].bType, item_table->aLimits[1].bType); // @warme012
 
 		// ## APPLY
-		VERIFY_IFIELD(IProto::applytype0,		item_table->aApplies[0].bType);
-		VERIFY_IFIELD(IProto::applyvalue0,		item_table->aApplies[0].lValue);
-		VERIFY_IFIELD(IProto::applytype1,		item_table->aApplies[1].bType);
-		VERIFY_IFIELD(IProto::applyvalue1,		item_table->aApplies[1].lValue);
-		VERIFY_IFIELD(IProto::applytype2,		item_table->aApplies[2].bType);
-		VERIFY_IFIELD(IProto::applyvalue2,		item_table->aApplies[2].lValue);
+		VERIFY_IFIELD(IProto::applytype0, item_table->aApplies[0].bType);
+		VERIFY_IFIELD(IProto::applyvalue0, item_table->aApplies[0].lValue);
+		VERIFY_IFIELD(IProto::applytype1, item_table->aApplies[1].bType);
+		VERIFY_IFIELD(IProto::applyvalue1, item_table->aApplies[1].lValue);
+		VERIFY_IFIELD(IProto::applytype2, item_table->aApplies[2].bType);
+		VERIFY_IFIELD(IProto::applyvalue2, item_table->aApplies[2].lValue);
 
 		// ## VALUE
-		VERIFY_IFIELD(IProto::value0,		item_table->alValues[0]);
-		VERIFY_IFIELD(IProto::value1,		item_table->alValues[1]);
-		VERIFY_IFIELD(IProto::value2,		item_table->alValues[2]);
-		VERIFY_IFIELD(IProto::value3,		item_table->alValues[3]);
-		VERIFY_IFIELD(IProto::value4,		item_table->alValues[4]);
-		VERIFY_IFIELD(IProto::value5,		item_table->alValues[5]);
+		VERIFY_IFIELD(IProto::value0, item_table->alValues[0]);
+		VERIFY_IFIELD(IProto::value1, item_table->alValues[1]);
+		VERIFY_IFIELD(IProto::value2, item_table->alValues[2]);
+		VERIFY_IFIELD(IProto::value3, item_table->alValues[3]);
+		VERIFY_IFIELD(IProto::value4, item_table->alValues[4]);
+		VERIFY_IFIELD(IProto::value5, item_table->alValues[5]);
 
-		VERIFY_IFIELD(IProto::socket_pct,		item_table->bGainSocketPct);
-		VERIFY_IFIELD(IProto::addon_type,		item_table->sAddonType);
+		VERIFY_IFIELD(IProto::socket_pct, item_table->bGainSocketPct);
+		VERIFY_IFIELD(IProto::addon_type, item_table->sAddonType);
 
 #if !defined(ENABLE_AUTODETECT_VNUMRANGE)
-		VERIFY_IFIELD(IProto::vnum_range,		item_table->dwVnumRange);
+		VERIFY_IFIELD(IProto::vnum_range, item_table->dwVnumRange);
 #else
-		if (item_table->bType==ITEM_DS)
+		if (item_table->bType == ITEM_DS)
 			item_table->dwVnumRange = 99;
 #endif
 
 #ifdef ENABLE_CHECK_SELL_PRICE
-	auto dwPrice = item_table->dwShopBuyPrice;
-	#ifndef ENABLE_NO_SELL_PRICE_DIVIDED_BY_5
-	dwPrice /= 5;
-	#endif
-	if (dwPrice > item_table->dwGold)
-	{
-		sys_err("ITEM: #%-5lu %-24s SELL_OVERFLOW dwGold: %u < dwShopBuyPrice %u",
-			item_table->dwVnum,
-			item_table->szLocaleName,
-			item_table->dwGold,
-			dwPrice
-		);
-		item_table->dwGold = dwPrice;
-	}
+		auto dwPrice = item_table->dwShopBuyPrice;
+#ifndef ENABLE_NO_SELL_PRICE_DIVIDED_BY_5
+		dwPrice /= 5;
+#endif
+		if (dwPrice > item_table->dwGold)
+		{
+			sys_err("ITEM: #%-5lu %-24s SELL_OVERFLOW dwGold: %u < dwShopBuyPrice %u",
+				item_table->dwVnum,
+				item_table->szLocaleName,
+				item_table->dwGold,
+				dwPrice
+			);
+			item_table->dwGold = dwPrice;
+		}
 #endif
 
 		m_map_itemTableByVnum.emplace(item_table->dwVnum, item_table);

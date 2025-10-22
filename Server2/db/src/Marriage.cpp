@@ -17,7 +17,7 @@ namespace marriage
 		return lhs.dwTime > rhs.dwTime;
 	}
 
-	bool operator > (const TWeddingInfo &lhs, const TWeddingInfo& rhs)
+	bool operator > (const TWeddingInfo& lhs, const TWeddingInfo& rhs)
 	{
 		return lhs.dwTime > rhs.dwTime;
 	}
@@ -37,13 +37,13 @@ namespace marriage
 		char szQuery[1024];
 
 		snprintf(szQuery, sizeof(szQuery),
-				"SELECT pid1, pid2, love_point, time, is_married, p1.name, p2.name FROM marriage, player%s as p1, player%s as p2 WHERE p1.id = pid1 AND p2.id = pid2",
-				GetTablePostfix(), GetTablePostfix());
+			"SELECT pid1, pid2, love_point, time, is_married, p1.name, p2.name FROM marriage, player%s as p1, player%s as p2 WHERE p1.id = pid1 AND p2.id = pid2",
+			GetTablePostfix(), GetTablePostfix());
 
 		auto pmsg_delete(CDBManager::instance().DirectQuery("DELETE FROM marriage WHERE is_married = 0"));
 		auto pmsg(CDBManager::instance().DirectQuery(szQuery));
 
-		SQLResult * pRes = pmsg->Get();
+		SQLResult* pRes = pmsg->Get();
 		sys_log(0, "MarriageList(size=%lu)", pRes->uiNumRows);
 
 		if (pRes->uiNumRows > 0)
@@ -138,7 +138,7 @@ namespace marriage
 
 		char szQuery[512];
 		snprintf(szQuery, sizeof(szQuery), "UPDATE marriage SET love_point = %d, is_married = %d WHERE pid1 = %u AND pid2 = %u",
-				iLovePoint, byMarried, pMarriage->pid1, pMarriage->pid2);
+			iLovePoint, byMarried, pMarriage->pid1, pMarriage->pid2);
 
 		auto pmsg(CDBManager::instance().DirectQuery(szQuery));
 		SQLResult* res = pmsg->Get();
@@ -226,7 +226,7 @@ namespace marriage
 
 		char szQuery[512];
 		snprintf(szQuery, sizeof(szQuery), "UPDATE marriage SET is_married = 1 WHERE pid1 = %u AND pid2 = %u",
-				pMarriage->pid1, pMarriage->pid2);
+			pMarriage->pid1, pMarriage->pid2);
 
 		auto pmsg(CDBManager::instance().DirectQuery(szQuery));
 		SQLResult* res = pmsg->Get();
@@ -269,7 +269,7 @@ namespace marriage
 				p.dwPID1 = pMarriage->pid1;
 				p.dwPID2 = pMarriage->pid2;
 				p.iLovePoint = pMarriage->love_point;
-				p.byMarried	= pMarriage->is_married;
+				p.byMarried = pMarriage->is_married;
 				peer->EncodeHeader(HEADER_DG_MARRIAGE_UPDATE, 0, sizeof(p));
 				peer->Encode(&p, sizeof(p));
 			}

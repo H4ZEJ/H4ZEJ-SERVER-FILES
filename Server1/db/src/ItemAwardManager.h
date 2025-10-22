@@ -16,53 +16,53 @@ enum
 
 typedef struct SItemAward
 {
-    DWORD	dwID;
-    char	szLogin[LOGIN_MAX_LEN+1];
-    DWORD	dwVnum;
-    DWORD	dwCount;
-    DWORD	dwSocket0;
-    DWORD	dwSocket1;
-    DWORD	dwSocket2;
-    char	szWhy[ITEM_AWARD_WHY_MAX_LEN+1];
-    bool	bTaken;
-    bool	bMall;
-	#ifdef ENABLE_EXTEND_ITEM_AWARD
+	DWORD	dwID;
+	char	szLogin[LOGIN_MAX_LEN + 1];
+	DWORD	dwVnum;
+	DWORD	dwCount;
+	DWORD	dwSocket0;
+	DWORD	dwSocket1;
+	DWORD	dwSocket2;
+	char	szWhy[ITEM_AWARD_WHY_MAX_LEN + 1];
+	bool	bTaken;
+	bool	bMall;
+#ifdef ENABLE_EXTEND_ITEM_AWARD
 	TPlayerItemAttribute aAttr[ITEM_ATTRIBUTE_MAX_NUM];
-	#endif
+#endif
 } TItemAward;
 
 class ItemAwardManager : public singleton<ItemAwardManager>
 {
-    public:
+public:
 	ItemAwardManager();
 	virtual ~ItemAwardManager();
 
 	void				RequestLoad();
-	void				Load(SQLMsg * pMsg);
-	std::set<TItemAward *> *	GetByLogin(const char * c_pszLogin);
+	void				Load(SQLMsg* pMsg);
+	std::set<TItemAward*>* GetByLogin(const char* c_pszLogin);
 
 	void				Taken(DWORD dwAwardID, DWORD dwItemID);
 
-	#ifdef ENABLE_EXTEND_ITEM_AWARD
-	void 				CheckItemAddonType(TItemAward & pkItemAward, const TItemTable & pkItemTable);
-	void				CheckItemCount(TItemAward & pkItemAward, const TItemTable & pkItemTable);
-	void				CheckItemSocket(TItemAward & pkItemAward, const TItemTable & pkItemTable);
-	void				CheckItemBlend(TItemAward & pkItemAward, const TItemTable & pkItemTable);
-	void				CheckItemSkillBook(TItemAward & pkItemAward, const std::vector<TSkillTable> vec_skillTable);
-	#endif
-	#ifdef USE_ITEM_AWARD_CHECK_ATTRIBUTES
-	void				CheckItemAttributes(TItemAward & pkItemAward, const TItemTable & pkItemTable, const std::vector<TItemAttrTable> & vec_itemAttrTable, const std::vector<TItemAttrTable> & vec_itemRareTable);
+#ifdef ENABLE_EXTEND_ITEM_AWARD
+	void 				CheckItemAddonType(TItemAward& pkItemAward, const TItemTable& pkItemTable);
+	void				CheckItemCount(TItemAward& pkItemAward, const TItemTable& pkItemTable);
+	void				CheckItemSocket(TItemAward& pkItemAward, const TItemTable& pkItemTable);
+	void				CheckItemBlend(TItemAward& pkItemAward, const TItemTable& pkItemTable);
+	void				CheckItemSkillBook(TItemAward& pkItemAward, const std::vector<TSkillTable> vec_skillTable);
+#endif
+#ifdef USE_ITEM_AWARD_CHECK_ATTRIBUTES
+	void				CheckItemAttributes(TItemAward& pkItemAward, const TItemTable& pkItemTable, const std::vector<TItemAttrTable>& vec_itemAttrTable, const std::vector<TItemAttrTable>& vec_itemRareTable);
 	int8_t				GetItemAttributeSetIndex(const uint8_t bItemType, const uint8_t bItemSubType) const;
-	#endif
+#endif
 
 	// gift notify
-	std::map<DWORD, TItemAward *>& GetMapAward();
-	std::map<std::string, std::set<TItemAward *> >& GetMapkSetAwardByLogin();
-    private:
+	std::map<DWORD, TItemAward*>& GetMapAward();
+	std::map<std::string, std::set<TItemAward*> >& GetMapkSetAwardByLogin();
+private:
 	// ID, ItemAward pair
-	std::map<DWORD, TItemAward *>			m_map_award;
+	std::map<DWORD, TItemAward*>			m_map_award;
 	// PID, ItemAward pair
-	std::map<std::string, std::set<TItemAward *> >	m_map_kSetAwardByLogin;
+	std::map<std::string, std::set<TItemAward*> >	m_map_kSetAwardByLogin;
 };
 
 #endif

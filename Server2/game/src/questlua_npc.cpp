@@ -22,7 +22,7 @@ namespace quest
 		if (lua_gettop(L) == 1)
 		{
 			if (lua_isnumber(L, 1))
-				iShopVnum = (int) lua_tonumber(L, 1);
+				iShopVnum = (int)lua_tonumber(L, 1);
 		}
 
 		if (CQuestManager::instance().GetCurrentNPCCharacterPtr())
@@ -89,7 +89,7 @@ namespace quest
 		{
 			return 0;
 		}
-		npc->SetPoint(POINT_ATT_GRADE_BONUS, MAX(0, npc->GetPoint(POINT_ATT_GRADE_BONUS)-1));
+		npc->SetPoint(POINT_ATT_GRADE_BONUS, MAX(0, npc->GetPoint(POINT_ATT_GRADE_BONUS) - 1));
 		return 0;
 	}
 
@@ -112,7 +112,7 @@ namespace quest
 		{
 			return 0;
 		}
-		npc->SetPoint(POINT_DEF_GRADE_BONUS, MAX(0, npc->GetPoint(POINT_DEF_GRADE_BONUS)-1));
+		npc->SetPoint(POINT_DEF_GRADE_BONUS, MAX(0, npc->GetPoint(POINT_DEF_GRADE_BONUS) - 1));
 		return 0;
 	}
 
@@ -123,7 +123,7 @@ namespace quest
 
 		if (npc)
 		{
-			const std::string & r_st = q.GetCurrentQuestName();
+			const std::string& r_st = q.GetCurrentQuestName();
 
 			if (q.GetQuestIndexByName(r_st) == npc->GetQuestBy())
 			{
@@ -179,7 +179,7 @@ namespace quest
 		}
 		else
 		{
-			lua_pushboolean(L, DISTANCE_APPROX(ch->GetX() - npc->GetX(), ch->GetY() - npc->GetY()) < dist*100);
+			lua_pushboolean(L, DISTANCE_APPROX(ch->GetX() - npc->GetX(), ch->GetY() - npc->GetY()) < dist * 100);
 		}
 
 		return 1;
@@ -209,7 +209,7 @@ namespace quest
 		}
 		else
 		{
-			lua_pushboolean(L, DISTANCE_APPROX(ch->GetX() - npc->GetX(), ch->GetY() - npc->GetY()) < dist*100);
+			lua_pushboolean(L, DISTANCE_APPROX(ch->GetX() - npc->GetX(), ch->GetY() - npc->GetY()) < dist * 100);
 		}
 
 		return 1;
@@ -221,7 +221,7 @@ namespace quest
 		LPCHARACTER ch = q.GetCurrentCharacterPtr();
 		LPCHARACTER npc = q.GetCurrentNPCCharacterPtr();
 
-		if ( npc != NULL )
+		if (npc != NULL)
 		{
 			if (npc->IsPC())
 				return 0;
@@ -392,7 +392,7 @@ namespace quest
 		CQuestManager& q = CQuestManager::instance();
 		LPCHARACTER npc = q.GetCurrentNPCCharacterPtr();
 
-		lua_pushboolean(L, npc!=NULL);
+		lua_pushboolean(L, npc != NULL);
 		return 1;
 	}
 
@@ -417,12 +417,12 @@ namespace quest
 		if (text.empty())
 			return 0;
 
-		struct packet_chat pack_chat{};
-		pack_chat.header	= HEADER_GC_CHAT;
-		pack_chat.size  = sizeof(struct packet_chat) + text.size() + 1;
-		pack_chat.type	  = CHAT_TYPE_TALKING;
-		pack_chat.id		= npc->GetVID();
-		pack_chat.bEmpire   = 0;
+		struct packet_chat pack_chat {};
+		pack_chat.header = HEADER_GC_CHAT;
+		pack_chat.size = sizeof(struct packet_chat) + text.size() + 1;
+		pack_chat.type = CHAT_TYPE_TALKING;
+		pack_chat.id = npc->GetVID();
+		pack_chat.bEmpire = 0;
 
 		TEMP_BUFFER buf{};
 		buf.write(&pack_chat, sizeof(struct packet_chat));

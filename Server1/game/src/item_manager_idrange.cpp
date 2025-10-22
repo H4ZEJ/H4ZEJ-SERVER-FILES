@@ -2,11 +2,11 @@
 #include "desc_client.h"
 #include "item_manager.h"
 
-int touch(const char *path)
+int touch(const char* path)
 {
-	FILE	*fp;
+	FILE* fp;
 
-	if ( !(fp = fopen(path, "a")) )
+	if (!(fp = fopen(path, "a")))
 	{
 		sys_err("touch failed");
 		return (-1);
@@ -20,11 +20,11 @@ DWORD ITEM_MANAGER::GetNewID()
 {
 	assert(m_dwCurrentID != 0);
 
-	if ( m_dwCurrentID >= m_ItemIDRange.dwMax )
+	if (m_dwCurrentID >= m_ItemIDRange.dwMax)
 	{
-		if ( m_ItemIDSpareRange.dwMin == 0 || m_ItemIDSpareRange.dwMax == 0 || m_ItemIDSpareRange.dwUsableItemIDMin == 0 )
+		if (m_ItemIDSpareRange.dwMin == 0 || m_ItemIDSpareRange.dwMax == 0 || m_ItemIDSpareRange.dwUsableItemIDMin == 0)
 		{
-			for ( int i=0; i < 10; i++ ) sys_err("ItemIDRange: FATAL ERROR!!! no more item id");
+			for (int i = 0; i < 10; i++) sys_err("ItemIDRange: FATAL ERROR!!! no more item id");
 			touch(".killscript");
 			thecore_shutdown();
 			return 0;
@@ -32,7 +32,7 @@ DWORD ITEM_MANAGER::GetNewID()
 		else
 		{
 			sys_log(0, "ItemIDRange: First Range is full. Change to SpareRange %u ~ %u %u",
-					m_ItemIDSpareRange.dwMin, m_ItemIDSpareRange.dwMax, m_ItemIDSpareRange.dwUsableItemIDMin);
+				m_ItemIDSpareRange.dwMin, m_ItemIDSpareRange.dwMax, m_ItemIDSpareRange.dwUsableItemIDMin);
 
 			db_clientdesc->DBPacket(HEADER_GD_REQ_SPARE_ITEM_ID_RANGE, 0, &m_ItemIDRange.dwMax, sizeof(DWORD));
 
@@ -51,9 +51,9 @@ bool ITEM_MANAGER::SetMaxItemID(TItemIDRangeTable range)
 {
 	m_ItemIDRange = range;
 
-	if ( m_ItemIDRange.dwMin == 0 || m_ItemIDRange.dwMax == 0 || m_ItemIDRange.dwUsableItemIDMin == 0 )
+	if (m_ItemIDRange.dwMin == 0 || m_ItemIDRange.dwMax == 0 || m_ItemIDRange.dwUsableItemIDMin == 0)
 	{
-		for ( int i=0; i < 10; i++ ) sys_err("ItemIDRange: FATAL ERROR!!! ITEM ID RANGE is not set.");
+		for (int i = 0; i < 10; i++) sys_err("ItemIDRange: FATAL ERROR!!! ITEM ID RANGE is not set.");
 		touch(".killscript");
 		thecore_shutdown();
 		return false;
@@ -68,16 +68,16 @@ bool ITEM_MANAGER::SetMaxItemID(TItemIDRangeTable range)
 
 bool ITEM_MANAGER::SetMaxSpareItemID(TItemIDRangeTable range)
 {
-	if ( range.dwMin == 0 || range.dwMax == 0 || range.dwUsableItemIDMin == 0 )
+	if (range.dwMin == 0 || range.dwMax == 0 || range.dwUsableItemIDMin == 0)
 	{
-		for ( int i=0; i < 10; i++ ) sys_err("ItemIDRange: FATAL ERROR!!! Spare ITEM ID RANGE is not set");
+		for (int i = 0; i < 10; i++) sys_err("ItemIDRange: FATAL ERROR!!! Spare ITEM ID RANGE is not set");
 		return false;
 	}
 
 	m_ItemIDSpareRange = range;
 
 	sys_log(0, "ItemIDRange: New Spare ItemID Range Recv %u ~ %u %u",
-			m_ItemIDSpareRange.dwMin, m_ItemIDSpareRange.dwMax, m_ItemIDSpareRange.dwUsableItemIDMin);
+		m_ItemIDSpareRange.dwMin, m_ItemIDSpareRange.dwMax, m_ItemIDSpareRange.dwUsableItemIDMin);
 
 	return true;
 }

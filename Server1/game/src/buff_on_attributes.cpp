@@ -6,7 +6,7 @@
 #include <algorithm>
 
 CBuffOnAttributes::CBuffOnAttributes(LPCHARACTER pOwner, BYTE point_type, std::vector <BYTE>* p_vec_buff_wear_targets)
-:	m_pBuffOwner(pOwner), m_bPointType(point_type), m_p_vec_buff_wear_targets(p_vec_buff_wear_targets)
+	: m_pBuffOwner(pOwner), m_bPointType(point_type), m_p_vec_buff_wear_targets(p_vec_buff_wear_targets)
 {
 	Initialize();
 }
@@ -24,12 +24,12 @@ void CBuffOnAttributes::Initialize()
 void CBuffOnAttributes::RemoveBuffFromItem(LPITEM pItem)
 {
 	if (0 == m_bBuffValue)
-		return ;
+		return;
 	if (NULL != pItem)
 	{
 		if (pItem->GetCell() < INVENTORY_MAX_NUM)
 			return;
-		std::vector <BYTE>::iterator it = find (m_p_vec_buff_wear_targets->begin(), m_p_vec_buff_wear_targets->end(), pItem->GetCell() - INVENTORY_MAX_NUM);
+		std::vector <BYTE>::iterator it = find(m_p_vec_buff_wear_targets->begin(), m_p_vec_buff_wear_targets->end(), pItem->GetCell() - INVENTORY_MAX_NUM);
 		if (m_p_vec_buff_wear_targets->end() == it)
 			return;
 
@@ -48,7 +48,7 @@ void CBuffOnAttributes::RemoveBuffFromItem(LPITEM pItem)
 			}
 			else
 			{
-				sys_err ("Buff ERROR(type %d). This item(%d) attr_type(%d) was not in buff pool", m_bPointType, pItem->GetVnum(), attr.bType);
+				sys_err("Buff ERROR(type %d). This item(%d) attr_type(%d) was not in buff pool", m_bPointType, pItem->GetVnum(), attr.bType);
 				return;
 			}
 		}
@@ -58,12 +58,12 @@ void CBuffOnAttributes::RemoveBuffFromItem(LPITEM pItem)
 void CBuffOnAttributes::AddBuffFromItem(LPITEM pItem)
 {
 	if (0 == m_bBuffValue)
-		return ;
+		return;
 	if (NULL != pItem)
 	{
 		if (pItem->GetCell() < INVENTORY_MAX_NUM)
 			return;
-		std::vector <BYTE>::iterator it = find (m_p_vec_buff_wear_targets->begin(), m_p_vec_buff_wear_targets->end(), pItem->GetCell() - INVENTORY_MAX_NUM);
+		std::vector <BYTE>::iterator it = find(m_p_vec_buff_wear_targets->begin(), m_p_vec_buff_wear_targets->end(), pItem->GetCell() - INVENTORY_MAX_NUM);
 		if (m_p_vec_buff_wear_targets->end() == it)
 			return;
 
@@ -153,7 +153,7 @@ bool CBuffOnAttributes::On(BYTE bValue)
 void CBuffOnAttributes::Off()
 {
 	if (0 == m_bBuffValue)
-		return ;
+		return;
 
 	for (TMapAttr::iterator it = m_map_additional_attrs.begin(); it != m_map_additional_attrs.end(); it++)
 	{

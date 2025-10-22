@@ -11,7 +11,7 @@
 static float MSA_GetNormalAttackDuration(const char* msaPath)
 {
 	float duration = 99.0f;
-	FILE * fp = fopen(msaPath, "rt");
+	FILE* fp = fopen(msaPath, "rt");
 	if (!fp)
 		return duration;
 
@@ -37,12 +37,12 @@ static float MOB_GetNormalAttackDuration(TMobTable* mobTable)
 {
 	float minDuration = 99.0f;
 
-	const char * folder = mobTable->szFolder;
+	const char* folder = mobTable->szFolder;
 
 	char motlistPath[1024];
 	snprintf(motlistPath, sizeof(motlistPath), "data/monster/%s/motlist.txt", folder);
 
-	FILE * fp = fopen(motlistPath, "rt");
+	FILE* fp = fopen(motlistPath, "rt");
 	if (!fp)
 		return minDuration;
 
@@ -73,11 +73,11 @@ static float MOB_GetNormalAttackDuration(TMobTable* mobTable)
 static const char* GetMotionFileName(TMobTable* mobTable, EPublicMotion motion)
 {
 	char buf[1024];
-	const char * folder = mobTable->szFolder;
+	const char* folder = mobTable->szFolder;
 	snprintf(buf, sizeof(buf), "data/monster/%s/motlist.txt", folder);
 
-	FILE * fp = fopen(buf, "rt");
-	char * v[4];
+	FILE* fp = fopen(buf, "rt");
+	char* v[4];
 
 	if (fp != NULL)
 	{
@@ -85,24 +85,24 @@ static const char* GetMotionFileName(TMobTable* mobTable, EPublicMotion motion)
 
 		switch (motion)
 		{
-			case MOTION_WALK				: field = "WALK"; break;
-			case MOTION_RUN					: field = "RUN"; break;
-			case MOTION_NORMAL_ATTACK		: field = "NORMAL_ATTACK"; break;
-			case MOTION_SPECIAL_1			: field = "SPECIAL"; break;
-			case MOTION_SPECIAL_2			: field = "SPECIAL1"; break;
-			case MOTION_SPECIAL_3			: field = "SPECIAL2"; break;
-			case MOTION_SPECIAL_4			: field = "SPECIAL3"; break;
-			case MOTION_SPECIAL_5			: field = "SPECIAL4"; break;
+		case MOTION_WALK: field = "WALK"; break;
+		case MOTION_RUN: field = "RUN"; break;
+		case MOTION_NORMAL_ATTACK: field = "NORMAL_ATTACK"; break;
+		case MOTION_SPECIAL_1: field = "SPECIAL"; break;
+		case MOTION_SPECIAL_2: field = "SPECIAL1"; break;
+		case MOTION_SPECIAL_3: field = "SPECIAL2"; break;
+		case MOTION_SPECIAL_4: field = "SPECIAL3"; break;
+		case MOTION_SPECIAL_5: field = "SPECIAL4"; break;
 
-			default:
-				fclose(fp);
-				sys_err("Motion: no process for this motion(%d) vnum(%d)", motion, mobTable->dwVnum);
-				return NULL;
+		default:
+			fclose(fp);
+			sys_err("Motion: no process for this motion(%d) vnum(%d)", motion, mobTable->dwVnum);
+			return NULL;
 		}
 
 		while (fgets(buf, 1024, fp))
 		{
-			v[0] = strtok(buf,  " \t\r\n");
+			v[0] = strtok(buf, " \t\r\n");
 			v[1] = strtok(NULL, " \t\r\n");
 			v[2] = strtok(NULL, " \t\r\n");
 			v[3] = strtok(NULL, " \t\r\n");
@@ -164,14 +164,14 @@ static void LoadSkillMotion(CMotionSet* pMotionSet, CMob* pMob, EPublicMotion mo
 
 	switch (motion)
 	{
-		case MOTION_SPECIAL_1 : idx = 0; break;
-		case MOTION_SPECIAL_2 : idx = 1; break;
-		case MOTION_SPECIAL_3 : idx = 2; break;
-		case MOTION_SPECIAL_4 : idx = 3; break;
-		case MOTION_SPECIAL_5 : idx = 4; break;
+	case MOTION_SPECIAL_1: idx = 0; break;
+	case MOTION_SPECIAL_2: idx = 1; break;
+	case MOTION_SPECIAL_3: idx = 2; break;
+	case MOTION_SPECIAL_4: idx = 3; break;
+	case MOTION_SPECIAL_5: idx = 4; break;
 
-		default :
-			return;
+	default:
+		return;
 	}
 
 	TMobTable* mob_table = &pMob->m_table;
@@ -192,7 +192,7 @@ static void LoadSkillMotion(CMotionSet* pMotionSet, CMob* pMob, EPublicMotion mo
 		if (mob_table->Skills[idx].dwVnum != 0)
 		{
 			sys_err("Motion: Skill exist but no motion data for index %d mob %u skill %u",
-				   	idx, mob_table->dwVnum, mob_table->Skills[idx].dwVnum);
+				idx, mob_table->dwVnum, mob_table->Skills[idx].dwVnum);
 		}
 		M2_DELETE(pMotion);
 	}
@@ -205,12 +205,12 @@ CMotionManager::CMotionManager()
 CMotionManager::~CMotionManager()
 {
 	iterator it = m_map_pkMotionSet.begin();
-	for ( ; it != m_map_pkMotionSet.end(); ++it) {
+	for (; it != m_map_pkMotionSet.end(); ++it) {
 		M2_DELETE(it->second);
 	}
 }
 
-const CMotionSet * CMotionManager::GetMotionSet(DWORD dwVnum)
+const CMotionSet* CMotionManager::GetMotionSet(DWORD dwVnum)
 {
 	iterator it = m_map_pkMotionSet.find(dwVnum);
 
@@ -220,9 +220,9 @@ const CMotionSet * CMotionManager::GetMotionSet(DWORD dwVnum)
 	return it->second;
 }
 
-const CMotion * CMotionManager::GetMotion(DWORD dwVnum, DWORD dwKey)
+const CMotion* CMotionManager::GetMotion(DWORD dwVnum, DWORD dwKey)
 {
-	const CMotionSet * pkMotionSet = GetMotionSet(dwVnum);
+	const CMotionSet* pkMotionSet = GetMotionSet(dwVnum);
 
 	if (!pkMotionSet)
 		return NULL;
@@ -232,7 +232,7 @@ const CMotion * CMotionManager::GetMotion(DWORD dwVnum, DWORD dwKey)
 
 float CMotionManager::GetMotionDuration(DWORD dwVnum, DWORD dwKey)
 {
-	const CMotion * pkMotion = GetMotion(dwVnum, dwKey);
+	const CMotion* pkMotion = GetMotion(dwVnum, dwKey);
 	return pkMotion ? pkMotion->GetDuration() : 0.0f;
 }
 
@@ -265,7 +265,7 @@ enum EMotionEventType
 
 bool CMotionManager::Build()
 {
-	const char * c_apszFolderName[MAIN_RACE_MAX_NUM] =
+	const char* c_apszFolderName[MAIN_RACE_MAX_NUM] =
 	{
 		"data/pc/warrior",
 		"data/pc/assassin",
@@ -275,12 +275,11 @@ bool CMotionManager::Build()
 		"data/pc2/assassin",
 		"data/pc2/sura",
 		"data/pc2/shaman",
-
 	};
 
 	for (int i = 0; i < MAIN_RACE_MAX_NUM; ++i)
 	{
-		CMotionSet * pkMotionSet = M2_NEW CMotionSet;
+		CMotionSet* pkMotionSet = M2_NEW CMotionSet;
 		m_map_pkMotionSet.emplace(i, pkMotionSet);
 
 		char sz[256];
@@ -324,19 +323,18 @@ bool CMotionManager::Build()
 		pkMotionSet->Load(sz, MOTION_MODE_HORSE, MOTION_RUN);
 		snprintf(sz, sizeof(sz), "%s/horse/walk.msa", c_apszFolderName[i]);
 		pkMotionSet->Load(sz, MOTION_MODE_HORSE, MOTION_WALK);
-
 	}
 
 	CMobManager::iterator it = CMobManager::instance().begin();
 
 	while (it != CMobManager::instance().end())
 	{
-		CMob * pkMob = (it++)->second;
-		TMobTable * t = &pkMob->m_table;
+		CMob* pkMob = (it++)->second;
+		TMobTable* t = &pkMob->m_table;
 
 		if ('\0' != t->szFolder[0])
 		{
-			CMotionSet * pkMotionSet = M2_NEW CMotionSet;
+			CMotionSet* pkMotionSet = M2_NEW CMotionSet;
 			m_map_pkMotionSet.emplace(t->dwVnum, pkMotionSet);
 
 			LoadMotion(pkMotionSet, t, MOTION_WALK);
@@ -367,12 +365,12 @@ CMotionSet::CMotionSet()
 CMotionSet::~CMotionSet()
 {
 	iterator it = m_map_pkMotion.begin();
-	for ( ; it != m_map_pkMotion.end(); ++it) {
+	for (; it != m_map_pkMotion.end(); ++it) {
 		M2_DELETE(it->second);
 	}
 }
 
-const CMotion * CMotionSet::GetMotion(DWORD dwKey) const
+const CMotion* CMotionSet::GetMotion(DWORD dwKey) const
 {
 	const_iterator it = m_map_pkMotion.find(dwKey);
 
@@ -382,14 +380,14 @@ const CMotion * CMotionSet::GetMotion(DWORD dwKey) const
 	return it->second;
 }
 
-void CMotionSet::Insert(DWORD dwKey, CMotion * pkMotion)
+void CMotionSet::Insert(DWORD dwKey, CMotion* pkMotion)
 {
 	m_map_pkMotion.emplace(dwKey, pkMotion);
 }
 
-bool CMotionSet::Load(const char * szFileName, int mode, int motion)
+bool CMotionSet::Load(const char* szFileName, int mode, int motion)
 {
-	CMotion * pkMotion = M2_NEW CMotion;
+	CMotion* pkMotion = M2_NEW CMotion;
 
 	if (!pkMotion->LoadFromFile(szFileName))
 	{
@@ -413,7 +411,7 @@ CMotion::~CMotion()
 {
 }
 
-bool CMotion::LoadMobSkillFromFile(const char * c_pszFileName, CMob* pMob, int iSkillIndex)
+bool CMotion::LoadMobSkillFromFile(const char* c_pszFileName, CMob* pMob, int iSkillIndex)
 {
 	CTextFileLoader rkTextFileLoader;
 	if (!rkTextFileLoader.Load(c_pszFileName))
@@ -468,38 +466,38 @@ bool CMotion::LoadMobSkillFromFile(const char * c_pszFileName, CMob* pMob, int i
 
 				switch (iType)
 				{
-					case MOTION_EVENT_TYPE_FLY:
-					case MOTION_EVENT_TYPE_EFFECT:
-					case MOTION_EVENT_TYPE_SCREEN_WAVING:
-					case MOTION_EVENT_TYPE_SOUND:
-					case MOTION_EVENT_TYPE_CHARACTER_SHOW:
-					case MOTION_EVENT_TYPE_CHARACTER_HIDE:
-					case MOTION_EVENT_TYPE_WARP:
-					case MOTION_EVENT_TYPE_EFFECT_TO_TARGET:
-						rkTextFileLoader.SetParentNode();
-						continue;
+				case MOTION_EVENT_TYPE_FLY:
+				case MOTION_EVENT_TYPE_EFFECT:
+				case MOTION_EVENT_TYPE_SCREEN_WAVING:
+				case MOTION_EVENT_TYPE_SOUND:
+				case MOTION_EVENT_TYPE_CHARACTER_SHOW:
+				case MOTION_EVENT_TYPE_CHARACTER_HIDE:
+				case MOTION_EVENT_TYPE_WARP:
+				case MOTION_EVENT_TYPE_EFFECT_TO_TARGET:
+					rkTextFileLoader.SetParentNode();
+					continue;
 
-					case MOTION_EVENT_TYPE_SPECIAL_ATTACKING:
+				case MOTION_EVENT_TYPE_SPECIAL_ATTACKING:
 
-						if (!rkTextFileLoader.SetChildNode("spheredata", 0))
-						{
-							sys_err("Motion: no sphere data %s", c_pszFileName);
-							return false;
-						}
-
-						//if (!rTextFileLoader.GetTokenFloat("radius", &fRadius))
-						//return false;
-						if (!rkTextFileLoader.GetTokenPosition("position", &v3Position))
-						{
-							sys_err("Motion: no position data %s", c_pszFileName);
-							return false;
-						}
-
-						rkTextFileLoader.SetParentNode();
-						break;
-					default:
-						assert(!" CRaceMotionData::LoadMotionData - Strange Event Type");
+					if (!rkTextFileLoader.SetChildNode("spheredata", 0))
+					{
+						sys_err("Motion: no sphere data %s", c_pszFileName);
 						return false;
+					}
+
+					//if (!rTextFileLoader.GetTokenFloat("radius", &fRadius))
+					//return false;
+					if (!rkTextFileLoader.GetTokenPosition("position", &v3Position))
+					{
+						sys_err("Motion: no position data %s", c_pszFileName);
+						return false;
+					}
+
+					rkTextFileLoader.SetParentNode();
+					break;
+				default:
+					assert(!" CRaceMotionData::LoadMotionData - Strange Event Type");
+					return false;
 				}
 
 				float fStartingTime;
@@ -524,7 +522,7 @@ bool CMotion::LoadMobSkillFromFile(const char * c_pszFileName, CMob* pMob, int i
 	return true;
 }
 
-bool CMotion::LoadFromFile(const char * c_pszFileName)
+bool CMotion::LoadFromFile(const char* c_pszFileName)
 {
 	CTextFileLoader loader;
 
@@ -554,7 +552,7 @@ float CMotion::GetDuration() const
 	return m_fDuration;
 }
 
-const D3DVECTOR & CMotion::GetAccumVector() const
+const D3DVECTOR& CMotion::GetAccumVector() const
 {
 	return m_vec3Accumulation;
 }

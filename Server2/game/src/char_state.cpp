@@ -30,194 +30,194 @@ namespace
 {
 	class FuncFindChrForFlag
 	{
-		public:
-			FuncFindChrForFlag(LPCHARACTER pkChr) :
-				m_pkChr(pkChr), m_pkChrFind(NULL), m_iMinDistance(INT_MAX)
-				{
-				}
+	public:
+		FuncFindChrForFlag(LPCHARACTER pkChr) :
+			m_pkChr(pkChr), m_pkChrFind(NULL), m_iMinDistance(INT_MAX)
+		{
+		}
 
-			void operator () (LPENTITY ent)
+		void operator () (LPENTITY ent)
+		{
+			if (!ent->IsType(ENTITY_CHARACTER))
+				return;
+
+			if (ent->IsObserverMode())
+				return;
+
+			LPCHARACTER pkChr = (LPCHARACTER)ent;
+
+			if (!pkChr->IsPC())
+				return;
+
+			if (!pkChr->GetGuild())
+				return;
+
+			if (pkChr->IsDead())
+				return;
+
+			int iDist = DISTANCE_APPROX(pkChr->GetX() - m_pkChr->GetX(), pkChr->GetY() - m_pkChr->GetY());
+
+			if (iDist <= 500 && m_iMinDistance > iDist &&
+				!pkChr->IsAffectFlag(AFF_WAR_FLAG1) &&
+				!pkChr->IsAffectFlag(AFF_WAR_FLAG2) &&
+				!pkChr->IsAffectFlag(AFF_WAR_FLAG3))
 			{
-				if (!ent->IsType(ENTITY_CHARACTER))
-					return;
-
-				if (ent->IsObserverMode())
-					return;
-
-				LPCHARACTER pkChr = (LPCHARACTER) ent;
-
-				if (!pkChr->IsPC())
-					return;
-
-				if (!pkChr->GetGuild())
-					return;
-
-				if (pkChr->IsDead())
-					return;
-
-				int iDist = DISTANCE_APPROX(pkChr->GetX()-m_pkChr->GetX(), pkChr->GetY()-m_pkChr->GetY());
-
-				if (iDist <= 500 && m_iMinDistance > iDist &&
-						!pkChr->IsAffectFlag(AFF_WAR_FLAG1) &&
-						!pkChr->IsAffectFlag(AFF_WAR_FLAG2) &&
-						!pkChr->IsAffectFlag(AFF_WAR_FLAG3))
+				if ((DWORD)m_pkChr->GetPoint(POINT_STAT) == pkChr->GetGuild()->GetID())
 				{
-					if ((DWORD) m_pkChr->GetPoint(POINT_STAT) == pkChr->GetGuild()->GetID())
-					{
-						CWarMap * pMap = pkChr->GetWarMap();
-						BYTE idx;
+					CWarMap* pMap = pkChr->GetWarMap();
+					BYTE idx;
 
-						if (!pMap || !pMap->GetTeamIndex(pkChr->GetGuild()->GetID(), idx))
-							return;
+					if (!pMap || !pMap->GetTeamIndex(pkChr->GetGuild()->GetID(), idx))
+						return;
 
-						if (!pMap->IsFlagOnBase(idx))
-						{
-							m_pkChrFind = pkChr;
-							m_iMinDistance = iDist;
-						}
-					}
-					else
+					if (!pMap->IsFlagOnBase(idx))
 					{
 						m_pkChrFind = pkChr;
 						m_iMinDistance = iDist;
 					}
 				}
+				else
+				{
+					m_pkChrFind = pkChr;
+					m_iMinDistance = iDist;
+				}
 			}
+		}
 
-			LPCHARACTER	m_pkChr;
-			LPCHARACTER m_pkChrFind;
-			int		m_iMinDistance;
+		LPCHARACTER	m_pkChr;
+		LPCHARACTER m_pkChrFind;
+		int		m_iMinDistance;
 	};
 
 	class FuncFindChrForFlagBase
 	{
-		public:
-			FuncFindChrForFlagBase(LPCHARACTER pkChr) : m_pkChr(pkChr)
+	public:
+		FuncFindChrForFlagBase(LPCHARACTER pkChr) : m_pkChr(pkChr)
+		{
+		}
+
+		void operator () (LPENTITY ent)
+		{
+			if (!ent->IsType(ENTITY_CHARACTER))
+				return;
+
+			if (ent->IsObserverMode())
+				return;
+
+			LPCHARACTER pkChr = (LPCHARACTER)ent;
+
+			if (!pkChr->IsPC())
+				return;
+
+			CGuild* pkGuild = pkChr->GetGuild();
+
+			if (!pkGuild)
+				return;
+
+			int iDist = DISTANCE_APPROX(pkChr->GetX() - m_pkChr->GetX(), pkChr->GetY() - m_pkChr->GetY());
+
+			if (iDist <= 500 &&
+				(pkChr->IsAffectFlag(AFF_WAR_FLAG1) ||
+					pkChr->IsAffectFlag(AFF_WAR_FLAG2) ||
+					pkChr->IsAffectFlag(AFF_WAR_FLAG3)))
 			{
-			}
+				CAffect* pkAff = pkChr->FindAffect(AFFECT_WAR_FLAG);
 
-			void operator () (LPENTITY ent)
-			{
-				if (!ent->IsType(ENTITY_CHARACTER))
-					return;
+				sys_log(0, "FlagBase %s dist %d aff %p flag gid %d chr gid %u",
+					pkChr->GetName(), iDist, pkAff, m_pkChr->GetPoint(POINT_STAT),
+					pkChr->GetGuild()->GetID());
 
-				if (ent->IsObserverMode())
-					return;
-
-				LPCHARACTER pkChr = (LPCHARACTER) ent;
-
-				if (!pkChr->IsPC())
-					return;
-
-				CGuild * pkGuild = pkChr->GetGuild();
-
-				if (!pkGuild)
-					return;
-
-				int iDist = DISTANCE_APPROX(pkChr->GetX()-m_pkChr->GetX(), pkChr->GetY()-m_pkChr->GetY());
-
-				if (iDist <= 500 &&
-						(pkChr->IsAffectFlag(AFF_WAR_FLAG1) ||
-						 pkChr->IsAffectFlag(AFF_WAR_FLAG2) ||
-						 pkChr->IsAffectFlag(AFF_WAR_FLAG3)))
+				if (pkAff)
 				{
-					CAffect * pkAff = pkChr->FindAffect(AFFECT_WAR_FLAG);
-
-					sys_log(0, "FlagBase %s dist %d aff %p flag gid %d chr gid %u",
-							pkChr->GetName(), iDist, pkAff, m_pkChr->GetPoint(POINT_STAT),
-							pkChr->GetGuild()->GetID());
-
-					if (pkAff)
+					if ((DWORD)m_pkChr->GetPoint(POINT_STAT) == pkGuild->GetID() &&
+						m_pkChr->GetPoint(POINT_STAT) != pkAff->lApplyValue)
 					{
-						if ((DWORD) m_pkChr->GetPoint(POINT_STAT) == pkGuild->GetID() &&
-								m_pkChr->GetPoint(POINT_STAT) != pkAff->lApplyValue)
+						CWarMap* pMap = pkChr->GetWarMap();
+						BYTE idx;
+
+						if (!pMap || !pMap->GetTeamIndex(pkGuild->GetID(), idx))
+							return;
+
+						//if (pMap->IsFlagOnBase(idx))
 						{
-							CWarMap * pMap = pkChr->GetWarMap();
-							BYTE idx;
+							BYTE idx_opp = idx == 0 ? 1 : 0;
 
-							if (!pMap || !pMap->GetTeamIndex(pkGuild->GetID(), idx))
-								return;
+							SendGuildWarScore(m_pkChr->GetPoint(POINT_STAT), pkAff->lApplyValue, 1);
+							//SendGuildWarScore(pkAff->lApplyValue, m_pkChr->GetPoint(POINT_STAT), -1);
 
-							//if (pMap->IsFlagOnBase(idx))
-							{
-								BYTE idx_opp = idx == 0 ? 1 : 0;
+							pMap->ResetFlag();
+							//pMap->AddFlag(idx_opp);
+							//pkChr->RemoveAffect(AFFECT_WAR_FLAG);
 
-								SendGuildWarScore(m_pkChr->GetPoint(POINT_STAT), pkAff->lApplyValue, 1);
-								//SendGuildWarScore(pkAff->lApplyValue, m_pkChr->GetPoint(POINT_STAT), -1);
-
-								pMap->ResetFlag();
-								//pMap->AddFlag(idx_opp);
-								//pkChr->RemoveAffect(AFFECT_WAR_FLAG);
-
-								char buf[256];
-								snprintf(buf, sizeof(buf), LC_TEXT("%s ±æµå°¡ %s ±æµåÀÇ ±ê¹ßÀ» »©¾Ñ¾Ò½À´Ï´Ù!"), pMap->GetGuild(idx)->GetName(), pMap->GetGuild(idx_opp)->GetName());
-								pMap->Notice(buf);
-							}
+							char buf[256];
+							snprintf(buf, sizeof(buf), LC_TEXT("%s ±æµå°¡ %s ±æµåÀÇ ±ê¹ßÀ» »©¾Ñ¾Ò½À´Ï´Ù!"), pMap->GetGuild(idx)->GetName(), pMap->GetGuild(idx_opp)->GetName());
+							pMap->Notice(buf);
 						}
 					}
 				}
 			}
+		}
 
-			LPCHARACTER m_pkChr;
+		LPCHARACTER m_pkChr;
 	};
 
 	class FuncFindGuardVictim
 	{
-		public:
-			FuncFindGuardVictim(LPCHARACTER pkChr, int iMaxDistance) :
+	public:
+		FuncFindGuardVictim(LPCHARACTER pkChr, int iMaxDistance) :
 			m_iMinDistance(INT_MAX),
 			m_iMaxDistance(iMaxDistance),
 			m_lx(pkChr->GetX()),
 			m_ly(pkChr->GetY()),
 			m_pkChrVictim(NULL)
+		{
+		};
+
+		void operator () (LPENTITY ent)
+		{
+			if (!ent->IsType(ENTITY_CHARACTER))
+				return;
+
+			LPCHARACTER pkChr = (LPCHARACTER)ent;
+
+			if (pkChr->IsPC())
+				return;
+
+			if (pkChr->IsNPC() && !pkChr->IsMonster())
+				return;
+
+			if (pkChr->IsDead())
+				return;
+
+			if (pkChr->IsAffectFlag(AFF_EUNHYUNG) ||
+				pkChr->IsAffectFlag(AFF_INVISIBILITY) ||
+				pkChr->IsAffectFlag(AFF_REVIVE_INVISIBLE))
+				return;
+
+			if (pkChr->GetRaceNum() == 5001)
+				return;
+
+			int iDistance = DISTANCE_APPROX(m_lx - pkChr->GetX(), m_ly - pkChr->GetY());
+
+			if (iDistance < m_iMinDistance && iDistance <= m_iMaxDistance)
 			{
-			};
-
-			void operator () (LPENTITY ent)
-			{
-				if (!ent->IsType(ENTITY_CHARACTER))
-					return;
-
-				LPCHARACTER pkChr = (LPCHARACTER) ent;
-
-				if (pkChr->IsPC())
-					return;
-
-				if (pkChr->IsNPC() && !pkChr->IsMonster())
-					return;
-
-				if (pkChr->IsDead())
-					return;
-
-				if (pkChr->IsAffectFlag(AFF_EUNHYUNG) ||
-						pkChr->IsAffectFlag(AFF_INVISIBILITY) ||
-						pkChr->IsAffectFlag(AFF_REVIVE_INVISIBLE))
-					return;
-
-				if (pkChr->GetRaceNum() == 5001)
-					return;
-
-				int iDistance = DISTANCE_APPROX(m_lx - pkChr->GetX(), m_ly - pkChr->GetY());
-
-				if (iDistance < m_iMinDistance && iDistance <= m_iMaxDistance)
-				{
-					m_pkChrVictim = pkChr;
-					m_iMinDistance = iDistance;
-				}
+				m_pkChrVictim = pkChr;
+				m_iMinDistance = iDistance;
 			}
+		}
 
-			LPCHARACTER GetVictim()
-			{
-				return (m_pkChrVictim);
-			}
+		LPCHARACTER GetVictim()
+		{
+			return (m_pkChrVictim);
+		}
 
-		private:
-			int		m_iMinDistance;
-			int		m_iMaxDistance;
-			long	m_lx;
-			long	m_ly;
+	private:
+		int		m_iMinDistance;
+		int		m_iMaxDistance;
+		long	m_lx;
+		long	m_ly;
 
-			LPCHARACTER	m_pkChrVictim;
+		LPCHARACTER	m_pkChrVictim;
 	};
 }
 
@@ -268,7 +268,7 @@ bool CHARACTER::IsReviver() const
 
 void CHARACTER::CowardEscape()
 {
-	int iDist[4] = {500, 1000, 3000, 5000};
+	int iDist[4] = { 500, 1000, 3000, 5000 };
 
 	for (int iDistIdx = 2; iDistIdx >= 0; --iDistIdx)
 		for (int iTryCount = 0; iTryCount < 8; ++iTryCount)
@@ -276,14 +276,14 @@ void CHARACTER::CowardEscape()
 			SetRotation(number(0, 359));
 
 			float fx, fy;
-			float fDist = number(iDist[iDistIdx], iDist[iDistIdx+1]);
+			float fDist = number(iDist[iDistIdx], iDist[iDistIdx + 1]);
 
 			GetDeltaByDegree(GetRotation(), fDist, &fx, &fy);
 
 			bool bIsWayBlocked = false;
 			for (int j = 1; j <= 100; ++j)
 			{
-				if (!SECTREE_MANAGER::instance().IsMovablePosition(GetMapIndex(), GetX() + (int) fx*j/100, GetY() + (int) fy*j/100))
+				if (!SECTREE_MANAGER::instance().IsMovablePosition(GetMapIndex(), GetX() + (int)fx * j / 100, GetY() + (int)fy * j / 100))
 				{
 					bIsWayBlocked = true;
 					break;
@@ -295,8 +295,8 @@ void CHARACTER::CowardEscape()
 
 			m_dwStateDuration = PASSES_PER_SEC(1);
 
-			int iDestX = GetX() + (int) fx;
-			int iDestY = GetY() + (int) fy;
+			int iDestX = GetX() + (int)fx;
+			int iDestY = GetY() + (int)fy;
 
 			if (Goto(iDestX, iDestY))
 				SendMovePacket(FUNC_WAIT, 0, 0, 0, 0);
@@ -378,7 +378,7 @@ void CHARACTER::__StateIdle_Stone()
 	int iPercent = 0; // @fixme136
 	if (GetMaxHP() >= 0)
 		iPercent = (GetHP() * 100) / GetMaxHP();
-	DWORD dwVnum = number(MIN(GetMobTable().sAttackSpeed, GetMobTable().sMovingSpeed ), MAX(GetMobTable().sAttackSpeed, GetMobTable().sMovingSpeed));
+	DWORD dwVnum = number(MIN(GetMobTable().sAttackSpeed, GetMobTable().sMovingSpeed), MAX(GetMobTable().sAttackSpeed, GetMobTable().sMovingSpeed));
 
 	if (iPercent <= 10 && GetMaxSP() < 10)
 	{
@@ -515,7 +515,7 @@ void CHARACTER::__StateIdle_NPC()
 
 			if (victim)
 			{
-				m_dwStateDuration = passes_per_sec/2;
+				m_dwStateDuration = passes_per_sec / 2;
 
 				if (CanBeginFight())
 					BeginFight(victim);
@@ -547,8 +547,8 @@ void CHARACTER::__StateIdle_NPC()
 				else
 				{
 					TPacketGGXmasWarpSanta p;
-					p.bHeader   = HEADER_GG_XMAS_WARP_SANTA;
-					p.bChannel  = g_bChannel;
+					p.bHeader = HEADER_GG_XMAS_WARP_SANTA;
+					p.bChannel = g_bChannel;
 					p.lMapIndex = lNextMapIndex;
 					P2P_MANAGER::instance().Send(&p, sizeof(TPacketGGXmasWarpSanta));
 				}
@@ -578,13 +578,13 @@ void CHARACTER::__StateIdle_NPC()
 
 				GetDeltaByDegree(GetRotation(), fDist, &fx, &fy);
 
-				if (!(SECTREE_MANAGER::instance().IsMovablePosition(GetMapIndex(), GetX() + (int) fx, GetY() + (int) fy)
-					&& SECTREE_MANAGER::instance().IsMovablePosition(GetMapIndex(), GetX() + (int) fx / 2, GetY() + (int) fy / 2)))
+				if (!(SECTREE_MANAGER::instance().IsMovablePosition(GetMapIndex(), GetX() + (int)fx, GetY() + (int)fy)
+					&& SECTREE_MANAGER::instance().IsMovablePosition(GetMapIndex(), GetX() + (int)fx / 2, GetY() + (int)fy / 2)))
 					return;
 
 				SetNowWalking(true);
 
-				if (Goto(GetX() + (int) fx, GetY() + (int) fy))
+				if (Goto(GetX() + (int)fx, GetY() + (int)fy))
 					SendMovePacket(FUNC_WAIT, 0, 0, 0, 0);
 
 				return;
@@ -680,11 +680,11 @@ void CHARACTER::__StateIdle_Monster()
 
 			GetDeltaByDegree(GetRotation(), fDist, &fx, &fy);
 
-			if (!(SECTREE_MANAGER::instance().IsMovablePosition(GetMapIndex(), GetX() + (int) fx, GetY() + (int) fy)
-						&& SECTREE_MANAGER::instance().IsMovablePosition(GetMapIndex(), GetX() + (int) fx/2, GetY() + (int) fy/2)))
+			if (!(SECTREE_MANAGER::instance().IsMovablePosition(GetMapIndex(), GetX() + (int)fx, GetY() + (int)fy)
+				&& SECTREE_MANAGER::instance().IsMovablePosition(GetMapIndex(), GetX() + (int)fx / 2, GetY() + (int)fy / 2)))
 				return;
 
-			if (Goto(GetX() + (int) fx, GetY() + (int) fy))
+			if (Goto(GetX() + (int)fx, GetY() + (int)fy))
 				SendMovePacket(FUNC_WAIT, 0, 0, 0, 0);
 
 			return;
@@ -702,17 +702,17 @@ bool __CHARACTER_GotoNearTarget(LPCHARACTER self, LPCHARACTER victim)
 
 	switch (self->GetMobBattleType())
 	{
-		case BATTLE_TYPE_RANGE:
-		case BATTLE_TYPE_MAGIC:
+	case BATTLE_TYPE_RANGE:
+	case BATTLE_TYPE_MAGIC:
 
-			if (self->Follow(victim, self->GetMobAttackRange() * 8 / 10))
-				return true;
-			break;
+		if (self->Follow(victim, self->GetMobAttackRange() * 8 / 10))
+			return true;
+		break;
 
-		default:
+	default:
 
-			if (self->Follow(victim, self->GetMobAttackRange() * 9 / 10))
-				return true;
+		if (self->Follow(victim, self->GetMobAttackRange() * 9 / 10))
+			return true;
 	}
 
 	return false;
@@ -721,13 +721,13 @@ bool __CHARACTER_GotoNearTarget(LPCHARACTER self, LPCHARACTER victim)
 void CHARACTER::StateMove()
 {
 	DWORD dwElapsedTime = get_dword_time() - m_dwMoveStartTime;
-	float fRate = (float) dwElapsedTime / (float) m_dwMoveDuration;
+	float fRate = (float)dwElapsedTime / (float)m_dwMoveDuration;
 
 	if (fRate > 1.0f)
 		fRate = 1.0f;
 
-	int x = (int) ((float) (m_posDest.x - m_posStart.x) * fRate + m_posStart.x);
-	int y = (int) ((float) (m_posDest.y - m_posStart.y) * fRate + m_posStart.y);
+	int x = (int)((float)(m_posDest.x - m_posStart.x) * fRate + m_posStart.x);
+	int y = (int)((float)(m_posDest.y - m_posStart.y) * fRate + m_posStart.y);
 
 	Move(x, y);
 
@@ -755,14 +755,14 @@ void CHARACTER::StateMove()
 				PointChange(POINT_STAMINA, GetMaxStamina() / 1);
 		}
 
-		if (!IsWalking() && !IsRiding()){
+		if (!IsWalking() && !IsRiding()) {
 			if ((get_dword_time() - GetLastAttackTime()) < 20000)
 			{
 				StartAffectEvent();
 
 				if (IsStaminaHalfConsume())
 				{
-					if (thecore_pulse()&1)
+					if (thecore_pulse() & 1)
 						PointChange(POINT_STAMINA, -STAMINA_PER_STEP);
 				}
 				else
@@ -892,7 +892,7 @@ void CHARACTER::StateBattle()
 	if (!victim || (victim->IsStun() && IsGuardNPC()) || victim->IsDead())
 	{
 		if (victim && victim->IsDead() &&
-				!no_wander && IsAggressive() && (!GetParty() || GetParty()->GetLeader() == this))
+			!no_wander && IsAggressive() && (!GetParty() || GetParty()->GetLeader() == this))
 		{
 			LPCHARACTER new_victim = FindVictim(this, m_pkMobData->m_table.wAggressiveSight);
 
@@ -903,36 +903,36 @@ void CHARACTER::StateBattle()
 			{
 				switch (GetMobBattleType())
 				{
-					case BATTLE_TYPE_MELEE:
-					case BATTLE_TYPE_SUPER_POWER:
-					case BATTLE_TYPE_SUPER_TANKER:
-					case BATTLE_TYPE_POWER:
-					case BATTLE_TYPE_TANKER:
+				case BATTLE_TYPE_MELEE:
+				case BATTLE_TYPE_SUPER_POWER:
+				case BATTLE_TYPE_SUPER_TANKER:
+				case BATTLE_TYPE_POWER:
+				case BATTLE_TYPE_TANKER:
+				{
+					float fx, fy;
+					float fDist = number(400, 1500);
+
+					GetDeltaByDegree(number(0, 359), fDist, &fx, &fy);
+
+					if (SECTREE_MANAGER::instance().IsAttackablePosition(victim->GetMapIndex(),
+						victim->GetX() + (int)fx,
+						victim->GetY() + (int)fy) &&
+						SECTREE_MANAGER::instance().IsAttackablePosition(victim->GetMapIndex(),
+							victim->GetX() + (int)fx / 2,
+							victim->GetY() + (int)fy / 2))
+					{
+						float dx = victim->GetX() + fx;
+						float dy = victim->GetY() + fy;
+
+						SetRotation(GetDegreeFromPosition(dx, dy));
+
+						if (Goto((long)dx, (long)dy))
 						{
-							float fx, fy;
-							float fDist = number(400, 1500);
-
-							GetDeltaByDegree(number(0, 359), fDist, &fx, &fy);
-
-							if (SECTREE_MANAGER::instance().IsAttackablePosition(victim->GetMapIndex(),
-										victim->GetX() + (int) fx,
-										victim->GetY() + (int) fy) &&
-									SECTREE_MANAGER::instance().IsAttackablePosition(victim->GetMapIndex(),
-										victim->GetX() + (int) fx/2,
-										victim->GetY() + (int) fy/2))
-							{
-								float dx = victim->GetX() + fx;
-								float dy = victim->GetY() + fy;
-
-								SetRotation(GetDegreeFromPosition(dx, dy));
-
-								if (Goto((long) dx, (long) dy))
-								{
-									sys_log(0, "KILL_AND_GO: %s distance %.1f", GetName(), fDist);
-									SendMovePacket(FUNC_WAIT, 0, 0, 0, 0);
-								}
-							}
+							sys_log(0, "KILL_AND_GO: %s distance %.1f", GetName(), fDist);
+							SendMovePacket(FUNC_WAIT, 0, 0, 0, 0);
 						}
+					}
+				}
 				}
 			}
 			return;
@@ -1039,7 +1039,7 @@ void CHARACTER::StateBattle()
 					SendMovePacket(FUNC_MOB_SKILL, iSkillIdx, GetX(), GetY(), 0, dwCurTime);
 
 					float fDuration = CMotionManager::instance().GetMotionDuration(GetRaceNum(), MAKE_MOTION_KEY(MOTION_MODE_GENERAL, MOTION_SPECIAL_1 + iSkillIdx));
-					m_dwStateDuration = (DWORD) (fDuration == 0.0f ? PASSES_PER_SEC(2) : PASSES_PER_SEC(fDuration));
+					m_dwStateDuration = (DWORD)(fDuration == 0.0f ? PASSES_PER_SEC(2) : PASSES_PER_SEC(fDuration));
 
 					if (test_server)
 						sys_log(0, "USE_MOB_SKILL: %s idx %u motion %u duration %.0f", GetName(), iSkillIdx, MOTION_SPECIAL_1 + iSkillIdx, fDuration);
@@ -1059,15 +1059,15 @@ void CHARACTER::StateBattle()
 		SendMovePacket(FUNC_ATTACK, 0, GetX(), GetY(), 0, dwCurTime);
 
 		float fDuration = CMotionManager::instance().GetMotionDuration(GetRaceNum(), MAKE_MOTION_KEY(MOTION_MODE_GENERAL, MOTION_NORMAL_ATTACK));
-		m_dwStateDuration = (DWORD) (fDuration == 0.0f ? PASSES_PER_SEC(2) : PASSES_PER_SEC(fDuration));
+		m_dwStateDuration = (DWORD)(fDuration == 0.0f ? PASSES_PER_SEC(2) : PASSES_PER_SEC(fDuration));
 	}
 }
 
 void CHARACTER::StateFlag()
 {
-	m_dwStateDuration = (DWORD) PASSES_PER_SEC(0.5);
+	m_dwStateDuration = (DWORD)PASSES_PER_SEC(0.5);
 
-	CWarMap * pMap = GetWarMap();
+	CWarMap* pMap = GetWarMap();
 
 	if (!pMap)
 		return;
@@ -1098,7 +1098,7 @@ void CHARACTER::StateFlag()
 
 void CHARACTER::StateFlagBase()
 {
-	m_dwStateDuration = (DWORD) PASSES_PER_SEC(0.5);
+	m_dwStateDuration = (DWORD)PASSES_PER_SEC(0.5);
 
 	FuncFindChrForFlagBase f(this);
 	GetSectree()->ForEachAround(f);
@@ -1154,13 +1154,13 @@ void CHARACTER::StateHorse()
 
 		GetDeltaByDegree(GetRotation(), fDist, &fx, &fy);
 
-		if (!(SECTREE_MANAGER::instance().IsAttackablePosition(GetMapIndex(), GetX() + (int) fx, GetY() + (int) fy)
-					&& SECTREE_MANAGER::instance().IsAttackablePosition(GetMapIndex(), GetX() + (int) fx/2, GetY() + (int) fy/2)))
+		if (!(SECTREE_MANAGER::instance().IsAttackablePosition(GetMapIndex(), GetX() + (int)fx, GetY() + (int)fy)
+			&& SECTREE_MANAGER::instance().IsAttackablePosition(GetMapIndex(), GetX() + (int)fx / 2, GetY() + (int)fy / 2)))
 			return;
 
 		SetNowWalking(true);
 
-		if (Goto(GetX() + (int) fx, GetY() + (int) fy))
+		if (Goto(GetX() + (int)fx, GetY() + (int)fy))
 			SendMovePacket(FUNC_WAIT, 0, 0, 0, 0);
 	}
 }

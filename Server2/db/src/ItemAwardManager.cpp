@@ -57,7 +57,7 @@ void ItemAwardManager::RequestLoad()
 {
 	char szQuery[QUERY_MAX_LEN];
 	snprintf(szQuery, sizeof(szQuery), "SELECT id,login,vnum,count,socket0,socket1,socket2,"
-		#ifdef ENABLE_EXTEND_ITEM_AWARD
+#ifdef ENABLE_EXTEND_ITEM_AWARD
 		"attrtype0, attrvalue0, "
 		"attrtype1, attrvalue1, "
 		"attrtype2, attrvalue2, "
@@ -65,14 +65,14 @@ void ItemAwardManager::RequestLoad()
 		"attrtype4, attrvalue4, "
 		"attrtype5, attrvalue5, "
 		"attrtype6, attrvalue6, "
-		#endif
+#endif
 		"mall,why FROM item_award WHERE taken_time IS NULL and id > %d", g_dwLastCachedItemAwardID);
 	CDBManager::instance().ReturnQuery(szQuery, QID_ITEM_AWARD_LOAD, 0, NULL);
 }
 
-void ItemAwardManager::Load(SQLMsg * pMsg)
+void ItemAwardManager::Load(SQLMsg* pMsg)
 {
-	MYSQL_RES * pRes = pMsg->Get()->pSQLResult;
+	MYSQL_RES* pRes = pMsg->Get()->pSQLResult;
 
 	for (uint i = 0; i < pMsg->Get()->uiNumRows; ++i)
 	{
@@ -85,22 +85,22 @@ void ItemAwardManager::Load(SQLMsg * pMsg)
 		if (m_map_award.find(dwID) != m_map_award.end())
 			continue;
 
-		TItemAward * kData = new TItemAward{};
+		TItemAward* kData = new TItemAward{};
 
-		kData->dwID	= dwID;
+		kData->dwID = dwID;
 		trim_and_lower(row[col++], kData->szLogin, sizeof(kData->szLogin));
 		str_to_number(kData->dwVnum, row[col++]);
 		str_to_number(kData->dwCount, row[col++]);
 		str_to_number(kData->dwSocket0, row[col++]);
 		str_to_number(kData->dwSocket1, row[col++]);
 		str_to_number(kData->dwSocket2, row[col++]);
-		#ifdef ENABLE_EXTEND_ITEM_AWARD
+#ifdef ENABLE_EXTEND_ITEM_AWARD
 		for (size_t j = 0; j < ITEM_ATTRIBUTE_MAX_NUM; j++)
 		{
 			str_to_number(kData->aAttr[j].bType, row[col++]);
 			str_to_number(kData->aAttr[j].sValue, row[col++]);
 		}
-		#endif
+#endif
 		str_to_number(kData->bMall, row[col++]);
 
 		if (row[col])
@@ -109,18 +109,18 @@ void ItemAwardManager::Load(SQLMsg * pMsg)
 
 			char* whyStr = kData->szWhy;
 			char cmdStr[100] = "";
-			strcpy(cmdStr,whyStr);
+			strcpy(cmdStr, whyStr);
 			char command[20] = "";
 			// @fixme203 directly GetCommand instead of strcpy
 			CClientManager::instance().GetCommand(cmdStr, command);
 			//sys_err("%d,  %s",pItemAward->dwID,command);
-			if( !(strcmp(command,"GIFT") ))
+			if (!(strcmp(command, "GIFT")))
 			{
 				TPacketItemAwardInfromer giftData;
 				strcpy(giftData.login, kData->szLogin);
 				strcpy(giftData.command, command);
 				giftData.vnum = kData->dwVnum;
-				CClientManager::instance().ForwardPacket(HEADER_DG_ITEMAWARD_INFORMER,&giftData,sizeof(TPacketItemAwardInfromer));
+				CClientManager::instance().ForwardPacket(HEADER_DG_ITEMAWARD_INFORMER, &giftData, sizeof(TPacketItemAwardInfromer));
 			}
 		}
 
@@ -128,7 +128,7 @@ void ItemAwardManager::Load(SQLMsg * pMsg)
 
 		printf("ITEM_AWARD load id %u bMall %d \n", kData->dwID, kData->bMall);
 		sys_log(0, "ITEM_AWARD: load id %lu login %s vnum %lu count %u socket %lu", kData->dwID, kData->szLogin, kData->dwVnum, kData->dwCount, kData->dwSocket0);
-		std::set<TItemAward *> & kSet = m_map_kSetAwardByLogin[kData->szLogin];
+		std::set<TItemAward*>& kSet = m_map_kSetAwardByLogin[kData->szLogin];
 		kSet.emplace(kData);
 
 		if (dwID > g_dwLastCachedItemAwardID)
@@ -136,7 +136,7 @@ void ItemAwardManager::Load(SQLMsg * pMsg)
 	}
 }
 
-std::set<TItemAward *> * ItemAwardManager::GetByLogin(const char * c_pszLogin)
+std::set<TItemAward*>* ItemAwardManager::GetByLogin(const char* c_pszLogin)
 {
 	itertype(m_map_kSetAwardByLogin) it = m_map_kSetAwardByLogin.find(c_pszLogin);
 
@@ -156,7 +156,7 @@ void ItemAwardManager::Taken(DWORD dwAwardID, DWORD dwItemID)
 		return;
 	}
 
-	TItemAward * k = it->second;
+	TItemAward* k = it->second;
 	k->bTaken = true;
 
 	// Update taken_time in database to prevent not to give him again.
@@ -164,18 +164,18 @@ void ItemAwardManager::Taken(DWORD dwAwardID, DWORD dwItemID)
 	char szQuery[QUERY_MAX_LEN];
 
 	snprintf(szQuery, sizeof(szQuery),
-			"UPDATE item_award SET taken_time=NOW(),item_id=%u WHERE id=%u AND taken_time IS NULL",
-			dwItemID, dwAwardID);
+		"UPDATE item_award SET taken_time=NOW(),item_id=%u WHERE id=%u AND taken_time IS NULL",
+		dwItemID, dwAwardID);
 
 	CDBManager::instance().ReturnQuery(szQuery, QID_ITEM_AWARD_TAKEN, 0, NULL);
 }
 
-std::map<DWORD, TItemAward *>& ItemAwardManager::GetMapAward()
+std::map<DWORD, TItemAward*>& ItemAwardManager::GetMapAward()
 {
 	return m_map_award;
 }
 
-std::map<std::string, std::set<TItemAward *> >& ItemAwardManager::GetMapkSetAwardByLogin()
+std::map<std::string, std::set<TItemAward*> >& ItemAwardManager::GetMapkSetAwardByLogin()
 {
 	return m_map_kSetAwardByLogin;
 }
@@ -210,7 +210,6 @@ int8_t ItemAwardManager::GetItemAttributeSetIndex(const uint8_t bItemType, const
 				{ARMOR_HEAD, ATTRIBUTE_SET_HEAD},
 				{ARMOR_SHIELD, ATTRIBUTE_SET_SHIELD},
 				{ARMOR_EAR, ATTRIBUTE_SET_EAR},
-
 			}
 		},
 
@@ -249,7 +248,7 @@ int8_t ItemAwardManager::GetItemAttributeSetIndex(const uint8_t bItemType, const
 ||| If the bonus type can't be added into a specific item, the bonus will be ignored > deleted. (example: critical pct to armor)
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 \*******************************************************************/
-void ItemAwardManager::CheckItemAttributes(TItemAward & rkItemAward, const TItemTable & rkItemTable, const std::vector<TItemAttrTable> & vec_itemAttrTable, const std::vector<TItemAttrTable> & vec_itemRareTable)
+void ItemAwardManager::CheckItemAttributes(TItemAward& rkItemAward, const TItemTable& rkItemTable, const std::vector<TItemAttrTable>& vec_itemAttrTable, const std::vector<TItemAttrTable>& vec_itemRareTable)
 {
 	const auto bItemType = rkItemTable.bType;
 	const auto bItemSubType = rkItemTable.bSubType;
@@ -278,7 +277,7 @@ void ItemAwardManager::CheckItemAttributes(TItemAward & rkItemAward, const TItem
 		for (size_t i = 0; i < ITEM_ATTRIBUTE_MAX_NUM; ++i)
 		{
 			const auto bApplyType = rkItemAward.aAttr[i].bType;
-			const TItemAttrTable * pkAttrTable{nullptr};
+			const TItemAttrTable* pkAttrTable{ nullptr };
 
 			// skip special bonus
 			if (bApplyType == APPLY_SKILL_DAMAGE_BONUS || bApplyType == APPLY_NORMAL_HIT_DAMAGE_BONUS)
@@ -289,7 +288,7 @@ void ItemAwardManager::CheckItemAttributes(TItemAward & rkItemAward, const TItem
 			{
 				for (size_t j = 0; j < vec_itemAttrTable.size() && !pkAttrTable; ++j)
 				{
-					const TItemAttrTable & rkAttrTable = vec_itemAttrTable.at(j);
+					const TItemAttrTable& rkAttrTable = vec_itemAttrTable.at(j);
 					if (rkAttrTable.dwApplyIndex == bApplyType)
 					{
 						const auto bAttrLevel = rkAttrTable.bMaxLevelBySet[iAttributeSet];
@@ -303,7 +302,7 @@ void ItemAwardManager::CheckItemAttributes(TItemAward & rkItemAward, const TItem
 			{
 				for (size_t j = 0; j < vec_itemRareTable.size() && !pkAttrTable; ++j)
 				{
-					const TItemAttrTable & rkAttrTable = vec_itemRareTable.at(j);
+					const TItemAttrTable& rkAttrTable = vec_itemRareTable.at(j);
 					if (rkAttrTable.dwApplyIndex == bApplyType)
 					{
 						const auto bAttrLevel = rkAttrTable.bMaxLevelBySet[iAttributeSet];
@@ -340,7 +339,7 @@ void ItemAwardManager::CheckItemAttributes(TItemAward & rkItemAward, const TItem
 ||| INSERT INTO player.item_award(`login`, `vnum`, `count`, `mall`) VALUES ('account', 189, 1, 1);
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 \*******************************************************************/
-void ItemAwardManager::CheckItemAddonType(TItemAward & rkItemAward, const TItemTable & rkItemTable)
+void ItemAwardManager::CheckItemAddonType(TItemAward& rkItemAward, const TItemTable& rkItemTable)
 {
 	const bool bIsAddonTypeItem = (rkItemTable.sAddonType == -1);
 	if (!bIsAddonTypeItem)
@@ -360,8 +359,8 @@ void ItemAwardManager::CheckItemAddonType(TItemAward & rkItemAward, const TItemT
 	{
 		const auto sApplySkillDamageValue = MINMAX(-30, static_cast<int16_t>((gauss_random(0, 5) + 0.5f)), 30);
 		const auto sApplyNormalHitValue = std::abs(sApplySkillDamageValue) <= 20 ?
-												(-2 * sApplySkillDamageValue) + std::abs(number(-8, 8) + number(-8, 8)) + number(1, 4) :
-												(-2 * sApplySkillDamageValue) + number(1, 5);
+			(-2 * sApplySkillDamageValue) + std::abs(number(-8, 8) + number(-8, 8)) + number(1, 4) :
+			(-2 * sApplySkillDamageValue) + number(1, 5);
 
 		rkItemAward.aAttr[0].bType = APPLY_NORMAL_HIT_DAMAGE_BONUS;
 		rkItemAward.aAttr[0].sValue = sApplyNormalHitValue;
@@ -391,7 +390,7 @@ void ItemAwardManager::CheckItemAddonType(TItemAward & rkItemAward, const TItemT
 ||| INSERT INTO player.item_award(`login`, `vnum`, `count`, `socket0`, `mall`) VALUES ('account', 50300, 1, 4, 1); # Specific book by skill vnum
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 \*******************************************************************/
-void ItemAwardManager::CheckItemSkillBook(TItemAward & rkItemAward, const std::vector<TSkillTable> vec_skillTable)
+void ItemAwardManager::CheckItemSkillBook(TItemAward& rkItemAward, const std::vector<TSkillTable> vec_skillTable)
 {
 	const bool bIsBookItem = (rkItemAward.dwVnum == ITEM_SKILL_VNUM || rkItemAward.dwVnum == ITEM_SKILLFORGET_VNUM);
 	if (!bIsBookItem)
@@ -412,7 +411,7 @@ void ItemAwardManager::CheckItemSkillBook(TItemAward & rkItemAward, const std::v
 	{
 		do
 		{
-			const TSkillTable * pkSkillTable = &vec_skillTable.at(number(0, vec_skillTable.size() - 1));
+			const TSkillTable* pkSkillTable = &vec_skillTable.at(number(0, vec_skillTable.size() - 1));
 			if (!pkSkillTable)
 				continue;
 
@@ -424,8 +423,7 @@ void ItemAwardManager::CheckItemSkillBook(TItemAward & rkItemAward, const std::v
 
 			dwSocket0SkillVnum = dwSkillVnum;
 			break;
-		}
-		while (true);
+		} while (true);
 
 		rkItemAward.dwSocket0 = dwSocket0SkillVnum;
 	}
@@ -437,7 +435,7 @@ void ItemAwardManager::CheckItemSkillBook(TItemAward & rkItemAward, const std::v
 ||| Check if item count overflow occured, then set it to maximum.
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 \*******************************************************************/
-void ItemAwardManager::CheckItemCount(TItemAward & rkItemAward, const TItemTable & rkItemTable)
+void ItemAwardManager::CheckItemCount(TItemAward& rkItemAward, const TItemTable& rkItemTable)
 {
 	const bool bIsStackableItem = (rkItemTable.dwFlags & ITEM_FLAG_STACKABLE);
 	if (rkItemAward.dwCount > 1 && !bIsStackableItem)
@@ -452,10 +450,10 @@ void ItemAwardManager::CheckItemCount(TItemAward & rkItemAward, const TItemTable
 ||| New created equipments had no available slots.
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 \*******************************************************************/
-void ItemAwardManager::CheckItemSocket(TItemAward & rkItemAward, const TItemTable & rkItemTable)
+void ItemAwardManager::CheckItemSocket(TItemAward& rkItemAward, const TItemTable& rkItemTable)
 {
 	// check for limited time items
-	for (const auto & limit : rkItemTable.aLimits)
+	for (const auto& limit : rkItemTable.aLimits)
 	{
 		if (LIMIT_REAL_TIME == limit.bType || LIMIT_REAL_TIME_START_FIRST_USE == limit.bType)
 			return;
@@ -480,7 +478,7 @@ void ItemAwardManager::CheckItemSocket(TItemAward & rkItemAward, const TItemTabl
 ||| Check if apply_value, apply_duration is equal with grades (1/2/3/4/5) from settings, blend.txt
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 \*******************************************************************/
-void ItemAwardManager::CheckItemBlend(TItemAward & rkItemAward, const TItemTable & rkItemTable)
+void ItemAwardManager::CheckItemBlend(TItemAward& rkItemAward, const TItemTable& rkItemTable)
 {
 	const bool bIsBlendItem = (rkItemTable.bType == ITEM_BLEND);
 	if (!bIsBlendItem)

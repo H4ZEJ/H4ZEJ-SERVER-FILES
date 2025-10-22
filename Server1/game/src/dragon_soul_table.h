@@ -3,7 +3,7 @@
 
 struct SApply
 {
-	SApply (EApplyTypes at, int av, float p = 0.f) : apply_type(at), apply_value(av), prob(p) {}
+	SApply(EApplyTypes at, int av, float p = 0.f) : apply_type(at), apply_value(av), prob(p) {}
 	EApplyTypes apply_type;
 	int apply_value;
 	float prob;
@@ -21,7 +21,7 @@ public:
 	typedef std::vector <SApply> TVecApplys;
 	typedef std::map <BYTE, TVecApplys> TMapApplyGroup;
 
-	bool	ReadDragonSoulTableFile(const char * c_pszFileName);
+	bool	ReadDragonSoulTableFile(const char* c_pszFileName);
 	bool	GetDragonSoulGroupName(BYTE bType, std::string& stGroupName) const;
 
 	bool	GetBasicApplys(BYTE ds_type, OUT TVecApplys& vec_basic_applys);
@@ -40,13 +40,13 @@ private:
 	std::string stFileName;
 
 	// caching m_pLoader's child nodes.
-	CGroupNode*	m_pApplyNumSettingNode;
-	CGroupNode*	m_pWeightTableNode;
-	CGroupNode*	m_pRefineGradeTableNode;
-	CGroupNode*	m_pRefineStepTableNode;
-	CGroupNode*	m_pRefineStrengthTableNode;
-	CGroupNode*	m_pDragonHeartExtTableNode;
-	CGroupNode*	m_pDragonSoulExtTableNode;
+	CGroupNode* m_pApplyNumSettingNode;
+	CGroupNode* m_pWeightTableNode;
+	CGroupNode* m_pRefineGradeTableNode;
+	CGroupNode* m_pRefineStepTableNode;
+	CGroupNode* m_pRefineStrengthTableNode;
+	CGroupNode* m_pDragonHeartExtTableNode;
+	CGroupNode* m_pDragonSoulExtTableNode;
 
 	typedef std::map <std::string, BYTE> TMapNameToType;
 	typedef std::map <BYTE, std::string> TMapTypeToName;

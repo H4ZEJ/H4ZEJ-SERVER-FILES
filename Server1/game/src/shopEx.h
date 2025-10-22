@@ -12,13 +12,13 @@ typedef struct SShopTableEx : SShopTable
 
 class CGroupNode;
 
-class CShopEx: public CShop
+class CShopEx : public CShop
 {
 public:
 	bool			Create(DWORD dwVnum, DWORD dwNPCVnum);
 	bool			AddShopTable(TShopTableEx& shopTable);
 
-	virtual bool	AddGuest(LPCHARACTER ch,DWORD owner_vid, bool bOtherEmpire);
+	virtual bool	AddGuest(LPCHARACTER ch, DWORD owner_vid, bool bOtherEmpire);
 	virtual void	SetPCShop(LPCHARACTER ch) { return; }
 	virtual bool	IsPCShop() { return false; }
 	virtual int		Buy(LPCHARACTER ch, BYTE pos);

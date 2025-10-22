@@ -40,20 +40,20 @@ OXEventStatus COXEventManager::GetStatus()
 
 	switch (ret)
 	{
-		case 0 :
-			return OXEVENT_FINISH;
+	case 0:
+		return OXEVENT_FINISH;
 
-		case 1 :
-			return OXEVENT_OPEN;
+	case 1:
+		return OXEVENT_OPEN;
 
-		case 2 :
-			return OXEVENT_CLOSE;
+	case 2:
+		return OXEVENT_CLOSE;
 
-		case 3 :
-			return OXEVENT_QUIZ;
+	case 3:
+		return OXEVENT_QUIZ;
 
-		default :
-			return OXEVENT_ERR;
+	default:
+		return OXEVENT_ERR;
 	}
 
 	return OXEVENT_ERR;
@@ -65,23 +65,23 @@ void COXEventManager::SetStatus(OXEventStatus status)
 
 	switch (status)
 	{
-		case OXEVENT_OPEN :
-			val = 1;
-			break;
+	case OXEVENT_OPEN:
+		val = 1;
+		break;
 
-		case OXEVENT_CLOSE :
-			val = 2;
-			break;
+	case OXEVENT_CLOSE:
+		val = 2;
+		break;
 
-		case OXEVENT_QUIZ :
-			val = 3;
-			break;
+	case OXEVENT_QUIZ:
+		val = 3;
+		break;
 
-		case OXEVENT_FINISH :
-		case OXEVENT_ERR :
-		default :
-			val = 0;
-			break;
+	case OXEVENT_FINISH:
+	case OXEVENT_ERR:
+	default:
+		val = 0;
+		break;
 	}
 	quest::CQuestManager::instance().RequestSetEventFlag("oxevent_status", val);
 }
@@ -134,7 +134,7 @@ bool COXEventManager::EnterAudience(LPCHARACTER pkChar)
 
 bool COXEventManager::AddQuiz(unsigned char level, const char* pszQuestion, bool answer)
 {
-	if (m_vec_quiz.size() < (size_t) level + 1)
+	if (m_vec_quiz.size() < (size_t)level + 1)
 		m_vec_quiz.resize(level + 1);
 
 	struct tag_Quiz tmpQuiz;
@@ -178,7 +178,7 @@ EVENTINFO(OXEventInfoData)
 	bool answer;
 
 	OXEventInfoData()
-	: answer( false )
+		: answer(false)
 	{
 	}
 };
@@ -188,44 +188,44 @@ EVENTFUNC(oxevent_timer)
 	static BYTE flag = 0;
 	OXEventInfoData* info = dynamic_cast<OXEventInfoData*>(event->info);
 
-	if ( info == NULL )
+	if (info == NULL)
 	{
-		sys_err( "oxevent_timer> <Factor> Null pointer" );
+		sys_err("oxevent_timer> <Factor> Null pointer");
 		return 0;
 	}
 
 	switch (flag)
 	{
-		case 0:
-			SendNoticeMap(LC_TEXT("10초뒤 판정하겠습니다."), OXEVENT_MAP_INDEX, true);
-			flag++;
-			return PASSES_PER_SEC(10);
+	case 0:
+		SendNoticeMap(LC_TEXT("10초뒤 판정하겠습니다."), OXEVENT_MAP_INDEX, true);
+		flag++;
+		return PASSES_PER_SEC(10);
 
-		case 1:
-			SendNoticeMap(LC_TEXT("정답은"), OXEVENT_MAP_INDEX, true);
+	case 1:
+		SendNoticeMap(LC_TEXT("정답은"), OXEVENT_MAP_INDEX, true);
 
-			if (info->answer == true)
-			{
-				COXEventManager::instance().CheckAnswer(true);
-				SendNoticeMap(LC_TEXT("O 입니다"), OXEVENT_MAP_INDEX, true);
-			}
-			else
-			{
-				COXEventManager::instance().CheckAnswer(false);
-				SendNoticeMap(LC_TEXT("X 입니다"), OXEVENT_MAP_INDEX, true);
-			}
+		if (info->answer == true)
+		{
+			COXEventManager::instance().CheckAnswer(true);
+			SendNoticeMap(LC_TEXT("O 입니다"), OXEVENT_MAP_INDEX, true);
+		}
+		else
+		{
+			COXEventManager::instance().CheckAnswer(false);
+			SendNoticeMap(LC_TEXT("X 입니다"), OXEVENT_MAP_INDEX, true);
+		}
 
-			SendNoticeMap(LC_TEXT("5초 뒤 틀리신 분들을 바깥으로 이동 시키겠습니다."), OXEVENT_MAP_INDEX, true);
+		SendNoticeMap(LC_TEXT("5초 뒤 틀리신 분들을 바깥으로 이동 시키겠습니다."), OXEVENT_MAP_INDEX, true);
 
-			flag++;
-			return PASSES_PER_SEC(5);
+		flag++;
+		return PASSES_PER_SEC(5);
 
-		case 2:
-			COXEventManager::instance().WarpToAudience();
-			COXEventManager::instance().SetStatus(OXEVENT_CLOSE);
-			SendNoticeMap(LC_TEXT("다음 문제 준비해주세요."), OXEVENT_MAP_INDEX, true);
-			flag = 0;
-			break;
+	case 2:
+		COXEventManager::instance().WarpToAudience();
+		COXEventManager::instance().SetStatus(OXEVENT_CLOSE);
+		SendNoticeMap(LC_TEXT("다음 문제 준비해주세요."), OXEVENT_MAP_INDEX, true);
+		flag = 0;
+		break;
 	}
 	return 0;
 }
@@ -238,7 +238,7 @@ bool COXEventManager::Quiz(unsigned char level, int timelimit)
 
 	if (timelimit < 0) timelimit = 30;
 
-	int idx = number(0, m_vec_quiz[level].size()-1);
+	int idx = number(0, m_vec_quiz[level].size() - 1);
 
 	SendNoticeMap(LC_TEXT("문제 입니다."), OXEVENT_MAP_INDEX, true);
 	SendNoticeMap(m_vec_quiz[level][idx].Quiz, OXEVENT_MAP_INDEX, true);
@@ -257,7 +257,7 @@ bool COXEventManager::Quiz(unsigned char level, int timelimit)
 
 	SetStatus(OXEVENT_QUIZ);
 
-	m_vec_quiz[level].erase(m_vec_quiz[level].begin()+idx);
+	m_vec_quiz[level].erase(m_vec_quiz[level].begin() + idx);
 	return true;
 }
 
@@ -309,9 +309,9 @@ bool COXEventManager::CheckAnswer(bool answer)
 				// pkChar->CreateFly(number(FLY_FIREWORK1, FLY_FIREWORK6), pkChar);
 				char chatbuf[256];
 				int len = snprintf(chatbuf, sizeof(chatbuf),
-						"%s %u %u", number(0, 1) == 1 ? "cheer1" : "cheer2", (DWORD)pkChar->GetVID(), 0);
+					"%s %u %u", number(0, 1) == 1 ? "cheer1" : "cheer2", (DWORD)pkChar->GetVID(), 0);
 
-				if (len < 0 || len >= (int) sizeof(chatbuf))
+				if (len < 0 || len >= (int)sizeof(chatbuf))
 					len = sizeof(chatbuf) - 1;
 
 				++len;
@@ -361,13 +361,13 @@ void COXEventManager::WarpToAudience()
 
 		if (pkChar != NULL)
 		{
-			switch ( number(0, 3))
+			switch (number(0, 3))
 			{
-				case 0 : pkChar->Show(OXEVENT_MAP_INDEX, 896300, 28900); break;
-				case 1 : pkChar->Show(OXEVENT_MAP_INDEX, 890900, 28100); break;
-				case 2 : pkChar->Show(OXEVENT_MAP_INDEX, 896600, 20500); break;
-				case 3 : pkChar->Show(OXEVENT_MAP_INDEX, 902500, 28100); break;
-				default : pkChar->Show(OXEVENT_MAP_INDEX, 896300, 28900); break;
+			case 0: pkChar->Show(OXEVENT_MAP_INDEX, 896300, 28900); break;
+			case 1: pkChar->Show(OXEVENT_MAP_INDEX, 890900, 28100); break;
+			case 2: pkChar->Show(OXEVENT_MAP_INDEX, 896600, 20500); break;
+			case 3: pkChar->Show(OXEVENT_MAP_INDEX, 902500, 28100); break;
+			default: pkChar->Show(OXEVENT_MAP_INDEX, 896300, 28900); break;
 			}
 		}
 	}

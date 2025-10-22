@@ -67,7 +67,7 @@ bool CHARACTER::StartRiding()
 
 	MountVnum(dwMountVnum);
 
-	if(test_server)
+	if (test_server)
 		sys_log(0, "Ride Horse : %s ", GetName());
 
 	return true;
@@ -106,11 +106,11 @@ bool CHARACTER::StopRiding()
 
 EVENTFUNC(horse_dead_event)
 {
-	char_event_info* info = dynamic_cast<char_event_info*>( event->info );
+	char_event_info* info = dynamic_cast<char_event_info*>(event->info);
 
-	if ( info == NULL )
+	if (info == NULL)
 	{
-		sys_err( "horse_dead_event> <Factor> Null pointer" );
+		sys_err("horse_dead_event> <Factor> Null pointer");
 		return 0;
 	}
 
@@ -141,9 +141,9 @@ LPCHARACTER CHARACTER::GetRider() const
 
 void CHARACTER::HorseSummon(bool bSummon, bool bFromFar, DWORD dwVnum, const char* pPetName)
 {
-	if ( bSummon )
+	if (bSummon)
 	{
-		if( m_chHorse != NULL )
+		if (m_chHorse != NULL)
 			return;
 
 		if (GetHorseLevel() <= 0)
@@ -172,10 +172,10 @@ void CHARACTER::HorseSummon(bool bSummon, bool bFromFar, DWORD dwVnum, const cha
 		}
 
 		m_chHorse = CHARACTER_MANAGER::instance().SpawnMob(
-				(0 == dwVnum) ? GetMyHorseVnum() : dwVnum,
-				GetMapIndex(),
-				x, y,
-				GetZ(), false, (int)(GetRotation()+180), false);
+			(0 == dwVnum) ? GetMyHorseVnum() : dwVnum,
+			GetMapIndex(),
+			x, y,
+			GetZ(), false, (int)(GetRotation() + 180), false);
 
 		if (!m_chHorse)
 		{
@@ -196,7 +196,7 @@ void CHARACTER::HorseSummon(bool bSummon, bool bFromFar, DWORD dwVnum, const cha
 
 		const char* pHorseName = CHorseNameManager::instance().GetHorseName(GetPlayerID());
 
-		if ( pHorseName != NULL && strlen(pHorseName) != 0 )
+		if (pHorseName != NULL && strlen(pHorseName) != 0)
 		{
 			m_chHorse->m_stName = pHorseName;
 		}
@@ -217,8 +217,8 @@ void CHARACTER::HorseSummon(bool bSummon, bool bFromFar, DWORD dwVnum, const cha
 		if ((GetHorseHealth() <= 0))
 		{
 			TPacketGCDead pack;
-			pack.header	= HEADER_GC_DEAD;
-			pack.vid    = m_chHorse->GetVID();
+			pack.header = HEADER_GC_DEAD;
+			pack.vid = m_chHorse->GetVID();
 			PacketAround(&pack, sizeof(pack));
 		}
 
@@ -244,14 +244,13 @@ void CHARACTER::HorseSummon(bool bSummon, bool bFromFar, DWORD dwVnum, const cha
 		{
 			chHorse->SetNowWalking(false);
 			float fx, fy;
-			chHorse->SetRotation(GetDegreeFromPositionXY(chHorse->GetX(), chHorse->GetY(), GetX(), GetY())+180);
+			chHorse->SetRotation(GetDegreeFromPositionXY(chHorse->GetX(), chHorse->GetY(), GetX(), GetY()) + 180);
 			GetDeltaByDegree(chHorse->GetRotation(), 3500, &fx, &fy);
-			chHorse->Goto((long)(chHorse->GetX()+fx), (long) (chHorse->GetY()+fy));
+			chHorse->Goto((long)(chHorse->GetX() + fx), (long)(chHorse->GetY() + fy));
 			chHorse->SendMovePacket(FUNC_WAIT, 0, 0, 0, 0);
 		}
 
 		m_chHorse = NULL;
-
 	}
 }
 
@@ -327,8 +326,8 @@ void CHARACTER::SendHorseInfo()
 			iStaminaGrade = 3;
 
 		if (m_bSendHorseLevel != GetHorseLevel() ||
-				m_bSendHorseHealthGrade != iHealthGrade ||
-				m_bSendHorseStaminaGrade != iStaminaGrade)
+			m_bSendHorseHealthGrade != iHealthGrade ||
+			m_bSendHorseStaminaGrade != iStaminaGrade)
 		{
 			ChatPacket(CHAT_TYPE_COMMAND, "horse_state %d %d %d", GetHorseLevel(), iHealthGrade, iStaminaGrade);
 
@@ -341,14 +340,14 @@ void CHARACTER::SendHorseInfo()
 
 bool CHARACTER::CanUseHorseSkill()
 {
-	if(IsRiding())
+	if (IsRiding())
 	{
 		if (GetHorseGrade() == 3)
 			return true;
 		else
 			return false;
 
-		if(GetMountVnum())
+		if (GetMountVnum())
 		{
 			if (GetMountVnum() >= 20209 && GetMountVnum() <= 20212)
 				return true;
@@ -358,7 +357,6 @@ bool CHARACTER::CanUseHorseSkill()
 		}
 		else
 			return false;
-
 	}
 
 	return false;

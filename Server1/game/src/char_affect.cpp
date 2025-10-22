@@ -18,18 +18,18 @@
 #include "DragonSoul.h"
 #include "../../common/CommonDefines.h"
 
-bool IS_NO_SAVE_AFFECT(uint32_t type, CHARACTER* owner = nullptr) 
+bool IS_NO_SAVE_AFFECT(uint32_t type, CHARACTER* owner = nullptr)
 {
 	if (type >= AFFECT_PREMIUM_START && type <= AFFECT_PREMIUM_END)
 		return true;
 
-	switch (type) 
+	switch (type)
 	{
-		case AFFECT_WAR_FLAG:
-		case AFFECT_REVIVE_INVISIBLE:
-			return true;
+	case AFFECT_WAR_FLAG:
+	case AFFECT_REVIVE_INVISIBLE:
+		return true;
 	}
-	if (owner && !owner->IsGM() && type == AFFECT_INVISIBILITY) 
+	if (owner && !owner->IsGM() && type == AFFECT_INVISIBILITY)
 	{
 		return false;
 	}
@@ -37,17 +37,17 @@ bool IS_NO_SAVE_AFFECT(uint32_t type, CHARACTER* owner = nullptr)
 	return false;
 }
 
-bool IS_NO_CLEAR_ON_DEATH_AFFECT(uint32_t type) 
+bool IS_NO_CLEAR_ON_DEATH_AFFECT(uint32_t type)
 {
 	if (type >= 500 && type <= 600)
 		return true;
 
-	switch (type) 
+	switch (type)
 	{
-		case AFFECT_BLOCK_CHAT:
-		case AFFECT_MOV_SPEED:
-		case AFFECT_ATT_SPEED:
-			return true;
+	case AFFECT_BLOCK_CHAT:
+	case AFFECT_MOV_SPEED:
+	case AFFECT_ATT_SPEED:
+		return true;
 	}
 
 	return false;
@@ -56,39 +56,39 @@ bool IS_NO_CLEAR_ON_DEATH_AFFECT(uint32_t type)
 void SendAffectRemovePacket(LPDESC d, DWORD pid, DWORD type, BYTE point)
 {
 	TPacketGCAffectRemove ptoc;
-	ptoc.bHeader	= HEADER_GC_AFFECT_REMOVE;
-	ptoc.dwType		= type;
-	ptoc.bApplyOn	= point;
+	ptoc.bHeader = HEADER_GC_AFFECT_REMOVE;
+	ptoc.dwType = type;
+	ptoc.bApplyOn = point;
 	d->Packet(&ptoc, sizeof(TPacketGCAffectRemove));
 
 	TPacketGDRemoveAffect ptod;
-	ptod.dwPID		= pid;
-	ptod.dwType		= type;
-	ptod.bApplyOn	= point;
+	ptod.dwPID = pid;
+	ptod.dwType = type;
+	ptod.bApplyOn = point;
 	db_clientdesc->DBPacket(HEADER_GD_REMOVE_AFFECT, 0, &ptod, sizeof(ptod));
 }
 
-void SendAffectAddPacket(LPDESC d, CAffect * pkAff)
+void SendAffectAddPacket(LPDESC d, CAffect* pkAff)
 {
 	TPacketGCAffectAdd ptoc;
-	ptoc.bHeader		= HEADER_GC_AFFECT_ADD;
-	ptoc.elem.dwType		= pkAff->dwType;
-	ptoc.elem.bApplyOn		= pkAff->bApplyOn;
-	ptoc.elem.lApplyValue	= pkAff->lApplyValue;
-	ptoc.elem.dwFlag		= pkAff->dwFlag;
-	ptoc.elem.lDuration		= pkAff->lDuration;
-	ptoc.elem.lSPCost		= pkAff->lSPCost;
+	ptoc.bHeader = HEADER_GC_AFFECT_ADD;
+	ptoc.elem.dwType = pkAff->dwType;
+	ptoc.elem.bApplyOn = pkAff->bApplyOn;
+	ptoc.elem.lApplyValue = pkAff->lApplyValue;
+	ptoc.elem.dwFlag = pkAff->dwFlag;
+	ptoc.elem.lDuration = pkAff->lDuration;
+	ptoc.elem.lSPCost = pkAff->lSPCost;
 	d->Packet(&ptoc, sizeof(TPacketGCAffectAdd));
 }
 ////////////////////////////////////////////////////////////////////
 // Affect
-CAffect * CHARACTER::FindAffect(DWORD dwType, BYTE bApply) const
+CAffect* CHARACTER::FindAffect(DWORD dwType, BYTE bApply) const
 {
 	itertype(m_list_pkAffect) it = m_list_pkAffect.begin();
 
 	while (it != m_list_pkAffect.end())
 	{
-		CAffect * pkAffect = *it++;
+		CAffect* pkAffect = *it++;
 
 		if (pkAffect->dwType == dwType && (bApply == APPLY_NONE || bApply == pkAffect->bApplyOn))
 			return pkAffect;
@@ -99,11 +99,11 @@ CAffect * CHARACTER::FindAffect(DWORD dwType, BYTE bApply) const
 
 EVENTFUNC(affect_event)
 {
-	char_event_info* info = dynamic_cast<char_event_info*>( event->info );
+	char_event_info* info = dynamic_cast<char_event_info*>(event->info);
 
-	if ( info == NULL )
+	if (info == NULL)
 	{
-		sys_err( "affect_event> <Factor> Null pointer" );
+		sys_err("affect_event> <Factor> Null pointer");
 		return 0;
 	}
 
@@ -159,14 +159,14 @@ bool CHARACTER::UpdateAffect()
 		PointChange(POINT_SP, GetPoint(POINT_SP_RECOVER_CONTINUE));
 	}
 
-	AutoRecoveryItemProcess( AFFECT_AUTO_HP_RECOVERY );
-	AutoRecoveryItemProcess( AFFECT_AUTO_SP_RECOVERY );
+	AutoRecoveryItemProcess(AFFECT_AUTO_HP_RECOVERY);
+	AutoRecoveryItemProcess(AFFECT_AUTO_SP_RECOVERY);
 
 	if (GetMaxStamina() > GetStamina())
 	{
 		int iSec = (get_dword_time() - GetStopTime()) / 3000;
 		if (iSec)
-			PointChange(POINT_STAMINA, GetMaxStamina()/1);
+			PointChange(POINT_STAMINA, GetMaxStamina() / 1);
 	}
 
 	if (ProcessAffect())
@@ -204,11 +204,11 @@ void CHARACTER::ClearAffect(bool bSave)
 
 	while (it != m_list_pkAffect.end())
 	{
-		CAffect * pkAff = *it;
+		CAffect* pkAff = *it;
 
 		if (bSave)
 		{
-			if ( IS_NO_CLEAR_ON_DEATH_AFFECT(pkAff->dwType) || IS_NO_SAVE_AFFECT(pkAff->dwType) )
+			if (IS_NO_CLEAR_ON_DEATH_AFFECT(pkAff->dwType) || IS_NO_SAVE_AFFECT(pkAff->dwType))
 			{
 				++it;
 				continue;
@@ -252,8 +252,8 @@ void CHARACTER::ClearAffect(bool bSave)
 	}
 
 	if (afOld != m_afAffectFlag ||
-			wMovSpd != GetPoint(POINT_MOV_SPEED) ||
-			wAttSpd != GetPoint(POINT_ATT_SPEED))
+		wMovSpd != GetPoint(POINT_MOV_SPEED) ||
+		wAttSpd != GetPoint(POINT_ATT_SPEED))
 		UpdatePacket();
 
 	CheckMaximumPoints();
@@ -264,8 +264,8 @@ void CHARACTER::ClearAffect(bool bSave)
 
 int CHARACTER::ProcessAffect()
 {
-	bool	bDiff	= false;
-	CAffect	*pkAff	= NULL;
+	bool	bDiff = false;
+	CAffect* pkAff = NULL;
 
 	for (int i = 0; i <= PREMIUM_MAX_NUM; ++i)
 	{
@@ -292,7 +292,7 @@ int CHARACTER::ProcessAffect()
 	if (pkAff)
 	{
 		// IF HAIR_LIMIT_TIME() < CURRENT_TIME()
-		if ( this->GetQuestFlag("hair.limit_time") < get_global_time())
+		if (this->GetQuestFlag("hair.limit_time") < get_global_time())
 		{
 			// SET HAIR NORMAL
 			this->SetPart(PART_HAIR, 0);
@@ -339,7 +339,7 @@ int CHARACTER::ProcessAffect()
 
 		// AFFECT_DURATION_BUG_FIX
 
-		if ( --pkAff->lDuration <= 0 )
+		if (--pkAff->lDuration <= 0)
 		{
 			bEnd = true;
 		}
@@ -366,8 +366,8 @@ int CHARACTER::ProcessAffect()
 	if (bDiff)
 	{
 		if (afOld != m_afAffectFlag ||
-				lMovSpd != GetPoint(POINT_MOV_SPEED) ||
-				lAttSpd != GetPoint(POINT_ATT_SPEED))
+			lMovSpd != GetPoint(POINT_MOV_SPEED) ||
+			lAttSpd != GetPoint(POINT_ATT_SPEED))
 		{
 			UpdatePacket();
 		}
@@ -389,20 +389,20 @@ void CHARACTER::SaveAffect()
 
 	while (it != m_list_pkAffect.end())
 	{
-		CAffect * pkAff = *it++;
+		CAffect* pkAff = *it++;
 
 		if (IS_NO_SAVE_AFFECT(pkAff->dwType))
 			continue;
 
 		sys_log(1, "AFFECT_SAVE: %u %u %d %d", pkAff->dwType, pkAff->bApplyOn, pkAff->lApplyValue, pkAff->lDuration);
 
-		p.dwPID			= GetPlayerID();
-		p.elem.dwType		= pkAff->dwType;
-		p.elem.bApplyOn		= pkAff->bApplyOn;
-		p.elem.lApplyValue	= pkAff->lApplyValue;
-		p.elem.dwFlag		= pkAff->dwFlag;
-		p.elem.lDuration	= pkAff->lDuration;
-		p.elem.lSPCost		= pkAff->lSPCost;
+		p.dwPID = GetPlayerID();
+		p.elem.dwType = pkAff->dwType;
+		p.elem.bApplyOn = pkAff->bApplyOn;
+		p.elem.lApplyValue = pkAff->lApplyValue;
+		p.elem.dwFlag = pkAff->dwFlag;
+		p.elem.lDuration = pkAff->lDuration;
+		p.elem.lSPCost = pkAff->lSPCost;
 		db_clientdesc->DBPacket(HEADER_GD_ADD_AFFECT, 0, &p, sizeof(p));
 	}
 }
@@ -414,20 +414,20 @@ EVENTINFO(load_affect_login_event_info)
 	char* data;
 
 	load_affect_login_event_info()
-	: pid( 0 )
-	, count( 0 )
-	, data( 0 )
+		: pid(0)
+		, count(0)
+		, data(0)
 	{
 	}
 };
 
 EVENTFUNC(load_affect_login_event)
 {
-	load_affect_login_event_info* info = dynamic_cast<load_affect_login_event_info*>( event->info );
+	load_affect_login_event_info* info = dynamic_cast<load_affect_login_event_info*>(event->info);
 
-	if ( info == NULL )
+	if (info == NULL)
 	{
-		sys_err( "load_affect_login_event_info> <Factor> Null pointer" );
+		sys_err("load_affect_login_event_info> <Factor> Null pointer");
 		return 0;
 	}
 
@@ -449,10 +449,10 @@ EVENTFUNC(load_affect_login_event)
 	}
 
 	if (d->IsPhase(PHASE_HANDSHAKE) ||
-			d->IsPhase(PHASE_LOGIN) ||
-			d->IsPhase(PHASE_SELECT) ||
-			d->IsPhase(PHASE_DEAD) ||
-			d->IsPhase(PHASE_LOADING))
+		d->IsPhase(PHASE_LOGIN) ||
+		d->IsPhase(PHASE_SELECT) ||
+		d->IsPhase(PHASE_DEAD) ||
+		d->IsPhase(PHASE_LOADING))
 	{
 		return PASSES_PER_SEC(1);
 	}
@@ -476,7 +476,7 @@ EVENTFUNC(load_affect_login_event)
 	}
 }
 
-void CHARACTER::LoadAffect(DWORD dwCount, TPacketAffectElement * pElements)
+void CHARACTER::LoadAffect(DWORD dwCount, TPacketAffectElement* pElements)
 {
 	m_bIsLoadedAffect = false;
 
@@ -514,7 +514,7 @@ void CHARACTER::LoadAffect(DWORD dwCount, TPacketAffectElement * pElements)
 
 		if (AFFECT_AUTO_HP_RECOVERY == pElements->dwType || AFFECT_AUTO_SP_RECOVERY == pElements->dwType)
 		{
-			LPITEM item = FindItemByID( pElements->dwFlag );
+			LPITEM item = FindItemByID(pElements->dwFlag);
 
 			if (NULL == item)
 				continue;
@@ -525,32 +525,31 @@ void CHARACTER::LoadAffect(DWORD dwCount, TPacketAffectElement * pElements)
 		if (pElements->bApplyOn >= POINT_MAX_NUM)
 		{
 			sys_err("invalid affect data %s ApplyOn %u ApplyValue %d",
-					GetName(), pElements->bApplyOn, pElements->lApplyValue);
+				GetName(), pElements->bApplyOn, pElements->lApplyValue);
 			continue;
 		}
 
 		if (test_server)
 		{
-			sys_log(0, "Load Affect : Affect %s %d %d", GetName(), pElements->dwType, pElements->bApplyOn );
+			sys_log(0, "Load Affect : Affect %s %d %d", GetName(), pElements->dwType, pElements->bApplyOn);
 		}
 
 		CAffect* pkAff = CAffect::Acquire();
 		m_list_pkAffect.emplace_back(pkAff);
 
-		pkAff->dwType		= pElements->dwType;
-		pkAff->bApplyOn		= pElements->bApplyOn;
-		pkAff->lApplyValue	= pElements->lApplyValue;
-		pkAff->dwFlag		= pElements->dwFlag;
-		pkAff->lDuration	= pElements->lDuration;
-		pkAff->lSPCost		= pElements->lSPCost;
+		pkAff->dwType = pElements->dwType;
+		pkAff->bApplyOn = pElements->bApplyOn;
+		pkAff->lApplyValue = pElements->lApplyValue;
+		pkAff->dwFlag = pElements->dwFlag;
+		pkAff->lDuration = pElements->lDuration;
+		pkAff->lSPCost = pElements->lSPCost;
 
 		SendAffectAddPacket(GetDesc(), pkAff);
 
 		ComputeAffect(pkAff, true);
-
 	}
 
-	if ( CArenaManager::instance().IsArenaMap(GetMapIndex()) == true )
+	if (CArenaManager::instance().IsArenaMap(GetMapIndex()) == true)
 	{
 		RemoveGoodAffect();
 	}
@@ -576,7 +575,7 @@ void CHARACTER::LoadAffect(DWORD dwCount, TPacketAffectElement * pElements)
 	// @fixme118 END
 }
 
-bool CHARACTER::AddAffect(DWORD dwType, BYTE bApplyOn, long lApplyValue, DWORD dwFlag, long lDuration, long lSPCost, bool bOverride, bool IsCube )
+bool CHARACTER::AddAffect(DWORD dwType, BYTE bApplyOn, long lApplyValue, DWORD dwFlag, long lDuration, long lSPCost, bool bOverride, bool IsCube)
 {
 	// CHAT_BLOCK
 	if (dwType == AFFECT_BLOCK_CHAT && lDuration > 1)
@@ -591,10 +590,10 @@ bool CHARACTER::AddAffect(DWORD dwType, BYTE bApplyOn, long lApplyValue, DWORD d
 		lDuration = 1;
 	}
 
-	CAffect * pkAff = NULL;
+	CAffect* pkAff = NULL;
 
 	if (IsCube)
-		pkAff = FindAffect(dwType,bApplyOn);
+		pkAff = FindAffect(dwType, bApplyOn);
 	else
 		pkAff = FindAffect(dwType);
 
@@ -621,18 +620,17 @@ bool CHARACTER::AddAffect(DWORD dwType, BYTE bApplyOn, long lApplyValue, DWORD d
 	{
 		pkAff = CAffect::Acquire();
 		m_list_pkAffect.emplace_back(pkAff);
-
 	}
 
 	sys_log(1, "AddAffect %s type %d apply %d %d flag %u duration %d", GetName(), dwType, bApplyOn, lApplyValue, dwFlag, lDuration);
 	sys_log(0, "AddAffect %s type %d apply %d %d flag %u duration %d", GetName(), dwType, bApplyOn, lApplyValue, dwFlag, lDuration);
 
-	pkAff->dwType	= dwType;
-	pkAff->bApplyOn	= bApplyOn;
-	pkAff->lApplyValue	= lApplyValue;
-	pkAff->dwFlag	= dwFlag;
-	pkAff->lDuration	= lDuration;
-	pkAff->lSPCost	= lSPCost;
+	pkAff->dwType = dwType;
+	pkAff->bApplyOn = bApplyOn;
+	pkAff->lApplyValue = lApplyValue;
+	pkAff->dwFlag = dwFlag;
+	pkAff->lDuration = lDuration;
+	pkAff->lSPCost = lSPCost;
 
 	WORD wMovSpd = GetPoint(POINT_MOV_SPEED);
 	WORD wAttSpd = GetPoint(POINT_ATT_SPEED);
@@ -652,13 +650,13 @@ bool CHARACTER::AddAffect(DWORD dwType, BYTE bApplyOn, long lApplyValue, DWORD d
 			return true;
 
 		TPacketGDAddAffect p;
-		p.dwPID			= GetPlayerID();
-		p.elem.dwType		= pkAff->dwType;
-		p.elem.bApplyOn		= pkAff->bApplyOn;
-		p.elem.lApplyValue	= pkAff->lApplyValue;
-		p.elem.dwFlag		= pkAff->dwFlag;
-		p.elem.lDuration	= pkAff->lDuration;
-		p.elem.lSPCost		= pkAff->lSPCost;
+		p.dwPID = GetPlayerID();
+		p.elem.dwType = pkAff->dwType;
+		p.elem.bApplyOn = pkAff->bApplyOn;
+		p.elem.lApplyValue = pkAff->lApplyValue;
+		p.elem.dwFlag = pkAff->dwFlag;
+		p.elem.lDuration = pkAff->lDuration;
+		p.elem.lSPCost = pkAff->lSPCost;
 		db_clientdesc->DBPacket(HEADER_GD_ADD_AFFECT, 0, &p, sizeof(p));
 	}
 
@@ -671,12 +669,12 @@ void CHARACTER::RefreshAffect()
 
 	while (it != m_list_pkAffect.end())
 	{
-		CAffect * pkAff = *it++;
+		CAffect* pkAff = *it++;
 		ComputeAffect(pkAff, true);
 	}
 }
 
-void CHARACTER::ComputeAffect(CAffect * pkAff, bool bAdd)
+void CHARACTER::ComputeAffect(CAffect* pkAff, bool bAdd)
 {
 	if (bAdd && pkAff->dwType >= GUILD_SKILL_START && pkAff->dwType <= GUILD_SKILL_END)
 	{
@@ -749,7 +747,7 @@ const std::vector<WORD> PvpSkills =
 };
 #endif
 
-bool CHARACTER::RemoveAffect(CAffect * pkAff)
+bool CHARACTER::RemoveAffect(CAffect* pkAff)
 {
 	if (!pkAff)
 		return false;
@@ -809,7 +807,7 @@ bool CHARACTER::RemoveAffect(DWORD dwType)
 
 	bool flag = false;
 
-	CAffect * pkAff;
+	CAffect* pkAff;
 
 	while ((pkAff = FindAffect(dwType)))
 	{
@@ -841,7 +839,6 @@ void CHARACTER::RemoveSkillAffect()
 	RemoveAffect(SKILL_KWAESOK);
 	RemoveAffect(SKILL_JEUNGRYEOK);
 	RemoveAffect(SKILL_GICHEON);
-
 }
 
 void CHARACTER::RemoveGoodAffect()
@@ -860,30 +857,30 @@ bool CHARACTER::IsGoodAffect(BYTE bAffectType) const
 {
 	switch (bAffectType)
 	{
-		case (AFFECT_MOV_SPEED):
-		case (AFFECT_ATT_SPEED):
-		case (AFFECT_STR):
-		case (AFFECT_DEX):
-		case (AFFECT_INT):
-		case (AFFECT_CON):
-		case (AFFECT_CHINA_FIREWORK):
+	case (AFFECT_MOV_SPEED):
+	case (AFFECT_ATT_SPEED):
+	case (AFFECT_STR):
+	case (AFFECT_DEX):
+	case (AFFECT_INT):
+	case (AFFECT_CON):
+	case (AFFECT_CHINA_FIREWORK):
 
-		case (SKILL_JEONGWI):
-		case (SKILL_GEOMKYUNG):
-		case (SKILL_CHUNKEON):
-		case (SKILL_EUNHYUNG):
-		case (SKILL_GYEONGGONG):
-		case (SKILL_GWIGEOM):
-		case (SKILL_TERROR):
-		case (SKILL_JUMAGAP):
-		case (SKILL_MANASHILED):
-		case (SKILL_HOSIN):
-		case (SKILL_REFLECT):
-		case (SKILL_KWAESOK):
-		case (SKILL_JEUNGRYEOK):
-		case (SKILL_GICHEON):
+	case (SKILL_JEONGWI):
+	case (SKILL_GEOMKYUNG):
+	case (SKILL_CHUNKEON):
+	case (SKILL_EUNHYUNG):
+	case (SKILL_GYEONGGONG):
+	case (SKILL_GWIGEOM):
+	case (SKILL_TERROR):
+	case (SKILL_JUMAGAP):
+	case (SKILL_MANASHILED):
+	case (SKILL_HOSIN):
+	case (SKILL_REFLECT):
+	case (SKILL_KWAESOK):
+	case (SKILL_JEUNGRYEOK):
+	case (SKILL_GICHEON):
 
-			return true;
+		return true;
 	}
 	return false;
 }

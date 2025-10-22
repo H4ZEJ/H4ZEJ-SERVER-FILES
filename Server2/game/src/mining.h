@@ -13,7 +13,7 @@ namespace mining
 	void CHEAT_MAX_PICK(LPCHARACTER ch, LPITEM item);
 	// END_OF_REFINE_PICK
 
-	bool IsVeinOfOre (DWORD vnum);
+	bool IsVeinOfOre(DWORD vnum);
 }
 
 #endif

@@ -41,11 +41,11 @@ void CEntity::Destroy()
 
 struct FuncPacketAround
 {
-	const void *        m_data;
+	const void* m_data;
 	int                 m_bytes;
 	LPENTITY            m_except;
 
-	FuncPacketAround(const void * data, int bytes, LPENTITY except = NULL) :m_data(data), m_bytes(bytes), m_except(except)
+	FuncPacketAround(const void* data, int bytes, LPENTITY except = NULL) :m_data(data), m_bytes(bytes), m_except(except)
 	{
 	}
 
@@ -61,8 +61,9 @@ struct FuncPacketAround
 
 struct FuncPacketView : public FuncPacketAround
 {
-	FuncPacketView(const void * data, int bytes, LPENTITY except = NULL) : FuncPacketAround(data, bytes, except)
-	{}
+	FuncPacketView(const void* data, int bytes, LPENTITY except = NULL) : FuncPacketAround(data, bytes, except)
+	{
+	}
 
 	void operator() (const CEntity::ENTITY_MAP::value_type& v)
 	{
@@ -70,12 +71,12 @@ struct FuncPacketView : public FuncPacketAround
 	}
 };
 
-void CEntity::PacketAround(const void * data, int bytes, LPENTITY except)
+void CEntity::PacketAround(const void* data, int bytes, LPENTITY except)
 {
 	PacketView(data, bytes, except);
 }
 
-void CEntity::PacketView(const void * data, int bytes, LPENTITY except)
+void CEntity::PacketView(const void* data, int bytes, LPENTITY except)
 {
 	if (!GetSectree())
 		return;
@@ -99,7 +100,7 @@ void CEntity::SetObserverMode(bool bFlag)
 
 	if (IsType(ENTITY_CHARACTER))
 	{
-		LPCHARACTER ch = (LPCHARACTER) this;
+		LPCHARACTER ch = (LPCHARACTER)this;
 		ch->ChatPacket(CHAT_TYPE_COMMAND, "ObserverMode %d", m_bIsObserver ? 1 : 0);
 	}
 }

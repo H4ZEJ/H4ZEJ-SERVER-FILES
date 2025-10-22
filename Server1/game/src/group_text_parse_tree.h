@@ -18,44 +18,44 @@ public:
 		virtual ~CGroupNodeRow();
 
 		template <typename T>
-		bool GetValue(const std::string & stColKey, OUT T& value) const;
+		bool GetValue(const std::string& stColKey, OUT T& value) const;
 		template <typename T>
 		bool GetValue(int idx, OUT T& value) const;
 
 		int GetSize() const;
 
 	private:
-		CGroupNode*		m_pOwnerGroupNode;
+		CGroupNode* m_pOwnerGroupNode;
 		TTokenVector	m_vec_values;
 	};
 public:
 	CGroupNode();
 	virtual ~CGroupNode();
 
-	bool Load(const char * c_szFileName);
-	const char * GetFileName();
+	bool Load(const char* c_szFileName);
+	const char* GetFileName();
 
 	DWORD GetChildNodeCount();
-	bool SetChildNode(const char * c_szKey, CGroupNode* pChildNode);
-	CGroupNode* GetChildNode(const std::string & c_rstrKey) const;
+	bool SetChildNode(const char* c_szKey, CGroupNode* pChildNode);
+	CGroupNode* GetChildNode(const std::string& c_rstrKey) const;
 	std::string GetNodeName() const;
 
-	bool IsToken(const std::string & c_rstrKey) const;
+	bool IsToken(const std::string& c_rstrKey) const;
 
 	int GetRowCount();
 
 	template <typename T>
-	bool GetValue(size_t i, const std::string & c_rstrColKey, T& tValue) const;
+	bool GetValue(size_t i, const std::string& c_rstrColKey, T& tValue) const;
 
 	template <typename T>
-	bool GetValue(const std::string & c_rstrRowKey, const std::string & c_rstrColKey, T& tValue) const;
+	bool GetValue(const std::string& c_rstrRowKey, const std::string& c_rstrColKey, T& tValue) const;
 	template <typename T>
-	bool GetValue(const std::string & c_rstrRowKey, int index, T& tValue) const;
+	bool GetValue(const std::string& c_rstrRowKey, int index, T& tValue) const;
 
-	bool GetRow(const std::string & c_rstrKey, OUT const CGroupNodeRow ** ppRow) const;
+	bool GetRow(const std::string& c_rstrKey, OUT const CGroupNodeRow** ppRow) const;
 
-	bool GetRow(int idx, OUT const CGroupNodeRow ** ppRow) const;
-	bool GetGroupRow(const std::string& stGroupName, const std::string& stRow, OUT const CGroupNode::CGroupNodeRow ** ppRow) const;
+	bool GetRow(int idx, OUT const CGroupNodeRow** ppRow) const;
+	bool GetGroupRow(const std::string& stGroupName, const std::string& stRow, OUT const CGroupNode::CGroupNodeRow** ppRow) const;
 
 	template <typename T>
 	bool GetGroupValue(const std::string& stGroupName, const std::string& stRow, int iCol, OUT T& tValue) const;
@@ -81,14 +81,14 @@ public:
 	CGroupTextParseTreeLoader();
 	virtual ~CGroupTextParseTreeLoader();
 
-	bool Load(const char * c_szFileName);
-	const char * GetFileName();
+	bool Load(const char* c_szFileName);
+	const char* GetFileName();
 
-	CGroupNode*	GetGroup(const char * c_szGroupName);
+	CGroupNode* GetGroup(const char* c_szGroupName);
 private:
-	bool LoadGroup(CGroupNode * pGroupNode);
+	bool LoadGroup(CGroupNode* pGroupNode);
 
-	CGroupNode *				m_pRootGroupNode;
+	CGroupNode* m_pRootGroupNode;
 	std::string					m_strFileName;
 	DWORD						m_dwcurLineIndex;
 
@@ -113,7 +113,7 @@ inline bool from_string <BYTE>(OUT BYTE& t, IN const std::string& s)
 }
 
 template <typename T>
-bool CGroupNode::GetValue(size_t i, const std::string & c_rstrColKey, T& tValue) const
+bool CGroupNode::GetValue(size_t i, const std::string& c_rstrColKey, T& tValue) const
 {
 	if (i > m_map_rows.size())
 		return FALSE;
@@ -137,7 +137,7 @@ bool CGroupNode::GetValue(size_t i, const std::string & c_rstrColKey, T& tValue)
 }
 
 template <typename T>
-bool CGroupNode::GetValue(const std::string & c_rstrRowKey, const std::string & c_rstrColKey, T& tValue) const
+bool CGroupNode::GetValue(const std::string& c_rstrRowKey, const std::string& c_rstrColKey, T& tValue) const
 {
 	TMapRow::const_iterator row_it = m_map_rows.find(c_rstrRowKey);
 	if (m_map_rows.end() == row_it)
@@ -160,7 +160,7 @@ bool CGroupNode::GetValue(const std::string & c_rstrRowKey, const std::string & 
 }
 
 template <typename T>
-bool CGroupNode::GetValue(const std::string & c_rstrRowKey, int index, T& tValue) const
+bool CGroupNode::GetValue(const std::string& c_rstrRowKey, int index, T& tValue) const
 {
 	TMapRow::const_iterator row_it = m_map_rows.find(c_rstrRowKey);
 	if (m_map_rows.end() == row_it)
@@ -212,7 +212,7 @@ bool CGroupNode::GetGroupValue(const std::string& stGroupName, const std::string
 }
 
 template <typename T>
-bool CGroupNode::CGroupNodeRow::GetValue(const std::string & stColKey, OUT T& value) const
+bool CGroupNode::CGroupNodeRow::GetValue(const std::string& stColKey, OUT T& value) const
 {
 	int idx = m_pOwnerGroupNode->GetColumnIndexFromName(stColKey);
 	if (idx < 0 || (TTokenVectorMap::size_type)idx >= m_vec_values.size())

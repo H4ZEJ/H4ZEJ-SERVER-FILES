@@ -5,58 +5,58 @@
 
 class CMonarch : public singleton<CMonarch>
 {
-	public:
-		CMonarch();
-		virtual ~CMonarch();
+public:
+	CMonarch();
+	virtual ~CMonarch();
 
-		bool Initialize();
+	bool Initialize();
 
-		int HealMyEmpire(LPCHARACTER ch, DWORD price);
-		void SetMonarchInfo(TMonarchInfo * pInfo);
+	int HealMyEmpire(LPCHARACTER ch, DWORD price);
+	void SetMonarchInfo(TMonarchInfo* pInfo);
 
-		bool IsMonarch(DWORD pid, BYTE bEmpire);
-		bool IsMoneyOk(int price, BYTE bEmpire);
-		bool SendtoDBAddMoney(int Money, BYTE bEmpire, LPCHARACTER ch);
-		bool SendtoDBDecMoney(int Money, BYTE bEmpire, LPCHARACTER ch);
+	bool IsMonarch(DWORD pid, BYTE bEmpire);
+	bool IsMoneyOk(int price, BYTE bEmpire);
+	bool SendtoDBAddMoney(int Money, BYTE bEmpire, LPCHARACTER ch);
+	bool SendtoDBDecMoney(int Money, BYTE bEmpire, LPCHARACTER ch);
 
-		bool AddMoney(int Money, BYTE bEmpire);
-		bool DecMoney(int Money, BYTE bEmpire);
-		int GetMoney(BYTE bEmpire);
+	bool AddMoney(int Money, BYTE bEmpire);
+	bool DecMoney(int Money, BYTE bEmpire);
+	int GetMoney(BYTE bEmpire);
 
-		TMonarchInfo* GetMonarch();
+	TMonarchInfo* GetMonarch();
 
-		DWORD GetMonarchPID(BYTE Empire);
+	DWORD GetMonarchPID(BYTE Empire);
 
-		bool IsPowerUp(BYTE Empire);
-		bool IsDefenceUp(BYTE Empire);
+	bool IsPowerUp(BYTE Empire);
+	bool IsDefenceUp(BYTE Empire);
 
-		int	GetPowerUpCT(BYTE Empire)
-		{
-			return Empire < _countof(m_PowerUpCT) ? m_PowerUpCT[Empire] : 0;
-		}
+	int	GetPowerUpCT(BYTE Empire)
+	{
+		return Empire < _countof(m_PowerUpCT) ? m_PowerUpCT[Empire] : 0;
+	}
 
-		bool CheckPowerUpCT(BYTE Empire);
-		bool CheckDefenseUpCT(BYTE Empire);
+	bool CheckPowerUpCT(BYTE Empire);
+	bool CheckDefenseUpCT(BYTE Empire);
 
-		int	GetDefenseUpCT(BYTE Empire)
-		{
-			return Empire < _countof(m_DefenseUpCT) ? m_DefenseUpCT[Empire] : 0;
-		}
+	int	GetDefenseUpCT(BYTE Empire)
+	{
+		return Empire < _countof(m_DefenseUpCT) ? m_DefenseUpCT[Empire] : 0;
+	}
 
-		void PowerUp(BYTE Empire, bool On);
-		void DefenseUp(BYTE Empire, bool On);
+	void PowerUp(BYTE Empire, bool On);
+	void DefenseUp(BYTE Empire, bool On);
 
-	private:
-		TMonarchInfo m_MonarchInfo;
+private:
+	TMonarchInfo m_MonarchInfo;
 
-		int m_PowerUp[4];
-		int m_DefenseUp[4];
+	int m_PowerUp[4];
+	int m_DefenseUp[4];
 
-		int m_PowerUpCT[4];
-		int m_DefenseUpCT[4];
+	int m_PowerUpCT[4];
+	int m_DefenseUpCT[4];
 };
 
-bool IsMonarchWarpZone (int map_idx);
+bool IsMonarchWarpZone(int map_idx);
 
 #endif
 //martysama0134's 8e0aa8057d3f54320e391131a48866b4

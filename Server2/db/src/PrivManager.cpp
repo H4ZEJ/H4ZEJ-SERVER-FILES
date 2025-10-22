@@ -2,8 +2,8 @@
 #include "PrivManager.h"
 #include "ClientManager.h"
 
-const int CHARACTER_GOOD_PRIV_DURATION = 2*60*60;
-const int CHARACTER_BAD_PRIV_DURATION = 60*60;
+const int CHARACTER_GOOD_PRIV_DURATION = 2 * 60 * 60;
+const int CHARACTER_BAD_PRIV_DURATION = 60 * 60;
 
 CPrivManager::CPrivManager()
 {
@@ -101,7 +101,7 @@ void CPrivManager::AddCharPriv(DWORD pid, BYTE type, int value)
 	if (value > 0)
 		iDuration = CHARACTER_GOOD_PRIV_DURATION;
 
-	m_pqPrivChar.push(std::make_pair(now+iDuration, p));
+	m_pqPrivChar.push(std::make_pair(now + iDuration, p));
 	m_aPrivChar[type].emplace(pid, p);
 
 	// TODO send packet
@@ -124,7 +124,7 @@ void CPrivManager::AddGuildPriv(DWORD guild_id, BYTE type, int value, time_t dur
 
 	time_t now = CClientManager::instance().GetCurrentTime();
 	time_t end = now + duration_sec;
-	TPrivGuildData * p = new TPrivGuildData(type, value, guild_id, end);
+	TPrivGuildData* p = new TPrivGuildData(type, value, guild_id, end);
 	m_pqPrivGuild.push(std::make_pair(end, p));
 
 	// ADD_GUILD_PRIV_TIME
@@ -152,14 +152,14 @@ void CPrivManager::AddEmpirePriv(BYTE empire, BYTE type, int value, time_t durat
 		duration_sec = 0;
 
 	time_t now = CClientManager::instance().GetCurrentTime();
-	time_t end = now+duration_sec;
+	time_t end = now + duration_sec;
 
 	{
 		if (m_aaPrivEmpire[type][empire])
 			m_aaPrivEmpire[type][empire]->bRemoved = true;
 	}
 
-	TPrivEmpireData * p = new TPrivEmpireData(type, value, empire, end);
+	TPrivEmpireData* p = new TPrivEmpireData(type, value, empire, end);
 	m_pqPrivEmpire.push(std::make_pair(end, p));
 	m_aaPrivEmpire[type][empire] = p;
 
@@ -268,7 +268,7 @@ void CPrivManager::SendPrivOnSetup(CPeer* peer)
 			// END_OF_ADD_EMPIRE_PRIV_TIME
 		}
 
-		for (typeof(m_aPrivGuild[i].begin()) it = m_aPrivGuild[i].begin(); it != m_aPrivGuild[i].end();++it)
+		for (typeof(m_aPrivGuild[i].begin()) it = m_aPrivGuild[i].begin(); it != m_aPrivGuild[i].end(); ++it)
 		{
 			// ADD_GUILD_PRIV_TIME
 			FSendChangeGuildPriv(it->first, i, it->second->value, it->second->end_time_sec)(peer);

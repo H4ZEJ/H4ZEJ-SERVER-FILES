@@ -14,7 +14,7 @@ namespace xmas
 	{
 		if (name == "xmas_snow" || name == "xmas_boom" || name == "xmas_song" || name == "xmas_tree")
 		{
-			const DESC_MANAGER::DESC_SET & c_ref_set = DESC_MANAGER::instance().GetClientSet();
+			const DESC_MANAGER::DESC_SET& c_ref_set = DESC_MANAGER::instance().GetClientSet();
 
 			for (itertype(c_ref_set) it = c_ref_set.begin(); it != c_ref_set.end(); ++it)
 			{
@@ -64,37 +64,37 @@ namespace xmas
 		{
 			switch (value)
 			{
-				case 0:
+			case 0:
 
-					{
-						CharacterVectorInteractor i;
+			{
+				CharacterVectorInteractor i;
 
-						if (CHARACTER_MANAGER::instance().GetCharactersByRaceNum(MOB_SANTA_VNUM, i))
-						{
-							CharacterVectorInteractor::iterator it = i.begin();
+				if (CHARACTER_MANAGER::instance().GetCharactersByRaceNum(MOB_SANTA_VNUM, i))
+				{
+					CharacterVectorInteractor::iterator it = i.begin();
 
-							while (it != i.end())
-								M2_DESTROY_CHARACTER(*it++);
-						}
-					}
+					while (it != i.end())
+						M2_DESTROY_CHARACTER(*it++);
+				}
+			}
 
-					break;
+			break;
 
-				case 1:
+			case 1:
 
-					if (map_allow_find(61))
-					{
-						quest::CQuestManager::instance().RequestSetEventFlag("xmas_santa", 2);
+				if (map_allow_find(61))
+				{
+					quest::CQuestManager::instance().RequestSetEventFlag("xmas_santa", 2);
 
-						CharacterVectorInteractor i;
+					CharacterVectorInteractor i;
 
-						if (CHARACTER_MANAGER::instance().GetCharactersByRaceNum(MOB_SANTA_VNUM, i))
-							CHARACTER_MANAGER::instance().SpawnMobRandomPosition(MOB_SANTA_VNUM, 61);
-					}
-					break;
+					if (CHARACTER_MANAGER::instance().GetCharactersByRaceNum(MOB_SANTA_VNUM, i))
+						CHARACTER_MANAGER::instance().SpawnMobRandomPosition(MOB_SANTA_VNUM, 61);
+				}
+				break;
 
-				case 2:
-					break;
+			case 2:
+				break;
 			}
 		}
 	}
@@ -104,18 +104,18 @@ namespace xmas
 		long lMapIndex;
 
 		spawn_santa_info()
-		: lMapIndex( 0 )
+			: lMapIndex(0)
 		{
 		}
 	};
 
 	EVENTFUNC(spawn_santa_event)
 	{
-		spawn_santa_info* info = dynamic_cast<spawn_santa_info*>( event->info );
+		spawn_santa_info* info = dynamic_cast<spawn_santa_info*>(event->info);
 
-		if ( info == NULL )
+		if (info == NULL)
 		{
-			sys_err( "spawn_santa_event> <Factor> Null pointer" );
+			sys_err("spawn_santa_event> <Factor> Null pointer");
 			return 0;
 		}
 
@@ -155,7 +155,7 @@ namespace xmas
 
 	void SpawnEventHelper(bool spawn)
 	{
-		if ( spawn == true )
+		if (spawn == true)
 		{
 			struct SNPCSellFireworkPosition
 			{
@@ -186,7 +186,7 @@ namespace xmas
 					}
 
 					CHARACTER_MANAGER::instance().SpawnMob(
-							MOB_XMAS_FIRWORK_SELLER_VNUM, p->lMapIndex, posBase.x + p->x * 100, posBase.y + p->y * 100, 0, false, -1);
+						MOB_XMAS_FIRWORK_SELLER_VNUM, p->lMapIndex, posBase.x + p->x * 100, posBase.y + p->y * 100, 0, false, -1);
 				}
 				p++;
 			}

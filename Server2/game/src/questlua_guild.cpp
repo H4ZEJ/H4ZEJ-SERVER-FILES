@@ -25,10 +25,10 @@ namespace quest
 		CQuestManager& q = CQuestManager::instance();
 		LPCHARACTER ch = q.GetCurrentCharacterPtr();
 		if (!ch->GetGuild())
-			lua_pushstring(L,"");
+			lua_pushstring(L, "");
 		else
 		{
-			char szBuf[4096+1];
+			char szBuf[4096 + 1];
 			CGuildManager::instance().GetAroundRankString(ch->GetGuild()->GetID(), szBuf, sizeof(szBuf));
 			lua_pushstring(L, szBuf);
 		}
@@ -43,7 +43,7 @@ namespace quest
 		if (ch->GetGuild())
 			dwMyGuild = ch->GetGuild()->GetID();
 
-		char szBuf[4096+1];
+		char szBuf[4096 + 1];
 		CGuildManager::instance().GetHighRankString(dwMyGuild, szBuf, sizeof(szBuf));
 		lua_pushstring(L, szBuf);
 		return 1;
@@ -90,7 +90,7 @@ namespace quest
 
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
-		if (ch->GetGuild() && ch->GetGuild()->UnderWar((DWORD) lua_tonumber(L, 1)))
+		if (ch->GetGuild() && ch->GetGuild()->UnderWar((DWORD)lua_tonumber(L, 1)))
 			lua_pushboolean(L, true);
 		else
 			lua_pushboolean(L, false);
@@ -106,7 +106,7 @@ namespace quest
 			return 0;
 		}
 
-		CGuild * pkGuild = CGuildManager::instance().FindGuild((DWORD) lua_tonumber(L, 1));
+		CGuild* pkGuild = CGuildManager::instance().FindGuild((DWORD)lua_tonumber(L, 1));
 
 		if (pkGuild)
 			lua_pushstring(L, pkGuild->GetName());
@@ -120,7 +120,7 @@ namespace quest
 	{
 		luaL_checknumber(L, 1);
 
-		CGuild * pkGuild = CGuildManager::instance().FindGuild((DWORD) lua_tonumber(L, 1));
+		CGuild* pkGuild = CGuildManager::instance().FindGuild((DWORD)lua_tonumber(L, 1));
 
 		if (pkGuild)
 			lua_pushnumber(L, pkGuild->GetLevel());
@@ -142,7 +142,7 @@ namespace quest
 		LPCHARACTER ch = q.GetCurrentCharacterPtr();
 
 		if (ch->GetGuild())
-			ch->GetGuild()->GuildWarEntryAccept((DWORD) lua_tonumber(L, 1), ch);
+			ch->GetGuild()->GuildWarEntryAccept((DWORD)lua_tonumber(L, 1), ch);
 
 		return 0;
 	}
@@ -163,11 +163,11 @@ namespace quest
 	{
 		if (!lua_isnumber(L, 1))
 		{
-			lua_pushstring(L,  "");
+			lua_pushstring(L, "");
 			return 1;
 		}
 
-		CGuild * pkGuild = CGuildManager::instance().FindGuild((DWORD) lua_tonumber(L, 1));
+		CGuild* pkGuild = CGuildManager::instance().FindGuild((DWORD)lua_tonumber(L, 1));
 
 		if (pkGuild)
 			lua_pushstring(L, pkGuild->GetName());
@@ -189,13 +189,13 @@ namespace quest
 
 		TPacketGDGuildWarBet p;
 
-		p.dwWarID = (DWORD) lua_tonumber(L, 1);
+		p.dwWarID = (DWORD)lua_tonumber(L, 1);
 		strlcpy(p.szLogin, ch->GetDesc()->GetAccountTable().login, sizeof(p.szLogin));
-		p.dwGuild = (DWORD) lua_tonumber(L, 2);
-		p.dwGold = (DWORD) lua_tonumber(L, 3);
+		p.dwGuild = (DWORD)lua_tonumber(L, 2);
+		p.dwGold = (DWORD)lua_tonumber(L, 3);
 
 		sys_log(0, "GUILD_WAR_BET: %s login %s war_id %u guild %u gold %u",
-				ch->GetName(), p.szLogin, p.dwWarID, p.dwGuild, p.dwGold);
+			ch->GetName(), p.szLogin, p.dwWarID, p.dwGuild, p.dwGold);
 
 		db_clientdesc->DBPacket(HEADER_GD_GUILD_WAR_BET, 0, &p, sizeof(p));
 		return 0;
@@ -210,8 +210,8 @@ namespace quest
 			return 1;
 		}
 
-		bool bBet = CGuildManager::instance().IsBet((DWORD) lua_tonumber(L, 1),
-				CQuestManager::instance().GetCurrentCharacterPtr()->GetDesc()->GetAccountTable().login);
+		bool bBet = CGuildManager::instance().IsBet((DWORD)lua_tonumber(L, 1),
+			CQuestManager::instance().GetCurrentCharacterPtr()->GetDesc()->GetAccountTable().login);
 
 		lua_pushboolean(L, bBet);
 		return 1;
@@ -226,10 +226,10 @@ namespace quest
 
 	ALUA(guild_get_reserve_war_table)
 	{
-		std::vector<CGuildWarReserveForGame *> & con = CGuildManager::instance().GetReserveWarRef();
+		std::vector<CGuildWarReserveForGame*>& con = CGuildManager::instance().GetReserveWarRef();
 
 		int i = 0;
-		std::vector<CGuildWarReserveForGame *>::iterator it = con.begin();
+		std::vector<CGuildWarReserveForGame*>::iterator it = con.begin();
 
 		sys_log(0, "con.size(): %d", con.size());
 
@@ -238,7 +238,7 @@ namespace quest
 
 		while (it != con.end())
 		{
-			TGuildWarReserve * p = &(*(it++))->data;
+			TGuildWarReserve* p = &(*(it++))->data;
 
 			if (p->bType != GUILD_WAR_TYPE_BATTLE)
 				continue;
@@ -282,7 +282,7 @@ namespace quest
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
-		if ( ch == NULL )
+		if (ch == NULL)
 		{
 			lua_pushnumber(L, 0);
 			return 1;
@@ -290,7 +290,7 @@ namespace quest
 
 		CGuild* pGuild = ch->GetGuild();
 
-		if ( pGuild == NULL )
+		if (pGuild == NULL)
 		{
 			lua_pushnumber(L, 0);
 			return 1;
@@ -307,11 +307,11 @@ namespace quest
 
 		CGuild* pGuild = ch->GetGuild();
 
-		if ( pGuild != NULL )
+		if (pGuild != NULL)
 		{
-			if ( pGuild->GetMasterPID() == ch->GetPlayerID() )
+			if (pGuild->GetMasterPID() == ch->GetPlayerID())
 			{
-				if ( lua_isstring(L, 1) == false )
+				if (lua_isstring(L, 1) == false)
 				{
 					lua_pushnumber(L, 0);
 				}
@@ -319,7 +319,7 @@ namespace quest
 				{
 					bool ret = pGuild->ChangeMasterTo(pGuild->GetMemberPID(lua_tostring(L, 1)));
 
-					lua_pushnumber(L, ret == false ? 2 : 3 );
+					lua_pushnumber(L, ret == false ? 2 : 3);
 				}
 			}
 			else
@@ -341,32 +341,32 @@ namespace quest
 
 		CGuild* pGuild = ch->GetGuild();
 
-		if ( pGuild != NULL )
+		if (pGuild != NULL)
 		{
-			if ( pGuild->GetMasterPID() == ch->GetPlayerID() )
+			if (pGuild->GetMasterPID() == ch->GetPlayerID())
 			{
-				if ( lua_isstring(L, 1) == false )
+				if (lua_isstring(L, 1) == false)
 				{
 					lua_pushnumber(L, 0);
 				}
 				else
 				{
-					LPCHARACTER pNewMaster = CHARACTER_MANAGER::instance().FindPC( lua_tostring(L,1) );
+					LPCHARACTER pNewMaster = CHARACTER_MANAGER::instance().FindPC(lua_tostring(L, 1));
 
-					if ( pNewMaster != NULL )
+					if (pNewMaster != NULL)
 					{
-						if ( pNewMaster->GetLevel() < lua_tonumber(L, 2) )
+						if (pNewMaster->GetLevel() < lua_tonumber(L, 2))
 						{
 							lua_pushnumber(L, 6);
 						}
 						else
 						{
 							int nBeOtherLeader = pNewMaster->GetQuestFlag("change_guild_master.be_other_leader");
-							CQuestManager::instance().GetPC( ch->GetPlayerID() );
+							CQuestManager::instance().GetPC(ch->GetPlayerID());
 
-							if ( lua_toboolean(L, 6) == true ) nBeOtherLeader = 0;
+							if (lua_toboolean(L, 6) == true) nBeOtherLeader = 0;
 
-							if ( nBeOtherLeader > get_global_time() )
+							if (nBeOtherLeader > get_global_time())
 							{
 								lua_pushnumber(L, 7);
 							}
@@ -374,7 +374,7 @@ namespace quest
 							{
 								bool ret = pGuild->ChangeMasterTo(pGuild->GetMemberPID(lua_tostring(L, 1)));
 
-								if ( ret == false )
+								if (ret == false)
 								{
 									lua_pushnumber(L, 2);
 								}
@@ -419,7 +419,7 @@ namespace quest
 
 		CGuild* pGuild = ch->GetGuild();
 
-		lua_pushnumber(L, (pGuild!=NULL)?pGuild->GetID():0);
+		lua_pushnumber(L, (pGuild != NULL) ? pGuild->GetID() : 0);
 		return 1;
 	}
 
@@ -429,7 +429,7 @@ namespace quest
 
 		CGuild* pGuild = ch->GetGuild();
 
-		lua_pushnumber(L, (pGuild!=NULL)?pGuild->GetSP():0);
+		lua_pushnumber(L, (pGuild != NULL) ? pGuild->GetSP() : 0);
 		return 1;
 	}
 
@@ -439,7 +439,7 @@ namespace quest
 
 		CGuild* pGuild = ch->GetGuild();
 
-		lua_pushnumber(L, (pGuild!=NULL)?pGuild->GetMaxSP():0);
+		lua_pushnumber(L, (pGuild != NULL) ? pGuild->GetMaxSP() : 0);
 		return 1;
 	}
 
@@ -449,7 +449,7 @@ namespace quest
 
 		CGuild* pGuild = ch->GetGuild();
 
-		lua_pushnumber(L, (pGuild!=NULL)?pGuild->GetGuildMoney():0);
+		lua_pushnumber(L, (pGuild != NULL) ? pGuild->GetGuildMoney() : 0);
 		return 1;
 	}
 
@@ -459,7 +459,7 @@ namespace quest
 
 		CGuild* pGuild = ch->GetGuild();
 
-		lua_pushnumber(L, (pGuild!=NULL)?pGuild->GetMaxMemberCount():0);
+		lua_pushnumber(L, (pGuild != NULL) ? pGuild->GetMaxMemberCount() : 0);
 		return 1;
 	}
 
@@ -469,7 +469,7 @@ namespace quest
 
 		CGuild* pGuild = ch->GetGuild();
 
-		lua_pushnumber(L, (pGuild!=NULL)?pGuild->GetTotalLevel():0);
+		lua_pushnumber(L, (pGuild != NULL) ? pGuild->GetTotalLevel() : 0);
 		return 1;
 	}
 
@@ -479,7 +479,7 @@ namespace quest
 
 		CGuild* pGuild = ch->GetGuild();
 
-		lua_pushboolean(L, (pGuild!=NULL)?pGuild->HasLand():false);
+		lua_pushboolean(L, (pGuild != NULL) ? pGuild->HasLand() : false);
 		return 1;
 	}
 
@@ -489,7 +489,7 @@ namespace quest
 
 		CGuild* pGuild = ch->GetGuild();
 
-		lua_pushnumber(L, (pGuild!=NULL)?pGuild->GetGuildWarWinCount():0);
+		lua_pushnumber(L, (pGuild != NULL) ? pGuild->GetGuildWarWinCount() : 0);
 		return 1;
 	}
 
@@ -499,7 +499,7 @@ namespace quest
 
 		CGuild* pGuild = ch->GetGuild();
 
-		lua_pushnumber(L, (pGuild!=NULL)?pGuild->GetGuildWarDrawCount():0);
+		lua_pushnumber(L, (pGuild != NULL) ? pGuild->GetGuildWarDrawCount() : 0);
 		return 1;
 	}
 
@@ -509,7 +509,7 @@ namespace quest
 
 		CGuild* pGuild = ch->GetGuild();
 
-		lua_pushnumber(L, (pGuild!=NULL)?pGuild->GetGuildWarLossCount():0);
+		lua_pushnumber(L, (pGuild != NULL) ? pGuild->GetGuildWarLossCount() : 0);
 		return 1;
 	}
 
@@ -548,7 +548,7 @@ namespace quest
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
 		CGuild* pGuild = ch->GetGuild();
-		lua_pushnumber(L, (pGuild)?pGuild->GetSkillLevel(lua_tonumber(L, 1)):0);
+		lua_pushnumber(L, (pGuild) ? pGuild->GetSkillLevel(lua_tonumber(L, 1)) : 0);
 		return 1;
 	}
 
@@ -558,7 +558,7 @@ namespace quest
 
 		CGuild* pGuild = ch->GetGuild();
 		if (pGuild)
-			pGuild->SetSkillLevel(lua_tonumber(L, 1), lua_tonumber(L, 2), lua_isnumber(L, 3)?lua_tonumber(L, 3):0);
+			pGuild->SetSkillLevel(lua_tonumber(L, 1), lua_tonumber(L, 2), lua_isnumber(L, 3) ? lua_tonumber(L, 3) : 0);
 		return 0;
 	}
 
@@ -567,7 +567,7 @@ namespace quest
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
 		CGuild* pGuild = ch->GetGuild();
-		lua_pushnumber(L, (pGuild)?pGuild->GetSkillPoint():0);
+		lua_pushnumber(L, (pGuild) ? pGuild->GetSkillPoint() : 0);
 		return 1;
 	}
 
@@ -583,7 +583,7 @@ namespace quest
 
 	ALUA(guild_get_exp_level0)
 	{
-		lua_pushnumber(L, guild_exp_table2[MINMAX(0, lua_tonumber(L, 1) ,GUILD_MAX_LEVEL)]);
+		lua_pushnumber(L, guild_exp_table2[MINMAX(0, lua_tonumber(L, 1), GUILD_MAX_LEVEL)]);
 		return 1;
 	}
 

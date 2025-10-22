@@ -25,7 +25,7 @@ size_t PanamaLoad()
 		sscanf(buf, " %s %s ", szPackName, szIVFileNameConfig);
 		snprintf(szIVFileName, sizeof(szIVFileName), "panama/%s", szIVFileNameConfig);
 
-		FILE * fpIV = fopen(szIVFileName, "rb");
+		FILE* fpIV = fopen(szIVFileName, "rb");
 
 		if (!fpIV)
 		{

@@ -8,7 +8,7 @@
 #define DegreeToRadian( degree ) ((degree) * (_PI / 180.0f))
 #define RadianToDegree( radian ) ((radian) * (180.0f / _PI))
 
-void Normalize(VECTOR * pV1, VECTOR * pV2)
+void Normalize(VECTOR* pV1, VECTOR* pV2)
 {
 	float l = sqrtf(pV1->x * pV1->x + pV1->y * pV1->y + pV1->z * pV1->z + 1.0e-12);
 
@@ -17,7 +17,7 @@ void Normalize(VECTOR * pV1, VECTOR * pV2)
 	pV2->z = pV1->z / l;
 }
 
-float DotProduct(VECTOR * pV1, VECTOR * pV2)
+float DotProduct(VECTOR* pV1, VECTOR* pV2)
 {
 	return pV1->x * pV2->x + pV1->y * pV2->y + pV1->z * pV2->z;
 }
@@ -51,7 +51,7 @@ float GetDegreeFromPositionXY(long sx, long sy, long ex, long ey)
 	return GetDegreeFromPosition(ex - sx, ey - sy);
 }
 
-void GetDeltaByDegree(float fDegree, float fDistance, float *x, float *y)
+void GetDeltaByDegree(float fDegree, float fDistance, float* x, float* y)
 {
 	float fRadian = DegreeToRadian(fDegree);
 

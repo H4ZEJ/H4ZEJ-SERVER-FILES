@@ -19,15 +19,15 @@ LPEVENT event_create_ex(TEVENTFUNC func, event_info_data* info, long when)
 	assert(NULL != new_event);
 
 	new_event->func = func;
-	new_event->info	= info;
-	new_event->q_el	= cxx_q.Enqueue(new_event, when, thecore_heart->pulse);
+	new_event->info = info;
+	new_event->q_el = cxx_q.Enqueue(new_event, when, thecore_heart->pulse);
 	new_event->is_processing = FALSE;
 	new_event->is_force_to_end = FALSE;
 
 	return (new_event);
 }
 
-void event_cancel(LPEVENT * ppevent)
+void event_cancel(LPEVENT* ppevent)
 {
 	LPEVENT event;
 
@@ -86,7 +86,7 @@ int event_process(int pulse)
 
 	while (pulse >= cxx_q.GetTopKey())
 	{
-		TQueueElement * pElem = cxx_q.Dequeue();
+		TQueueElement* pElem = cxx_q.Dequeue();
 
 		if (pElem->bCancel)
 		{
@@ -150,11 +150,11 @@ long event_time(LPEVENT event)
 
 void event_destroy(void)
 {
-	TQueueElement * pElem;
+	TQueueElement* pElem;
 
 	while ((pElem = cxx_q.Dequeue()))
 	{
-		LPEVENT the_event = (LPEVENT) pElem->pvData;
+		LPEVENT the_event = (LPEVENT)pElem->pvData;
 
 		if (!pElem->bCancel)
 		{
@@ -175,7 +175,7 @@ void intrusive_ptr_add_ref(EVENT* p) {
 }
 
 void intrusive_ptr_release(EVENT* p) {
-	if ( --(p->ref_count) == 0 ) {
+	if (--(p->ref_count) == 0) {
 		M2_DELETE(p);
 	}
 }

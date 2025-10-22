@@ -24,7 +24,7 @@ WORD SECTREE_MANAGER::current_sectree_version = MAKEWORD(0, 3);
 
 SECTREE_MAP::SECTREE_MAP()
 {
-	memset( &m_setting, 0, sizeof(m_setting) );
+	memset(&m_setting, 0, sizeof(m_setting));
 }
 
 SECTREE_MAP::~SECTREE_MAP()
@@ -39,7 +39,7 @@ SECTREE_MAP::~SECTREE_MAP()
 	map_.clear();
 }
 
-SECTREE_MAP::SECTREE_MAP(SECTREE_MAP & r)
+SECTREE_MAP::SECTREE_MAP(SECTREE_MAP& r)
 {
 	m_setting = r.m_setting;
 
@@ -160,11 +160,11 @@ LPSECTREE SECTREE_MANAGER::Get(DWORD dwIndex, DWORD x, DWORD y)
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
-int SECTREE_MANAGER::LoadSettingFile(long lMapIndex, const char * c_pszSettingFileName, TMapSetting & r_setting)
+int SECTREE_MANAGER::LoadSettingFile(long lMapIndex, const char* c_pszSettingFileName, TMapSetting& r_setting)
 {
 	memset(&r_setting, 0, sizeof(TMapSetting));
 
-	FILE * fp = fopen(c_pszSettingFileName, "r");
+	FILE* fp = fopen(c_pszSettingFileName, "r");
 
 	if (!fp)
 	{
@@ -207,7 +207,7 @@ int SECTREE_MANAGER::LoadSettingFile(long lMapIndex, const char * c_pszSettingFi
 	return 1;
 }
 
-LPSECTREE_MAP SECTREE_MANAGER::BuildSectreeFromSetting(TMapSetting & r_setting)
+LPSECTREE_MAP SECTREE_MANAGER::BuildSectreeFromSetting(TMapSetting& r_setting)
 {
 	LPSECTREE_MAP pkMapSectree = M2_NEW SECTREE_MAP;
 
@@ -247,7 +247,7 @@ LPSECTREE_MAP SECTREE_MANAGER::BuildSectreeFromSetting(TMapSetting & r_setting)
 	return pkMapSectree;
 }
 
-void SECTREE_MANAGER::LoadDungeon(int iIndex, const char * c_pszFileName)
+void SECTREE_MANAGER::LoadDungeon(int iIndex, const char* c_pszFileName)
 {
 	FILE* fp = fopen(c_pszFileName, "r");
 
@@ -292,36 +292,36 @@ void SECTREE_MANAGER::LoadDungeon(int iIndex, const char * c_pszFileName)
 	sys_log(0, "Dungeon Position Load [%3d]%s count %d", iIndex, c_pszFileName, count);
 }
 
-bool SECTREE_MANAGER::LoadMapRegion(const char * c_pszFileName, TMapSetting & r_setting, const char * c_pszMapName)
+bool SECTREE_MANAGER::LoadMapRegion(const char* c_pszFileName, TMapSetting& r_setting, const char* c_pszMapName)
 {
-	FILE * fp = fopen(c_pszFileName, "r");
+	FILE* fp = fopen(c_pszFileName, "r");
 
-	if ( test_server )
-		sys_log( 0, "[LoadMapRegion] file(%s)", c_pszFileName );
+	if (test_server)
+		sys_log(0, "[LoadMapRegion] file(%s)", c_pszFileName);
 
 	if (!fp)
 		return false;
 
-	int iX=0, iY=0;
+	int iX = 0, iY = 0;
 	PIXEL_POSITION pos[3] = { {0,0,0}, {0,0,0}, {0,0,0} };
 
 	fscanf(fp, " %d %d ", &iX, &iY);
 
 	int iEmpirePositionCount = fscanf(fp, " %d %d %d %d %d %d ",
-			&pos[0].x, &pos[0].y,
-			&pos[1].x, &pos[1].y,
-			&pos[2].x, &pos[2].y);
+		&pos[0].x, &pos[0].y,
+		&pos[1].x, &pos[1].y,
+		&pos[2].x, &pos[2].y);
 
 	fclose(fp);
 
-	if( iEmpirePositionCount == 6 )
+	if (iEmpirePositionCount == 6)
 	{
-		for ( int n = 0; n < 3; ++n )
-			sys_log( 0 ,"LoadMapRegion %d %d ", pos[n].x, pos[n].y );
+		for (int n = 0; n < 3; ++n)
+			sys_log(0, "LoadMapRegion %d %d ", pos[n].x, pos[n].y);
 	}
 	else
 	{
-		sys_log( 0, "LoadMapRegion no empire specific start point" );
+		sys_log(0, "LoadMapRegion no empire specific start point");
 	}
 
 	TMapRegion region;
@@ -340,13 +340,13 @@ bool SECTREE_MANAGER::LoadMapRegion(const char * c_pszFileName, TMapSetting & r_
 	r_setting.posSpawn = region.posSpawn;
 
 	sys_log(0, "LoadMapRegion %d x %d ~ %d y %d ~ %d, town %d %d",
-			region.index,
-			region.sx,
-			region.ex,
-			region.sy,
-			region.ey,
-			region.posSpawn.x,
-			region.posSpawn.y);
+		region.index,
+		region.sx,
+		region.ex,
+		region.sy,
+		region.ey,
+		region.posSpawn.x,
+		region.posSpawn.y);
 
 	if (iEmpirePositionCount == 6)
 	{
@@ -365,13 +365,13 @@ bool SECTREE_MANAGER::LoadMapRegion(const char * c_pszFileName, TMapSetting & r_
 
 	m_vec_mapRegion.emplace_back(region);
 
-	sys_log(0,"LoadMapRegion %d End", region.index);
+	sys_log(0, "LoadMapRegion %d End", region.index);
 	return true;
 }
 
-bool SECTREE_MANAGER::LoadAttribute(LPSECTREE_MAP pkMapSectree, const char * c_pszFileName, TMapSetting & r_setting)
+bool SECTREE_MANAGER::LoadAttribute(LPSECTREE_MAP pkMapSectree, const char* c_pszFileName, TMapSetting& r_setting)
 {
-	FILE * fp = fopen(c_pszFileName, "rb");
+	FILE* fp = fopen(c_pszFileName, "rb");
 
 	if (!fp)
 	{
@@ -394,7 +394,7 @@ bool SECTREE_MANAGER::LoadAttribute(LPSECTREE_MAP pkMapSectree, const char * c_p
 #else
 	BYTE* abComp = M2_NEW BYTE[maxMemSize];
 #endif
-	DWORD * attr = M2_NEW DWORD[maxMemSize];
+	DWORD* attr = M2_NEW DWORD[maxMemSize];
 
 	for (int y = 0; y < iHeight; ++y)
 		for (int x = 0; x < iWidth; ++x)
@@ -409,7 +409,7 @@ bool SECTREE_MANAGER::LoadAttribute(LPSECTREE_MAP pkMapSectree, const char * c_p
 			if (tree == NULL)
 			{
 				sys_err("FATAL ERROR! LoadAttribute(%s) - cannot find sectree(package=%x, coord=(%u, %u), map_index=%u, map_base=(%u, %u))",
-						c_pszFileName, id.package, id.coord.x, id.coord.y, r_setting.iIndex, r_setting.iBaseX, r_setting.iBaseY);
+					c_pszFileName, id.package, id.coord.x, id.coord.y, r_setting.iIndex, r_setting.iBaseX, r_setting.iBaseY);
 				sys_err("ERROR_ATTR_POS(%d, %d) attr_size(%d, %d)", x, y, iWidth, iHeight);
 				sys_err("CHECK! 'Setting.txt' and 'server_attr' MAP_SIZE!!");
 
@@ -427,7 +427,7 @@ bool SECTREE_MANAGER::LoadAttribute(LPSECTREE_MAP pkMapSectree, const char * c_p
 			if (tree->m_id.package != id.package)
 			{
 				sys_err("returned tree id mismatch! return %u, request %u",
-						tree->m_id.package, id.package);
+					tree->m_id.package, id.package);
 				fclose(fp);
 
 				M2_DELETE_ARRAY(attr);
@@ -442,12 +442,12 @@ bool SECTREE_MANAGER::LoadAttribute(LPSECTREE_MAP pkMapSectree, const char * c_p
 
 			//LZOManager::instance().Decompress(abComp, uiSize, (BYTE *) tree->GetAttributePointer(), &uiDestSize);
 			uiDestSize = sizeof(DWORD) * maxMemSize;
-			LZOManager::instance().Decompress(abComp, uiSize, (BYTE *) attr, &uiDestSize);
+			LZOManager::instance().Decompress(abComp, uiSize, (BYTE*)attr, &uiDestSize);
 
 			if (uiDestSize != sizeof(DWORD) * (SECTREE_SIZE / CELL_SIZE) * (SECTREE_SIZE / CELL_SIZE))
 			{
 				sys_err("SECTREE_MANAGER::LoadAttribte : %s : %d %d size mismatch! %d",
-						c_pszFileName, tree->m_id.coord.x, tree->m_id.coord.y, uiDestSize);
+					c_pszFileName, tree->m_id.coord.x, tree->m_id.coord.y, uiDestSize);
 				fclose(fp);
 
 				M2_DELETE_ARRAY(attr);
@@ -469,7 +469,7 @@ bool SECTREE_MANAGER::LoadAttribute(LPSECTREE_MAP pkMapSectree, const char * c_p
 	return true;
 }
 
-bool SECTREE_MANAGER::GetRecallPositionByEmpire(int iMapIndex, BYTE bEmpire, PIXEL_POSITION & r_pos)
+bool SECTREE_MANAGER::GetRecallPositionByEmpire(int iMapIndex, BYTE bEmpire, PIXEL_POSITION& r_pos)
 {
 	std::vector<TMapRegion>::iterator it = m_vec_mapRegion.begin();
 
@@ -480,7 +480,7 @@ bool SECTREE_MANAGER::GetRecallPositionByEmpire(int iMapIndex, BYTE bEmpire, PIX
 
 	while (it != m_vec_mapRegion.end())
 	{
-		TMapRegion & rRegion = *(it++);
+		TMapRegion& rRegion = *(it++);
 
 		if (rRegion.index == iMapIndex)
 		{
@@ -496,13 +496,13 @@ bool SECTREE_MANAGER::GetRecallPositionByEmpire(int iMapIndex, BYTE bEmpire, PIX
 	return false;
 }
 
-bool SECTREE_MANAGER::GetCenterPositionOfMap(long lMapIndex, PIXEL_POSITION & r_pos)
+bool SECTREE_MANAGER::GetCenterPositionOfMap(long lMapIndex, PIXEL_POSITION& r_pos)
 {
 	std::vector<TMapRegion>::iterator it = m_vec_mapRegion.begin();
 
 	while (it != m_vec_mapRegion.end())
 	{
-		TMapRegion & rRegion = *(it++);
+		TMapRegion& rRegion = *(it++);
 
 		if (rRegion.index == lMapIndex)
 		{
@@ -518,12 +518,12 @@ bool SECTREE_MANAGER::GetCenterPositionOfMap(long lMapIndex, PIXEL_POSITION & r_
 
 bool SECTREE_MANAGER::GetSpawnPositionByMapIndex(long lMapIndex, PIXEL_POSITION& r_pos)
 {
-	if (lMapIndex> 10000) lMapIndex /= 10000;
+	if (lMapIndex > 10000) lMapIndex /= 10000;
 	std::vector<TMapRegion>::iterator it = m_vec_mapRegion.begin();
 
 	while (it != m_vec_mapRegion.end())
 	{
-		TMapRegion & rRegion = *(it++);
+		TMapRegion& rRegion = *(it++);
 
 		if (lMapIndex == rRegion.index)
 		{
@@ -535,13 +535,13 @@ bool SECTREE_MANAGER::GetSpawnPositionByMapIndex(long lMapIndex, PIXEL_POSITION&
 	return false;
 }
 
-bool SECTREE_MANAGER::GetSpawnPosition(long x, long y, PIXEL_POSITION & r_pos)
+bool SECTREE_MANAGER::GetSpawnPosition(long x, long y, PIXEL_POSITION& r_pos)
 {
 	std::vector<TMapRegion>::iterator it = m_vec_mapRegion.begin();
 
 	while (it != m_vec_mapRegion.end())
 	{
-		TMapRegion & rRegion = *(it++);
+		TMapRegion& rRegion = *(it++);
 
 		if (x >= rRegion.sx && y >= rRegion.sy && x < rRegion.ex && y < rRegion.ey)
 		{
@@ -553,14 +553,14 @@ bool SECTREE_MANAGER::GetSpawnPosition(long x, long y, PIXEL_POSITION & r_pos)
 	return false;
 }
 
-bool SECTREE_MANAGER::GetMapBasePositionByMapIndex(long lMapIndex, PIXEL_POSITION & r_pos)
+bool SECTREE_MANAGER::GetMapBasePositionByMapIndex(long lMapIndex, PIXEL_POSITION& r_pos)
 {
-	if (lMapIndex> 10000) lMapIndex /= 10000;
+	if (lMapIndex > 10000) lMapIndex /= 10000;
 	std::vector<TMapRegion>::iterator it = m_vec_mapRegion.begin();
 
 	while (it != m_vec_mapRegion.end())
 	{
-		TMapRegion & rRegion = *(it++);
+		TMapRegion& rRegion = *(it++);
 
 		//if (x >= rRegion.sx && y >= rRegion.sy && x < rRegion.ex && y < rRegion.ey)
 		if (lMapIndex == rRegion.index)
@@ -575,13 +575,13 @@ bool SECTREE_MANAGER::GetMapBasePositionByMapIndex(long lMapIndex, PIXEL_POSITIO
 	return false;
 }
 
-bool SECTREE_MANAGER::GetMapBasePosition(long x, long y, PIXEL_POSITION & r_pos)
+bool SECTREE_MANAGER::GetMapBasePosition(long x, long y, PIXEL_POSITION& r_pos)
 {
 	std::vector<TMapRegion>::iterator it = m_vec_mapRegion.begin();
 
 	while (it != m_vec_mapRegion.end())
 	{
-		TMapRegion & rRegion = *(it++);
+		TMapRegion& rRegion = *(it++);
 
 		if (x >= rRegion.sx && y >= rRegion.sy && x < rRegion.ex && y < rRegion.ey)
 		{
@@ -595,13 +595,13 @@ bool SECTREE_MANAGER::GetMapBasePosition(long x, long y, PIXEL_POSITION & r_pos)
 	return false;
 }
 
-const TMapRegion * SECTREE_MANAGER::FindRegionByPartialName(const char* szMapName)
+const TMapRegion* SECTREE_MANAGER::FindRegionByPartialName(const char* szMapName)
 {
 	std::vector<TMapRegion>::iterator it = m_vec_mapRegion.begin();
 
 	while (it != m_vec_mapRegion.end())
 	{
-		TMapRegion & rRegion = *(it++);
+		TMapRegion& rRegion = *(it++);
 
 		//if (rRegion.index == lMapIndex)
 		//return &rRegion;
@@ -612,13 +612,13 @@ const TMapRegion * SECTREE_MANAGER::FindRegionByPartialName(const char* szMapNam
 	return NULL;
 }
 
-const TMapRegion * SECTREE_MANAGER::GetMapRegion(long lMapIndex)
+const TMapRegion* SECTREE_MANAGER::GetMapRegion(long lMapIndex)
 {
 	std::vector<TMapRegion>::iterator it = m_vec_mapRegion.begin();
 
 	while (it != m_vec_mapRegion.end())
 	{
-		TMapRegion & rRegion = *(it++);
+		TMapRegion& rRegion = *(it++);
 
 		if (rRegion.index == lMapIndex)
 			return &rRegion;
@@ -633,7 +633,7 @@ int SECTREE_MANAGER::GetMapIndex(long x, long y)
 
 	while (it != m_vec_mapRegion.end())
 	{
-		TMapRegion & rRegion = *(it++);
+		TMapRegion& rRegion = *(it++);
 
 		if (x >= rRegion.sx && y >= rRegion.sy && x < rRegion.ex && y < rRegion.ey)
 			return rRegion.index;
@@ -642,16 +642,16 @@ int SECTREE_MANAGER::GetMapIndex(long x, long y)
 	sys_log(0, "SECTREE_MANAGER::GetMapIndex(%d, %d)", x, y);
 
 	std::vector<TMapRegion>::iterator i;
-	for (i = m_vec_mapRegion.begin(); i !=m_vec_mapRegion.end(); ++i)
+	for (i = m_vec_mapRegion.begin(); i != m_vec_mapRegion.end(); ++i)
 	{
-		TMapRegion & rRegion = *i;
+		TMapRegion& rRegion = *i;
 		sys_log(0, "%d: (%d, %d) ~ (%d, %d)", rRegion.index, rRegion.sx, rRegion.sy, rRegion.ex, rRegion.ey);
 	}
 
 	return 0;
 }
 
-int SECTREE_MANAGER::Build(const char * c_pszListFileName, const char* c_pszMapBasePath)
+int SECTREE_MANAGER::Build(const char* c_pszListFileName, const char* c_pszMapBasePath)
 {
 	if (test_server)
 		sys_log(0, "[BUILD] Build %s %s ", c_pszListFileName, c_pszMapBasePath);
@@ -662,7 +662,7 @@ int SECTREE_MANAGER::Build(const char * c_pszListFileName, const char* c_pszMapB
 
 	std::unordered_set<DWORD> loadedMaps; // @fixme308
 	auto lines = msl::string_split(f.string_read(), '\n');
-	for (auto & line : lines)
+	for (auto& line : lines)
 	{
 		msl::rtrim_in_place(line);
 
@@ -707,7 +707,7 @@ int SECTREE_MANAGER::Build(const char * c_pszListFileName, const char* c_pszMapB
 		}
 
 		if (test_server)
-			sys_log(0,"[BUILD] Build %s %s %d ",c_pszMapBasePath, szMapName, iIndex);
+			sys_log(0, "[BUILD] Build %s %s %d ", c_pszMapBasePath, szMapName, iIndex);
 
 		if (map_allow_find(iIndex))
 		{
@@ -760,7 +760,7 @@ bool SECTREE_MANAGER::IsMovablePosition(long lMapIndex, long x, long y)
 	return (!tree->IsAttr(x, y, ATTR_BLOCK | ATTR_OBJECT));
 }
 
-bool SECTREE_MANAGER::GetMovablePosition(long lMapIndex, long x, long y, PIXEL_POSITION & pos)
+bool SECTREE_MANAGER::GetMovablePosition(long lMapIndex, long x, long y, PIXEL_POSITION& pos)
 {
 	int i = 0;
 
@@ -787,7 +787,7 @@ bool SECTREE_MANAGER::GetMovablePosition(long lMapIndex, long x, long y, PIXEL_P
 	return false;
 }
 
-bool SECTREE_MANAGER::GetValidLocation(long lMapIndex, long x, long y, long & r_lValidMapIndex, PIXEL_POSITION & r_pos, BYTE empire)
+bool SECTREE_MANAGER::GetValidLocation(long lMapIndex, long x, long y, long& r_lValidMapIndex, PIXEL_POSITION& r_pos, BYTE empire)
 {
 	LPSECTREE_MAP pkSectreeMap = GetMap(lMapIndex);
 
@@ -813,7 +813,7 @@ bool SECTREE_MANAGER::GetValidLocation(long lMapIndex, long x, long y, long & r_
 
 	while (it != m_vec_mapRegion.end())
 	{
-		TMapRegion & rRegion = *(it++);
+		TMapRegion& rRegion = *(it++);
 
 		if (rRegion.index == lRealMapIndex)
 		{
@@ -836,7 +836,7 @@ bool SECTREE_MANAGER::GetValidLocation(long lMapIndex, long x, long y, long & r_
 	return false;
 }
 
-bool SECTREE_MANAGER::GetRandomLocation(long lMapIndex, PIXEL_POSITION & r_pos, DWORD dwCurrentX, DWORD dwCurrentY, int iMaxDistance)
+bool SECTREE_MANAGER::GetRandomLocation(long lMapIndex, PIXEL_POSITION& r_pos, DWORD dwCurrentX, DWORD dwCurrentY, int iMaxDistance)
 {
 	LPSECTREE_MAP pkSectreeMap = GetMap(lMapIndex);
 
@@ -849,7 +849,7 @@ bool SECTREE_MANAGER::GetRandomLocation(long lMapIndex, PIXEL_POSITION & r_pos, 
 
 	while (it != m_vec_mapRegion.end())
 	{
-		TMapRegion & rRegion = *(it++);
+		TMapRegion& rRegion = *(it++);
 
 		if (rRegion.index != lMapIndex)
 			continue;
@@ -956,7 +956,7 @@ struct FDestroyPrivateMapEntity
 	{
 		if (ent->IsType(ENTITY_CHARACTER))
 		{
-			LPCHARACTER ch = (LPCHARACTER) ent;
+			LPCHARACTER ch = (LPCHARACTER)ent;
 			sys_log(0, "PRIVAE_MAP: removing character %s", ch->GetName());
 
 			if (ch->GetDesc())
@@ -966,7 +966,7 @@ struct FDestroyPrivateMapEntity
 		}
 		else if (ent->IsType(ENTITY_ITEM))
 		{
-			LPITEM item = (LPITEM) ent;
+			LPITEM item = (LPITEM)ent;
 			sys_log(0, "PRIVATE_MAP: removing item %s", item->GetName());
 
 			M2_DESTROY_ITEM(item);
@@ -1064,23 +1064,23 @@ BYTE SECTREE_MANAGER::GetEmpireFromMapIndex(long lMapIndex)
 	if (lMapIndex >= 41 && lMapIndex <= 60)
 		return 3;
 
-	if ( lMapIndex == 184 || lMapIndex == 185 )
+	if (lMapIndex == 184 || lMapIndex == 185)
 		return 1;
 
-	if ( lMapIndex == 186 || lMapIndex == 187 )
+	if (lMapIndex == 186 || lMapIndex == 187)
 		return 2;
 
-	if ( lMapIndex == 188 || lMapIndex == 189 )
+	if (lMapIndex == 188 || lMapIndex == 189)
 		return 3;
 
-	switch ( lMapIndex )
+	switch (lMapIndex)
 	{
-		case 190 :
-			return 1;
-		case 191 :
-			return 2;
-		case 192 :
-			return 3;
+	case 190:
+		return 1;
+	case 191:
+		return 2;
+	case 192:
+		return 3;
 	}
 
 	return 0;
@@ -1088,43 +1088,43 @@ BYTE SECTREE_MANAGER::GetEmpireFromMapIndex(long lMapIndex)
 
 class FRemoveIfAttr
 {
-	public:
-		FRemoveIfAttr(LPSECTREE pkTree, DWORD dwAttr) : m_pkTree(pkTree), m_dwCheckAttr(dwAttr)
+public:
+	FRemoveIfAttr(LPSECTREE pkTree, DWORD dwAttr) : m_pkTree(pkTree), m_dwCheckAttr(dwAttr)
+	{
+	}
+
+	void operator () (LPENTITY entity)
+	{
+		if (!m_pkTree->IsAttr(entity->GetX(), entity->GetY(), m_dwCheckAttr))
+			return;
+
+		if (entity->IsType(ENTITY_ITEM))
 		{
+			M2_DESTROY_ITEM((LPITEM)entity);
 		}
-
-		void operator () (LPENTITY entity)
+		else if (entity->IsType(ENTITY_CHARACTER))
 		{
-			if (!m_pkTree->IsAttr(entity->GetX(), entity->GetY(), m_dwCheckAttr))
-				return;
+			LPCHARACTER ch = (LPCHARACTER)entity;
 
-			if (entity->IsType(ENTITY_ITEM))
+			if (ch->IsPC())
 			{
-				M2_DESTROY_ITEM((LPITEM) entity);
-			}
-			else if (entity->IsType(ENTITY_CHARACTER))
-			{
-				LPCHARACTER ch = (LPCHARACTER) entity;
+				PIXEL_POSITION pos;
 
-				if (ch->IsPC())
-				{
-					PIXEL_POSITION pos;
-
-					if (SECTREE_MANAGER::instance().GetRecallPositionByEmpire(ch->GetMapIndex(), ch->GetEmpire(), pos))
-						ch->WarpSet(pos.x, pos.y);
-					else
-						ch->WarpSet(EMPIRE_START_X(ch->GetEmpire()), EMPIRE_START_Y(ch->GetEmpire()));
-				}
+				if (SECTREE_MANAGER::instance().GetRecallPositionByEmpire(ch->GetMapIndex(), ch->GetEmpire(), pos))
+					ch->WarpSet(pos.x, pos.y);
 				else
-					ch->DeadNoReward(); // @fixme188 from Dead()
+					ch->WarpSet(EMPIRE_START_X(ch->GetEmpire()), EMPIRE_START_Y(ch->GetEmpire()));
 			}
+			else
+				ch->DeadNoReward(); // @fixme188 from Dead()
 		}
+	}
 
-		LPSECTREE m_pkTree;
-		DWORD m_dwCheckAttr;
+	LPSECTREE m_pkTree;
+	DWORD m_dwCheckAttr;
 };
 
-bool SECTREE_MANAGER::ForAttrRegionCell( long lMapIndex, long lCX, long lCY, DWORD dwAttr, EAttrRegionMode mode )
+bool SECTREE_MANAGER::ForAttrRegionCell(long lMapIndex, long lCX, long lCY, DWORD dwAttr, EAttrRegionMode mode)
 {
 	SECTREEID id;
 
@@ -1134,50 +1134,50 @@ bool SECTREE_MANAGER::ForAttrRegionCell( long lMapIndex, long lCX, long lCY, DWO
 	long lTreeCX = id.coord.x * (SECTREE_SIZE / CELL_SIZE);
 	long lTreeCY = id.coord.y * (SECTREE_SIZE / CELL_SIZE);
 
-	LPSECTREE pSec = Get( lMapIndex, id.package );
-	if ( !pSec )
+	LPSECTREE pSec = Get(lMapIndex, id.package);
+	if (!pSec)
 		return false;
 
 	switch (mode)
 	{
-		case ATTR_REGION_MODE_SET:
-			pSec->SetAttribute( lCX - lTreeCX, lCY - lTreeCY, dwAttr );
-			break;
+	case ATTR_REGION_MODE_SET:
+		pSec->SetAttribute(lCX - lTreeCX, lCY - lTreeCY, dwAttr);
+		break;
 
-		case ATTR_REGION_MODE_REMOVE:
-			pSec->RemoveAttribute( lCX - lTreeCX, lCY - lTreeCY, dwAttr );
-			break;
+	case ATTR_REGION_MODE_REMOVE:
+		pSec->RemoveAttribute(lCX - lTreeCX, lCY - lTreeCY, dwAttr);
+		break;
 
-		case ATTR_REGION_MODE_CHECK:
-			if ( pSec->IsAttr( lCX * CELL_SIZE, lCY * CELL_SIZE, ATTR_OBJECT ) )
-				return true;
-			break;
+	case ATTR_REGION_MODE_CHECK:
+		if (pSec->IsAttr(lCX * CELL_SIZE, lCY * CELL_SIZE, ATTR_OBJECT))
+			return true;
+		break;
 
-		default:
-			sys_err("Unknown region mode %u", mode);
-			break;
+	default:
+		sys_err("Unknown region mode %u", mode);
+		break;
 	}
 
 	return false;
 }
 
-bool SECTREE_MANAGER::ForAttrRegionRightAngle( long lMapIndex, long lCX, long lCY, long lCW, long lCH, long lRotate, DWORD dwAttr, EAttrRegionMode mode )
+bool SECTREE_MANAGER::ForAttrRegionRightAngle(long lMapIndex, long lCX, long lCY, long lCW, long lCH, long lRotate, DWORD dwAttr, EAttrRegionMode mode)
 {
-	if (1 == lRotate/90 || 3 == lRotate/90)
+	if (1 == lRotate / 90 || 3 == lRotate / 90)
 	{
 		for (int x = 0; x < lCH; ++x)
 			for (int y = 0; y < lCW; ++y)
 			{
-				if ( ForAttrRegionCell( lMapIndex, lCX + x, lCY + y, dwAttr, mode ) )
+				if (ForAttrRegionCell(lMapIndex, lCX + x, lCY + y, dwAttr, mode))
 					return true;
 			}
 	}
-	if (0 == lRotate/90 || 2 == lRotate/90)
+	if (0 == lRotate / 90 || 2 == lRotate / 90)
 	{
 		for (int x = 0; x < lCW; ++x)
 			for (int y = 0; y < lCH; ++y)
 			{
-				if ( ForAttrRegionCell( lMapIndex, lCX + x, lCY + y, dwAttr, mode) )
+				if (ForAttrRegionCell(lMapIndex, lCX + x, lCY + y, dwAttr, mode))
 					return true;
 			}
 	}
@@ -1188,19 +1188,19 @@ bool SECTREE_MANAGER::ForAttrRegionRightAngle( long lMapIndex, long lCX, long lC
 #define min( l, r )	((l) < (r) ? (l) : (r))
 #define max( l, r )	((l) < (r) ? (r) : (l))
 
-bool SECTREE_MANAGER::ForAttrRegionFreeAngle( long lMapIndex, long lCX, long lCY, long lCW, long lCH, long lRotate, DWORD dwAttr, EAttrRegionMode mode )
+bool SECTREE_MANAGER::ForAttrRegionFreeAngle(long lMapIndex, long lCX, long lCY, long lCW, long lCH, long lRotate, DWORD dwAttr, EAttrRegionMode mode)
 {
-	float fx1 = (-lCW/2) * sinf(float(lRotate)/180.0f*3.14f) + (-lCH/2) * cosf(float(lRotate)/180.0f*3.14f);
-	float fy1 = (-lCW/2) * cosf(float(lRotate)/180.0f*3.14f) - (-lCH/2) * sinf(float(lRotate)/180.0f*3.14f);
+	float fx1 = (-lCW / 2) * sinf(float(lRotate) / 180.0f * 3.14f) + (-lCH / 2) * cosf(float(lRotate) / 180.0f * 3.14f);
+	float fy1 = (-lCW / 2) * cosf(float(lRotate) / 180.0f * 3.14f) - (-lCH / 2) * sinf(float(lRotate) / 180.0f * 3.14f);
 
-	float fx2 = (+lCW/2) * sinf(float(lRotate)/180.0f*3.14f) + (-lCH/2) * cosf(float(lRotate)/180.0f*3.14f);
-	float fy2 = (+lCW/2) * cosf(float(lRotate)/180.0f*3.14f) - (-lCH/2) * sinf(float(lRotate)/180.0f*3.14f);
+	float fx2 = (+lCW / 2) * sinf(float(lRotate) / 180.0f * 3.14f) + (-lCH / 2) * cosf(float(lRotate) / 180.0f * 3.14f);
+	float fy2 = (+lCW / 2) * cosf(float(lRotate) / 180.0f * 3.14f) - (-lCH / 2) * sinf(float(lRotate) / 180.0f * 3.14f);
 
-	float fx3 = (-lCW/2) * sinf(float(lRotate)/180.0f*3.14f) + (+lCH/2) * cosf(float(lRotate)/180.0f*3.14f);
-	float fy3 = (-lCW/2) * cosf(float(lRotate)/180.0f*3.14f) - (+lCH/2) * sinf(float(lRotate)/180.0f*3.14f);
+	float fx3 = (-lCW / 2) * sinf(float(lRotate) / 180.0f * 3.14f) + (+lCH / 2) * cosf(float(lRotate) / 180.0f * 3.14f);
+	float fy3 = (-lCW / 2) * cosf(float(lRotate) / 180.0f * 3.14f) - (+lCH / 2) * sinf(float(lRotate) / 180.0f * 3.14f);
 
-	float fx4 = (+lCW/2) * sinf(float(lRotate)/180.0f*3.14f) + (+lCH/2) * cosf(float(lRotate)/180.0f*3.14f);
-	float fy4 = (+lCW/2) * cosf(float(lRotate)/180.0f*3.14f) - (+lCH/2) * sinf(float(lRotate)/180.0f*3.14f);
+	float fx4 = (+lCW / 2) * sinf(float(lRotate) / 180.0f * 3.14f) + (+lCH / 2) * cosf(float(lRotate) / 180.0f * 3.14f);
+	float fy4 = (+lCW / 2) * cosf(float(lRotate) / 180.0f * 3.14f) - (+lCH / 2) * sinf(float(lRotate) / 180.0f * 3.14f);
 
 	float fdx1 = fx2 - fx1;
 	float fdy1 = fy2 - fy1;
@@ -1209,26 +1209,26 @@ bool SECTREE_MANAGER::ForAttrRegionFreeAngle( long lMapIndex, long lCX, long lCY
 
 	if (0 == fdx1 || 0 == fdx2)
 	{
-		sys_err( "SECTREE_MANAGER::ForAttrRegion - Unhandled exception. MapIndex: %d", lMapIndex );
+		sys_err("SECTREE_MANAGER::ForAttrRegion - Unhandled exception. MapIndex: %d", lMapIndex);
 		return false;
 	}
 
 	float fTilt1 = float(fdy1) / float(fdx1);
 	float fTilt2 = float(fdy2) / float(fdx2);
-	float fb1 = fy1 - fTilt1*fx1;
-	float fb2 = fy1 - fTilt2*fx1;
-	float fb3 = fy4 - fTilt1*fx4;
-	float fb4 = fy4 - fTilt2*fx4;
+	float fb1 = fy1 - fTilt1 * fx1;
+	float fb2 = fy1 - fTilt2 * fx1;
+	float fb3 = fy4 - fTilt1 * fx4;
+	float fb4 = fy4 - fTilt2 * fx4;
 
 	float fxMin = min(fx1, min(fx2, min(fx3, fx4)));
 	float fxMax = max(fx1, max(fx2, max(fx3, fx4)));
 	for (int i = int(fxMin); i < int(fxMax); ++i)
 	{
-		float fyValue1 = fTilt1*i + min(fb1, fb3);
-		float fyValue2 = fTilt2*i + min(fb2, fb4);
+		float fyValue1 = fTilt1 * i + min(fb1, fb3);
+		float fyValue2 = fTilt2 * i + min(fb2, fb4);
 
-		float fyValue3 = fTilt1*i + max(fb1, fb3);
-		float fyValue4 = fTilt2*i + max(fb2, fb4);
+		float fyValue3 = fTilt1 * i + max(fb1, fb3);
+		float fyValue4 = fTilt2 * i + max(fb2, fb4);
 
 		float fMinValue;
 		float fMaxValue;
@@ -1242,7 +1242,7 @@ bool SECTREE_MANAGER::ForAttrRegionFreeAngle( long lMapIndex, long lCX, long lCY
 			fMinValue = fyValue4;
 
 		for (int j = int(min(fMinValue, fMaxValue)); j < int(max(fMinValue, fMaxValue)); ++j) {
-			if ( ForAttrRegionCell( lMapIndex, lCX + (lCW / 2) + i, lCY + (lCH / 2) + j, dwAttr, mode ) )
+			if (ForAttrRegionCell(lMapIndex, lCX + (lCW / 2) + i, lCY + (lCH / 2) + j, dwAttr, mode))
 				return true;
 		}
 	}
@@ -1260,10 +1260,10 @@ bool SECTREE_MANAGER::ForAttrRegion(long lMapIndex, long lStartX, long lStartY, 
 		return mode == ATTR_REGION_MODE_CHECK ? true : false;
 	}
 
-	lStartX	-= lStartX % CELL_SIZE;
-	lStartY	-= lStartY % CELL_SIZE;
-	lEndX	+= lEndX % CELL_SIZE;
-	lEndY	+= lEndY % CELL_SIZE;
+	lStartX -= lStartX % CELL_SIZE;
+	lStartY -= lStartY % CELL_SIZE;
+	lEndX += lEndX % CELL_SIZE;
+	lEndY += lEndY % CELL_SIZE;
 
 	long lCX = lStartX / CELL_SIZE;
 	long lCY = lStartY / CELL_SIZE;
@@ -1275,12 +1275,12 @@ bool SECTREE_MANAGER::ForAttrRegion(long lMapIndex, long lStartX, long lStartY, 
 	lRotate = lRotate % 360;
 
 	if (0 == lRotate % 90)
-		return ForAttrRegionRightAngle( lMapIndex, lCX, lCY, lCW, lCH, lRotate, dwAttr, mode );
+		return ForAttrRegionRightAngle(lMapIndex, lCX, lCY, lCW, lCH, lRotate, dwAttr, mode);
 
-	return ForAttrRegionFreeAngle( lMapIndex, lCX, lCY, lCW, lCH, lRotate, dwAttr, mode );
+	return ForAttrRegionFreeAngle(lMapIndex, lCX, lCY, lCW, lCH, lRotate, dwAttr, mode);
 }
 
-bool SECTREE_MANAGER::SaveAttributeToImage(int lMapIndex, const char * c_pszFileName, LPSECTREE_MAP pMapSrc)
+bool SECTREE_MANAGER::SaveAttributeToImage(int lMapIndex, const char* c_pszFileName, LPSECTREE_MAP pMapSrc)
 {
 	LPSECTREE_MAP pMap = SECTREE_MANAGER::GetMap(lMapIndex);
 
@@ -1312,7 +1312,7 @@ bool SECTREE_MANAGER::SaveAttributeToImage(int lMapIndex, const char * c_pszFile
 
 	sys_log(0, "1");
 
-	DWORD * pdwDest = (DWORD *) image.GetBasePointer();
+	DWORD* pdwDest = (DWORD*)image.GetBasePointer();
 
 	int pixels = 0;
 	int x, x2;
@@ -1320,7 +1320,7 @@ bool SECTREE_MANAGER::SaveAttributeToImage(int lMapIndex, const char * c_pszFile
 
 	sys_log(0, "2 %p", pdwDest);
 
-	DWORD * pdwLine = M2_NEW DWORD[SECTREE_SIZE / CELL_SIZE];
+	DWORD* pdwLine = M2_NEW DWORD[SECTREE_SIZE / CELL_SIZE];
 
 	for (y = 0; y < 4 * iMapHeight; ++y)
 	{
@@ -1389,7 +1389,7 @@ struct FPurgeMonsters
 {
 	void operator() (LPENTITY ent)
 	{
-		if ( ent->IsType(ENTITY_CHARACTER) == true )
+		if (ent->IsType(ENTITY_CHARACTER) == true)
 		{
 			LPCHARACTER lpChar = (LPCHARACTER)ent;
 			if (lpChar->IsMonster() == true && !lpChar->IsPet()
@@ -1408,11 +1408,11 @@ void SECTREE_MANAGER::PurgeMonstersInMap(long lMapIndex)
 {
 	LPSECTREE_MAP sectree = SECTREE_MANAGER::instance().GetMap(lMapIndex);
 
-	if ( sectree != NULL )
+	if (sectree != NULL)
 	{
 		struct FPurgeMonsters f;
 
-		sectree->for_each( f );
+		sectree->for_each(f);
 	}
 }
 
@@ -1420,11 +1420,11 @@ struct FPurgeStones
 {
 	void operator() (LPENTITY ent)
 	{
-		if ( ent->IsType(ENTITY_CHARACTER) == true )
+		if (ent->IsType(ENTITY_CHARACTER) == true)
 		{
 			LPCHARACTER lpChar = (LPCHARACTER)ent;
 
-			if ( lpChar->IsStone() == true )
+			if (lpChar->IsStone() == true)
 			{
 				M2_DESTROY_CHARACTER(lpChar);
 			}
@@ -1436,11 +1436,11 @@ void SECTREE_MANAGER::PurgeStonesInMap(long lMapIndex)
 {
 	LPSECTREE_MAP sectree = SECTREE_MANAGER::instance().GetMap(lMapIndex);
 
-	if ( sectree != NULL )
+	if (sectree != NULL)
 	{
 		struct FPurgeStones f;
 
-		sectree->for_each( f );
+		sectree->for_each(f);
 	}
 }
 
@@ -1448,7 +1448,7 @@ struct FPurgeNPCs
 {
 	void operator() (LPENTITY ent)
 	{
-		if ( ent->IsType(ENTITY_CHARACTER) == true )
+		if (ent->IsType(ENTITY_CHARACTER) == true)
 		{
 			LPCHARACTER lpChar = (LPCHARACTER)ent;
 			if (lpChar->IsNPC() == true && !lpChar->IsPet()
@@ -1467,11 +1467,11 @@ void SECTREE_MANAGER::PurgeNPCsInMap(long lMapIndex)
 {
 	LPSECTREE_MAP sectree = SECTREE_MANAGER::instance().GetMap(lMapIndex);
 
-	if ( sectree != NULL )
+	if (sectree != NULL)
 	{
 		struct FPurgeNPCs f;
 
-		sectree->for_each( f );
+		sectree->for_each(f);
 	}
 }
 
@@ -1481,11 +1481,11 @@ struct FCountMonsters
 
 	void operator() (LPENTITY ent)
 	{
-		if ( ent->IsType(ENTITY_CHARACTER) == true )
+		if (ent->IsType(ENTITY_CHARACTER) == true)
 		{
 			LPCHARACTER lpChar = (LPCHARACTER)ent;
 
-			if ( lpChar->IsMonster() == true )
+			if (lpChar->IsMonster() == true)
 			{
 				m_map_Monsters[lpChar->GetVID()] = lpChar->GetVID();
 			}
@@ -1497,11 +1497,11 @@ size_t SECTREE_MANAGER::GetMonsterCountInMap(long lMapIndex)
 {
 	LPSECTREE_MAP sectree = SECTREE_MANAGER::instance().GetMap(lMapIndex);
 
-	if ( sectree != NULL )
+	if (sectree != NULL)
 	{
 		struct FCountMonsters f;
 
-		sectree->for_each( f );
+		sectree->for_each(f);
 
 		return f.m_map_Monsters.size();
 	}
@@ -1516,7 +1516,8 @@ struct FCountSpecifiedMonster
 
 	FCountSpecifiedMonster(DWORD id)
 		: SpecifiedVnum(id), cnt(0)
-	{}
+	{
+	}
 
 	void operator() (LPENTITY ent)
 	{
@@ -1541,7 +1542,7 @@ size_t SECTREE_MANAGER::GetMonsterCountInMap(long lMapIndex, DWORD dwVnum)
 	{
 		struct FCountSpecifiedMonster f(dwVnum);
 
-		sectree->for_each( f );
+		sectree->for_each(f);
 
 		return f.cnt;
 	}

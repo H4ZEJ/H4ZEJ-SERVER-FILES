@@ -26,16 +26,16 @@ BYTE PK_PROTECT_LEVEL = 30;
 string 			g_stLocal = "";
 eLocalization 	g_eLocalType = LC_NOSET;
 
-int (*check_name) (const char * str) = NULL;
-int (*is_twobyte) (const char * str) = NULL;
-bool LC_InitLocalization( const std::string& szLocal );
+int (*check_name) (const char* str) = NULL;
+int (*is_twobyte) (const char* str) = NULL;
+bool LC_InitLocalization(const std::string& szLocal);
 
-int is_twobyte_euckr(const char * str)
+int is_twobyte_euckr(const char* str)
 {
 	return ishan(*str);
 }
 
-int is_twobyte_gb2312(const char * str)
+int is_twobyte_gb2312(const char* str)
 {
 	if (!str || !*str)
 		return 0;
@@ -52,7 +52,7 @@ int is_twobyte_gb2312(const char * str)
 	return 1;
 }
 
-int is_twobyte_big5(const char * str)
+int is_twobyte_big5(const char* str)
 {
 	if (!str || !*str)
 		return 0;
@@ -83,7 +83,7 @@ int is_twobyte_big5(const char * str)
 	return 1;
 }
 
-int check_name_independent(const char * str)
+int check_name_independent(const char* str)
 {
 	if (CBanwordManager::instance().CheckString(str, strlen(str)))
 		return 0;
@@ -97,7 +97,7 @@ int check_name_independent(const char * str)
 	return 1;
 }
 
-int check_name_gb2312(const char * str)
+int check_name_gb2312(const char* str)
 {
 	static const BYTE exceptions[5][2] =
 	{
@@ -147,12 +147,12 @@ int check_name_gb2312(const char * str)
 		}
 	}
 
-	if ( len > 6 ) return 0;
+	if (len > 6) return 0;
 
 	return check_name_independent(str);
 }
 
-int check_name_big5(const char * str )
+int check_name_big5(const char* str)
 {
 	int i;
 	BYTE b1, b2;
@@ -222,15 +222,15 @@ int check_name_big5(const char * str )
 	return check_name_independent(str);
 }
 
-int check_name_euckr(const char * str)
+int check_name_euckr(const char* str)
 {
 	int		code;
-	const char*	tmp;
+	const char* tmp;
 
 	if (!str || !*str)
 		return 0;
 
-	if ( strlen(str) < 2 || strlen(str) > 12 )
+	if (strlen(str) < 2 || strlen(str) > 12)
 		return 0;
 
 	for (tmp = str; *tmp; ++tmp)
@@ -259,10 +259,10 @@ int check_name_euckr(const char * str)
 	return check_name_independent(str);
 }
 
-int check_name_latin1(const char * str)
+int check_name_latin1(const char* str)
 {
 	int		code;
-	const char*	tmp;
+	const char* tmp;
 
 	if (!str || !*str)
 		return 0;
@@ -284,8 +284,8 @@ int check_name_latin1(const char * str)
 		unsigned char uc_tmp = *tmp;
 
 		if (uc_tmp == 145 || uc_tmp == 146 || uc_tmp == 196
-				|| uc_tmp == 214 || uc_tmp == 220 || uc_tmp == 223
-				|| uc_tmp == 228 || uc_tmp == 246 || uc_tmp == 252 )
+			|| uc_tmp == 214 || uc_tmp == 220 || uc_tmp == 223
+			|| uc_tmp == 228 || uc_tmp == 246 || uc_tmp == 252)
 			continue;
 		code = *tmp;
 		code += 256;
@@ -302,9 +302,9 @@ int check_name_latin1(const char * str)
 	return check_name_independent(str);
 }
 
-int check_name_alphabet(const char * str)
+int check_name_alphabet(const char* str)
 {
-	const char*	tmp;
+	const char* tmp;
 
 	if (!str || !*str)
 		return 0;
@@ -342,12 +342,12 @@ bool sjis_is_disable_name_char(const char* src)
 #define issjistail(c) ((0x40<=(c) && (c)<=0x7e) || \
 		                               (0x80<=(c) && (c)<=0xfc))
 
-static int is_char_sjis(const char *p, const char *e)
+static int is_char_sjis(const char* p, const char* e)
 {
-	return (issjishead((BYTE) *p) && (e-p)>1 && issjistail((BYTE)p[1]) ? true : false);
+	return (issjishead((BYTE)*p) && (e - p) > 1 && issjistail((BYTE)p[1]) ? true : false);
 }
 
-int is_twobyte_sjis(const char *str)
+int is_twobyte_sjis(const char* str)
 {
 	if (str && str[0] && str[1])
 		return issjishead((BYTE)str[0]) && issjistail((BYTE)str[1]);
@@ -355,12 +355,12 @@ int is_twobyte_sjis(const char *str)
 		return 0;
 }
 
-int check_name_sjis(const char *str)
+int check_name_sjis(const char* str)
 {
-	const char	*p = str;
-	const char	*e = str + strlen(str);	// NULL position
+	const char* p = str;
+	const char* e = str + strlen(str);	// NULL position
 
-	if ( strlen(str) < 2 || strlen(str) > 16 )
+	if (strlen(str) < 2 || strlen(str) > 16)
 		return 0;
 
 	while (*p)
@@ -373,7 +373,7 @@ int check_name_sjis(const char *str)
 
 			// END_OF_DISABLE_SPECIAL_CHAR_NAMING
 
-			if ((BYTE)p[0]==0x81 && (BYTE)p[1]==0x40) return false;
+			if ((BYTE)p[0] == 0x81 && (BYTE)p[1] == 0x40) return false;
 
 			p += 2;
 			continue;
@@ -503,7 +503,7 @@ static void __LocaleService_Init_NewCIBN()
 
 static void __LocaleService_Init_Germany()
 {
-	g_stLocale="latin1";
+	g_stLocale = "latin1";
 	g_stServiceBasePath = "locale/germany";
 	g_stQuestDir = "locale/germany/quest";
 	g_stServiceMapPath = "locale/germany/map";
@@ -521,7 +521,7 @@ static void __LocaleService_Init_Germany()
 
 static void __LocaleService_Init_Korea()
 {
-	g_stLocale="euckr";
+	g_stLocale = "euckr";
 	g_stServiceBasePath = "locale/korea";
 	g_stQuestDir = "locale/korea/quest";
 	g_stServiceMapPath = "locale/korea/map";
@@ -534,7 +534,7 @@ static void __LocaleService_Init_Korea()
 
 static void __LocaleService_Init_France()
 {
-	g_stLocale="latin1";
+	g_stLocale = "latin1";
 	g_stServiceBasePath = "locale/france";
 	g_stQuestDir = "locale/france/quest";
 	g_stServiceMapPath = "locale/france/map";
@@ -552,7 +552,7 @@ static void __LocaleService_Init_France()
 
 static void __LocaleService_Init_Italy()
 {
-	g_stLocale="latin1";
+	g_stLocale = "latin1";
 	g_stServiceBasePath = "locale/italy";
 	g_stQuestDir = "locale/italy/quest";
 	g_stServiceMapPath = "locale/italy/map";
@@ -570,7 +570,7 @@ static void __LocaleService_Init_Italy()
 
 static void __LocaleService_Init_spain()
 {
-	g_stLocale="latin1";
+	g_stLocale = "latin1";
 	g_stServiceBasePath = "locale/spain";
 	g_stQuestDir = "locale/spain/quest";
 	g_stServiceMapPath = "locale/spain/map";
@@ -588,7 +588,7 @@ static void __LocaleService_Init_spain()
 
 static void __LocaleService_Init_greek()
 {
-	g_stLocale="greek";
+	g_stLocale = "greek";
 	g_stServiceBasePath = "locale/greek";
 	g_stQuestDir = "locale/greek/quest";
 	g_stServiceMapPath = "locale/greek/map";
@@ -606,7 +606,7 @@ static void __LocaleService_Init_greek()
 
 static void __LocaleService_Init_UK()
 {
-	g_stLocale="latin1";
+	g_stLocale = "latin1";
 	g_stServiceBasePath = "locale/uk";
 	g_stQuestDir = "locale/uk/quest";
 	g_stServiceMapPath = "locale/uk/map";
@@ -624,7 +624,7 @@ static void __LocaleService_Init_UK()
 
 static void __LocaleService_Init_Turkey()
 {
-	g_stLocale="latin5";
+	g_stLocale = "latin5";
 	g_stServiceBasePath = "locale/turkey";
 	g_stQuestDir = "locale/turkey/quest";
 	g_stServiceMapPath = "locale/turkey/map";
@@ -642,7 +642,7 @@ static void __LocaleService_Init_Turkey()
 
 static void __LocaleService_Init_Poland()
 {
-	g_stLocale="latin2";
+	g_stLocale = "latin2";
 	g_stServiceBasePath = "locale/poland";
 	g_stQuestDir = "locale/poland/quest";
 	g_stServiceMapPath = "locale/poland/map";
@@ -660,7 +660,7 @@ static void __LocaleService_Init_Poland()
 
 static void __LocaleService_Init_Portugal()
 {
-	g_stLocale="latin1";
+	g_stLocale = "latin1";
 	g_stServiceBasePath = "locale/portugal";
 	g_stQuestDir = "locale/portugal/quest";
 	g_stServiceMapPath = "locale/portugal/map";
@@ -680,14 +680,14 @@ static void __LocaleService_Init_Canada()
 {
 	g_stLocale = "latin1";
 	g_stServiceBasePath = "locale/canada";
-	g_stQuestDir		= "locale/canada/quest";
-	g_stServiceMapPath	= "locale/canada/map";
+	g_stQuestDir = "locale/canada/quest";
+	g_stServiceMapPath = "locale/canada/map";
 
 	g_setQuestObjectDir.clear();
 	g_setQuestObjectDir.emplace("locale/canada/quest/object");
 	g_stLocaleFilename = "locale/canada/locale_string.txt";
 
-	check_name	= check_name_alphabet;
+	check_name = check_name_alphabet;
 
 	g_iUseLocale = TRUE;
 }
@@ -696,8 +696,8 @@ static void __LocaleService_Init_Brazil()
 {
 	g_stLocale = "latin1";
 	g_stServiceBasePath = "locale/brazil";
-	g_stQuestDir		= "locale/brazil/quest";
-	g_stServiceMapPath	= "locale/brazil/map";
+	g_stQuestDir = "locale/brazil/quest";
+	g_stServiceMapPath = "locale/brazil/map";
 
 	g_setQuestObjectDir.clear();
 	g_setQuestObjectDir.emplace("locale/brazil/quest/object");
@@ -724,7 +724,7 @@ static void __LocaleService_Init_YMIR()
 
 static void __LocaleService_Init_Russia()
 {
-	g_stLocale="cp1251";
+	g_stLocale = "cp1251";
 	g_stServiceBasePath = "locale/russia";
 	g_stQuestDir = "locale/russia/quest";
 	g_stServiceMapPath = "locale/russia/map";
@@ -742,7 +742,7 @@ static void __LocaleService_Init_Russia()
 
 static void __LocaleService_Init_Denmark()
 {
-	g_stLocale="latin1";
+	g_stLocale = "latin1";
 	g_stServiceBasePath = "locale/denmark";
 	g_stQuestDir = "locale/denmark/quest";
 	g_stServiceMapPath = "locale/denmark/map";
@@ -760,7 +760,7 @@ static void __LocaleService_Init_Denmark()
 
 static void __LocaleService_Init_Bulgaria()
 {
-	g_stLocale="cp1251";
+	g_stLocale = "cp1251";
 	g_stServiceBasePath = "locale/bulgaria";
 	g_stQuestDir = "locale/bulgaria/quest";
 	g_stServiceMapPath = "locale/bulgaria/map";
@@ -778,7 +778,7 @@ static void __LocaleService_Init_Bulgaria()
 
 static void __LocaleService_Init_Croatia()
 {
-	g_stLocale="cp1251";
+	g_stLocale = "cp1251";
 	g_stServiceBasePath = "locale/croatia";
 	g_stQuestDir = "locale/croatia/quest";
 	g_stServiceMapPath = "locale/croatia/map";
@@ -796,7 +796,7 @@ static void __LocaleService_Init_Croatia()
 
 static void __LocaleService_Init_Mexico()
 {
-	g_stLocale="latin1";
+	g_stLocale = "latin1";
 	g_stServiceBasePath = "locale/mexico";
 	g_stQuestDir = "locale/mexico/quest";
 	g_stServiceMapPath = "locale/mexico/map";
@@ -814,7 +814,7 @@ static void __LocaleService_Init_Mexico()
 
 static void __LocaleService_Init_Arabia()
 {
-	g_stLocale="cp1256";
+	g_stLocale = "cp1256";
 	g_stServiceBasePath = "locale/arabia";
 	g_stQuestDir = "locale/arabia/quest";
 	g_stServiceMapPath = "locale/arabia/map";
@@ -832,7 +832,7 @@ static void __LocaleService_Init_Arabia()
 
 static void __LocaleService_Init_Czech()
 {
-	g_stLocale="latin2";
+	g_stLocale = "latin2";
 	g_stServiceBasePath = "locale/czech";
 	g_stQuestDir = "locale/czech/quest";
 	g_stServiceMapPath = "locale/czech/map";
@@ -850,7 +850,7 @@ static void __LocaleService_Init_Czech()
 
 static void __LocaleService_Init_Hungary()
 {
-	g_stLocale="latin2";
+	g_stLocale = "latin2";
 	g_stServiceBasePath = "locale/hungary";
 	g_stQuestDir = "locale/hungary/quest";
 	g_stServiceMapPath = "locale/hungary/map";
@@ -868,7 +868,7 @@ static void __LocaleService_Init_Hungary()
 
 static void __LocaleService_Init_Romania()
 {
-	g_stLocale="latin2";
+	g_stLocale = "latin2";
 	g_stServiceBasePath = "locale/romania";
 	g_stQuestDir = "locale/romania/quest";
 	g_stServiceMapPath = "locale/romania/map";
@@ -886,7 +886,7 @@ static void __LocaleService_Init_Romania()
 
 static void __LocaleService_Init_Netherlands()
 {
-	g_stLocale="latin1";
+	g_stLocale = "latin1";
 	g_stServiceBasePath = "locale/netherlands";
 	g_stQuestDir = "locale/netherlands/quest";
 	g_stServiceMapPath = "locale/netherlands/map";
@@ -906,46 +906,46 @@ static void __LocaleService_Init_Singapore()
 {
 	g_stLocale = "latin1";
 	g_stServiceBasePath = "locale/singapore";
-	g_stQuestDir		= "locale/singapore/quest";
-	g_stServiceMapPath	= "locale/singapore/map";
+	g_stQuestDir = "locale/singapore/quest";
+	g_stServiceMapPath = "locale/singapore/map";
 
 	g_setQuestObjectDir.clear();
 	g_setQuestObjectDir.emplace("locale/singapore/quest/object");
 	g_stLocaleFilename = "locale/singapore/locale_string.txt";
 
-	check_name	= check_name_alphabet;
+	check_name = check_name_alphabet;
 
 	g_iUseLocale = TRUE;
 }
 
 static void __LocaleService_Init_Vietnam()
 {
-	g_stLocale 			= "latin1";
+	g_stLocale = "latin1";
 	g_stServiceBasePath = "locale/vietnam";
-	g_stQuestDir		= "locale/vietnam/quest";
-	g_stServiceMapPath	= "locale/vietnam/map";
+	g_stQuestDir = "locale/vietnam/quest";
+	g_stServiceMapPath = "locale/vietnam/map";
 
 	g_setQuestObjectDir.clear();
 	g_setQuestObjectDir.emplace("locale/vietnam/quest/object");
 	g_stLocaleFilename = "locale/vietnam/locale_string.txt";
 
-	check_name	= check_name_alphabet;
+	check_name = check_name_alphabet;
 
 	g_iUseLocale = TRUE;
 }
 
 static void __LocaleService_Init_Thailand()
 {
-	g_stLocale 			= "latin1";
+	g_stLocale = "latin1";
 	g_stServiceBasePath = "locale/thailand";
-	g_stQuestDir		= "locale/thailand/quest";
-	g_stServiceMapPath	= "locale/thailand/map";
+	g_stQuestDir = "locale/thailand/quest";
+	g_stServiceMapPath = "locale/thailand/map";
 
 	g_setQuestObjectDir.clear();
 	g_setQuestObjectDir.emplace("locale/thailand/quest/object");
 	g_stLocaleFilename = "locale/thailand/locale_string.txt";
 
-	check_name	= check_name_alphabet;
+	check_name = check_name_alphabet;
 
 	g_iUseLocale = TRUE;
 }
@@ -970,7 +970,7 @@ static void __LocaleService_Init_WE_Korea()
 {
 	g_stLocale = "euckr";
 
-//	g_stLocaleFilename = "locale/we_korea/locale_string.txt";
+	//	g_stLocaleFilename = "locale/we_korea/locale_string.txt";
 
 	g_stServiceBasePath = "locale/" + g_stServiceName;
 	g_stServiceMapPath = g_stServiceBasePath + "/map";
@@ -1022,123 +1022,123 @@ bool LocaleService_Init(const std::string& c_rstServiceName)
 
 	g_stServiceName = c_rstServiceName;
 
-	if ( "japan" == g_stServiceName)
+	if ("japan" == g_stServiceName)
 	{
 		__LocaleService_Init_JAPAN();
 	}
-	else if ( "english" == g_stServiceName)
+	else if ("english" == g_stServiceName)
 	{
 		__LocaleService_Init_English();
 	}
-	else if ( "hongkong" == g_stServiceName)
+	else if ("hongkong" == g_stServiceName)
 	{
 		__LocaleService_Init_HongKong();
 	}
-	else if ( "newcibn" == g_stServiceName)
+	else if ("newcibn" == g_stServiceName)
 	{
 		__LocaleService_Init_NewCIBN();
 	}
-	else if ( "germany" == g_stServiceName)
+	else if ("germany" == g_stServiceName)
 	{
 		__LocaleService_Init_Germany();
 	}
-	else if ( "korea" == g_stServiceName)
+	else if ("korea" == g_stServiceName)
 	{
 		__LocaleService_Init_Korea();
 	}
-	else if ( "france" == g_stServiceName)
+	else if ("france" == g_stServiceName)
 	{
 		__LocaleService_Init_France();
 	}
-	else if ( "italy" == g_stServiceName)
+	else if ("italy" == g_stServiceName)
 	{
 		__LocaleService_Init_Italy();
 	}
-	else if ( "spain" == g_stServiceName)
+	else if ("spain" == g_stServiceName)
 	{
 		__LocaleService_Init_spain();
 	}
-	else if ( "greek" == g_stServiceName)
+	else if ("greek" == g_stServiceName)
 	{
 		__LocaleService_Init_greek();
 	}
-	else if ( "uk" == g_stServiceName)
+	else if ("uk" == g_stServiceName)
 	{
 		__LocaleService_Init_UK();
 	}
-	else if ( "turkey" == g_stServiceName)
+	else if ("turkey" == g_stServiceName)
 	{
 		__LocaleService_Init_Turkey();
 	}
-	else if ( "poland" == g_stServiceName)
+	else if ("poland" == g_stServiceName)
 	{
 		__LocaleService_Init_Poland();
 	}
-	else if ( "portugal" == g_stServiceName)
+	else if ("portugal" == g_stServiceName)
 	{
 		__LocaleService_Init_Portugal();
 	}
-	else if ( "canada" == g_stServiceName)
+	else if ("canada" == g_stServiceName)
 	{
 		__LocaleService_Init_Canada();
 	}
-	else if ( "brazil" == g_stServiceName)
+	else if ("brazil" == g_stServiceName)
 	{
 		__LocaleService_Init_Brazil();
 	}
-	else if ( "ymir" == g_stServiceName)
+	else if ("ymir" == g_stServiceName)
 	{
 		__LocaleService_Init_YMIR();
 	}
-	else if ( "russia" == g_stServiceName)
+	else if ("russia" == g_stServiceName)
 	{
 		__LocaleService_Init_Russia();
 	}
-	else if ( "denmark" == g_stServiceName)
+	else if ("denmark" == g_stServiceName)
 	{
 		__LocaleService_Init_Denmark();
 	}
-	else if ( "bulgaria" == g_stServiceName)
+	else if ("bulgaria" == g_stServiceName)
 	{
 		__LocaleService_Init_Bulgaria();
 	}
-	else if ( "croatia" == g_stServiceName)
+	else if ("croatia" == g_stServiceName)
 	{
 		__LocaleService_Init_Croatia();
 	}
-	else if ( "mexico" == g_stServiceName)
+	else if ("mexico" == g_stServiceName)
 	{
 		__LocaleService_Init_Mexico();
 	}
-	else if ( "arabia" == g_stServiceName)
+	else if ("arabia" == g_stServiceName)
 	{
 		__LocaleService_Init_Arabia();
 	}
-	else if ( "czech" == g_stServiceName)
+	else if ("czech" == g_stServiceName)
 	{
 		__LocaleService_Init_Czech();
 	}
-	else if ( "romania" == g_stServiceName)
+	else if ("romania" == g_stServiceName)
 	{
 		__LocaleService_Init_Romania();
 	}
-	else if ( "hungary" == g_stServiceName)
+	else if ("hungary" == g_stServiceName)
 	{
 		__LocaleService_Init_Hungary();
 	}
-	else if ( "netherlands" == g_stServiceName)
+	else if ("netherlands" == g_stServiceName)
 	{
 		__LocaleService_Init_Netherlands();
 	}
-	else if ( "singapore" == g_stServiceName)
+	else if ("singapore" == g_stServiceName)
 	{
 		__LocaleService_Init_Singapore();
 	}
-	else if ( "vietnam" == g_stServiceName)
+	else if ("vietnam" == g_stServiceName)
 	{
 		__LocaleService_Init_Vietnam();
 	}
-	else if ( "thailand" == g_stServiceName)
+	else if ("thailand" == g_stServiceName)
 	{
 		__LocaleService_Init_Thailand();
 	}
@@ -1208,75 +1208,75 @@ const std::string& LocaleService_GetQuestPath()
 	return g_stQuestDir;
 }
 
-bool LC_InitLocalization( const std::string& szLocal )
+bool LC_InitLocalization(const std::string& szLocal)
 {
 	g_stLocal = szLocal;
 
-	if ( !g_stLocal.compare("ymir") )
+	if (!g_stLocal.compare("ymir"))
 		g_eLocalType = LC_YMIR;
-	else if ( !g_stLocal.compare("japan") )
+	else if (!g_stLocal.compare("japan"))
 		g_eLocalType = LC_JAPAN;
-	else if ( !g_stLocal.compare("english") )
+	else if (!g_stLocal.compare("english"))
 		g_eLocalType = LC_ENGLISH;
-	else if ( !g_stLocal.compare("hongkong") )
+	else if (!g_stLocal.compare("hongkong"))
 		g_eLocalType = LC_HONGKONG;
-	else if (!g_stLocal.compare("newcibn") )
+	else if (!g_stLocal.compare("newcibn"))
 		g_eLocalType = LC_NEWCIBN;
-	else if ( !g_stLocal.compare("germany") )
+	else if (!g_stLocal.compare("germany"))
 		g_eLocalType = LC_GERMANY;
-	else if ( !g_stLocal.compare("korea") )
+	else if (!g_stLocal.compare("korea"))
 		g_eLocalType = LC_KOREA;
-	else if ( !g_stLocal.compare("france") )
+	else if (!g_stLocal.compare("france"))
 		g_eLocalType = LC_FRANCE;
-	else if ( !g_stLocal.compare("italy") )
+	else if (!g_stLocal.compare("italy"))
 		g_eLocalType = LC_ITALY;
-	else if ( !g_stLocal.compare("spain") )
+	else if (!g_stLocal.compare("spain"))
 		g_eLocalType = LC_SPAIN;
-	else if ( !g_stLocal.compare("greek") )
+	else if (!g_stLocal.compare("greek"))
 		g_eLocalType = LC_GREEK;
-	else if ( !g_stLocal.compare("uk") )
+	else if (!g_stLocal.compare("uk"))
 		g_eLocalType = LC_UK;
-	else if ( !g_stLocal.compare("turkey") )
+	else if (!g_stLocal.compare("turkey"))
 		g_eLocalType = LC_TURKEY;
-	else if ( !g_stLocal.compare("poland") )
+	else if (!g_stLocal.compare("poland"))
 		g_eLocalType = LC_POLAND;
-	else if ( !g_stLocal.compare("portugal") )
+	else if (!g_stLocal.compare("portugal"))
 		g_eLocalType = LC_PORTUGAL;
-	else if ( !g_stLocal.compare("canada") )
+	else if (!g_stLocal.compare("canada"))
 		g_eLocalType = LC_CANADA;
-	else if ( !g_stLocal.compare("brazil") )
+	else if (!g_stLocal.compare("brazil"))
 		g_eLocalType = LC_BRAZIL;
-	else if ( !g_stLocal.compare("russia") )
+	else if (!g_stLocal.compare("russia"))
 		g_eLocalType = LC_RUSSIA;
-	else if ( !g_stLocal.compare("denmark") )
+	else if (!g_stLocal.compare("denmark"))
 		g_eLocalType = LC_DENMARK;
-	else if ( !g_stLocal.compare("bulgaria") )
+	else if (!g_stLocal.compare("bulgaria"))
 		g_eLocalType = LC_BULGARIA;
-	else if ( !g_stLocal.compare("croatia") )
+	else if (!g_stLocal.compare("croatia"))
 		g_eLocalType = LC_CROATIA;
-	else if ( !g_stLocal.compare("mexico") )
+	else if (!g_stLocal.compare("mexico"))
 		g_eLocalType = LC_MEXICO;
-	else if ( !g_stLocal.compare("arabia") )
+	else if (!g_stLocal.compare("arabia"))
 		g_eLocalType = LC_ARABIA;
-	else if ( !g_stLocal.compare("czech") )
+	else if (!g_stLocal.compare("czech"))
 		g_eLocalType = LC_CZECH;
-	else if ( !g_stLocal.compare("romania") )
+	else if (!g_stLocal.compare("romania"))
 		g_eLocalType = LC_ROMANIA;
-	else if ( !g_stLocal.compare("hungary") )
+	else if (!g_stLocal.compare("hungary"))
 		g_eLocalType = LC_HUNGARY;
-	else if ( !g_stLocal.compare("netherlands") )
+	else if (!g_stLocal.compare("netherlands"))
 		g_eLocalType = LC_NETHERLANDS;
-	else if ( !g_stLocal.compare("singapore") )
+	else if (!g_stLocal.compare("singapore"))
 		g_eLocalType = LC_SINGAPORE;
-	else if ( !g_stLocal.compare("vietnam") )
+	else if (!g_stLocal.compare("vietnam"))
 		g_eLocalType = LC_VIETNAM;
-	else if ( !g_stLocal.compare("thailand") )
+	else if (!g_stLocal.compare("thailand"))
 		g_eLocalType = LC_THAILAND;
-	else if ( !g_stLocal.compare("usa") )
+	else if (!g_stLocal.compare("usa"))
 		g_eLocalType = LC_USA;
-	else if ( !g_stLocal.compare("we_korea") ) // ver.WorldEdition for korea
+	else if (!g_stLocal.compare("we_korea")) // ver.WorldEdition for korea
 		g_eLocalType = LC_WE_KOREA;
-	else if ( !g_stLocal.compare("taiwan") )
+	else if (!g_stLocal.compare("taiwan"))
 		g_eLocalType = LC_TAIWAN;
 	else
 		return false;
@@ -1289,25 +1289,25 @@ eLocalization LC_GetLocalType()
 	return g_eLocalType;
 }
 
-bool LC_IsLocale( const eLocalization t )
+bool LC_IsLocale(const eLocalization t)
 {
 	return LC_GetLocalType() == t ? true : false;
 }
 
-bool LC_IsYMIR()		{ return LC_GetLocalType() == LC_YMIR ? true : false; }
-bool LC_IsJapan()		{ return LC_GetLocalType() == LC_JAPAN ? true : false; }
-bool LC_IsEnglish()		{ return LC_GetLocalType() == LC_ENGLISH ? true : false; }
-bool LC_IsHongKong()	{ return LC_GetLocalType() == LC_HONGKONG ? true : false; }
-bool LC_IsNewCIBN()		{ return LC_GetLocalType() == LC_NEWCIBN ? true : false; }
-bool LC_IsGermany()		{ return LC_GetLocalType() == LC_GERMANY ? true : false; }
-bool LC_IsKorea()		{ return LC_GetLocalType() == LC_KOREA ? true : false; }
-bool LC_IsCanada()		{ return LC_GetLocalType() == LC_CANADA ? false : false; }
-bool LC_IsBrazil()		{ return LC_GetLocalType() == LC_BRAZIL ? true : false; }
-bool LC_IsSingapore()	{ return LC_GetLocalType() == LC_SINGAPORE ? true : false; }
-bool LC_IsVietnam()		{ return LC_GetLocalType() == LC_VIETNAM ? true : false; }
-bool LC_IsThailand()	{ return LC_GetLocalType() == LC_THAILAND ? true : false; }
-bool LC_IsWE_Korea()	{ return LC_GetLocalType() == LC_WE_KOREA ? true : false; }
-bool LC_IsTaiwan()	{ return LC_GetLocalType() == LC_TAIWAN ? true : false; }
+bool LC_IsYMIR() { return LC_GetLocalType() == LC_YMIR ? true : false; }
+bool LC_IsJapan() { return LC_GetLocalType() == LC_JAPAN ? true : false; }
+bool LC_IsEnglish() { return LC_GetLocalType() == LC_ENGLISH ? true : false; }
+bool LC_IsHongKong() { return LC_GetLocalType() == LC_HONGKONG ? true : false; }
+bool LC_IsNewCIBN() { return LC_GetLocalType() == LC_NEWCIBN ? true : false; }
+bool LC_IsGermany() { return LC_GetLocalType() == LC_GERMANY ? true : false; }
+bool LC_IsKorea() { return LC_GetLocalType() == LC_KOREA ? true : false; }
+bool LC_IsCanada() { return LC_GetLocalType() == LC_CANADA ? false : false; }
+bool LC_IsBrazil() { return LC_GetLocalType() == LC_BRAZIL ? true : false; }
+bool LC_IsSingapore() { return LC_GetLocalType() == LC_SINGAPORE ? true : false; }
+bool LC_IsVietnam() { return LC_GetLocalType() == LC_VIETNAM ? true : false; }
+bool LC_IsThailand() { return LC_GetLocalType() == LC_THAILAND ? true : false; }
+bool LC_IsWE_Korea() { return LC_GetLocalType() == LC_WE_KOREA ? true : false; }
+bool LC_IsTaiwan() { return LC_GetLocalType() == LC_TAIWAN ? true : false; }
 
 bool LC_IsWorldEdition()
 {
@@ -1318,34 +1318,34 @@ bool LC_IsEurope()
 {
 	eLocalization val = LC_GetLocalType();
 
-	switch ((int) val)
+	switch ((int)val)
 	{
-		case LC_GERMANY:
-		case LC_FRANCE:
-		case LC_ITALY:
-		case LC_TURKEY:
-		case LC_POLAND:
-		case LC_UK:
-		case LC_SPAIN:
-		case LC_PORTUGAL:
-		case LC_GREEK:
-		case LC_RUSSIA:
-		case LC_DENMARK:
-		case LC_BULGARIA:
-		case LC_CROATIA:
-		case LC_MEXICO:
-		case LC_ARABIA:
-		case LC_CZECH:
-		case LC_ROMANIA:
-		case LC_HUNGARY:
-		case LC_NETHERLANDS:
-		case LC_USA:
-		case LC_WE_KOREA:
-		case LC_TAIWAN:
-		case LC_JAPAN:
-		case LC_NEWCIBN:
-		case LC_CANADA:
-			return true;
+	case LC_GERMANY:
+	case LC_FRANCE:
+	case LC_ITALY:
+	case LC_TURKEY:
+	case LC_POLAND:
+	case LC_UK:
+	case LC_SPAIN:
+	case LC_PORTUGAL:
+	case LC_GREEK:
+	case LC_RUSSIA:
+	case LC_DENMARK:
+	case LC_BULGARIA:
+	case LC_CROATIA:
+	case LC_MEXICO:
+	case LC_ARABIA:
+	case LC_CZECH:
+	case LC_ROMANIA:
+	case LC_HUNGARY:
+	case LC_NETHERLANDS:
+	case LC_USA:
+	case LC_WE_KOREA:
+	case LC_TAIWAN:
+	case LC_JAPAN:
+	case LC_NEWCIBN:
+	case LC_CANADA:
+		return true;
 	}
 
 	return false;

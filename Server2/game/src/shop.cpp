@@ -31,9 +31,9 @@ CShop::~CShop()
 {
 	TPacketGCShop pack;
 
-	pack.header		= HEADER_GC_SHOP;
-	pack.subheader	= SHOP_SUBHEADER_GC_END;
-	pack.size		= sizeof(TPacketGCShop);
+	pack.header = HEADER_GC_SHOP;
+	pack.subheader = SHOP_SUBHEADER_GC_END;
+	pack.size = sizeof(TPacketGCShop);
 
 	Broadcast(&pack, sizeof(pack));
 
@@ -56,7 +56,7 @@ void CShop::SetPCShop(LPCHARACTER ch)
 	m_pkPC = ch;
 }
 
-bool CShop::Create(DWORD dwVnum, DWORD dwNPCVnum, TShopItemTable * pTable)
+bool CShop::Create(DWORD dwVnum, DWORD dwNPCVnum, TShopItemTable* pTable)
 {
 	sys_log(0, "SHOP #%d (Shopkeeper %d)", dwVnum, dwNPCVnum);
 
@@ -73,7 +73,7 @@ bool CShop::Create(DWORD dwVnum, DWORD dwNPCVnum, TShopItemTable * pTable)
 	return true;
 }
 
-void CShop::SetShopItems(TShopItemTable * pTable, BYTE bItemCount)
+void CShop::SetShopItems(TShopItemTable* pTable, BYTE bItemCount)
 {
 	if (bItemCount > SHOP_HOST_ITEM_MAX_NUM)
 		return;
@@ -86,7 +86,7 @@ void CShop::SetShopItems(TShopItemTable * pTable, BYTE bItemCount)
 	for (int i = 0; i < bItemCount; ++i)
 	{
 		LPITEM pkItem = NULL;
-		const TItemTable * item_table;
+		const TItemTable* item_table;
 
 		if (m_pkPC)
 		{
@@ -145,19 +145,17 @@ void CShop::SetShopItems(TShopItemTable * pTable, BYTE bItemCount)
 
 		m_pGrid->Put(iPos, 1, item_table->bSize);
 
-		SHOP_ITEM & item = m_itemVector[iPos];
+		SHOP_ITEM& item = m_itemVector[iPos];
 
 		item.pkItem = pkItem;
 		item.itemid = 0;
-
 
 		if (item.pkItem)
 		{
 			item.vnum = pkItem->GetVnum();
 			item.count = pkItem->GetCount();
 			item.price = pTable->price;
-			item.itemid	= pkItem->GetID();
-
+			item.itemid = pkItem->GetID();
 		}
 		else
 		{
@@ -176,7 +174,7 @@ void CShop::SetShopItems(TShopItemTable * pTable, BYTE bItemCount)
 		}
 
 		char name[36];
-		snprintf(name, sizeof(name), "%-20s(#%-5d) (x %d)", item_table->szName, (int) item.vnum, item.count);
+		snprintf(name, sizeof(name), "%-20s(#%-5d) (x %d)", item_table->szName, (int)item.vnum, item.count);
 
 		sys_log(0, "SHOP_ITEM: %-36s PRICE %-5d", name, item.price);
 		++pTable;
@@ -213,8 +211,8 @@ int CShop::Buy(LPCHARACTER ch, BYTE pos)
 		if (!pkSelectedItem)
 		{
 			sys_log(0, "Shop::Buy : Critical: This user seems to be a hacker : invalid pcshop item : BuyerPID:%d SellerPID:%d",
-					ch->GetPlayerID(),
-					m_pkPC->GetPlayerID());
+				ch->GetPlayerID(),
+				m_pkPC->GetPlayerID());
 
 			return SHOP_SUBHEADER_GC_SOLD_OUT; // @fixme132 false to SHOP_SUBHEADER_GC_SOLD_OUT
 		}
@@ -222,8 +220,8 @@ int CShop::Buy(LPCHARACTER ch, BYTE pos)
 		if ((pkSelectedItem->GetOwner() != m_pkPC))
 		{
 			sys_log(0, "Shop::Buy : Critical: This user seems to be a hacker : invalid pcshop item : BuyerPID:%d SellerPID:%d",
-					ch->GetPlayerID(),
-					m_pkPC->GetPlayerID());
+				ch->GetPlayerID(),
+				m_pkPC->GetPlayerID());
 
 			return SHOP_SUBHEADER_GC_SOLD_OUT; // @fixme132 false to SHOP_SUBHEADER_GC_SOLD_OUT
 		}
@@ -231,13 +229,10 @@ int CShop::Buy(LPCHARACTER ch, BYTE pos)
 
 	DWORD dwPrice = r_item.price;
 
-
-
 	//if (it->second)	// if other empire, price is triple
 	//	dwPrice *= 3;
 
-
-	if (ch->GetGold() < (int) dwPrice)
+	if (ch->GetGold() < (int)dwPrice)
 	{
 		sys_log(1, "Shop::Buy : Not enough money : %s has %d, price %d", ch->GetName(), ch->GetGold(), dwPrice);
 		return SHOP_SUBHEADER_GC_NOT_ENOUGH_MONEY;
@@ -283,7 +278,6 @@ int CShop::Buy(LPCHARACTER ch, BYTE pos)
 	}
 
 	ch->PointChange(POINT_GOLD, -dwPrice, false);
-
 
 	DWORD dwTax = 0;
 	int iVal = 0;
@@ -363,9 +357,9 @@ int CShop::Buy(LPCHARACTER ch, BYTE pos)
 	if (item)
 		sys_log(0, "SHOP: BUY: name %s %s(x %d):%u price %u", ch->GetName(), item->GetName(), item->GetCount(), item->GetID(), dwPrice);
 
-    ch->Save();
+	ch->Save();
 
-    return (SHOP_SUBHEADER_GC_OK);
+	return (SHOP_SUBHEADER_GC_OK);
 }
 
 bool CShop::AddGuest(LPCHARACTER ch, DWORD owner_vid, bool bOtherEmpire)
@@ -385,8 +379,8 @@ bool CShop::AddGuest(LPCHARACTER ch, DWORD owner_vid, bool bOtherEmpire)
 
 	TPacketGCShop pack;
 
-	pack.header		= HEADER_GC_SHOP;
-	pack.subheader	= SHOP_SUBHEADER_GC_START;
+	pack.header = HEADER_GC_SHOP;
+	pack.subheader = SHOP_SUBHEADER_GC_START;
 
 	TPacketGCShopStart pack2;
 
@@ -395,7 +389,7 @@ bool CShop::AddGuest(LPCHARACTER ch, DWORD owner_vid, bool bOtherEmpire)
 
 	for (DWORD i = 0; i < m_itemVector.size() && i < SHOP_HOST_ITEM_MAX_NUM; ++i)
 	{
-		const SHOP_ITEM & item = m_itemVector[i];
+		const SHOP_ITEM& item = m_itemVector[i];
 
 #ifdef ENABLE_SHOP_BLACKLIST
 		//HIVALUE_ITEM_EVENT
@@ -425,7 +419,6 @@ bool CShop::AddGuest(LPCHARACTER ch, DWORD owner_vid, bool bOtherEmpire)
 		else
 			pack2.items[i].price = item.price;
 
-
 		// END_REMOVED_EMPIRE_PRICE_LIFT
 
 		pack2.items[i].count = item.count;
@@ -454,14 +447,14 @@ void CShop::RemoveGuest(LPCHARACTER ch)
 
 	TPacketGCShop pack;
 
-	pack.header		= HEADER_GC_SHOP;
-	pack.subheader	= SHOP_SUBHEADER_GC_END;
-	pack.size		= sizeof(TPacketGCShop);
+	pack.header = HEADER_GC_SHOP;
+	pack.subheader = SHOP_SUBHEADER_GC_END;
+	pack.size = sizeof(TPacketGCShop);
 
 	ch->GetDesc()->Packet(&pack, sizeof(pack));
 }
 
-void CShop::Broadcast(const void * data, int bytes)
+void CShop::Broadcast(const void* data, int bytes)
 {
 	sys_log(1, "Shop::Broadcast %p %d", data, bytes);
 
@@ -487,17 +480,17 @@ void CShop::BroadcastUpdateItem(BYTE pos)
 
 	TEMP_BUFFER	buf;
 
-	pack.header		= HEADER_GC_SHOP;
-	pack.subheader	= SHOP_SUBHEADER_GC_UPDATE_ITEM;
-	pack.size		= sizeof(pack) + sizeof(pack2);
+	pack.header = HEADER_GC_SHOP;
+	pack.subheader = SHOP_SUBHEADER_GC_UPDATE_ITEM;
+	pack.size = sizeof(pack) + sizeof(pack2);
 
-	pack2.pos		= pos;
+	pack2.pos = pos;
 
 	if (m_pkPC && !m_itemVector[pos].pkItem)
 		pack2.item.vnum = 0;
 	else
 	{
-		pack2.item.vnum	= m_itemVector[pos].vnum;
+		pack2.item.vnum = m_itemVector[pos].vnum;
 		if (m_itemVector[pos].pkItem)
 		{
 			thecore_memcpy(pack2.item.alSockets, m_itemVector[pos].pkItem->GetSockets(), sizeof(pack2.item.alSockets));
@@ -510,9 +503,8 @@ void CShop::BroadcastUpdateItem(BYTE pos)
 		}
 	}
 
-	pack2.item.price	= m_itemVector[pos].price;
-	pack2.item.count	= m_itemVector[pos].count;
-
+	pack2.item.price = m_itemVector[pos].price;
+	pack2.item.count = m_itemVector[pos].count;
 
 	buf.write(&pack, sizeof(pack));
 	buf.write(&pack2, sizeof(pack2));
@@ -526,7 +518,7 @@ int CShop::GetNumberByVnum(DWORD dwVnum)
 
 	for (DWORD i = 0; i < m_itemVector.size() && i < SHOP_HOST_ITEM_MAX_NUM; ++i)
 	{
-		const SHOP_ITEM & item = m_itemVector[i];
+		const SHOP_ITEM& item = m_itemVector[i];
 
 		if (item.vnum == dwVnum)
 		{

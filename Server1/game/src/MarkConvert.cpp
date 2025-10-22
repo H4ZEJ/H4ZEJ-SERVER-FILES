@@ -8,9 +8,9 @@
 #define OLD_MARK_INDEX_FILENAME "guild_mark.idx"
 #define OLD_MARK_DATA_FILENAME "guild_mark.tga"
 
-static Pixel * LoadOldGuildMarkImageFile()
+static Pixel* LoadOldGuildMarkImageFile()
 {
-	FILE * fp = fopen(OLD_MARK_DATA_FILENAME, "rb");
+	FILE* fp = fopen(OLD_MARK_DATA_FILENAME, "rb");
 
 	if (!fp)
 	{
@@ -19,7 +19,7 @@ static Pixel * LoadOldGuildMarkImageFile()
 	}
 
 	int dataSize = 512 * 512 * sizeof(Pixel);
-	Pixel * dataPtr = (Pixel *) malloc(dataSize);
+	Pixel* dataPtr = (Pixel*)malloc(dataSize);
 
 	fread(dataPtr, dataSize, 1, fp);
 
@@ -28,7 +28,7 @@ static Pixel * LoadOldGuildMarkImageFile()
 	return dataPtr;
 }
 
-bool GuildMarkConvert(const std::vector<DWORD> & vecGuildID)
+bool GuildMarkConvert(const std::vector<DWORD>& vecGuildID)
 {
 #ifndef __WIN32__
 	mkdir("mark", S_IRWXU);
@@ -48,7 +48,7 @@ bool GuildMarkConvert(const std::vector<DWORD> & vecGuildID)
 	if (NULL == fp)
 		return false;
 
-	Pixel * oldImagePtr = LoadOldGuildMarkImageFile();
+	Pixel* oldImagePtr = LoadOldGuildMarkImageFile();
 
 	if (NULL == oldImagePtr)
 	{
@@ -63,7 +63,7 @@ bool GuildMarkConvert(const std::vector<DWORD> & vecGuildID)
 	DWORD mark_id;
 	Pixel mark[SGuildMark::SIZE];
 
-	while (fgets(line, sizeof(line)-1, fp))
+	while (fgets(line, sizeof(line) - 1, fp))
 	{
 		sscanf(line, "%u %u", &guild_id, &mark_id);
 
@@ -85,18 +85,18 @@ bool GuildMarkConvert(const std::vector<DWORD> & vecGuildID)
 		uint sx = col * 16;
 		uint sy = row * 12;
 
-		Pixel * src = oldImagePtr + sy * 512 + sx;
-		Pixel * dst = mark;
+		Pixel* src = oldImagePtr + sy * 512 + sx;
+		Pixel* dst = mark;
 
 		for (int y = 0; y != SGuildMark::HEIGHT; ++y)
 		{
 			for (int x = 0; x != SGuildMark::WIDTH; ++x)
-				*(dst++) = *(src+x);
+				*(dst++) = *(src + x);
 
 			src += 512;
 		}
 
-		CGuildMarkManager::instance().SaveMark(guild_id, (BYTE *) mark);
+		CGuildMarkManager::instance().SaveMark(guild_id, (BYTE*)mark);
 		line[0] = '\0';
 	}
 

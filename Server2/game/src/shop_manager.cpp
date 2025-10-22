@@ -38,7 +38,7 @@ CShopManager::~CShopManager()
 	Destroy();
 }
 
-bool CShopManager::Initialize(TShopTable * table, int size)
+bool CShopManager::Initialize(TShopTable* table, int size)
 {
 	if (!m_map_pkShop.empty())
 		return false;
@@ -161,7 +161,7 @@ LPSHOP CShopManager::FindPCShop(DWORD dwVID)
 	return it->second;
 }
 
-LPSHOP CShopManager::CreatePCShop(LPCHARACTER ch, TShopItemTable * pTable, BYTE bItemCount)
+LPSHOP CShopManager::CreatePCShop(LPCHARACTER ch, TShopItemTable* pTable, BYTE bItemCount)
 {
 	if (FindPCShop(ch->GetVID()))
 		return NULL;
@@ -237,9 +237,9 @@ void CShopManager::Buy(LPCHARACTER ch, BYTE pos)
 	{
 		TPacketGCShop pack;
 
-		pack.header	= HEADER_GC_SHOP;
-		pack.subheader	= ret;
-		pack.size	= sizeof(TPacketGCShop);
+		pack.header = HEADER_GC_SHOP;
+		pack.subheader = ret;
+		pack.size = sizeof(TPacketGCShop);
 
 		ch->GetDesc()->Packet(&pack, sizeof(pack));
 	}
@@ -266,7 +266,7 @@ void CShopManager::Sell(LPCHARACTER ch, BYTE bCell, BYTE bCount)
 	if (ch->GetShop()->IsPCShop())
 		return;
 
-	if (DISTANCE_APPROX(ch->GetX()-ch->GetShopOwner()->GetX(), ch->GetY()-ch->GetShopOwner()->GetY())>2000)
+	if (DISTANCE_APPROX(ch->GetX() - ch->GetShopOwner()->GetX(), ch->GetY() - ch->GetShopOwner()->GetY()) > 2000)
 	{
 		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("상점과의 거리가 너무 멀어 물건을 팔 수 없습니다."));
 		return;
@@ -316,7 +316,7 @@ void CShopManager::Sell(LPCHARACTER ch, BYTE bCell, BYTE bCount)
 	int iVal = 3;
 
 	{
-		dwTax = dwPrice * iVal/100;
+		dwTax = dwPrice * iVal / 100;
 		dwPrice -= dwTax;
 	}
 
@@ -434,7 +434,6 @@ bool ConvertToShopItemTable(IN CGroupNode* pNode, OUT TShopTableEx& shopTable)
 			sys_err("row(%d) of group items of group %s does not have price column", i, pNode->GetNodeName().c_str());
 			return false;
 		}
-
 	}
 	std::string stSort;
 	if (!pNode->GetValue("sort", 0, stSort))
@@ -446,7 +445,7 @@ bool ConvertToShopItemTable(IN CGroupNode* pNode, OUT TShopTableEx& shopTable)
 	{
 		std::sort(shopItems.begin(), shopItems.end(), CompareShopItemName);
 	}
-	else if(boost::iequals(stSort, "Desc"))
+	else if (boost::iequals(stSort, "Desc"))
 	{
 		std::sort(shopItems.rbegin(), shopItems.rend(), CompareShopItemName);
 	}
@@ -458,7 +457,7 @@ bool ConvertToShopItemTable(IN CGroupNode* pNode, OUT TShopTableEx& shopTable)
 
 	for (size_t i = 0; i < shopItems.size(); i++)
 	{
-		TItemTable * item_table = ITEM_MANAGER::instance().GetTable(shopItems[i].vnum);
+		TItemTable* item_table = ITEM_MANAGER::instance().GetTable(shopItems[i].vnum);
 		if (!item_table)
 		{
 			sys_err("vnum(%d) of group items of group %s does not exist", shopItems[i].vnum, pNode->GetNodeName().c_str());

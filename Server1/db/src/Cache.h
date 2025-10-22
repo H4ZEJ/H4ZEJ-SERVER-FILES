@@ -6,7 +6,7 @@
 
 class CItemCache : public cache<TPlayerItem>
 {
-    public:
+public:
 	CItemCache();
 	virtual ~CItemCache();
 
@@ -16,7 +16,7 @@ class CItemCache : public cache<TPlayerItem>
 
 class CPlayerTableCache : public cache<TPlayerTable>
 {
-    public:
+public:
 	CPlayerTableCache();
 	virtual ~CPlayerTableCache();
 
@@ -29,7 +29,7 @@ class CPlayerTableCache : public cache<TPlayerTable>
 
 class CItemPriceListTableCache : public cache< TItemPriceListTable >
 {
-    public:
+public:
 
 	/// Constructor
 
@@ -40,7 +40,7 @@ class CItemPriceListTableCache : public cache< TItemPriceListTable >
 
 	virtual void	OnFlush(void);
 
-    private:
+private:
 
 	static const int	s_nMinFlushSec;		///< Minimum cache expire time
 };

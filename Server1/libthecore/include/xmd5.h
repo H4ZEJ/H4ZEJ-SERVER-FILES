@@ -19,33 +19,33 @@
  * - Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA -
  */
 
-/*
- * md5.h and md5.c are based off of md5hl.c, md5c.c, and md5.h from libmd, which in turn are
- * based off the FreeBSD libmd library.  Their respective copyright notices follow:
- */
+ /*
+  * md5.h and md5.c are based off of md5hl.c, md5c.c, and md5.h from libmd, which in turn are
+  * based off the FreeBSD libmd library.  Their respective copyright notices follow:
+  */
 
-/*
- * This code implements the MD5 message-digest algorithm.
- * The algorithm is due to Ron Rivest.  This code was
- * written by Colin Plumb in 1993, no copyright is claimed.
- * This code is in the public domain; do with it what you wish.
- *
- * Equivalent code is available from RSA Data Security, Inc.
- * This code has been tested against that, and is equivalent,
- * except that you don't need to include two pages of legalese
- * with every copy.
- */
+  /*
+   * This code implements the MD5 message-digest algorithm.
+   * The algorithm is due to Ron Rivest.  This code was
+   * written by Colin Plumb in 1993, no copyright is claimed.
+   * This code is in the public domain; do with it what you wish.
+   *
+   * Equivalent code is available from RSA Data Security, Inc.
+   * This code has been tested against that, and is equivalent,
+   * except that you don't need to include two pages of legalese
+   * with every copy.
+   */
 
-/* ----------------------------------------------------------------------------
- * "THE BEER-WARE LICENSE" (Revision 42):
- * <phk@login.dkuug.dk> wrote this file.  As long as you retain this notice you
- * can do whatever you want with this stuff. If we meet some day, and you think
- * this stuff is worth it, you can buy me a beer in return.   Poul-Henning Kamp
- * ----------------------------------------------------------------------------
- *
- * $Id: md5.h,v 1.1.1.1 2004/04/02 05:11:38 deklund2 Exp $
- *
- */
+   /* ----------------------------------------------------------------------------
+	* "THE BEER-WARE LICENSE" (Revision 42):
+	* <phk@login.dkuug.dk> wrote this file.  As long as you retain this notice you
+	* can do whatever you want with this stuff. If we meet some day, and you think
+	* this stuff is worth it, you can buy me a beer in return.   Poul-Henning Kamp
+	* ----------------------------------------------------------------------------
+	*
+	* $Id: md5.h,v 1.1.1.1 2004/04/02 05:11:38 deklund2 Exp $
+	*
+	*/
 
 #ifndef MD5_H
 #define MD5_H
@@ -55,23 +55,23 @@
 #define MD5_HASHBYTES 16
 
 typedef struct MD5Context {
-        uint32_t buf[4];
-        uint32_t bits[2];
-        unsigned char in[64];
+	uint32_t buf[4];
+	uint32_t bits[2];
+	unsigned char in[64];
 } MD5_CTX;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void MD5Init(MD5_CTX *context);
-void MD5Update(MD5_CTX *context, unsigned char const *buf, unsigned len);
-void MD5Final(unsigned char digest[MD5_HASHBYTES], MD5_CTX *context);
-void MD5Transform(uint32_t buf[4], uint32_t const in[16]);
-char* MD5End(MD5_CTX *, char *);
+	void MD5Init(MD5_CTX* context);
+	void MD5Update(MD5_CTX* context, unsigned char const* buf, unsigned len);
+	void MD5Final(unsigned char digest[MD5_HASHBYTES], MD5_CTX* context);
+	void MD5Transform(uint32_t buf[4], uint32_t const in[16]);
+	char* MD5End(MD5_CTX*, char*);
 
-char* lutil_md5_file(const char *filename, char *buf);
-char* lutil_md5_data(const unsigned char *data, unsigned int len, char *buf);
+	char* lutil_md5_file(const char* filename, char* buf);
+	char* lutil_md5_data(const unsigned char* data, unsigned int len, char* buf);
 
 #ifdef __cplusplus
 }

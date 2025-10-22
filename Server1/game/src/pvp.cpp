@@ -32,13 +32,13 @@ CPVP::CPVP(DWORD dwPID1, DWORD dwPID2)
 	DWORD adwID[2];
 	adwID[0] = m_players[0].dwPID;
 	adwID[1] = m_players[1].dwPID;
-	m_dwCRC = GetFastHash((const char *) &adwID, 8);
+	m_dwCRC = GetFastHash((const char*)&adwID, 8);
 	m_bRevenge = false;
 
 	SetLastFightTime();
 }
 
-CPVP::CPVP(CPVP & k)
+CPVP::CPVP(CPVP& k)
 {
 	m_players[0] = k.m_players[0];
 	m_players[1] = k.m_players[1];
@@ -95,7 +95,7 @@ void CPVP::Packet(bool bDelete)
 		}
 	}
 
-	const DESC_MANAGER::DESC_SET & c_rSet = DESC_MANAGER::instance().GetClientSet();
+	const DESC_MANAGER::DESC_SET& c_rSet = DESC_MANAGER::instance().GetClientSet();
 	DESC_MANAGER::DESC_SET::const_iterator it = c_rSet.begin();
 
 	while (it != c_rSet.end())
@@ -176,7 +176,7 @@ void CPVPManager::Insert(LPCHARACTER pkChr, LPCHARACTER pkVictim)
 
 	CPVP kPVP(pkChr->GetPlayerID(), pkVictim->GetPlayerID());
 
-	CPVP * pkPVP;
+	CPVP* pkPVP;
 
 	if ((pkPVP = Find(kPVP.m_dwCRC)))
 	{
@@ -249,7 +249,7 @@ bool CPVPManager::IsFighting(DWORD dwPID)
 
 	while (it2 != it->second.end())
 	{
-		CPVP * pkPVP = *it2++;
+		CPVP* pkPVP = *it2++;
 		if (pkPVP->IsFight())
 			return true;
 	}
@@ -271,7 +271,7 @@ void CPVPManager::ConnectEx(LPCHARACTER pkChr, bool bDisconnect)
 
 	while (it2 != it->second.end())
 	{
-		CPVP * pkPVP = *it2++;
+		CPVP* pkPVP = *it2++;
 		pkPVP->SetVID(pkChr->GetPlayerID(), dwVID);
 	}
 }
@@ -298,7 +298,7 @@ void CPVPManager::GiveUp(LPCHARACTER pkChr, DWORD dwKillerPID) // This method is
 
 	while (it2 != it->second.end())
 	{
-		CPVP * pkPVP = *it2++;
+		CPVP* pkPVP = *it2++;
 
 		DWORD dwCompanionPID;
 
@@ -341,7 +341,7 @@ bool CPVPManager::Dead(LPCHARACTER pkChr, DWORD dwKillerPID)
 
 	while (it2 != it->second.end())
 	{
-		CPVP * pkPVP = *it2++;
+		CPVP* pkPVP = *it2++;
 
 		DWORD dwCompanionPID;
 
@@ -374,10 +374,10 @@ bool CPVPManager::CanAttack(LPCHARACTER pkChr, LPCHARACTER pkVictim)
 {
 	switch (pkVictim->GetCharType())
 	{
-		case CHAR_TYPE_NPC:
-		case CHAR_TYPE_WARP:
-		case CHAR_TYPE_GOTO:
-			return false;
+	case CHAR_TYPE_NPC:
+	case CHAR_TYPE_WARP:
+	case CHAR_TYPE_GOTO:
+		return false;
 	}
 
 	if (pkChr == pkVictim)
@@ -386,28 +386,28 @@ bool CPVPManager::CanAttack(LPCHARACTER pkChr, LPCHARACTER pkVictim)
 	if (pkVictim->IsNPC() && pkChr->IsNPC() && !pkChr->IsGuardNPC())
 		return false;
 
-	if( true == pkChr->IsHorseRiding() )
+	if (true == pkChr->IsHorseRiding())
 	{
-		if( pkChr->GetHorseLevel() > 0 && 1 == pkChr->GetHorseGrade() )
+		if (pkChr->GetHorseLevel() > 0 && 1 == pkChr->GetHorseGrade())
 			return false;
 	}
 	else
 	{
-		#ifndef ENABLE_NO_MOUNT_CHECK
+#ifndef ENABLE_NO_MOUNT_CHECK
 		eMountType eIsMount = GetMountLevelByVnum(pkChr->GetMountVnum(), false);
 		switch (eIsMount)
 		{
-			case MOUNT_TYPE_NONE:
-			case MOUNT_TYPE_COMBAT:
-			case MOUNT_TYPE_MILITARY:
-				break;
-			case MOUNT_TYPE_NORMAL:
-			default:
-				if (test_server)
-					sys_log(0, "CanUseSkill: Mount can't attack. vnum(%u) type(%d)", pkChr->GetMountVnum(), static_cast<int>(eIsMount));
-				return false;
+		case MOUNT_TYPE_NONE:
+		case MOUNT_TYPE_COMBAT:
+		case MOUNT_TYPE_MILITARY:
+			break;
+		case MOUNT_TYPE_NORMAL:
+		default:
+			if (test_server)
+				sys_log(0, "CanUseSkill: Mount can't attack. vnum(%u) type(%d)", pkChr->GetMountVnum(), static_cast<int>(eIsMount));
+			return false;
 		}
-		#endif
+#endif
 	}
 
 	if (pkVictim->IsNPC() || pkChr->IsNPC())
@@ -421,8 +421,8 @@ bool CPVPManager::CanAttack(LPCHARACTER pkChr, LPCHARACTER pkVictim)
 	{
 		BYTE bMapEmpire = SECTREE_MANAGER::instance().GetEmpireFromMapIndex(pkChr->GetMapIndex());
 
-		if ( ((pkChr->GetPKMode() == PK_MODE_PROTECT) && (pkChr->GetEmpire() == bMapEmpire)) ||
-				((pkVictim->GetPKMode() == PK_MODE_PROTECT) && (pkVictim->GetEmpire() == bMapEmpire)) )
+		if (((pkChr->GetPKMode() == PK_MODE_PROTECT) && (pkChr->GetEmpire() == bMapEmpire)) ||
+			((pkVictim->GetPKMode() == PK_MODE_PROTECT) && (pkVictim->GetEmpire() == bMapEmpire)))
 		{
 			return false;
 		}
@@ -432,7 +432,7 @@ bool CPVPManager::CanAttack(LPCHARACTER pkChr, LPCHARACTER pkVictim)
 	{
 		// @warme005
 		{
-			if ( pkChr->GetPKMode() == PK_MODE_PROTECT || pkVictim->GetPKMode() == PK_MODE_PROTECT )
+			if (pkChr->GetPKMode() == PK_MODE_PROTECT || pkVictim->GetPKMode() == PK_MODE_PROTECT)
 			{
 				return false;
 			}
@@ -457,57 +457,57 @@ bool CPVPManager::CanAttack(LPCHARACTER pkChr, LPCHARACTER pkVictim)
 
 		if (pkChr->GetAlignment() < 0 && pkVictim->GetAlignment() >= 0)
 		{
-		    if (g_protectNormalPlayer)
-		    {
-			if (PK_MODE_PEACE == pkVictim->GetPKMode())
-			    return false;
-		    }
+			if (g_protectNormalPlayer)
+			{
+				if (PK_MODE_PEACE == pkVictim->GetPKMode())
+					return false;
+			}
 		}
 
 		switch (pkChr->GetPKMode())
 		{
-			case PK_MODE_PEACE:
-			case PK_MODE_REVENGE:
-				// Cannot attack same guild
-				if (pkVictim->GetGuild() && pkVictim->GetGuild() == pkChr->GetGuild())
-					break;
-
-				if (pkChr->GetPKMode() == PK_MODE_REVENGE)
-				{
-					if (pkChr->GetAlignment() < 0 && pkVictim->GetAlignment() >= 0)
-					{
-						pkChr->SetKillerMode(true);
-						return true;
-					}
-					else if (pkChr->GetAlignment() >= 0 && pkVictim->GetAlignment() < 0)
-						return true;
-				}
+		case PK_MODE_PEACE:
+		case PK_MODE_REVENGE:
+			// Cannot attack same guild
+			if (pkVictim->GetGuild() && pkVictim->GetGuild() == pkChr->GetGuild())
 				break;
 
-			case PK_MODE_GUILD:
-				// Same implementation from PK_MODE_FREE except for attacking same guild
-				if (!pkChr->GetGuild() || (pkVictim->GetGuild() != pkChr->GetGuild()))
+			if (pkChr->GetPKMode() == PK_MODE_REVENGE)
+			{
+				if (pkChr->GetAlignment() < 0 && pkVictim->GetAlignment() >= 0)
 				{
-					if (pkVictim->GetAlignment() >= 0)
-						pkChr->SetKillerMode(true);
-					else if (pkChr->GetAlignment() < 0 && pkVictim->GetAlignment() < 0)
-						pkChr->SetKillerMode(true);
-
+					pkChr->SetKillerMode(true);
 					return true;
 				}
-				break;
+				else if (pkChr->GetAlignment() >= 0 && pkVictim->GetAlignment() < 0)
+					return true;
+			}
+			break;
 
-			case PK_MODE_FREE:
+		case PK_MODE_GUILD:
+			// Same implementation from PK_MODE_FREE except for attacking same guild
+			if (!pkChr->GetGuild() || (pkVictim->GetGuild() != pkChr->GetGuild()))
+			{
 				if (pkVictim->GetAlignment() >= 0)
 					pkChr->SetKillerMode(true);
 				else if (pkChr->GetAlignment() < 0 && pkVictim->GetAlignment() < 0)
 					pkChr->SetKillerMode(true);
+
 				return true;
+			}
+			break;
+
+		case PK_MODE_FREE:
+			if (pkVictim->GetAlignment() >= 0)
+				pkChr->SetKillerMode(true);
+			else if (pkChr->GetAlignment() < 0 && pkVictim->GetAlignment() < 0)
+				pkChr->SetKillerMode(true);
+			return true;
 		}
 	}
 
 	CPVP kPVP(pkChr->GetPlayerID(), pkVictim->GetPlayerID());
-	CPVP * pkPVP = Find(kPVP.m_dwCRC);
+	CPVP* pkPVP = Find(kPVP.m_dwCRC);
 
 	if (!pkPVP || !pkPVP->IsFight())
 	{
@@ -521,9 +521,9 @@ bool CPVPManager::CanAttack(LPCHARACTER pkChr, LPCHARACTER pkVictim)
 	return true;
 }
 
-CPVP * CPVPManager::Find(DWORD dwCRC)
+CPVP* CPVPManager::Find(DWORD dwCRC)
 {
-	map<DWORD, CPVP *>::iterator it = m_map_pkPVP.find(dwCRC);
+	map<DWORD, CPVP*>::iterator it = m_map_pkPVP.find(dwCRC);
 
 	if (it == m_map_pkPVP.end())
 		return NULL;
@@ -531,9 +531,9 @@ CPVP * CPVPManager::Find(DWORD dwCRC)
 	return it->second;
 }
 
-void CPVPManager::Delete(CPVP * pkPVP)
+void CPVPManager::Delete(CPVP* pkPVP)
 {
-	map<DWORD, CPVP *>::iterator it = m_map_pkPVP.find(pkPVP->m_dwCRC);
+	map<DWORD, CPVP*>::iterator it = m_map_pkPVP.find(pkPVP->m_dwCRC);
 
 	if (it == m_map_pkPVP.end())
 		return;
@@ -547,7 +547,7 @@ void CPVPManager::Delete(CPVP * pkPVP)
 
 void CPVPManager::SendList(LPDESC d)
 {
-	map<DWORD, CPVP *>::iterator it = m_map_pkPVP.begin();
+	map<DWORD, CPVP*>::iterator it = m_map_pkPVP.begin();
 
 	DWORD dwVID = d->GetCharacter()->GetVID();
 
@@ -557,7 +557,7 @@ void CPVPManager::SendList(LPDESC d)
 
 	while (it != m_map_pkPVP.end())
 	{
-		CPVP * pkPVP = (it++)->second;
+		CPVP* pkPVP = (it++)->second;
 
 		if (!pkPVP->m_players[0].dwVID || !pkPVP->m_players[1].dwVID)
 			continue;
@@ -610,11 +610,11 @@ void CPVPManager::SendList(LPDESC d)
 
 void CPVPManager::Process()
 {
-	map<DWORD, CPVP *>::iterator it = m_map_pkPVP.begin();
+	map<DWORD, CPVP*>::iterator it = m_map_pkPVP.begin();
 
 	while (it != m_map_pkPVP.end())
 	{
-		CPVP * pvp = (it++)->second;
+		CPVP* pvp = (it++)->second;
 
 		if (get_dword_time() - pvp->GetLastFightTime() > 600000)
 		{

@@ -40,11 +40,11 @@ typedef CItem* LPITEM;
 #endif
 
 namespace building {
-class CObject;
+	class CObject;
 #ifdef USE_DEBUG_PTR
-typedef DebugPtr<CObject> LPOBJECT;
+	typedef DebugPtr<CObject> LPOBJECT;
 #else
-typedef CObject* LPOBJECT;
+	typedef CObject* LPOBJECT;
 #endif
 }
 

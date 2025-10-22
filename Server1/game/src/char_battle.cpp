@@ -66,9 +66,9 @@ DWORD AdjustExpByLevel(const LPCHARACTER ch, const DWORD exp)
 		double ret = 0.95;
 		double factor = 0.1;
 
-		for (ssize_t i=0 ; i < ch->GetLevel()-100 ; ++i)
+		for (ssize_t i = 0; i < ch->GetLevel() - 100; ++i)
 		{
-			if ( (i%10) == 0)
+			if ((i % 10) == 0)
 				factor /= 2.0;
 
 			ret *= 1.0 - factor;
@@ -109,10 +109,10 @@ void CHARACTER::CreateFly(BYTE bType, LPCHARACTER pkVictim)
 {
 	TPacketGCCreateFly packFly;
 
-	packFly.bHeader         = HEADER_GC_CREATE_FLY;
-	packFly.bType           = bType;
-	packFly.dwStartVID      = GetVID();
-	packFly.dwEndVID        = pkVictim->GetVID();
+	packFly.bHeader = HEADER_GC_CREATE_FLY;
+	packFly.bType = bType;
+	packFly.dwStartVID = GetVID();
+	packFly.dwEndVID = pkVictim->GetVID();
 
 	PacketAround(&packFly, sizeof(TPacketGCCreateFly));
 }
@@ -232,28 +232,28 @@ bool CHARACTER::Attack(LPCHARACTER pkVictim, BYTE bType)
 	{
 		switch (GetMobBattleType())
 		{
-			case BATTLE_TYPE_MELEE:
-			case BATTLE_TYPE_POWER:
-			case BATTLE_TYPE_TANKER:
-			case BATTLE_TYPE_SUPER_POWER:
-			case BATTLE_TYPE_SUPER_TANKER:
-				iRet = battle_melee_attack(this, pkVictim);
-				break;
+		case BATTLE_TYPE_MELEE:
+		case BATTLE_TYPE_POWER:
+		case BATTLE_TYPE_TANKER:
+		case BATTLE_TYPE_SUPER_POWER:
+		case BATTLE_TYPE_SUPER_TANKER:
+			iRet = battle_melee_attack(this, pkVictim);
+			break;
 
-			case BATTLE_TYPE_RANGE:
-				FlyTarget(pkVictim->GetVID(), pkVictim->GetX(), pkVictim->GetY(), HEADER_CG_FLY_TARGETING);
-				iRet = Shoot(0) ? BATTLE_DAMAGE : BATTLE_NONE;
-				break;
+		case BATTLE_TYPE_RANGE:
+			FlyTarget(pkVictim->GetVID(), pkVictim->GetX(), pkVictim->GetY(), HEADER_CG_FLY_TARGETING);
+			iRet = Shoot(0) ? BATTLE_DAMAGE : BATTLE_NONE;
+			break;
 
-			case BATTLE_TYPE_MAGIC:
-				FlyTarget(pkVictim->GetVID(), pkVictim->GetX(), pkVictim->GetY(), HEADER_CG_FLY_TARGETING);
-				iRet = Shoot(1) ? BATTLE_DAMAGE : BATTLE_NONE;
-				break;
+		case BATTLE_TYPE_MAGIC:
+			FlyTarget(pkVictim->GetVID(), pkVictim->GetX(), pkVictim->GetY(), HEADER_CG_FLY_TARGETING);
+			iRet = Shoot(1) ? BATTLE_DAMAGE : BATTLE_NONE;
+			break;
 
-			default:
-				sys_err("Unhandled battle type %d", GetMobBattleType());
-				iRet = BATTLE_NONE;
-				break;
+		default:
+			sys_err("Unhandled battle type %d", GetMobBattleType());
+			iRet = BATTLE_NONE;
+			break;
 		}
 	}
 	else
@@ -263,12 +263,12 @@ bool CHARACTER::Attack(LPCHARACTER pkVictim, BYTE bType)
 			if (dwCurrentTime - m_dwLastSkillTime > 1500)
 			{
 				sys_log(1, "HACK: Too long skill using term. Name(%s) PID(%u) delta(%u)",
-						GetName(), GetPlayerID(), (dwCurrentTime - m_dwLastSkillTime));
+					GetName(), GetPlayerID(), (dwCurrentTime - m_dwLastSkillTime));
 				return false;
 			}
 		}
 
-		sys_log(1, "Attack call ComputeSkill %d %s", bType, pkVictim?pkVictim->GetName():"");
+		sys_log(1, "Attack call ComputeSkill %d %s", bType, pkVictim ? pkVictim->GetName() : "");
 		iRet = ComputeSkill(bType, pkVictim);
 	}
 
@@ -293,7 +293,6 @@ void CHARACTER::DeathPenalty(BYTE bTown)
 
 	Cube_close(this);
 
-
 	if (GetLevel() < 10)
 	{
 		sys_log(0, "NO_DEATH_PENALTY_LESS_LV10(%s)", GetName());
@@ -301,7 +300,7 @@ void CHARACTER::DeathPenalty(BYTE bTown)
 		return;
 	}
 
-   	if (number(0, 2))
+	if (number(0, 2))
 	{
 		sys_log(0, "NO_DEATH_PENALTY_LUCK(%s)", GetName());
 		ChatPacket(CHAT_TYPE_INFO, LC_TEXT("용신의 가호로 경험치가 떨어지지 않았습니다."));
@@ -351,11 +350,11 @@ bool CHARACTER::IsStun() const
 
 EVENTFUNC(StunEvent)
 {
-	char_event_info* info = dynamic_cast<char_event_info*>( event->info );
+	char_event_info* info = dynamic_cast<char_event_info*>(event->info);
 
-	if ( info == NULL )
+	if (info == NULL)
 	{
-		sys_err( "StunEvent> <Factor> Null pointer" );
+		sys_err("StunEvent> <Factor> Null pointer");
 		return 0;
 	}
 
@@ -392,8 +391,8 @@ void CHARACTER::Stun()
 	event_cancel(&m_pkRecoveryEvent);
 
 	TPacketGCStun pack;
-	pack.header	= HEADER_GC_STUN;
-	pack.vid	= m_vid;
+	pack.header = HEADER_GC_STUN;
+	pack.vid = m_vid;
 	PacketAround(&pack, sizeof(pack));
 
 	SET_BIT(m_pointsInstant.instant_flag, INSTANT_FLAG_STUN);
@@ -414,8 +413,8 @@ EVENTINFO(SCharDeadEventInfo)
 	uint32_t dwID;
 
 	SCharDeadEventInfo()
-	: isPC(0)
-	, dwID(0)
+		: isPC(0)
+		, dwID(0)
 	{
 	}
 };
@@ -424,9 +423,9 @@ EVENTFUNC(dead_event)
 {
 	const SCharDeadEventInfo* info = dynamic_cast<SCharDeadEventInfo*>(event->info);
 
-	if ( info == NULL )
+	if (info == NULL)
 	{
-		sys_err( "dead_event> <Factor> Null pointer" );
+		sys_err("dead_event> <Factor> Null pointer");
 		return 0;
 	}
 
@@ -434,16 +433,16 @@ EVENTFUNC(dead_event)
 
 	if (true == info->isPC)
 	{
-		ch = CHARACTER_MANAGER::instance().FindByPID( info->dwID );
+		ch = CHARACTER_MANAGER::instance().FindByPID(info->dwID);
 	}
 	else
 	{
-		ch = CHARACTER_MANAGER::instance().Find( info->dwID );
+		ch = CHARACTER_MANAGER::instance().Find(info->dwID);
 	}
 
 	if (NULL == ch)
 	{
-		sys_err("DEAD_EVENT: cannot find char pointer with %s id(%d)", info->isPC ? "PC" : "MOB", info->dwID );
+		sys_err("DEAD_EVENT: cannot find char pointer with %s id(%d)", info->isPC ? "PC" : "MOB", info->dwID);
 		return 0;
 	}
 
@@ -512,7 +511,7 @@ void CHARACTER::RewardGold(LPCHARACTER pkAttacker)
 	// ADD_PREMIUM
 	bool isAutoLoot =
 		(pkAttacker->GetPremiumRemainSeconds(PREMIUM_AUTOLOOT) > 0 ||
-		 pkAttacker->IsEquipUniqueGroup(UNIQUE_GROUP_AUTOLOOT))
+			pkAttacker->IsEquipUniqueGroup(UNIQUE_GROUP_AUTOLOOT))
 		? true : false;
 	// END_OF_ADD_PREMIUM
 
@@ -531,7 +530,7 @@ void CHARACTER::RewardGold(LPCHARACTER pkAttacker)
 
 	// ADD_PREMIUM
 	if (pkAttacker->GetPremiumRemainSeconds(PREMIUM_GOLD) > 0 ||
-			pkAttacker->IsEquipUniqueGroup(UNIQUE_GROUP_LUCKY_GOLD))
+		pkAttacker->IsEquipUniqueGroup(UNIQUE_GROUP_LUCKY_GOLD))
 		iGoldPercent += iGoldPercent;
 	// END_OF_ADD_PREMIUM
 
@@ -673,9 +672,9 @@ void CHARACTER::RewardGold(LPCHARACTER pkAttacker)
 }
 
 void CHARACTER::Reward(bool bItemDrop
-	#ifdef ENABLE_KILL_EVENT_FIX
+#ifdef ENABLE_KILL_EVENT_FIX
 	, LPCHARACTER pkKiller
-	#endif
+#endif
 )
 {
 	if (GetRaceNum() == 5001)
@@ -713,14 +712,14 @@ void CHARACTER::Reward(bool bItemDrop
 		return;
 	}
 
-   	LPCHARACTER pkAttacker = DistributeExp();
+	LPCHARACTER pkAttacker = DistributeExp();
 
 	if (!pkAttacker
-		#ifdef ENABLE_KILL_EVENT_FIX
+#ifdef ENABLE_KILL_EVENT_FIX
 		&& !(pkAttacker = GetMostAttacked())
 		&& !(pkAttacker = pkKiller)
-		#endif
-	)
+#endif
+		)
 		return;
 
 	if (pkAttacker->IsPC())
@@ -945,7 +944,7 @@ void CHARACTER::ItemDropPenalty(LPCHARACTER pkKiller)
 	if (GetLevel() < 50)
 		return;
 
-	struct TItemDropPenalty * table = &aItemDropPenalty_kor[0];
+	struct TItemDropPenalty* table = &aItemDropPenalty_kor[0];
 
 	if (GetLevel() < 10)
 		return;
@@ -976,7 +975,7 @@ void CHARACTER::ItemDropPenalty(LPCHARACTER pkKiller)
 	int	i;
 	bool isDropAllEquipments = false;
 
-	TItemDropPenalty & r = table[iAlignIndex];
+	TItemDropPenalty& r = table[iAlignIndex];
 	sys_log(0, "%s align %d inven_pct %d equip_pct %d", GetName(), iAlignIndex, r.iInventoryPct, r.iEquipmentPct);
 
 	bool bDropInventory = r.iInventoryPct >= number(1, 1000);
@@ -1125,37 +1124,37 @@ void CHARACTER::ItemDropPenalty(LPCHARACTER pkKiller)
 
 class FPartyAlignmentCompute
 {
-	public:
-		FPartyAlignmentCompute(int iAmount, int x, int y)
-		{
-			m_iAmount = iAmount;
-			m_iCount = 0;
-			m_iStep = 0;
-			m_iKillerX = x;
-			m_iKillerY = y;
-		}
+public:
+	FPartyAlignmentCompute(int iAmount, int x, int y)
+	{
+		m_iAmount = iAmount;
+		m_iCount = 0;
+		m_iStep = 0;
+		m_iKillerX = x;
+		m_iKillerY = y;
+	}
 
-		void operator () (LPCHARACTER pkChr)
+	void operator () (LPCHARACTER pkChr)
+	{
+		if (DISTANCE_APPROX(pkChr->GetX() - m_iKillerX, pkChr->GetY() - m_iKillerY) < PARTY_DEFAULT_RANGE)
 		{
-			if (DISTANCE_APPROX(pkChr->GetX() - m_iKillerX, pkChr->GetY() - m_iKillerY) < PARTY_DEFAULT_RANGE)
+			if (m_iStep == 0)
 			{
-				if (m_iStep == 0)
-				{
-					++m_iCount;
-				}
-				else
-				{
-					pkChr->UpdateAlignment(m_iAmount / m_iCount);
-				}
+				++m_iCount;
+			}
+			else
+			{
+				pkChr->UpdateAlignment(m_iAmount / m_iCount);
 			}
 		}
+	}
 
-		int m_iAmount;
-		int m_iCount;
-		int m_iStep;
+	int m_iAmount;
+	int m_iCount;
+	int m_iStep;
 
-		int m_iKillerX;
-		int m_iKillerY;
+	int m_iKillerX;
+	int m_iKillerY;
 };
 
 void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
@@ -1177,24 +1176,23 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 		{
 			RemoveAffect(AFFECT_MOUNT_BONUS);
 #ifndef ENABLE_MOUNT_COSTUME_SYSTEM
-		LPITEM item = GetWear(WEAR_UNIQUE1);
-		LPITEM item2 = GetWear(WEAR_UNIQUE2);
+			LPITEM item = GetWear(WEAR_UNIQUE1);
+			LPITEM item2 = GetWear(WEAR_UNIQUE2);
 
-		if (item && item->IsRideItem())
-		{
-			UnequipItem(item);
-		}
+			if (item && item->IsRideItem())
+			{
+				UnequipItem(item);
+			}
 
-		if (item2 && item2->IsRideItem())
-		{
-			UnequipItem(item2);
-		}
+			if (item2 && item2->IsRideItem())
+			{
+				UnequipItem(item2);
+			}
 #endif
 			m_dwMountVnum = 0;
 			UnEquipSpecialRideUniqueItem();
 			UpdatePacket();
 		}
-
 	}
 #endif
 
@@ -1221,8 +1219,8 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 
 		if (IsPC())
 		{
-			CGuild * g1 = GetGuild();
-			CGuild * g2 = pkKiller->GetGuild();
+			CGuild* g1 = GetGuild();
+			CGuild* g2 = pkKiller->GetGuild();
 
 			if (g1 && g2)
 				if (g1->UnderWar(g2->GetID()))
@@ -1240,7 +1238,7 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 		if (pkKiller)
 			SetQuestNPCID(pkKiller->GetVID());
 		// quest::CQuestManager::instance().Die(GetPlayerID(), quest::QUEST_NO_NPC);
-		quest::CQuestManager::instance().Die(GetPlayerID(), (pkKiller)?pkKiller->GetRaceNum():quest::QUEST_NO_NPC);
+		quest::CQuestManager::instance().Die(GetPlayerID(), (pkKiller) ? pkKiller->GetRaceNum() : quest::QUEST_NO_NPC);
 	}
 #endif
 
@@ -1253,11 +1251,11 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 	//END_CHECK_FORKEDROAD_WAR
 
 	if (pkKiller &&
-			!isAgreedPVP &&
-			!isUnderGuildWar &&
-			IsPC() &&
-			!isDuel &&
-			!isForked)
+		!isAgreedPVP &&
+		!isUnderGuildWar &&
+		IsPC() &&
+		!isDuel &&
+		!isForked)
 	{
 		if (GetGMLevel() == GM_PLAYER || test_server)
 		{
@@ -1267,7 +1265,7 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 
 	if (true == isForked)
 	{
-		CThreeWayWar::instance().onDead( this, pkKiller );
+		CThreeWayWar::instance().onDead(this, pkKiller);
 	}
 
 	SetPosition(POS_DEAD);
@@ -1306,9 +1304,9 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 
 				char buf[256];
 				snprintf(buf, sizeof(buf),
-						"%d %d %d %s %d %d %d %s",
-						GetEmpire(), GetAlignment(), GetPKMode(), GetName(),
-						pkKiller->GetEmpire(), pkKiller->GetAlignment(), pkKiller->GetPKMode(), pkKiller->GetName());
+					"%d %d %d %s %d %d %d %s",
+					GetEmpire(), GetAlignment(), GetPKMode(), GetName(),
+					pkKiller->GetEmpire(), pkKiller->GetAlignment(), pkKiller->GetPKMode(), pkKiller->GetName());
 
 				LogManager::instance().CharLog(this, pkKiller->GetPlayerID(), "DEAD_BY_PC", buf);
 			}
@@ -1349,9 +1347,9 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 
 				char buf[256];
 				snprintf(buf, sizeof(buf),
-						"%d %d %d %s %d %d %d %s",
-						GetEmpire(), GetAlignment(), GetPKMode(), GetName(),
-						pkKiller->GetEmpire(), pkKiller->GetAlignment(), pkKiller->GetPKMode(), pkKiller->GetName());
+					"%d %d %d %s %d %d %d %s",
+					GetEmpire(), GetAlignment(), GetPKMode(), GetName(),
+					pkKiller->GetEmpire(), pkKiller->GetAlignment(), pkKiller->GetPKMode(), pkKiller->GetName());
 
 				LogManager::instance().CharLog(this, pkKiller->GetPlayerID(), "DEAD_BY_PC", buf);
 			}
@@ -1383,7 +1381,7 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 				if (GetMobTable().dwResurrectionVnum)
 				{
 					// DUNGEON_MONSTER_REBIRTH_BUG_FIX
-					LPCHARACTER chResurrect = CHARACTER_MANAGER::instance().SpawnMob(GetMobTable().dwResurrectionVnum, GetMapIndex(), GetX(), GetY(), GetZ(), true, (int) GetRotation());
+					LPCHARACTER chResurrect = CHARACTER_MANAGER::instance().SpawnMob(GetMobTable().dwResurrectionVnum, GetMapIndex(), GetX(), GetY(), GetZ(), true, (int)GetRotation());
 					if (GetDungeon() && chResurrect)
 					{
 						chResurrect->SetDungeon(GetDungeon());
@@ -1391,25 +1389,25 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 					// END_OF_DUNGEON_MONSTER_REBIRTH_BUG_FIX
 
 					Reward(false
-						#ifdef ENABLE_KILL_EVENT_FIX
+#ifdef ENABLE_KILL_EVENT_FIX
 						, pkKiller
-						#endif
+#endif
 					);
 				}
 				else if (IsRevive())
 				{
 					Reward(false
-						#ifdef ENABLE_KILL_EVENT_FIX
+#ifdef ENABLE_KILL_EVENT_FIX
 						, pkKiller
-						#endif
+#endif
 					);
 				}
 				else
 				{
 					Reward(true
-						#ifdef ENABLE_KILL_EVENT_FIX
+#ifdef ENABLE_KILL_EVENT_FIX
 						, pkKiller
-						#endif
+#endif
 					); // Drops gold, item, etc..
 				}
 			}
@@ -1437,8 +1435,8 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 	// END_OF_BOSS_KILL_LOG
 
 	TPacketGCDead pack;
-	pack.header	= HEADER_GC_DEAD;
-	pack.vid	= m_vid;
+	pack.header = HEADER_GC_DEAD;
+	pack.vid = m_vid;
 	PacketAround(&pack, sizeof(pack));
 
 	REMOVE_BIT(m_pointsInstant.instant_flag, INSTANT_FLAG_STUN);
@@ -1498,7 +1496,6 @@ void CHARACTER::Dead(LPCHARACTER pkKiller, bool bImmediateDead)
 
 	if (IsCubeOpen())
 		Cube_close(this);
-
 
 	CShopManager::instance().StopShopping(this);
 	CloseMyShop();
@@ -1603,16 +1600,16 @@ bool CHARACTER::Damage(LPCHARACTER pAttacker, int dam, EDamageType type) // retu
 #ifdef ENABLE_NO_DAMAGE_QUEST_RUNNING
 	if (pAttacker && pAttacker->IsPC())
 	{
-		auto * pPC = quest::CQuestManager::instance().GetPCForce(pAttacker->GetPlayerID());
+		auto* pPC = quest::CQuestManager::instance().GetPCForce(pAttacker->GetPlayerID());
 		if (pPC->IsRunning())
 		{
 			if (test_server)
 			{
-				auto & mgr = quest::CQuestManager::instance();
+				auto& mgr = quest::CQuestManager::instance();
 				sys_err("QUEST There's suspended quest state for %s, can't run new quest state (quest: %s pc: %s)",
-						pAttacker->GetName(),
-						pPC->GetCurrentQuestName().c_str(),
-						mgr.GetCurrentCharacterPtr() ? mgr.GetCurrentCharacterPtr()->GetName() : "<none>");
+					pAttacker->GetName(),
+					pPC->GetCurrentQuestName().c_str(),
+					mgr.GetCurrentCharacterPtr() ? mgr.GetCurrentCharacterPtr()->GetName() : "<none>");
 			}
 			pAttacker->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("You can't deal damage while running quests"));
 			return false;
@@ -1804,10 +1801,10 @@ bool CHARACTER::Damage(LPCHARACTER pAttacker, int dam, EDamageType type) // retu
 		}
 
 		if (IsAffectFlag(AFF_JEONGWIHON))
-			dam = (int) (dam * (100 + GetSkillPower(SKILL_JEONGWI) * 25 / 100) / 100);
+			dam = (int)(dam * (100 + GetSkillPower(SKILL_JEONGWI) * 25 / 100) / 100);
 
 		if (IsAffectFlag(AFF_TERROR))
-			dam = (int) (dam * (95 - GetSkillPower(SKILL_TERROR) / 5) / 100);
+			dam = (int)(dam * (95 - GetSkillPower(SKILL_TERROR) / 5) / 100);
 
 		if (IsAffectFlag(AFF_HOSIN))
 			dam = dam * (100 - GetPoint(POINT_RESIST_NORMAL_DAMAGE)) / 100;
@@ -1932,7 +1929,7 @@ bool CHARACTER::Damage(LPCHARACTER pAttacker, int dam, EDamageType type) // retu
 
 			if (pAttacker->GetPoint(POINT_HIT_HP_RECOVERY) && number(0, 4) > 0)
 			{
-				int i = ((iCurHP>=0)?MIN(dam, iCurHP):dam) * pAttacker->GetPoint(POINT_HIT_HP_RECOVERY) / 100; //@fixme107
+				int i = ((iCurHP >= 0) ? MIN(dam, iCurHP) : dam) * pAttacker->GetPoint(POINT_HIT_HP_RECOVERY) / 100; //@fixme107
 
 				if (i)
 				{
@@ -1943,7 +1940,7 @@ bool CHARACTER::Damage(LPCHARACTER pAttacker, int dam, EDamageType type) // retu
 
 			if (pAttacker->GetPoint(POINT_HIT_SP_RECOVERY) && number(0, 4) > 0)
 			{
-				int i = ((iCurHP>=0)?MIN(dam, iCurHP):dam) * pAttacker->GetPoint(POINT_HIT_SP_RECOVERY) / 100; //@fixme107
+				int i = ((iCurHP >= 0) ? MIN(dam, iCurHP) : dam) * pAttacker->GetPoint(POINT_HIT_SP_RECOVERY) / 100; //@fixme107
 
 				if (i)
 				{
@@ -1962,30 +1959,30 @@ bool CHARACTER::Damage(LPCHARACTER pAttacker, int dam, EDamageType type) // retu
 
 	switch (type)
 	{
-		case DAMAGE_TYPE_NORMAL:
-		case DAMAGE_TYPE_NORMAL_RANGE:
-			if (pAttacker)
-				if (pAttacker->GetPoint(POINT_NORMAL_HIT_DAMAGE_BONUS))
-					dam = dam * (100 + pAttacker->GetPoint(POINT_NORMAL_HIT_DAMAGE_BONUS)) / 100;
+	case DAMAGE_TYPE_NORMAL:
+	case DAMAGE_TYPE_NORMAL_RANGE:
+		if (pAttacker)
+			if (pAttacker->GetPoint(POINT_NORMAL_HIT_DAMAGE_BONUS))
+				dam = dam * (100 + pAttacker->GetPoint(POINT_NORMAL_HIT_DAMAGE_BONUS)) / 100;
 
-			dam = dam * (100 - MIN(99, GetPoint(POINT_NORMAL_HIT_DEFEND_BONUS))) / 100;
-			break;
+		dam = dam * (100 - MIN(99, GetPoint(POINT_NORMAL_HIT_DEFEND_BONUS))) / 100;
+		break;
 
-		case DAMAGE_TYPE_MELEE:
-		case DAMAGE_TYPE_RANGE:
-		case DAMAGE_TYPE_FIRE:
-		case DAMAGE_TYPE_ICE:
-		case DAMAGE_TYPE_ELEC:
-		case DAMAGE_TYPE_MAGIC:
-			if (pAttacker)
-				if (pAttacker->GetPoint(POINT_SKILL_DAMAGE_BONUS))
-					dam = dam * (100 + pAttacker->GetPoint(POINT_SKILL_DAMAGE_BONUS)) / 100;
+	case DAMAGE_TYPE_MELEE:
+	case DAMAGE_TYPE_RANGE:
+	case DAMAGE_TYPE_FIRE:
+	case DAMAGE_TYPE_ICE:
+	case DAMAGE_TYPE_ELEC:
+	case DAMAGE_TYPE_MAGIC:
+		if (pAttacker)
+			if (pAttacker->GetPoint(POINT_SKILL_DAMAGE_BONUS))
+				dam = dam * (100 + pAttacker->GetPoint(POINT_SKILL_DAMAGE_BONUS)) / 100;
 
-			dam = dam * (100 - MIN(99, GetPoint(POINT_SKILL_DEFEND_BONUS))) / 100;
-			break;
+		dam = dam * (100 - MIN(99, GetPoint(POINT_SKILL_DEFEND_BONUS))) / 100;
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 
 	if (IsAffectFlag(AFF_MANASHIELD))
@@ -2043,7 +2040,6 @@ bool CHARACTER::Damage(LPCHARACTER pAttacker, int dam, EDamageType type) // retu
 					pAttacker->PointChange(POINT_SP, -iSP);
 				}
 			}
-
 		}
 		else if (pAttacker->IsGuardNPC())
 		{
@@ -2114,7 +2110,7 @@ bool CHARACTER::Damage(LPCHARACTER pAttacker, int dam, EDamageType type) // retu
 		{
 			if (pAttacker->IsDeathBlow())
 			{
-				if (number(JOB_WARRIOR, JOB_MAX_NUM-1) == GetJob()) // @fixme192 (1, 4)
+				if (number(JOB_WARRIOR, JOB_MAX_NUM - 1) == GetJob()) // @fixme192 (1, 4)
 				{
 					IsDeathBlow = true;
 					dam = dam * 4;
@@ -2150,31 +2146,31 @@ bool CHARACTER::Damage(LPCHARACTER pAttacker, int dam, EDamageType type) // retu
 			if (GetMaxHP() >= 0)
 				iTmpPercent = (GetHP() * 100) / GetMaxHP();
 
-			if(pAttacker)
+			if (pAttacker)
 			{
 				pAttacker->ChatPacket(CHAT_TYPE_INFO, "-> %s, DAM %d HP %d(%d%%) %s%s",
-						GetName(),
-						dam,
-						GetHP(),
-						iTmpPercent,
-						IsCritical ? "crit " : "",
-						IsPenetrate ? "pene " : "",
-						IsDeathBlow ? "deathblow " : "");
-			}
-
-			ChatPacket(CHAT_TYPE_PARTY, "<- %s, DAM %d HP %d(%d%%) %s%s",
-					pAttacker ? pAttacker->GetName() : 0,
+					GetName(),
 					dam,
 					GetHP(),
 					iTmpPercent,
 					IsCritical ? "crit " : "",
 					IsPenetrate ? "pene " : "",
 					IsDeathBlow ? "deathblow " : "");
+			}
+
+			ChatPacket(CHAT_TYPE_PARTY, "<- %s, DAM %d HP %d(%d%%) %s%s",
+				pAttacker ? pAttacker->GetName() : 0,
+				dam,
+				GetHP(),
+				iTmpPercent,
+				IsCritical ? "crit " : "",
+				IsPenetrate ? "pene " : "",
+				IsDeathBlow ? "deathblow " : "");
 		}
 
 		if (m_bDetailLog)
 		{
-			ChatPacket(CHAT_TYPE_INFO, LC_TEXT("%s[%d]가 공격 위치: %d %d"), pAttacker->GetName(), (DWORD) pAttacker->GetVID(), pAttacker->GetX(), pAttacker->GetY());
+			ChatPacket(CHAT_TYPE_INFO, LC_TEXT("%s[%d]가 공격 위치: %d %d"), pAttacker->GetName(), (DWORD)pAttacker->GetVID(), pAttacker->GetX(), pAttacker->GetY());
 		}
 	}
 
@@ -2253,26 +2249,26 @@ static void GiveExp(LPCHARACTER from, LPCHARACTER to, int iExp)
 
 	switch (to->GetMountVnum())
 	{
-		case 20110:
-		case 20111:
-		case 20112:
-		case 20113:
-			if (to->IsEquipUniqueItem(71115) || to->IsEquipUniqueItem(71117) || to->IsEquipUniqueItem(71119) ||
-					to->IsEquipUniqueItem(71121) )
-			{
-				rateFactor += 10;
-			}
-			break;
+	case 20110:
+	case 20111:
+	case 20112:
+	case 20113:
+		if (to->IsEquipUniqueItem(71115) || to->IsEquipUniqueItem(71117) || to->IsEquipUniqueItem(71119) ||
+			to->IsEquipUniqueItem(71121))
+		{
+			rateFactor += 10;
+		}
+		break;
 
-		case 20114:
-		case 20120:
-		case 20121:
-		case 20122:
-		case 20123:
-		case 20124:
-		case 20125:
-			rateFactor += 30;
-			break;
+	case 20114:
+	case 20120:
+	case 20121:
+	case 20122:
+	case 20123:
+	case 20124:
+	case 20125:
+		rateFactor += 30;
+		break;
 	}
 
 	if (to->GetPremiumRemainSeconds(PREMIUM_EXP) > 0)
@@ -2284,19 +2280,19 @@ static void GiveExp(LPCHARACTER from, LPCHARACTER to, int iExp)
 	rateFactor += to->GetPoint(POINT_MALL_EXPBONUS);
 	rateFactor += to->GetPoint(POINT_EXP);
 	// useless (never used except for china intoxication) = always 100
-	rateFactor = rateFactor * static_cast<rate_t>(CHARACTER_MANAGER::instance().GetMobExpRate(to))/100.0L;
+	rateFactor = rateFactor * static_cast<rate_t>(CHARACTER_MANAGER::instance().GetMobExpRate(to)) / 100.0L;
 	// fix underflow formula
 	iExp = std::max<int>(0, iExp);
 	rateFactor = std::max<rate_t>(100.0L, rateFactor);
 	// apply calculated rate bonus
-	iExp *= (rateFactor/100.0L);
+	iExp *= (rateFactor / 100.0L);
 	auto iOldExp = iExp;
 	// you can get at maximum only 10% of the total required exp at once (so, you need to kill at least 10 mobs to level up) (useless)
 	iExp = MIN(to->GetNextExp() / 10, iExp);
 	// it recalculate the given exp if the player level is greater than the exp_table size (useless)
 	iExp = AdjustExpByLevel(to, iExp);
 	if (test_server)
-		to->ChatPacket(CHAT_TYPE_INFO, "base_exp(%d) * rate(%Lf) = exp(%d) => exp+minGNE+adjust(%d)", iBaseExp, rateFactor/100.0L, iOldExp, iExp);
+		to->ChatPacket(CHAT_TYPE_INFO, "base_exp(%d) * rate(%Lf) = exp(%d) => exp+minGNE+adjust(%d)", iBaseExp, rateFactor / 100.0L, iOldExp, iExp);
 	// set
 	to->PointChange(POINT_EXP, iExp, true);
 	from->CreateFly(FLY_EXP, to);
@@ -2306,10 +2302,10 @@ static void GiveExp(LPCHARACTER from, LPCHARACTER to, int iExp)
 		if (you)
 		{
 			// sometimes, this overflows
-			DWORD dwUpdatePoint = (2000.0L/to->GetLevel()/to->GetLevel()/3)*iExp;
+			DWORD dwUpdatePoint = (2000.0L / to->GetLevel() / to->GetLevel() / 3) * iExp;
 
 			if (to->GetPremiumRemainSeconds(PREMIUM_MARRIAGE_FAST) > 0 ||
-					you->GetPremiumRemainSeconds(PREMIUM_MARRIAGE_FAST) > 0)
+				you->GetPremiumRemainSeconds(PREMIUM_MARRIAGE_FAST) > 0)
 				dwUpdatePoint *= 3;
 
 			marriage::TMarriage* pMarriage = marriage::CManager::instance().Get(to->GetPlayerID());
@@ -2335,7 +2331,7 @@ static void GiveExp(LPCHARACTER from, LPCHARACTER to, int iExp)
 
 	{
 		if (to->IsEquipUniqueItem(UNIQUE_ITEM_LARBOR_MEDAL))
-			iExp += iExp * 20 /100;
+			iExp += iExp * 20 / 100;
 
 		if (to->GetMapIndex() >= 660000 && to->GetMapIndex() < 670000)
 			iExp += iExp * 20 / 100;
@@ -2349,27 +2345,27 @@ static void GiveExp(LPCHARACTER from, LPCHARACTER to, int iExp)
 
 		switch (to->GetMountVnum())
 		{
-			case 20110:
-			case 20111:
-			case 20112:
-			case 20113:
-				if (to->IsEquipUniqueItem(71115) || to->IsEquipUniqueItem(71117) || to->IsEquipUniqueItem(71119) ||
-						to->IsEquipUniqueItem(71121) )
-				{
-					iExp += iExp * 10 / 100;
-				}
-				break;
+		case 20110:
+		case 20111:
+		case 20112:
+		case 20113:
+			if (to->IsEquipUniqueItem(71115) || to->IsEquipUniqueItem(71117) || to->IsEquipUniqueItem(71119) ||
+				to->IsEquipUniqueItem(71121))
+			{
+				iExp += iExp * 10 / 100;
+			}
+			break;
 
-			case 20114:
-			case 20120:
-			case 20121:
-			case 20122:
-			case 20123:
-			case 20124:
-			case 20125:
+		case 20114:
+		case 20120:
+		case 20121:
+		case 20122:
+		case 20123:
+		case 20124:
+		case 20125:
 
-				iExp += iExp * 30 / 100;
-				break;
+			iExp += iExp * 30 / 100;
+			break;
 		}
 	}
 
@@ -2387,17 +2383,17 @@ static void GiveExp(LPCHARACTER from, LPCHARACTER to, int iExp)
 		iExp += iExp * to->GetMarriageBonus(UNIQUE_ITEM_MARRIAGE_EXP_BONUS) / 100;
 	}
 
-	iExp += (iExp * to->GetPoint(POINT_RAMADAN_CANDY_BONUS_EXP)/100);
-	iExp += (iExp * to->GetPoint(POINT_MALL_EXPBONUS)/100);
-	iExp += (iExp * to->GetPoint(POINT_EXP)/100);
+	iExp += (iExp * to->GetPoint(POINT_RAMADAN_CANDY_BONUS_EXP) / 100);
+	iExp += (iExp * to->GetPoint(POINT_MALL_EXPBONUS) / 100);
+	iExp += (iExp * to->GetPoint(POINT_EXP) / 100);
 
 	if (test_server)
 	{
 		sys_log(0, "Bonus Exp : Ramadan Candy: %d MallExp: %d PointExp: %d",
-				to->GetPoint(POINT_RAMADAN_CANDY_BONUS_EXP),
-				to->GetPoint(POINT_MALL_EXPBONUS),
-				to->GetPoint(POINT_EXP)
-			   );
+			to->GetPoint(POINT_RAMADAN_CANDY_BONUS_EXP),
+			to->GetPoint(POINT_MALL_EXPBONUS),
+			to->GetPoint(POINT_EXP)
+		);
 	}
 
 	iExp = iExp * CHARACTER_MANAGER::instance().GetMobExpRate(to) / 100;
@@ -2406,8 +2402,8 @@ static void GiveExp(LPCHARACTER from, LPCHARACTER to, int iExp)
 
 	if (test_server)
 	{
-		if (quest::CQuestManager::instance().GetEventFlag("exp_bonus_log") && iBaseExp>0)
-			to->ChatPacket(CHAT_TYPE_INFO, "exp bonus %d%%", (iExp-iBaseExp)*100/iBaseExp);
+		if (quest::CQuestManager::instance().GetEventFlag("exp_bonus_log") && iBaseExp > 0)
+			to->ChatPacket(CHAT_TYPE_INFO, "exp bonus %d%%", (iExp - iBaseExp) * 100 / iBaseExp);
 		to->ChatPacket(CHAT_TYPE_INFO, "exp(%d) base_exp(%d)", iExp, iBaseExp);
 	}
 
@@ -2421,10 +2417,10 @@ static void GiveExp(LPCHARACTER from, LPCHARACTER to, int iExp)
 
 		if (you)
 		{
-			DWORD dwUpdatePoint = 2000*iExp/to->GetLevel()/to->GetLevel()/3;
+			DWORD dwUpdatePoint = 2000 * iExp / to->GetLevel() / to->GetLevel() / 3;
 
 			if (to->GetPremiumRemainSeconds(PREMIUM_MARRIAGE_FAST) > 0 ||
-					you->GetPremiumRemainSeconds(PREMIUM_MARRIAGE_FAST) > 0)
+				you->GetPremiumRemainSeconds(PREMIUM_MARRIAGE_FAST) > 0)
 				dwUpdatePoint = (DWORD)(dwUpdatePoint * 3);
 
 			marriage::TMarriage* pMarriage = marriage::CManager::instance().Get(to->GetPlayerID());
@@ -2448,7 +2444,8 @@ namespace NPartyExpDistribute
 
 		FPartyTotaler(LPCHARACTER center)
 			: total(0), member_count(0), x(center->GetX()), y(center->GetY())
-		{};
+		{
+		};
 
 		void operator () (LPCHARACTER ch)
 		{
@@ -2472,10 +2469,10 @@ namespace NPartyExpDistribute
 
 		FPartyDistributor(LPCHARACTER center, int member_count, int total, DWORD iExp, int iMode)
 			: total(total), c(center), x(center->GetX()), y(center->GetY()), _iExp(iExp), m_iMode(iMode), m_iMemberCount(member_count)
-			{
-				if (m_iMemberCount == 0)
-					m_iMemberCount = 1;
-			};
+		{
+			if (m_iMemberCount == 0)
+				m_iMemberCount = 1;
+		};
 
 		void operator () (LPCHARACTER ch)
 		{
@@ -2485,17 +2482,17 @@ namespace NPartyExpDistribute
 
 				switch (m_iMode)
 				{
-					case PARTY_EXP_DISTRIBUTION_NON_PARITY:
-						iExp2 = (DWORD) (_iExp * (float) __GetPartyExpNP(ch->GetLevel()) / total);
-						break;
+				case PARTY_EXP_DISTRIBUTION_NON_PARITY:
+					iExp2 = (DWORD)(_iExp * (float)__GetPartyExpNP(ch->GetLevel()) / total);
+					break;
 
-					case PARTY_EXP_DISTRIBUTION_PARITY:
-						iExp2 = _iExp / m_iMemberCount;
-						break;
+				case PARTY_EXP_DISTRIBUTION_PARITY:
+					iExp2 = _iExp / m_iMemberCount;
+					break;
 
-					default:
-						sys_err("Unknown party exp distribution mode %d", m_iMode);
-						return;
+				default:
+					sys_err("Unknown party exp distribution mode %d", m_iMode);
+					return;
 				}
 
 				GiveExp(c, ch, iExp2);
@@ -2540,7 +2537,7 @@ typedef struct SDamageInfo
 
 				if (DISTANCE_APPROX(ch->GetX() - tch->GetX(), ch->GetY() - tch->GetY()) <= PARTY_DEFAULT_RANGE)
 				{
-					int iExpCenteralize = (int) (iExp * 0.05f);
+					int iExpCenteralize = (int)(iExp * 0.05f);
 					iExp -= iExpCenteralize;
 
 					GiveExp(ch, pParty->GetExpCentralizeCharacter(), iExpCenteralize);
@@ -2555,14 +2552,14 @@ typedef struct SDamageInfo
 
 #ifdef ENABLE_KILL_EVENT_FIX
 LPCHARACTER CHARACTER::GetMostAttacked() {
-	int iMostDam=-1;
+	int iMostDam = -1;
 	LPCHARACTER pkChrMostAttacked = NULL;
 	auto it = m_map_kDamage.begin();
 
-	while (it != m_map_kDamage.end()){
+	while (it != m_map_kDamage.end()) {
 		//* getting information from the iterator
-		const VID & c_VID = it->first;
-		const int iDam    = it->second.iTotalDamage;
+		const VID& c_VID = it->first;
+		const int iDam = it->second.iTotalDamage;
 
 		//* increasing the iterator
 		++it;
@@ -2575,14 +2572,14 @@ LPCHARACTER CHARACTER::GetMostAttacked() {
 			continue;
 
 		//* if the attacker is not a player
-		if( pAttacker->IsNPC())
+		if (pAttacker->IsNPC())
 			continue;
 
 		//* if the player is too far
-		if(DISTANCE_APPROX(GetX()-pAttacker->GetX(), GetY()-pAttacker->GetY())>5000)
+		if (DISTANCE_APPROX(GetX() - pAttacker->GetX(), GetY() - pAttacker->GetY()) > 5000)
 			continue;
 
-		if (iDam > iMostDam){
+		if (iDam > iMostDam) {
 			pkChrMostAttacked = pAttacker;
 			iMostDam = iDam;
 		}
@@ -2613,14 +2610,14 @@ LPCHARACTER CHARACTER::DistributeExp()
 
 	while (it != m_map_kDamage.end())
 	{
-		const VID & c_VID = it->first;
+		const VID& c_VID = it->first;
 		int iDam = it->second.iTotalDamage;
 
 		++it;
 
 		LPCHARACTER pAttacker = CHARACTER_MANAGER::instance().Find(c_VID);
 
-		if (!pAttacker || pAttacker->IsNPC() || DISTANCE_APPROX(GetX()-pAttacker->GetX(), GetY()-pAttacker->GetY())>5000)
+		if (!pAttacker || pAttacker->IsNPC() || DISTANCE_APPROX(GetX() - pAttacker->GetX(), GetY() - pAttacker->GetY()) > 5000)
 			continue;
 
 		iTotalDam += iDam;
@@ -2681,7 +2678,7 @@ LPCHARACTER CHARACTER::DistributeExp()
 	}
 
 	sys_log(1, "%s total exp: %d, damage_info_table.size() == %d, TotalDam %d",
-			GetName(), iExpToDistribute, damage_info_table.size(), iTotalDam);
+		GetName(), iExpToDistribute, damage_info_table.size(), iTotalDam);
 	//sys_log(1, "%s total exp: %d, pq_damage.size() == %d, TotalDam %d",
 	//GetName(), iExpToDistribute, pq_damage.size(), iTotalDam);
 
@@ -2695,7 +2692,7 @@ LPCHARACTER CHARACTER::DistributeExp()
 		{
 			TDamageInfoTable::iterator it;
 
-			for (it = damage_info_table.begin(); it != damage_info_table.end();++it)
+			for (it = damage_info_table.begin(); it != damage_info_table.end(); ++it)
 			{
 				if (it->iDam > di->iDam)
 					di = it;
@@ -2705,7 +2702,7 @@ LPCHARACTER CHARACTER::DistributeExp()
 		int	iExp = iExpToDistribute / 5;
 		iExpToDistribute -= iExp;
 
-		float fPercent = (float) di->iDam / iTotalDam;
+		float fPercent = (float)di->iDam / iTotalDam;
 
 		if (fPercent > 1.0f)
 		{
@@ -2713,7 +2710,7 @@ LPCHARACTER CHARACTER::DistributeExp()
 			fPercent = 1.0f;
 		}
 
-		iExp += (int) (iExpToDistribute * fPercent);
+		iExp += (int)(iExpToDistribute * fPercent);
 
 		//sys_log(0, "%s given exp percent %.1f + 20 dam %d", GetName(), fPercent * 100.0f, di.iDam);
 
@@ -2730,9 +2727,9 @@ LPCHARACTER CHARACTER::DistributeExp()
 
 		for (it = damage_info_table.begin(); it != damage_info_table.end(); ++it)
 		{
-			TDamageInfo & di = *it;
+			TDamageInfo& di = *it;
 
-			float fPercent = (float) di.iDam / iTotalDam;
+			float fPercent = (float)di.iDam / iTotalDam;
 
 			if (fPercent > 1.0f)
 			{
@@ -2741,14 +2738,14 @@ LPCHARACTER CHARACTER::DistributeExp()
 			}
 
 			//sys_log(0, "%s given exp percent %.1f dam %d", GetName(), fPercent * 100.0f, di.iDam);
-			di.Distribute(this, (int) (iExpToDistribute * fPercent));
+			di.Distribute(this, (int)(iExpToDistribute * fPercent));
 		}
 	}
 
 	return pkChrMostAttacked;
 }
 
-int CHARACTER::GetArrowAndBow(LPITEM * ppkBow, LPITEM * ppkArrow, int iArrowCount/* = 1 */)
+int CHARACTER::GetArrowAndBow(LPITEM* ppkBow, LPITEM* ppkArrow, int iArrowCount/* = 1 */)
 {
 	LPITEM pkBow;
 
@@ -2760,10 +2757,10 @@ int CHARACTER::GetArrowAndBow(LPITEM * ppkBow, LPITEM * ppkArrow, int iArrowCoun
 	LPITEM pkArrow;
 
 	if (!(pkArrow = GetWear(WEAR_ARROW)) || pkArrow->GetType() != ITEM_WEAPON ||
-			(pkArrow->GetProto()->bSubType != WEAPON_ARROW
-				#ifdef ENABLE_QUIVER_SYSTEM
-				&& pkArrow->GetSubType() != WEAPON_QUIVER
-				#endif
+		(pkArrow->GetProto()->bSubType != WEAPON_ARROW
+#ifdef ENABLE_QUIVER_SYSTEM
+			&& pkArrow->GetSubType() != WEAPON_QUIVER
+#endif
 			)
 		)
 	{
@@ -2776,7 +2773,7 @@ int CHARACTER::GetArrowAndBow(LPITEM * ppkBow, LPITEM * ppkArrow, int iArrowCoun
 		iArrowCount = ((pkArrow->GetSocket(0) - time(0)) <= 0) ? 0 : 1;
 #endif
 
-	*ppkBow = pkBow;
+	* ppkBow = pkBow;
 	*ppkArrow = pkArrow;
 
 	return iArrowCount;
@@ -2807,270 +2804,265 @@ void CHARACTER::UseArrow(LPITEM pkArrow, DWORD dwArrowCount)
 
 class CFuncShoot
 {
-	public:
-		LPCHARACTER	m_me;
-		BYTE		m_bType;
-		bool		m_bSucceed;
+public:
+	LPCHARACTER	m_me;
+	BYTE		m_bType;
+	bool		m_bSucceed;
 
-		CFuncShoot(LPCHARACTER ch, BYTE bType) : m_me(ch), m_bType(bType), m_bSucceed(FALSE)
+	CFuncShoot(LPCHARACTER ch, BYTE bType) : m_me(ch), m_bType(bType), m_bSucceed(FALSE)
+	{
+	}
+
+	void operator () (DWORD dwTargetVID)
+	{
+		if (m_bType > 1)
 		{
+			if (g_bSkillDisable)
+				return;
+
+			m_me->m_SkillUseInfo[m_bType].SetMainTargetVID(dwTargetVID);
 		}
 
-		void operator () (DWORD dwTargetVID)
+		LPCHARACTER pkVictim = CHARACTER_MANAGER::instance().Find(dwTargetVID);
+
+		if (!pkVictim)
+			return;
+
+		if (!battle_is_attackable(m_me, pkVictim))
+			return;
+
+		if (m_me->IsNPC())
 		{
-			if (m_bType > 1)
+			if (DISTANCE_APPROX(m_me->GetX() - pkVictim->GetX(), m_me->GetY() - pkVictim->GetY()) > 5000)
+				return;
+		}
+
+#ifdef ENABLE_SKILL_COOLDOWN_CHECK
+		if (m_me->IsPC() && m_bType > 0 && m_me->SkillIsOnCooldown(m_bType))
+			return;
+#endif
+
+		LPITEM pkBow, pkArrow;
+
+		switch (m_bType)
+		{
+		case 0:
+		{
+			int iDam = 0;
+
+			if (m_me->IsPC())
 			{
-				if (g_bSkillDisable)
+				if (m_me->GetJob() != JOB_ASSASSIN)
 					return;
 
-				m_me->m_SkillUseInfo[m_bType].SetMainTargetVID(dwTargetVID);
-			}
-
-			LPCHARACTER pkVictim = CHARACTER_MANAGER::instance().Find(dwTargetVID);
-
-			if (!pkVictim)
-				return;
-
-			if (!battle_is_attackable(m_me, pkVictim))
-				return;
-
-			if (m_me->IsNPC())
-			{
-				if (DISTANCE_APPROX(m_me->GetX() - pkVictim->GetX(), m_me->GetY() - pkVictim->GetY()) > 5000)
+				if (0 == m_me->GetArrowAndBow(&pkBow, &pkArrow))
 					return;
-			}
 
-			#ifdef ENABLE_SKILL_COOLDOWN_CHECK
-			if (m_me->IsPC() && m_bType > 0 && m_me->SkillIsOnCooldown(m_bType))
-				return;
-			#endif
-
-			LPITEM pkBow, pkArrow;
-
-			switch (m_bType)
-			{
-				case 0:
+				if (m_me->GetSkillGroup() != 0)
+					if (!m_me->IsNPC() && m_me->GetSkillGroup() != 2)
 					{
-						int iDam = 0;
-
-						if (m_me->IsPC())
-						{
-							if (m_me->GetJob() != JOB_ASSASSIN)
-								return;
-
-							if (0 == m_me->GetArrowAndBow(&pkBow, &pkArrow))
-								return;
-
-							if (m_me->GetSkillGroup() != 0)
-								if (!m_me->IsNPC() && m_me->GetSkillGroup() != 2)
-								{
-									if (m_me->GetSP() < 5)
-										return;
-
-									m_me->PointChange(POINT_SP, -5);
-								}
-
-							iDam = CalcArrowDamage(m_me, pkVictim, pkBow, pkArrow);
-							m_me->UseArrow(pkArrow, 1);
-
-							// check speed hack
-							DWORD	dwCurrentTime	= get_dword_time();
-							if (IS_SPEED_HACK(m_me, pkVictim, dwCurrentTime))
-								iDam	= 0;
-						}
-						else
-							iDam = CalcMeleeDamage(m_me, pkVictim);
-
-						NormalAttackAffect(m_me, pkVictim);
-
-						iDam = iDam * (100 - pkVictim->GetPoint(POINT_RESIST_BOW)) / 100;
-
-						//sys_log(0, "%s arrow %s dam %d", m_me->GetName(), pkVictim->GetName(), iDam);
-
-						m_me->OnMove(true);
-						pkVictim->OnMove();
-
-						if (pkVictim->CanBeginFight())
-							pkVictim->BeginFight(m_me);
-
-						pkVictim->Damage(m_me, iDam, DAMAGE_TYPE_NORMAL_RANGE);
-
-					}
-					break;
-
-				case 1:
-					{
-						int iDam;
-
-						if (m_me->IsPC())
+						if (m_me->GetSP() < 5)
 							return;
 
-						iDam = CalcMagicDamage(m_me, pkVictim);
-
-						NormalAttackAffect(m_me, pkVictim);
-
-
-						iDam = iDam * (100 - pkVictim->GetPoint(POINT_RESIST_MAGIC)) / 100;
-
-						//sys_log(0, "%s arrow %s dam %d", m_me->GetName(), pkVictim->GetName(), iDam);
-
-						m_me->OnMove(true);
-						pkVictim->OnMove();
-
-						if (pkVictim->CanBeginFight())
-							pkVictim->BeginFight(m_me);
-
-						pkVictim->Damage(m_me, iDam, DAMAGE_TYPE_MAGIC);
-
-					}
-					break;
-
-				case SKILL_YEONSA:
-					{
-						int iUseArrow = 1;
-						{
-							if (iUseArrow == m_me->GetArrowAndBow(&pkBow, &pkArrow, iUseArrow))
-							{
-								m_me->OnMove(true);
-								pkVictim->OnMove();
-
-								if (pkVictim->CanBeginFight())
-									pkVictim->BeginFight(m_me);
-
-								m_me->ComputeSkill(m_bType, pkVictim);
-								m_me->UseArrow(pkArrow, iUseArrow);
-
-								if (pkVictim->IsDead())
-									break;
-
-							}
-							else
-								break;
-						}
-					}
-					break;
-
-				case SKILL_KWANKYEOK:
-					{
-						int iUseArrow = 1;
-						if (iUseArrow == m_me->GetArrowAndBow(&pkBow, &pkArrow, iUseArrow))
-						{
-							m_me->OnMove(true);
-							pkVictim->OnMove();
-
-							if (pkVictim->CanBeginFight())
-								pkVictim->BeginFight(m_me);
-
-							sys_log(0, "%s kwankeyok %s", m_me->GetName(), pkVictim->GetName());
-							m_me->ComputeSkill(m_bType, pkVictim);
-							m_me->UseArrow(pkArrow, iUseArrow);
-						}
-					}
-					break;
-
-				case SKILL_GIGUNG:
-					{
-						int iUseArrow = 1;
-						if (iUseArrow == m_me->GetArrowAndBow(&pkBow, &pkArrow, iUseArrow))
-						{
-							m_me->OnMove(true);
-							pkVictim->OnMove();
-
-							if (pkVictim->CanBeginFight())
-								pkVictim->BeginFight(m_me);
-
-							sys_log(0, "%s gigung %s", m_me->GetName(), pkVictim->GetName());
-							m_me->ComputeSkill(m_bType, pkVictim);
-							m_me->UseArrow(pkArrow, iUseArrow);
-						}
+						m_me->PointChange(POINT_SP, -5);
 					}
 
-					break;
-				case SKILL_HWAJO:
-					{
-						int iUseArrow = 1;
-						if (iUseArrow == m_me->GetArrowAndBow(&pkBow, &pkArrow, iUseArrow))
-						{
-							m_me->OnMove(true);
-							pkVictim->OnMove();
+				iDam = CalcArrowDamage(m_me, pkVictim, pkBow, pkArrow);
+				m_me->UseArrow(pkArrow, 1);
 
-							if (pkVictim->CanBeginFight())
-								pkVictim->BeginFight(m_me);
+				// check speed hack
+				DWORD	dwCurrentTime = get_dword_time();
+				if (IS_SPEED_HACK(m_me, pkVictim, dwCurrentTime))
+					iDam = 0;
+			}
+			else
+				iDam = CalcMeleeDamage(m_me, pkVictim);
 
-							sys_log(0, "%s hwajo %s", m_me->GetName(), pkVictim->GetName());
-							m_me->ComputeSkill(m_bType, pkVictim);
-							m_me->UseArrow(pkArrow, iUseArrow);
-						}
-					}
+			NormalAttackAffect(m_me, pkVictim);
 
-					break;
+			iDam = iDam * (100 - pkVictim->GetPoint(POINT_RESIST_BOW)) / 100;
 
-				case SKILL_HORSE_WILDATTACK_RANGE:
-					{
-						int iUseArrow = 1;
-						if (iUseArrow == m_me->GetArrowAndBow(&pkBow, &pkArrow, iUseArrow))
-						{
-							m_me->OnMove(true);
-							pkVictim->OnMove();
+			//sys_log(0, "%s arrow %s dam %d", m_me->GetName(), pkVictim->GetName(), iDam);
 
-							if (pkVictim->CanBeginFight())
-								pkVictim->BeginFight(m_me);
+			m_me->OnMove(true);
+			pkVictim->OnMove();
 
-							sys_log(0, "%s horse_wildattack %s", m_me->GetName(), pkVictim->GetName());
-							m_me->ComputeSkill(m_bType, pkVictim);
-							m_me->UseArrow(pkArrow, iUseArrow);
-						}
-					}
+			if (pkVictim->CanBeginFight())
+				pkVictim->BeginFight(m_me);
 
-					break;
+			pkVictim->Damage(m_me, iDam, DAMAGE_TYPE_NORMAL_RANGE);
+		}
+		break;
 
-				case SKILL_MARYUNG:
-				case SKILL_TUSOK:
-				case SKILL_BIPABU:
-				case SKILL_NOEJEON:
-				case SKILL_GEOMPUNG:
-				case SKILL_SANGONG:
-				case SKILL_MAHWAN:
-				case SKILL_PABEOB:
-					{
-						m_me->OnMove(true);
-						pkVictim->OnMove();
+		case 1:
+		{
+			int iDam;
 
-						if (pkVictim->CanBeginFight())
-							pkVictim->BeginFight(m_me);
+			if (m_me->IsPC())
+				return;
 
-						sys_log(0, "%s - Skill %d -> %s", m_me->GetName(), m_bType, pkVictim->GetName());
-						m_me->ComputeSkill(m_bType, pkVictim);
-					}
-					break;
+			iDam = CalcMagicDamage(m_me, pkVictim);
 
-				case SKILL_CHAIN:
-					{
-						m_me->OnMove(true);
-						pkVictim->OnMove();
+			NormalAttackAffect(m_me, pkVictim);
 
-						if (pkVictim->CanBeginFight())
-							pkVictim->BeginFight(m_me);
+			iDam = iDam * (100 - pkVictim->GetPoint(POINT_RESIST_MAGIC)) / 100;
 
-						sys_log(0, "%s - Skill %d -> %s", m_me->GetName(), m_bType, pkVictim->GetName());
-						m_me->ComputeSkill(m_bType, pkVictim);
+			//sys_log(0, "%s arrow %s dam %d", m_me->GetName(), pkVictim->GetName(), iDam);
 
-					}
-					break;
+			m_me->OnMove(true);
+			pkVictim->OnMove();
 
-				case SKILL_YONGBI:
-					{
-						m_me->OnMove(true);
-					}
-					break;
+			if (pkVictim->CanBeginFight())
+				pkVictim->BeginFight(m_me);
 
-				default:
-					sys_err("CFuncShoot: I don't know this type [%d] of range attack.", (int) m_bType);
+			pkVictim->Damage(m_me, iDam, DAMAGE_TYPE_MAGIC);
+		}
+		break;
+
+		case SKILL_YEONSA:
+		{
+			int iUseArrow = 1;
+			{
+				if (iUseArrow == m_me->GetArrowAndBow(&pkBow, &pkArrow, iUseArrow))
+				{
+					m_me->OnMove(true);
+					pkVictim->OnMove();
+
+					if (pkVictim->CanBeginFight())
+						pkVictim->BeginFight(m_me);
+
+					m_me->ComputeSkill(m_bType, pkVictim);
+					m_me->UseArrow(pkArrow, iUseArrow);
+
+					if (pkVictim->IsDead())
+						break;
+				}
+				else
 					break;
 			}
-
-			m_bSucceed = TRUE;
 		}
+		break;
+
+		case SKILL_KWANKYEOK:
+		{
+			int iUseArrow = 1;
+			if (iUseArrow == m_me->GetArrowAndBow(&pkBow, &pkArrow, iUseArrow))
+			{
+				m_me->OnMove(true);
+				pkVictim->OnMove();
+
+				if (pkVictim->CanBeginFight())
+					pkVictim->BeginFight(m_me);
+
+				sys_log(0, "%s kwankeyok %s", m_me->GetName(), pkVictim->GetName());
+				m_me->ComputeSkill(m_bType, pkVictim);
+				m_me->UseArrow(pkArrow, iUseArrow);
+			}
+		}
+		break;
+
+		case SKILL_GIGUNG:
+		{
+			int iUseArrow = 1;
+			if (iUseArrow == m_me->GetArrowAndBow(&pkBow, &pkArrow, iUseArrow))
+			{
+				m_me->OnMove(true);
+				pkVictim->OnMove();
+
+				if (pkVictim->CanBeginFight())
+					pkVictim->BeginFight(m_me);
+
+				sys_log(0, "%s gigung %s", m_me->GetName(), pkVictim->GetName());
+				m_me->ComputeSkill(m_bType, pkVictim);
+				m_me->UseArrow(pkArrow, iUseArrow);
+			}
+		}
+
+		break;
+		case SKILL_HWAJO:
+		{
+			int iUseArrow = 1;
+			if (iUseArrow == m_me->GetArrowAndBow(&pkBow, &pkArrow, iUseArrow))
+			{
+				m_me->OnMove(true);
+				pkVictim->OnMove();
+
+				if (pkVictim->CanBeginFight())
+					pkVictim->BeginFight(m_me);
+
+				sys_log(0, "%s hwajo %s", m_me->GetName(), pkVictim->GetName());
+				m_me->ComputeSkill(m_bType, pkVictim);
+				m_me->UseArrow(pkArrow, iUseArrow);
+			}
+		}
+
+		break;
+
+		case SKILL_HORSE_WILDATTACK_RANGE:
+		{
+			int iUseArrow = 1;
+			if (iUseArrow == m_me->GetArrowAndBow(&pkBow, &pkArrow, iUseArrow))
+			{
+				m_me->OnMove(true);
+				pkVictim->OnMove();
+
+				if (pkVictim->CanBeginFight())
+					pkVictim->BeginFight(m_me);
+
+				sys_log(0, "%s horse_wildattack %s", m_me->GetName(), pkVictim->GetName());
+				m_me->ComputeSkill(m_bType, pkVictim);
+				m_me->UseArrow(pkArrow, iUseArrow);
+			}
+		}
+
+		break;
+
+		case SKILL_MARYUNG:
+		case SKILL_TUSOK:
+		case SKILL_BIPABU:
+		case SKILL_NOEJEON:
+		case SKILL_GEOMPUNG:
+		case SKILL_SANGONG:
+		case SKILL_MAHWAN:
+		case SKILL_PABEOB:
+		{
+			m_me->OnMove(true);
+			pkVictim->OnMove();
+
+			if (pkVictim->CanBeginFight())
+				pkVictim->BeginFight(m_me);
+
+			sys_log(0, "%s - Skill %d -> %s", m_me->GetName(), m_bType, pkVictim->GetName());
+			m_me->ComputeSkill(m_bType, pkVictim);
+		}
+		break;
+
+		case SKILL_CHAIN:
+		{
+			m_me->OnMove(true);
+			pkVictim->OnMove();
+
+			if (pkVictim->CanBeginFight())
+				pkVictim->BeginFight(m_me);
+
+			sys_log(0, "%s - Skill %d -> %s", m_me->GetName(), m_bType, pkVictim->GetName());
+			m_me->ComputeSkill(m_bType, pkVictim);
+		}
+		break;
+
+		case SKILL_YONGBI:
+		{
+			m_me->OnMove(true);
+		}
+		break;
+
+		default:
+			sys_err("CFuncShoot: I don't know this type [%d] of range attack.", (int)m_bType);
+			break;
+		}
+
+		m_bSucceed = TRUE;
+	}
 };
 
 bool CHARACTER::Shoot(BYTE bType)
@@ -3102,8 +3094,8 @@ void CHARACTER::FlyTarget(DWORD dwTargetVID, long x, long y, BYTE bHeader)
 	TPacketGCFlyTargeting pack;
 
 	//pack.bHeader	= HEADER_GC_FLY_TARGETING;
-	pack.bHeader	= (bHeader == HEADER_CG_FLY_TARGETING) ? HEADER_GC_FLY_TARGETING : HEADER_GC_ADD_FLY_TARGETING;
-	pack.dwShooterVID	= GetVID();
+	pack.bHeader = (bHeader == HEADER_CG_FLY_TARGETING) ? HEADER_GC_FLY_TARGETING : HEADER_GC_ADD_FLY_TARGETING;
+	pack.dwShooterVID = GetVID();
 
 	if (pkVictim)
 	{
@@ -3139,7 +3131,7 @@ LPCHARACTER CHARACTER::GetNearestVictim(LPCHARACTER pkChr)
 
 	while (it != m_map_kDamage.end())
 	{
-		const VID & c_VID = it->first;
+		const VID& c_VID = it->first;
 		++it;
 
 		LPCHARACTER pAttacker = CHARACTER_MANAGER::instance().Find(c_VID);
@@ -3148,8 +3140,8 @@ LPCHARACTER CHARACTER::GetNearestVictim(LPCHARACTER pkChr)
 			continue;
 
 		if (pAttacker->IsAffectFlag(AFF_EUNHYUNG) ||
-				pAttacker->IsAffectFlag(AFF_INVISIBILITY) ||
-				pAttacker->IsAffectFlag(AFF_REVIVE_INVISIBLE))
+			pAttacker->IsAffectFlag(AFF_INVISIBILITY) ||
+			pAttacker->IsAffectFlag(AFF_REVIVE_INVISIBLE))
 			continue;
 
 		float fDist = DISTANCE_APPROX(pAttacker->GetX() - pkChr->GetX(), pAttacker->GetY() - pkChr->GetY());
@@ -3312,7 +3304,7 @@ struct FuncForgetMyAttacker
 	{
 		if (ent->IsType(ENTITY_CHARACTER))
 		{
-			LPCHARACTER ch = (LPCHARACTER) ent;
+			LPCHARACTER ch = (LPCHARACTER)ent;
 			if (ch->IsPC())
 				return;
 			if (ch->m_kVIDVictim == m_ch->GetVID())
@@ -3332,7 +3324,7 @@ struct FuncAggregateMonster
 	{
 		if (ent->IsType(ENTITY_CHARACTER))
 		{
-			LPCHARACTER ch = (LPCHARACTER) ent;
+			LPCHARACTER ch = (LPCHARACTER)ent;
 			if (ch->IsPC())
 				return;
 			if (!ch->IsMonster())
@@ -3360,7 +3352,7 @@ struct FuncAttractRanger
 	{
 		if (ent->IsType(ENTITY_CHARACTER))
 		{
-			LPCHARACTER ch = (LPCHARACTER) ent;
+			LPCHARACTER ch = (LPCHARACTER)ent;
 			if (ch->IsPC())
 				return;
 			if (!ch->IsMonster())
@@ -3373,7 +3365,7 @@ struct FuncAttractRanger
 				if (iNewRange < 150)
 					iNewRange = 150;
 
-				ch->AddAffect(AFFECT_BOW_DISTANCE, POINT_BOW_DISTANCE, iNewRange - ch->GetMobAttackRange(), AFF_NONE, 3*60, 0, false);
+				ch->AddAffect(AFFECT_BOW_DISTANCE, POINT_BOW_DISTANCE, iNewRange - ch->GetMobAttackRange(), AFF_NONE, 3 * 60, 0, false);
 			}
 		}
 	}
@@ -3393,7 +3385,7 @@ struct FuncPullMonster
 	{
 		if (ent->IsType(ENTITY_CHARACTER))
 		{
-			LPCHARACTER ch = (LPCHARACTER) ent;
+			LPCHARACTER ch = (LPCHARACTER)ent;
 			if (ch->IsPC())
 				return;
 			if (!ch->IsMonster())
@@ -3466,28 +3458,28 @@ void CHARACTER::PullMonster()
 	}
 }
 
-void CHARACTER::UpdateAggrPointEx(LPCHARACTER pAttacker, EDamageType type, int dam, CHARACTER::TBattleInfo & info)
+void CHARACTER::UpdateAggrPointEx(LPCHARACTER pAttacker, EDamageType type, int dam, CHARACTER::TBattleInfo& info)
 {
 	switch (type)
 	{
-		case DAMAGE_TYPE_NORMAL_RANGE:
-			dam = (int) (dam*1.2f);
-			break;
+	case DAMAGE_TYPE_NORMAL_RANGE:
+		dam = (int)(dam * 1.2f);
+		break;
 
-		case DAMAGE_TYPE_RANGE:
-			dam = (int) (dam*1.5f);
-			break;
+	case DAMAGE_TYPE_RANGE:
+		dam = (int)(dam * 1.5f);
+		break;
 
-		case DAMAGE_TYPE_MAGIC:
-			dam = (int) (dam*1.2f);
-			break;
+	case DAMAGE_TYPE_MAGIC:
+		dam = (int)(dam * 1.2f);
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 
 	if (pAttacker == GetVictim())
-		dam = (int) (dam * 1.2f);
+		dam = (int)(dam * 1.2f);
 
 	info.iAggro += dam;
 

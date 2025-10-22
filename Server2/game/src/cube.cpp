@@ -78,42 +78,42 @@ public:
 /*                  STATIC FUNCTIONS                      */
 /*--------------------------------------------------------*/
 
-static bool FN_check_item_count (LPITEM *items, DWORD item_vnum, int need_count)
+static bool FN_check_item_count(LPITEM* items, DWORD item_vnum, int need_count)
 {
 	int	count = 0;
 
 	// for all cube
-	for (int i=0; i<CUBE_MAX_NUM; ++i)
+	for (int i = 0; i < CUBE_MAX_NUM; ++i)
 	{
-		if (NULL==items[i])	continue;
+		if (NULL == items[i])	continue;
 
-		if (item_vnum==items[i]->GetVnum())
+		if (item_vnum == items[i]->GetVnum())
 		{
 			count += items[i]->GetCount();
 		}
 	}
 
-	return (count>=need_count);
+	return (count >= need_count);
 }
 
-static void FN_remove_material (LPITEM *items, DWORD item_vnum, int need_count)
+static void FN_remove_material(LPITEM* items, DWORD item_vnum, int need_count)
 {
-	int		count	= 0;
-	LPITEM	item	= NULL;
+	int		count = 0;
+	LPITEM	item = NULL;
 
 	// for all cube
-	for (int i=0; i<CUBE_MAX_NUM; ++i)
+	for (int i = 0; i < CUBE_MAX_NUM; ++i)
 	{
-		if (NULL==items[i])	continue;
+		if (NULL == items[i])	continue;
 
 		item = items[i];
-		if (item_vnum==item->GetVnum())
+		if (item_vnum == item->GetVnum())
 		{
 			count += item->GetCount();
 
-			if (count>need_count)
+			if (count > need_count)
 			{
-				item->SetCount(count-need_count);
+				item->SetCount(count - need_count);
 				return;
 			}
 			else
@@ -125,57 +125,57 @@ static void FN_remove_material (LPITEM *items, DWORD item_vnum, int need_count)
 	}
 }
 
-static CUBE_DATA* FN_find_cube (LPITEM *items, WORD npc_vnum)
+static CUBE_DATA* FN_find_cube(LPITEM* items, WORD npc_vnum)
 {
 	DWORD	i, end_index;
 
-	if (0==npc_vnum)	return NULL;
+	if (0 == npc_vnum)	return NULL;
 
 	// FOR ALL CUBE_PROTO
 	end_index = s_cube_proto.size();
-	for (i=0; i<end_index; ++i)
+	for (i = 0; i < end_index; ++i)
 	{
-		if ( s_cube_proto[i]->can_make_item(items, npc_vnum) )
+		if (s_cube_proto[i]->can_make_item(items, npc_vnum))
 			return s_cube_proto[i];
 	}
 
 	return NULL;
 }
 
-static bool FN_check_valid_npc( WORD vnum )
+static bool FN_check_valid_npc(WORD vnum)
 {
-	for ( std::vector<CUBE_DATA*>::iterator iter = s_cube_proto.begin(); iter != s_cube_proto.end(); iter++ )
+	for (std::vector<CUBE_DATA*>::iterator iter = s_cube_proto.begin(); iter != s_cube_proto.end(); iter++)
 	{
-		if ( std::find((*iter)->npc_vnum.begin(), (*iter)->npc_vnum.end(), vnum) != (*iter)->npc_vnum.end() )
+		if (std::find((*iter)->npc_vnum.begin(), (*iter)->npc_vnum.end(), vnum) != (*iter)->npc_vnum.end())
 			return true;
 	}
 
 	return false;
 }
 
-static bool FN_check_cube_data (CUBE_DATA *cube_data)
+static bool FN_check_cube_data(CUBE_DATA* cube_data)
 {
 	DWORD	i = 0;
 	DWORD	end_index = 0;
 
 	end_index = cube_data->npc_vnum.size();
-	for (i=0; i<end_index; ++i)
+	for (i = 0; i < end_index; ++i)
 	{
-		if ( cube_data->npc_vnum[i] == 0 )	return false;
+		if (cube_data->npc_vnum[i] == 0)	return false;
 	}
 
 	end_index = cube_data->item.size();
-	for (i=0; i<end_index; ++i)
+	for (i = 0; i < end_index; ++i)
 	{
-		if ( cube_data->item[i].vnum == 0 )		return false;
-		if ( cube_data->item[i].count == 0 )	return false;
+		if (cube_data->item[i].vnum == 0)		return false;
+		if (cube_data->item[i].count == 0)	return false;
 	}
 
 	end_index = cube_data->reward.size();
-	for (i=0; i<end_index; ++i)
+	for (i = 0; i < end_index; ++i)
 	{
-		if ( cube_data->reward[i].vnum == 0 )	return false;
-		if ( cube_data->reward[i].count == 0 )	return false;
+		if (cube_data->reward[i].vnum == 0)	return false;
+		if (cube_data->reward[i].count == 0)	return false;
 	}
 	return true;
 }
@@ -186,7 +186,7 @@ CUBE_DATA::CUBE_DATA()
 	this->gold = 0;
 }
 
-bool CUBE_DATA::can_make_item (LPITEM *items, WORD npc_vnum)
+bool CUBE_DATA::can_make_item(LPITEM* items, WORD npc_vnum)
 {
 	DWORD	i, end_index;
 	DWORD	need_vnum;
@@ -195,62 +195,62 @@ bool CUBE_DATA::can_make_item (LPITEM *items, WORD npc_vnum)
 
 	// check npc_vnum
 	end_index = this->npc_vnum.size();
-	for (i=0; i<end_index; ++i)
+	for (i = 0; i < end_index; ++i)
 	{
 		if (npc_vnum == this->npc_vnum[i])
 			found_npc = true;
 	}
-	if (false==found_npc)	return false;
+	if (false == found_npc)	return false;
 
 	end_index = this->item.size();
-	for (i=0; i<end_index; ++i)
+	for (i = 0; i < end_index; ++i)
 	{
-		need_vnum	= this->item[i].vnum;
-		need_count	= this->item[i].count;
+		need_vnum = this->item[i].vnum;
+		need_count = this->item[i].count;
 
-		if ( false==FN_check_item_count(items, need_vnum, need_count) )
+		if (false == FN_check_item_count(items, need_vnum, need_count))
 			return false;
 	}
 
 	return true;
 }
 
-CUBE_VALUE* CUBE_DATA::reward_value ()
+CUBE_VALUE* CUBE_DATA::reward_value()
 {
-	int		end_index		= 0;
-	DWORD	reward_index	= 0;
+	int		end_index = 0;
+	DWORD	reward_index = 0;
 
 	end_index = this->reward.size();
 	reward_index = number(0, end_index);
-	reward_index = number(0, end_index-1);
+	reward_index = number(0, end_index - 1);
 
 	return &this->reward[reward_index];
 }
 
-void CUBE_DATA::remove_material (LPCHARACTER ch)
+void CUBE_DATA::remove_material(LPCHARACTER ch)
 {
 	DWORD	i, end_index;
 	DWORD	need_vnum;
 	int		need_count;
-	LPITEM	*items = ch->GetCubeItem();
+	LPITEM* items = ch->GetCubeItem();
 
 	end_index = this->item.size();
-	for (i=0; i<end_index; ++i)
+	for (i = 0; i < end_index; ++i)
 	{
-		need_vnum	= this->item[i].vnum;
-		need_count	= this->item[i].count;
+		need_vnum = this->item[i].vnum;
+		need_count = this->item[i].count;
 
-		FN_remove_material (items, need_vnum, need_count);
+		FN_remove_material(items, need_vnum, need_count);
 	}
 }
 
-void Cube_clean_item (LPCHARACTER ch)
+void Cube_clean_item(LPCHARACTER ch)
 {
-	LPITEM	*cube_item;
+	LPITEM* cube_item;
 
 	cube_item = ch->GetCubeItem();
 
-	for (int i=0; i<CUBE_MAX_NUM; ++i)
+	for (int i = 0; i < CUBE_MAX_NUM; ++i)
 	{
 		if (NULL == cube_item[i])
 			continue;
@@ -259,7 +259,7 @@ void Cube_clean_item (LPCHARACTER ch)
 	}
 }
 
-void Cube_open (LPCHARACTER ch)
+void Cube_open(LPCHARACTER ch)
 {
 	if (false == s_isInitializedCubeMaterialInformation)
 	{
@@ -270,14 +270,14 @@ void Cube_open (LPCHARACTER ch)
 		return;
 
 	LPCHARACTER	npc = ch->GetQuestNPC();
-	if (NULL==npc)
+	if (NULL == npc)
 	{
 		if (test_server)
 			sys_log(0, "cube_npc is Null");
 		return;
 	}
 
-	if ( FN_check_valid_npc(npc->GetRaceNum()) == false )
+	if (FN_check_valid_npc(npc->GetRaceNum()) == false)
 	{
 		if (test_server)
 			sys_log(0, "cube not valid NPC");
@@ -289,7 +289,7 @@ void Cube_open (LPCHARACTER ch)
 		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("이미 제조창이 열려있습니다."));
 		return;
 	}
-	if ( ch->GetExchange() || ch->GetMyShop() || ch->GetShopOwner() || ch->IsOpenSafebox() || ch->IsCubeOpen() )
+	if (ch->GetExchange() || ch->GetMyShop() || ch->GetShopOwner() || ch->IsOpenSafebox() || ch->IsCubeOpen())
 	{
 		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("다른 거래중(창고,교환,상점)에는 사용할 수 없습니다."));
 		return;
@@ -309,7 +309,7 @@ void Cube_open (LPCHARACTER ch)
 	ch->ChatPacket(CHAT_TYPE_COMMAND, "cube open %d", npc->GetRaceNum());
 }
 
-void Cube_close (LPCHARACTER ch)
+void Cube_close(LPCHARACTER ch)
 {
 	RETURN_IF_CUBE_IS_NOT_OPENED(ch);
 	Cube_clean_item(ch);
@@ -320,15 +320,15 @@ void Cube_close (LPCHARACTER ch)
 
 void Cube_init()
 {
-	CUBE_DATA * p_cube = NULL;
+	CUBE_DATA* p_cube = NULL;
 	std::vector<CUBE_DATA*>::iterator iter;
 
-	char file_name[256+1];
+	char file_name[256 + 1];
 	snprintf(file_name, sizeof(file_name), "%s/cube.txt", LocaleService_GetBasePath().c_str());
 
 	sys_log(0, "Cube_Init %s", file_name);
 
-	for (iter = s_cube_proto.begin(); iter!=s_cube_proto.end(); iter++)
+	for (iter = s_cube_proto.begin(); iter != s_cube_proto.end(); iter++)
 	{
 		p_cube = *iter;
 		M2_DELETE(p_cube);
@@ -340,15 +340,15 @@ void Cube_init()
 		sys_err("Cube_Init failed");
 }
 
-bool Cube_load (const char *file)
+bool Cube_load(const char* file)
 {
-	FILE	*fp;
+	FILE* fp;
 	char	one_line[256];
 	int		value1, value2;
-	const char	*delim = " \t\r\n";
-	char	*v, *token_string;
-	CUBE_DATA	*cube_data = NULL;
-	CUBE_VALUE	cube_value = {0,0};
+	const char* delim = " \t\r\n";
+	char* v, * token_string;
+	CUBE_DATA* cube_data = NULL;
+	CUBE_VALUE	cube_value = { 0,0 };
 
 	if (0 == file || 0 == file[0])
 		return false;
@@ -385,15 +385,15 @@ bool Cube_load (const char *file)
 		}
 		else TOKEN("item")
 		{
-			cube_value.vnum		= value1;
-			cube_value.count	= value2;
+			cube_value.vnum = value1;
+			cube_value.count = value2;
 
 			cube_data->item.emplace_back(cube_value);
 		}
 		else TOKEN("reward")
 		{
-			cube_value.vnum		= value1;
-			cube_value.count	= value2;
+			cube_value.vnum = value1;
+			cube_value.count = value2;
 
 			cube_data->reward.emplace_back(cube_value);
 		}
@@ -401,42 +401,42 @@ bool Cube_load (const char *file)
 		{
 			cube_data->percent = value1;
 		}
-		else TOKEN("gold")
+	else TOKEN("gold")
+	{
+		cube_data->gold = value1;
+	}
+	else TOKEN("end")
+	{
+		// TODO : check cube data
+		if (false == FN_check_cube_data(cube_data))
 		{
-			cube_data->gold = value1;
+			sys_log(1, "something wrong");
+			M2_DELETE(cube_data);
+			continue;
 		}
-		else TOKEN("end")
-		{
-			// TODO : check cube data
-			if (false == FN_check_cube_data(cube_data))
-			{
-				sys_log(1, "something wrong");
-				M2_DELETE(cube_data);
-				continue;
-			}
-			s_cube_proto.emplace_back(cube_data);
-		}
+		s_cube_proto.emplace_back(cube_data);
+	}
 	}
 
 	fclose(fp);
 	return true;
 }
 
-static void FN_cube_print (CUBE_DATA *data, DWORD index)
+static void FN_cube_print(CUBE_DATA* data, DWORD index)
 {
 	DWORD	i;
 	sys_log(1, "--------------------------------");
 	sys_log(1, "CUBE_DATA[%d]", index);
 
-	for (i=0; i<data->npc_vnum.size(); ++i)
+	for (i = 0; i < data->npc_vnum.size(); ++i)
 	{
 		sys_log(1, "\tNPC_VNUM[%d] = %d", i, data->npc_vnum[i]);
 	}
-	for (i=0; i<data->item.size(); ++i)
+	for (i = 0; i < data->item.size(); ++i)
 	{
 		sys_log(1, "\tITEM[%d]   = (%d, %d)", i, data->item[i].vnum, data->item[i].count);
 	}
-	for (i=0; i<data->reward.size(); ++i)
+	for (i = 0; i < data->reward.size(); ++i)
 	{
 		sys_log(1, "\tREWARD[%d] = (%d, %d)", i, data->reward[i].vnum, data->reward[i].count);
 	}
@@ -444,9 +444,9 @@ static void FN_cube_print (CUBE_DATA *data, DWORD index)
 	sys_log(1, "--------------------------------");
 }
 
-void Cube_print ()
+void Cube_print()
 {
-	for (DWORD i=0; i<s_cube_proto.size(); ++i)
+	for (DWORD i = 0; i < s_cube_proto.size(); ++i)
 	{
 		FN_cube_print(s_cube_proto[i], i);
 	}
@@ -477,12 +477,12 @@ static bool FN_update_cube_status(LPCHARACTER ch)
 }
 
 // return new item
-bool Cube_make (LPCHARACTER ch)
+bool Cube_make(LPCHARACTER ch)
 {
 	LPCHARACTER	npc;
 	int			percent_number = 0;
-	CUBE_DATA	*cube_proto;
-	LPITEM	*items;
+	CUBE_DATA* cube_proto;
+	LPITEM* items;
 	LPITEM	new_item;
 
 	if (!(ch)->IsCubeOpen())
@@ -512,21 +512,21 @@ bool Cube_make (LPCHARACTER ch)
 		return false;
 	}
 
-	CUBE_VALUE	*reward_value = cube_proto->reward_value();
+	CUBE_VALUE* reward_value = cube_proto->reward_value();
 
-	cube_proto->remove_material (ch);
+	cube_proto->remove_material(ch);
 
 	if (0 < cube_proto->gold)
 		ch->PointChange(POINT_GOLD, -(cube_proto->gold), false);
 
-	percent_number = number(1,100);
-	if ( percent_number<=cube_proto->percent)
+	percent_number = number(1, 100);
+	if (percent_number <= cube_proto->percent)
 	{
 		ch->ChatPacket(CHAT_TYPE_COMMAND, "cube success %d %d", reward_value->vnum, reward_value->count);
 		new_item = ch->AutoGiveItem(reward_value->vnum, reward_value->count);
 
 		LogManager::instance().CubeLog(ch->GetPlayerID(), ch->GetX(), ch->GetY(),
-				reward_value->vnum, new_item->GetID(), reward_value->count, 1);
+			reward_value->vnum, new_item->GetID(), reward_value->count, 1);
 		return true;
 	}
 	else
@@ -534,53 +534,53 @@ bool Cube_make (LPCHARACTER ch)
 		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("제조에 실패하였습니다."));
 		ch->ChatPacket(CHAT_TYPE_COMMAND, "cube fail");
 		LogManager::instance().CubeLog(ch->GetPlayerID(), ch->GetX(), ch->GetY(),
-				reward_value->vnum, 0, 0, 0);
+			reward_value->vnum, 0, 0, 0);
 		return false;
 	}
 
 	return false;
 }
 
-void Cube_show_list (LPCHARACTER ch)
+void Cube_show_list(LPCHARACTER ch)
 {
-	LPITEM	*cube_item;
+	LPITEM* cube_item;
 	LPITEM	item;
 
 	RETURN_IF_CUBE_IS_NOT_OPENED(ch);
 
 	cube_item = ch->GetCubeItem();
 
-	for (int i=0; i<CUBE_MAX_NUM; ++i)
+	for (int i = 0; i < CUBE_MAX_NUM; ++i)
 	{
 		item = cube_item[i];
-		if (NULL==item)	continue;
+		if (NULL == item)	continue;
 
 		ch->ChatPacket(CHAT_TYPE_INFO, "cube[%d]: inventory[%d]: %s",
-				i, item->GetCell(), item->GetName());
+			i, item->GetCell(), item->GetName());
 	}
 }
 
-void Cube_add_item (LPCHARACTER ch, int cube_index, int inven_index)
+void Cube_add_item(LPCHARACTER ch, int cube_index, int inven_index)
 {
 	LPITEM	item;
-	LPITEM	*cube_item;
+	LPITEM* cube_item;
 
 	RETURN_IF_CUBE_IS_NOT_OPENED(ch);
 
-	if (inven_index<0 || INVENTORY_MAX_NUM<=inven_index)
+	if (inven_index < 0 || INVENTORY_MAX_NUM <= inven_index)
 		return;
-	if (cube_index<0 || CUBE_MAX_NUM<=cube_index)
+	if (cube_index < 0 || CUBE_MAX_NUM <= cube_index)
 		return;
 
 	item = ch->GetInventoryItem(inven_index);
 
-	if (NULL==item)	return;
+	if (NULL == item)	return;
 
 	cube_item = ch->GetCubeItem();
 
-	for (int i=0; i<CUBE_MAX_NUM; ++i)
+	for (int i = 0; i < CUBE_MAX_NUM; ++i)
 	{
-		if (item==cube_item[i])
+		if (item == cube_item[i])
 		{
 			cube_item[i] = NULL;
 			break;
@@ -591,32 +591,32 @@ void Cube_add_item (LPCHARACTER ch, int cube_index, int inven_index)
 
 	if (test_server)
 		ch->ChatPacket(CHAT_TYPE_INFO, "cube[%d]: inventory[%d]: %s added",
-									cube_index, inven_index, item->GetName());
+			cube_index, inven_index, item->GetName());
 
 	FN_update_cube_status(ch);
 
 	return;
 }
 
-void Cube_delete_item (LPCHARACTER ch, int cube_index)
+void Cube_delete_item(LPCHARACTER ch, int cube_index)
 {
 	LPITEM	item;
-	LPITEM	*cube_item;
+	LPITEM* cube_item;
 
 	RETURN_IF_CUBE_IS_NOT_OPENED(ch);
 
-	if (cube_index<0 || CUBE_MAX_NUM<=cube_index)	return;
+	if (cube_index < 0 || CUBE_MAX_NUM <= cube_index)	return;
 
 	cube_item = ch->GetCubeItem();
 
-	if ( NULL== cube_item[cube_index] )	return;
+	if (NULL == cube_item[cube_index])	return;
 
 	item = cube_item[cube_index];
 	cube_item[cube_index] = NULL;
 
 	if (test_server)
 		ch->ChatPacket(CHAT_TYPE_INFO, "cube[%d]: cube[%d]: %s deleted",
-				cube_index, item->GetCell(), item->GetName());
+			cube_index, item->GetCell(), item->GetName());
 
 	FN_update_cube_status(ch);
 
@@ -782,7 +782,6 @@ void Cube_InformationInitialize()
 					}	// if level
 				}	// for existMaterialInfo
 			}	// if (reward.vnum == existInfo.reward.vnum)
-
 		}	// for resultList
 
 		if (false == bComplicate)
@@ -840,7 +839,6 @@ void Cube_request_result_list(LPCHARACTER ch)
 			resultText.clear();
 			resultCount = 0;
 		}
-
 	}
 
 	// (Server -> Client) /cube r_list npcVNUM resultCount vnum1,count1/vnum2,count2,/vnum3,count3/...

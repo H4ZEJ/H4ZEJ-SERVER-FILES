@@ -15,7 +15,7 @@ void CConfig::Destroy()
 	m_valueMap.clear();
 }
 
-void CConfig::NextLine(FILE *fp)
+void CConfig::NextLine(FILE* fp)
 {
 	int c;
 
@@ -26,7 +26,7 @@ void CConfig::NextLine(FILE *fp)
 	}
 }
 
-bool CConfig::GetWord(FILE *fp, char *tar)
+bool CConfig::GetWord(FILE* fp, char* tar)
 {
 	int i = 0;
 	int c;
@@ -79,7 +79,7 @@ bool CConfig::GetWord(FILE *fp, char *tar)
 	return (i != 0);
 }
 
-bool CConfig::GetLine(FILE* fp, char*dest)
+bool CConfig::GetLine(FILE* fp, char* dest)
 {
 	int c;
 	int i = 0;
@@ -98,7 +98,7 @@ bool CConfig::LoadFile(const char* filename)
 	char 	szTmp[256];
 	char 	comment[256];
 
-	FILE *	fp = fopen(filename, "rb");
+	FILE* fp = fopen(filename, "rb");
 
 	if (fp == NULL)
 		return false;
@@ -115,20 +115,20 @@ bool CConfig::LoadFile(const char* filename)
 
 		switch (mode)
 		{
-			case 0:
-				strlcpy(comment, szTmp, sizeof(comment));
+		case 0:
+			strlcpy(comment, szTmp, sizeof(comment));
+			++mode;
+			break;
+
+		case 1:
+			if (*szTmp == '=')
 				++mode;
-				break;
+			break;
 
-			case 1:
-				if (*szTmp == '=')
-					++mode;
-				break;
-
-			case 2:
-				mode = 0;
-				m_valueMap.emplace(comment, szTmp);
-				break;
+		case 2:
+			mode = 0;
+			m_valueMap.emplace(comment, szTmp);
+			break;
 		}
 
 		// ITEM_ID_RANGE
@@ -137,7 +137,6 @@ bool CConfig::LoadFile(const char* filename)
 			GetLine(fp, szTmp);
 			m_valueMap.emplace(comment, szTmp);
 			mode = 0;
-
 		}
 		// ITEM_ID_RANGE_END
 	}
@@ -146,7 +145,7 @@ bool CConfig::LoadFile(const char* filename)
 	return true;
 }
 
-std::string * CConfig::Search(const char* key)
+std::string* CConfig::Search(const char* key)
 {
 	itertype(m_valueMap) i = m_valueMap.find(key);
 
@@ -156,24 +155,24 @@ std::string * CConfig::Search(const char* key)
 		return (&i->second);
 }
 
-bool CConfig::GetParam(const char*key, int index, DWORD *Param)
+bool CConfig::GetParam(const char* key, int index, DWORD* Param)
 {
-	std::string * pstStr = Search(key);
+	std::string* pstStr = Search(key);
 	if (!pstStr)
 		return false;
 
 	char szParam[5][32];
 
-	sscanf(pstStr->c_str(), "%s %s %s %s %s", szParam[0],szParam[1],szParam[2],szParam[3],szParam[4]);
+	sscanf(pstStr->c_str(), "%s %s %s %s %s", szParam[0], szParam[1], szParam[2], szParam[3], szParam[4]);
 
 	str_to_number(*Param, szParam[index]);
 
 	sys_log(0, "GetParam %d", *Param);
 	return true;
 }
-const char * CConfig::Get(const char* key)
+const char* CConfig::Get(const char* key)
 {
-	std::string * pstStr = Search(key);
+	std::string* pstStr = Search(key);
 
 	if (!pstStr)
 	{
@@ -184,7 +183,7 @@ const char * CConfig::Get(const char* key)
 	return pstStr->c_str();
 }
 
-bool CConfig::GetValue(const char * key, int* dest)
+bool CConfig::GetValue(const char* key, int* dest)
 {
 	if (!Search(key))
 		return false;
@@ -193,7 +192,7 @@ bool CConfig::GetValue(const char * key, int* dest)
 	return true;
 }
 
-bool CConfig::GetValue(const char * key, float *dest)
+bool CConfig::GetValue(const char* key, float* dest)
 {
 	if (!Search(key))
 		return false;
@@ -202,7 +201,7 @@ bool CConfig::GetValue(const char * key, float *dest)
 	return true;
 }
 
-bool CConfig::GetValue(const char * key, DWORD *dest)
+bool CConfig::GetValue(const char* key, DWORD* dest)
 {
 	if (!Search(key))
 		return false;
@@ -211,16 +210,16 @@ bool CConfig::GetValue(const char * key, DWORD *dest)
 	return true;
 }
 
-bool CConfig::GetValue(const char * key, BYTE *dest)
+bool CConfig::GetValue(const char* key, BYTE* dest)
 {
 	if (!Search(key))
 		return false;
 
-	*dest = *(BYTE *) Get(key);
+	*dest = *(BYTE*)Get(key);
 	return true;
 }
 
-bool CConfig::GetValue(const char * key, char *dest, size_t destSize)
+bool CConfig::GetValue(const char* key, char* dest, size_t destSize)
 {
 	if (!Search(key))
 		return false;
@@ -233,7 +232,7 @@ bool CConfig::GetValue(const char * key, char *dest, size_t destSize)
 	return true;
 }
 
-bool CConfig::GetTwoValue(const char* key, DWORD * dest1, DWORD *dest2)
+bool CConfig::GetTwoValue(const char* key, DWORD* dest1, DWORD* dest2)
 {
 	if (!GetParam(key, 0, dest1))
 		return false;

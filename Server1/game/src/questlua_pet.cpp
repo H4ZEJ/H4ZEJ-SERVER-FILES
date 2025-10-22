@@ -28,17 +28,17 @@ namespace quest
 		LPITEM pItem = CQuestManager::instance().GetCurrentItem();
 		if (!ch || !petSystem || !pItem)
 		{
-			lua_pushnumber (L, 0);
+			lua_pushnumber(L, 0);
 			return 1;
 		}
 
 		if (0 == petSystem)
 		{
-			lua_pushnumber (L, 0);
+			lua_pushnumber(L, 0);
 			return 1;
 		}
 
-		DWORD mobVnum= lua_isnumber(L, 1) ? lua_tonumber(L, 1) : 0;
+		DWORD mobVnum = lua_isnumber(L, 1) ? lua_tonumber(L, 1) : 0;
 
 		const char* petName = lua_isstring(L, 2) ? lua_tostring(L, 2) : 0;
 
@@ -47,9 +47,9 @@ namespace quest
 		CPetActor* pet = petSystem->Summon(mobVnum, pItem, petName, bFromFar);
 
 		if (pet != NULL)
-			lua_pushnumber (L, pet->GetVID());
+			lua_pushnumber(L, pet->GetVID());
 		else
-			lua_pushnumber (L, 0);
+			lua_pushnumber(L, 0);
 
 		return 1;
 	}
@@ -63,7 +63,7 @@ namespace quest
 		if (0 == petSystem)
 			return 0;
 
-		DWORD mobVnum= lua_isnumber(L, 1) ? lua_tonumber(L, 1) : 0;
+		DWORD mobVnum = lua_isnumber(L, 1) ? lua_tonumber(L, 1) : 0;
 
 		petSystem->Unsummon(mobVnum);
 		return 1;
@@ -94,7 +94,7 @@ namespace quest
 		if (0 == petSystem)
 			return 0;
 
-		DWORD mobVnum= lua_isnumber(L, 1) ? lua_tonumber(L, 1) : 0;
+		DWORD mobVnum = lua_isnumber(L, 1) ? lua_tonumber(L, 1) : 0;
 
 		CPetActor* petActor = petSystem->GetByVnum(mobVnum);
 
@@ -125,7 +125,7 @@ namespace quest
 
 		if (lua_isstring(L, 2))
 		{
-			pet_ch->SpecificEffectPacket (lua_tostring(L, 2));
+			pet_ch->SpecificEffectPacket(lua_tostring(L, 2));
 		}
 		return 0;
 	}

@@ -9,12 +9,12 @@ CMemoryTextFileLoader::~CMemoryTextFileLoader()
 {
 }
 
-bool CMemoryTextFileLoader::SplitLine(DWORD dwLine, std::vector<std::string>* pstTokenVector, const char * c_szDelimeter)
+bool CMemoryTextFileLoader::SplitLine(DWORD dwLine, std::vector<std::string>* pstTokenVector, const char* c_szDelimeter)
 {
 	pstTokenVector->clear();
 
 	std::string stToken;
-	const std::string & c_rstLine = GetLineString(dwLine);
+	const std::string& c_rstLine = GetLineString(dwLine);
 
 	DWORD basePos = 0;
 
@@ -68,7 +68,7 @@ bool CMemoryTextFileLoader::CheckLineIndex(DWORD dwLine)
 	return true;
 }
 
-const std::string & CMemoryTextFileLoader::GetLineString(DWORD dwLine)
+const std::string& CMemoryTextFileLoader::GetLineString(DWORD dwLine)
 {
 	assert(CheckLineIndex(dwLine));
 	return m_stLineVector[dwLine];
@@ -78,7 +78,7 @@ void CMemoryTextFileLoader::Bind(int bufSize, const void* c_pvBuf)
 {
 	m_stLineVector.clear();
 
-	const char * c_pcBuf = (const char *)c_pvBuf;
+	const char* c_pcBuf = (const char*)c_pvBuf;
 	std::string stLine;
 	int pos = 0;
 
@@ -97,7 +97,7 @@ void CMemoryTextFileLoader::Bind(int bufSize, const void* c_pvBuf)
 		}
 		else if (c < 0)
 		{
-			stLine.append(c_pcBuf + (pos-1), 2);
+			stLine.append(c_pcBuf + (pos - 1), 2);
 			++pos;
 		}
 		else

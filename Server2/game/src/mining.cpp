@@ -141,9 +141,9 @@ namespace mining
 			return;
 		}
 
-		#ifdef ENABLE_AUTO_PICK_ORE
+#ifdef ENABLE_AUTO_PICK_ORE
 		ch->AutoGiveItem(item);
-		#else
+#else
 		PIXEL_POSITION pos;
 		pos.x = ch->GetX() + number(-200, 200);
 		pos.y = ch->GetY() + number(-200, 200);
@@ -151,7 +151,7 @@ namespace mining
 		item->AddToGround(ch->GetMapIndex(), pos);
 		item->StartDestroyEvent();
 		item->SetOwnership(ch, 15);
-		#endif
+#endif
 
 		DBManager::instance().SendMoneyLog(MONEY_LOG_DROP, item->GetVnum(), item->GetCount());
 	}
@@ -175,8 +175,8 @@ namespace mining
 		DWORD vid_load;
 
 		mining_event_info()
-		: pid( 0 )
-		, vid_load( 0 )
+			: pid(0)
+			, vid_load(0)
 		{
 		}
 	};
@@ -230,12 +230,12 @@ namespace mining
 
 	bool Pick_IsPracticeSuccess(CItem& pick)
 	{
-		return (number(1,pick.GetValue(1))==1);
+		return (number(1, pick.GetValue(1)) == 1);
 	}
 
 	bool Pick_IsRefineSuccess(CItem& pick)
 	{
-		return (number(1,100) <= pick.GetValue(3));
+		return (number(1, 100) <= pick.GetValue(3));
 	}
 
 	int RealRefinePick(LPCHARACTER ch, LPITEM item)
@@ -331,7 +331,7 @@ namespace mining
 			return;
 
 		CItem& pick = *item;
-		if (pick.GetRefinedVnum()<=0)
+		if (pick.GetRefinedVnum() <= 0)
 			return;
 
 		if (Pick_IsPracticeSuccess(pick))
@@ -346,7 +346,7 @@ namespace mining
 				Pick_IncCurExp(pick);
 
 				ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("곡괭이의 수련도가 증가하였습니다! (%d/%d)"),
-						Pick_GetCurExp(pick), Pick_GetMaxExp(pick));
+					Pick_GetCurExp(pick), Pick_GetMaxExp(pick));
 
 				if (Pick_Refinable(pick))
 				{
@@ -360,11 +360,11 @@ namespace mining
 
 	EVENTFUNC(mining_event)
 	{
-		mining_event_info* info = dynamic_cast<mining_event_info*>( event->info );
+		mining_event_info* info = dynamic_cast<mining_event_info*>(event->info);
 
-		if ( info == NULL )
+		if (info == NULL)
 		{
-			sys_err( "mining_event_info> <Factor> Null pointer" );
+			sys_err("mining_event_info> <Factor> Null pointer");
 			return 0;
 		}
 
@@ -404,10 +404,10 @@ namespace mining
 			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("채광에 실패하였습니다."));
 		}
 
-		#ifdef ENABLE_AUTO_MINING
+#ifdef ENABLE_AUTO_MINING
 		if (!load->IsDead())
 			ch->mining(load);
-		#endif
+#endif
 
 		PracticePick(ch, pick);
 
@@ -466,7 +466,7 @@ namespace mining
 		return false;
 	}
 
-	bool IsVeinOfOre (DWORD vnum)
+	bool IsVeinOfOre(DWORD vnum)
 	{
 		for (int i = 0; i < MAX_ORE; i++)
 		{

@@ -17,17 +17,17 @@ CLoginData::CLoginData()
 	memset(&m_data, 0, sizeof(TAccountTable));
 }
 
-TAccountTable & CLoginData::GetAccountRef()
+TAccountTable& CLoginData::GetAccountRef()
 {
 	return m_data;
 }
 
-void CLoginData::SetClientKey(const DWORD * c_pdwClientKey)
+void CLoginData::SetClientKey(const DWORD* c_pdwClientKey)
 {
 	thecore_memcpy(&m_adwClientKey, c_pdwClientKey, sizeof(DWORD) * 4);
 }
 
-const DWORD * CLoginData::GetClientKey()
+const DWORD* CLoginData::GetClientKey()
 {
 	return &m_adwClientKey[0];
 }
@@ -62,12 +62,12 @@ DWORD CLoginData::GetLogonTime()
 	return m_dwLogonTime;
 }
 
-void CLoginData::SetIP(const char * c_pszIP)
+void CLoginData::SetIP(const char* c_pszIP)
 {
 	strlcpy(m_szIP, c_pszIP, sizeof(m_szIP));
 }
 
-const char * CLoginData::GetIP()
+const char* CLoginData::GetIP()
 {
 	return m_szIP;
 }
@@ -101,7 +101,7 @@ bool CLoginData::IsDeleted()
 	return m_bDeleted;
 }
 
-void CLoginData::SetPremium(int * paiPremiumTimes)
+void CLoginData::SetPremium(int* paiPremiumTimes)
 {
 	thecore_memcpy(m_aiPremiumTimes, paiPremiumTimes, sizeof(m_aiPremiumTimes));
 }
@@ -114,7 +114,7 @@ int CLoginData::GetPremium(BYTE type)
 	return m_aiPremiumTimes[type];
 }
 
-int * CLoginData::GetPremiumPtr()
+int* CLoginData::GetPremiumPtr()
 {
 	return &m_aiPremiumTimes[0];
 }

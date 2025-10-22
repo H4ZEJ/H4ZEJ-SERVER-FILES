@@ -18,7 +18,7 @@ static int pid_init(void)
 #ifdef __WIN32__
 	return true;
 #else
-	FILE*	fp;
+	FILE* fp;
 	if ((fp = fopen("pid", "w")))
 	{
 		fprintf(fp, "%d", getpid());
@@ -38,9 +38,9 @@ static int pid_init(void)
 static void pid_deinit(void)
 {
 #ifdef __WIN32__
-    return;
+	return;
 #else
-    remove("./pid");
+	remove("./pid");
 	sys_log(0, "\nEnd of pid\n"); // @warme012
 #endif
 }
@@ -48,12 +48,12 @@ static void pid_deinit(void)
 int thecore_init(int fps, HEARTFUNC heartbeat_func)
 {
 #ifdef __WIN32__
-    srand(time(0));
+	srand(time(0));
 #else
-    srandom(time(0) + getpid() + getuid());
-    srandomdev();
+	srandom(time(0) + getpid() + getuid());
+	srandomdev();
 #endif
-    signal_setup();
+	signal_setup();
 
 	if (!log_init() || !pid_init())
 		return false;
@@ -66,14 +66,14 @@ int thecore_init(int fps, HEARTFUNC heartbeat_func)
 
 void thecore_shutdown()
 {
-    shutdowned = TRUE;
+	shutdowned = TRUE;
 }
 
 int thecore_idle(void)
 {
-    thecore_tick();
+	thecore_tick();
 
-    if (shutdowned)
+	if (shutdowned)
 		return 0;
 
 	int pulses;
@@ -85,8 +85,8 @@ int thecore_idle(void)
 		return 0;
 	}
 
-    thecore_profiler[PF_IDLE] += (get_dword_time() - t);
-    return pulses;
+	thecore_profiler[PF_IDLE] += (get_dword_time() - t);
+	return pulses;
 }
 
 void thecore_destroy(void)
@@ -102,12 +102,12 @@ int thecore_pulse(void)
 
 float thecore_pulse_per_second(void)
 {
-	return ((float) thecore_heart->passes_per_sec);
+	return ((float)thecore_heart->passes_per_sec);
 }
 
 float thecore_time(void)
 {
-	return ((float) thecore_heart->pulse / (float) thecore_heart->passes_per_sec);
+	return ((float)thecore_heart->pulse / (float)thecore_heart->passes_per_sec);
 }
 
 int thecore_is_shutdowned(void)

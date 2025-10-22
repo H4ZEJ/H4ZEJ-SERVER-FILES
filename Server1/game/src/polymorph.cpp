@@ -42,24 +42,24 @@ bool CPolymorphUtils::PolymorphCharacter(LPCHARACTER pChar, LPITEM pItem, const 
 
 	switch (pChar->GetSkillMasterType(POLYMORPH_SKILL_ID))
 	{
-		case SKILL_NORMAL:
-			dwDuration = 10;
-			break;
+	case SKILL_NORMAL:
+		dwDuration = 10;
+		break;
 
-		case SKILL_MASTER:
-			dwDuration = 15;
-			break;
+	case SKILL_MASTER:
+		dwDuration = 15;
+		break;
 
-		case SKILL_GRAND_MASTER:
-			dwDuration = 20;
-			break;
+	case SKILL_GRAND_MASTER:
+		dwDuration = 20;
+		break;
 
-		case SKILL_PERFECT_MASTER:
-			dwDuration = 25;
-			break;
+	case SKILL_PERFECT_MASTER:
+		dwDuration = 25;
+		break;
 
-		default:
-			return false;
+	default:
+		return false;
 	}
 
 	// dwDuration *= 60;
@@ -86,21 +86,21 @@ bool CPolymorphUtils::PolymorphCharacter(LPCHARACTER pChar, LPITEM pItem, const 
 
 	switch (GetBonusType(pMob->m_table.dwVnum))
 	{
-		case POLYMORPH_ATK_BONUS:
-			pChar->AddAffect(AFFECT_POLYMORPH, POINT_ATT_BONUS, dwBonusPercent, AFF_POLYMORPH, dwDuration - 1, 0, false);
-			break;
+	case POLYMORPH_ATK_BONUS:
+		pChar->AddAffect(AFFECT_POLYMORPH, POINT_ATT_BONUS, dwBonusPercent, AFF_POLYMORPH, dwDuration - 1, 0, false);
+		break;
 
-		case POLYMORPH_DEF_BONUS:
-			pChar->AddAffect(AFFECT_POLYMORPH, POINT_DEF_BONUS, dwBonusPercent, AFF_POLYMORPH, dwDuration - 1, 0, false);
-			break;
+	case POLYMORPH_DEF_BONUS:
+		pChar->AddAffect(AFFECT_POLYMORPH, POINT_DEF_BONUS, dwBonusPercent, AFF_POLYMORPH, dwDuration - 1, 0, false);
+		break;
 
-		case POLYMORPH_SPD_BONUS:
-			pChar->AddAffect(AFFECT_POLYMORPH, POINT_MOV_SPEED, dwBonusPercent, AFF_POLYMORPH, dwDuration - 1, 0, false);
-			break;
+	case POLYMORPH_SPD_BONUS:
+		pChar->AddAffect(AFFECT_POLYMORPH, POINT_MOV_SPEED, dwBonusPercent, AFF_POLYMORPH, dwDuration - 1, 0, false);
+		break;
 
-		default:
-		case POLYMORPH_NO_BONUS:
-			break;
+	default:
+	case POLYMORPH_NO_BONUS:
+		break;
 	}
 
 	return true;
@@ -132,7 +132,7 @@ bool CPolymorphUtils::GiveBook(LPCHARACTER pChar, DWORD dwMobVnum, DWORD dwPract
 	if (CMobManager::instance().Get(dwMobVnum) == NULL)
 	{
 		sys_err("Wrong Polymorph vnum passed: CPolymorphUtils::GiveBook(PID(%d), %d %d %d %d)",
-				pChar->GetPlayerID(), dwMobVnum, dwPracticeCount, BookLevel, LevelLimit);
+			pChar->GetPlayerID(), dwMobVnum, dwPracticeCount, BookLevel, LevelLimit);
 		return false;
 	}
 
@@ -148,7 +148,7 @@ bool CPolymorphUtils::BookUpgrade(LPCHARACTER pChar, LPITEM pItem)
 		return false;
 
 	pItem->SetSocket(1, pItem->GetSocket(2) * 50);
-	pItem->SetSocket(2, pItem->GetSocket(2)+1);
+	pItem->SetSocket(2, pItem->GetSocket(2) + 1);
 	return true;
 }
 //martysama0134's 8e0aa8057d3f54320e391131a48866b4

@@ -36,7 +36,7 @@ void CHARACTER::SyncQuickslot(BYTE bType, BYTE bOldPos, BYTE bNewPos)
 	}
 }
 
-bool CHARACTER::GetQuickslot(BYTE pos, TQuickslot ** ppSlot)
+bool CHARACTER::GetQuickslot(BYTE pos, TQuickslot** ppSlot)
 {
 	if (!m_PlayerSlots)
 		return false;
@@ -48,7 +48,7 @@ bool CHARACTER::GetQuickslot(BYTE pos, TQuickslot ** ppSlot)
 	return true;
 }
 
-bool CHARACTER::SetQuickslot(BYTE pos, TQuickslot & rSlot)
+bool CHARACTER::SetQuickslot(BYTE pos, TQuickslot& rSlot)
 {
 	if (!m_PlayerSlots)
 		return false;
@@ -72,32 +72,32 @@ bool CHARACTER::SetQuickslot(BYTE pos, TQuickslot & rSlot)
 
 	switch (rSlot.type)
 	{
-		case QUICKSLOT_TYPE_ITEM:
-			if (false == srcCell.IsDefaultInventoryPosition() && false == srcCell.IsBeltInventoryPosition())
-				return false;
-
-			break;
-
-		case QUICKSLOT_TYPE_SKILL:
-			if ((int) rSlot.pos >= SKILL_MAX_NUM)
-				return false;
-
-			break;
-
-		case QUICKSLOT_TYPE_COMMAND:
-			break;
-
-		default:
+	case QUICKSLOT_TYPE_ITEM:
+		if (false == srcCell.IsDefaultInventoryPosition() && false == srcCell.IsBeltInventoryPosition())
 			return false;
+
+		break;
+
+	case QUICKSLOT_TYPE_SKILL:
+		if ((int)rSlot.pos >= SKILL_MAX_NUM)
+			return false;
+
+		break;
+
+	case QUICKSLOT_TYPE_COMMAND:
+		break;
+
+	default:
+		return false;
 	}
 
 	m_PlayerSlots->pQuickslot[pos] = rSlot;
 
 	if (GetDesc())
 	{
-		pack_quickslot_add.header	= HEADER_GC_QUICKSLOT_ADD;
-		pack_quickslot_add.pos		= pos;
-		pack_quickslot_add.slot		= m_PlayerSlots->pQuickslot[pos];
+		pack_quickslot_add.header = HEADER_GC_QUICKSLOT_ADD;
+		pack_quickslot_add.pos = pos;
+		pack_quickslot_add.slot = m_PlayerSlots->pQuickslot[pos];
 
 		GetDesc()->Packet(&pack_quickslot_add, sizeof(pack_quickslot_add));
 	}
@@ -116,8 +116,8 @@ bool CHARACTER::DelQuickslot(BYTE pos)
 	memset(&m_PlayerSlots->pQuickslot[pos], 0, sizeof(TQuickslot));
 
 	struct packet_quickslot_del pack_quickslot_del;
-	pack_quickslot_del.header	= HEADER_GC_QUICKSLOT_DEL;
-	pack_quickslot_del.pos	= pos;
+	pack_quickslot_del.header = HEADER_GC_QUICKSLOT_DEL;
+	pack_quickslot_del.pos = pos;
 
 	GetDesc()->Packet(&pack_quickslot_del, sizeof(pack_quickslot_del));
 	return true;
@@ -138,9 +138,9 @@ bool CHARACTER::SwapQuickslot(BYTE a, BYTE b)
 	m_PlayerSlots->pQuickslot[b] = quickslot;
 
 	struct packet_quickslot_swap pack_quickslot_swap;
-	pack_quickslot_swap.header	= HEADER_GC_QUICKSLOT_SWAP;
-	pack_quickslot_swap.pos	= a;
-	pack_quickslot_swap.pos_to	= b;
+	pack_quickslot_swap.header = HEADER_GC_QUICKSLOT_SWAP;
+	pack_quickslot_swap.pos = a;
+	pack_quickslot_swap.pos_to = b;
 
 	GetDesc()->Packet(&pack_quickslot_swap, sizeof(pack_quickslot_swap));
 	return true;
@@ -154,9 +154,9 @@ void CHARACTER::ChainQuickslotItem(LPITEM pItem, BYTE bType, BYTE bOldPos)
 	if (pItem->IsDragonSoul())
 		return;
 
-	for ( int i=0; i < QUICKSLOT_MAX_NUM; ++i )
+	for (int i = 0; i < QUICKSLOT_MAX_NUM; ++i)
 	{
-		if ( m_PlayerSlots->pQuickslot[i].type == bType && m_PlayerSlots->pQuickslot[i].pos == bOldPos )
+		if (m_PlayerSlots->pQuickslot[i].type == bType && m_PlayerSlots->pQuickslot[i].pos == bOldPos)
 		{
 			TQuickslot slot;
 			slot.type = bType;

@@ -22,7 +22,7 @@ class CArena
 {
 	friend class CArenaMap;
 
-	private :
+private:
 	DWORD m_dwPIDA;
 	DWORD m_dwPIDB;
 
@@ -39,13 +39,13 @@ class CArena
 
 	std::map<DWORD, LPCHARACTER> m_mapObserver;
 
-	protected :
+protected:
 	CArena(WORD startA_X, WORD startA_Y, WORD startB_X, WORD startB_Y);
 
 	bool StartDuel(LPCHARACTER pCharFrom, LPCHARACTER pCharTo, int nSetPoint, int nMinute = 5);
 
-	bool IsEmpty() const	{ return ((m_dwPIDA==0) && (m_dwPIDB==0)); }
-	bool IsMember(DWORD dwPID) const	{ return ((m_dwPIDA==dwPID) || (m_dwPIDB==dwPID)); }
+	bool IsEmpty() const { return ((m_dwPIDA == 0) && (m_dwPIDB == 0)); }
+	bool IsMember(DWORD dwPID) const { return ((m_dwPIDA == dwPID) || (m_dwPIDB == dwPID)); }
 
 	bool CheckArea(WORD startA_X, WORD startA_Y, WORD startB_X, WORD startB_Y);
 	void Clear();
@@ -58,7 +58,7 @@ class CArena
 	bool AddObserver(LPCHARACTER pChar);
 	bool RegisterObserverPtr(LPCHARACTER pChar);
 
-	public :
+public:
 	DWORD GetPlayerAPID() { return m_dwPIDA; }
 	DWORD GetPlayerBPID() { return m_dwPIDB; }
 
@@ -75,19 +75,19 @@ class CArena
 	void OnDisconnect(DWORD pid);
 	void RemoveObserver(DWORD pid);
 
-	void SendPacketToObserver(const void * c_pvData, int iSize);
-	void SendChatPacketToObserver(BYTE type, const char * format, ...);
+	void SendPacketToObserver(const void* c_pvData, int iSize);
+	void SendChatPacketToObserver(BYTE type, const char* format, ...);
 };
 
 class CArenaMap
 {
 	friend class CArenaManager;
 
-	private :
+private:
 	DWORD m_dwMapIndex;
 	std::list<CArena*> m_listArena;
 
-	protected :
+protected:
 	void Destroy();
 
 	bool AddArena(DWORD mapIdx, WORD startA_X, WORD startA_Y, WORD startB_X, WORD startB_Y);
@@ -110,35 +110,35 @@ class CArenaMap
 
 class CArenaManager : public singleton<CArenaManager>
 {
-	private :
-		std::map<DWORD, CArenaMap*> m_mapArenaMap;
+private:
+	std::map<DWORD, CArenaMap*> m_mapArenaMap;
 
-	public :
-		bool Initialize();
-		void Destroy();
+public:
+	bool Initialize();
+	void Destroy();
 
-		bool StartDuel(LPCHARACTER pCharFrom, LPCHARACTER pCharTo, int nSetPoint, int nMinute = 5);
+	bool StartDuel(LPCHARACTER pCharFrom, LPCHARACTER pCharTo, int nSetPoint, int nMinute = 5);
 
-		bool AddArena(DWORD mapIdx, WORD startA_X, WORD startA_Y, WORD startB_X, WORD startB_Y);
+	bool AddArena(DWORD mapIdx, WORD startA_X, WORD startA_Y, WORD startB_X, WORD startB_Y);
 
-		void SendArenaMapListTo(LPCHARACTER pChar);
+	void SendArenaMapListTo(LPCHARACTER pChar);
 
-		void EndAllDuel();
-		bool EndDuel(DWORD pid);
+	void EndAllDuel();
+	bool EndDuel(DWORD pid);
 
-		void GetDuelList(lua_State* L);
+	void GetDuelList(lua_State* L);
 
-		bool CanAttack(LPCHARACTER pCharAttacker, LPCHARACTER pCharVictim);
+	bool CanAttack(LPCHARACTER pCharAttacker, LPCHARACTER pCharVictim);
 
-		bool OnDead(LPCHARACTER pCharKiller, LPCHARACTER pCharVictim);
+	bool OnDead(LPCHARACTER pCharKiller, LPCHARACTER pCharVictim);
 
-		bool AddObserver(LPCHARACTER pChar, DWORD mapIdx, WORD ObserverX, WORD ObserverY);
-		bool RegisterObserverPtr(LPCHARACTER pChar, DWORD mapIdx, WORD ObserverX, WORD ObserverY);
+	bool AddObserver(LPCHARACTER pChar, DWORD mapIdx, WORD ObserverX, WORD ObserverY);
+	bool RegisterObserverPtr(LPCHARACTER pChar, DWORD mapIdx, WORD ObserverX, WORD ObserverY);
 
-		bool IsArenaMap(DWORD dwMapIndex);
-		MEMBER_IDENTITY IsMember(DWORD dwMapIndex, DWORD PID);
+	bool IsArenaMap(DWORD dwMapIndex);
+	MEMBER_IDENTITY IsMember(DWORD dwMapIndex, DWORD PID);
 
-		bool IsLimitedItem( long lMapIndex, DWORD dwVnum );
+	bool IsLimitedItem(long lMapIndex, DWORD dwVnum);
 };
 
 #endif /*__CLASS_ARENA_MANAGER__*/

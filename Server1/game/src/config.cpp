@@ -51,7 +51,7 @@ int		g_iShoutLimitLevel = 15;
 // int		g_iShoutLimitTime = 15;
 int		g_iDbLogLevel = LOG_LEVEL_MAX;
 int		g_iSysLogLevel = LOG_LEVEL_MAX;
-int		g_aiItemDestroyTime[ITEM_DESTROY_TIME_MAX] = {300, 150, 300}; // autoitem, dropgold, dropitem
+int		g_aiItemDestroyTime[ITEM_DESTROY_TIME_MAX] = { 300, 150, 300 }; // autoitem, dropgold, dropitem
 bool	g_bDisableEmpireLanguageCheck = false;
 DWORD	g_dwSkillBookNextReadMin = 28800;
 DWORD	g_dwSkillBookNextReadMax = 43200;
@@ -98,8 +98,8 @@ string g_stBlockDate = "30000705";
 
 extern string g_stLocale;
 
-int SPEEDHACK_LIMIT_COUNT   = 50;
-int SPEEDHACK_LIMIT_BONUS   = 80;
+int SPEEDHACK_LIMIT_COUNT = 50;
+int SPEEDHACK_LIMIT_BONUS = 80;
 int g_iSyncHackLimitCount = 10;
 
 int VIEW_RANGE = 5000;
@@ -117,7 +117,7 @@ int			g_iSpamBlockMaxLevel = 10;
 void		LoadStateUserCount();
 void		LoadValidCRCList();
 bool		LoadClientVersion();
-bool            g_protectNormalPlayer   = false;
+bool            g_protectNormalPlayer = false;
 
 int gPlayerMaxLevel = 99;
 int gShutdownAge = 0;
@@ -127,7 +127,7 @@ bool gHackCheckEnable = false;
 
 bool g_BlockCharCreation = false;
 
-bool is_string_true(const char * string)
+bool is_string_true(const char* string)
 {
 	bool	result = 0;
 	if (isnhdigit(*string))
@@ -174,7 +174,7 @@ void map_allow_add(int index)
 	s_set_map_allows.emplace(index);
 }
 
-void map_allow_copy(long * pl, int size)
+void map_allow_copy(long* pl, int size)
 {
 	int iCount = 0;
 	std::set<int>::iterator it = s_set_map_allows.begin();
@@ -189,11 +189,11 @@ void map_allow_copy(long * pl, int size)
 	}
 }
 
-static void FN_add_adminpageIP(char *line)
+static void FN_add_adminpageIP(char* line)
 {
-	char	*last;
-	const char *delim = " \t\r\n";
-	char *v = strtok_r(line, delim, &last);
+	char* last;
+	const char* delim = " \t\r\n";
+	char* v = strtok_r(line, delim, &last);
 
 	while (v)
 	{
@@ -224,13 +224,13 @@ bool GetIPInfo()
 	if (0 != getifaddrs(&ifaddrp))
 		return false;
 
-	for( struct ifaddrs* ifap=ifaddrp ; NULL != ifap ; ifap = ifap->ifa_next )
+	for (struct ifaddrs* ifap = ifaddrp; NULL != ifap; ifap = ifap->ifa_next)
 	{
-		struct sockaddr_in * sai = (struct sockaddr_in *) ifap->ifa_addr;
+		struct sockaddr_in* sai = (struct sockaddr_in*)ifap->ifa_addr;
 
 		if (!ifap->ifa_netmask ||  // ignore if no netmask
-				sai->sin_addr.s_addr == 0 || // ignore if address is 0.0.0.0
-				sai->sin_addr.s_addr == 16777343) // ignore if address is 127.0.0.1
+			sai->sin_addr.s_addr == 0 || // ignore if address is 0.0.0.0
+			sai->sin_addr.s_addr == 16777343) // ignore if address is 127.0.0.1
 			continue;
 #else
 	WSADATA wsa_data;
@@ -247,13 +247,13 @@ bool GetIPInfo()
 	if (host_ent == NULL) {
 		return false;
 	}
-	for ( ; host_ent->h_addr_list[n] != NULL; ++n) {
+	for (; host_ent->h_addr_list[n] != NULL; ++n) {
 		struct sockaddr_in addr;
 		struct sockaddr_in* sai = &addr;
 		memcpy(&sai->sin_addr.s_addr, host_ent->h_addr_list[n], host_ent->h_length);
 #endif
 
-		char * netip = inet_ntoa(sai->sin_addr);
+		char* netip = inet_ntoa(sai->sin_addr);
 
 		if (!strncmp(netip, "192.168", 7)) // ignore if address is starting with 192
 		{
@@ -285,7 +285,7 @@ bool GetIPInfo()
 	}
 
 #ifndef __WIN32__
-	freeifaddrs( ifaddrp );
+	freeifaddrs(ifaddrp);
 #else
 	WSACleanup();
 #endif
@@ -307,10 +307,10 @@ bool GetIPInfo()
 		return false;
 #endif
 	}
-}
+	}
 
 static bool __LoadConnectConfigFile(const char* configName)
-	{
+{
 	char	buf[256];
 	char	token_string[256];
 	char	value_string[256];
@@ -321,10 +321,10 @@ static bool __LoadConnectConfigFile(const char* configName)
 
 	for (int n = 0; n < 2; ++n)
 	{
-		*db_host[n]	= '\0';
+		*db_host[n] = '\0';
 		*db_user[n] = '\0';
-		*db_pwd[n]= '\0';
-		*db_db[n]= '\0';
+		*db_pwd[n] = '\0';
+		*db_db[n] = '\0';
 		mysql_db_port[n] = 0;
 	}
 
@@ -366,7 +366,7 @@ static bool __LoadConnectConfigFile(const char* configName)
 
 		TOKEN("player_sql")
 		{
-			const char * line = two_arguments(value_string, db_host[0], sizeof(db_host[0]), db_user[0], sizeof(db_user[0]));
+			const char* line = two_arguments(value_string, db_host[0], sizeof(db_host[0]), db_user[0], sizeof(db_user[0]));
 			line = two_arguments(line, db_pwd[0], sizeof(db_pwd[0]), db_db[0], sizeof(db_db[0]));
 
 			if ('\0' != line[0])
@@ -390,7 +390,7 @@ static bool __LoadConnectConfigFile(const char* configName)
 
 		TOKEN("common_sql")
 		{
-			const char * line = two_arguments(value_string, db_host[1], sizeof(db_host[1]), db_user[1], sizeof(db_user[1]));
+			const char* line = two_arguments(value_string, db_host[1], sizeof(db_host[1]), db_user[1], sizeof(db_user[1]));
 			line = two_arguments(line, db_pwd[1], sizeof(db_pwd[1]), db_db[1], sizeof(db_db[1]));
 
 			if ('\0' != line[0])
@@ -414,7 +414,7 @@ static bool __LoadConnectConfigFile(const char* configName)
 
 		TOKEN("log_sql")
 		{
-			const char * line = two_arguments(value_string, log_host, sizeof(log_host), log_user, sizeof(log_user));
+			const char* line = two_arguments(value_string, log_host, sizeof(log_host), log_user, sizeof(log_user));
 			line = two_arguments(line, log_pwd, sizeof(log_pwd), log_db, sizeof(log_db));
 
 			if ('\0' != line[0])
@@ -545,10 +545,10 @@ static bool __LoadConnectConfigFile(const char* configName)
 
 		row = mysql_fetch_row(pMsg->Get()->pSQLResult);
 
-		const char * p = row[0];
+		const char* p = row[0];
 		int cnt = 0;
 		char num[128];
-		int aiBaseSkillPowerByLevelTable[SKILL_MAX_LEVEL+1];
+		int aiBaseSkillPowerByLevelTable[SKILL_MAX_LEVEL + 1];
 
 		fprintf(stdout, "SKILL_POWER_BY_LEVEL %s\n", p);
 		while (*p != '\0' && cnt < (SKILL_MAX_LEVEL + 1))
@@ -619,7 +619,7 @@ static bool __LoadConnectConfigFile(const char* configName)
 
 static bool __LoadDefaultConfigFile(const char* configName)
 {
-	FILE	*fp;
+	FILE* fp;
 
 	char	buf[256];
 	char	token_string[256];
@@ -646,7 +646,7 @@ static bool __LoadDefaultConfigFile(const char* configName)
 
 		TOKEN("map_allow")
 		{
-			char * p = value_string;
+			char* p = value_string;
 			string stNum;
 
 			for (; *p; p++)
@@ -666,7 +666,7 @@ static bool __LoadDefaultConfigFile(const char* configName)
 			}
 
 			if (stNum.length())
-		{
+			{
 				int	index = 0;
 				str_to_number(index, stNum.c_str());
 				map_allow_add(index);
@@ -693,7 +693,7 @@ static bool __LoadDefaultConfigFile(const char* configName)
 			if (!strcasecmp(szIP, "master"))
 				fprintf(stdout, "AUTH_SERVER: I am the master\n");
 			else
-		{
+			{
 				g_stAuthMasterIP = szIP;
 				str_to_number(g_wAuthMasterPort, szPort);
 
@@ -701,7 +701,6 @@ static bool __LoadDefaultConfigFile(const char* configName)
 			}
 			continue;
 		}
-
 	}
 
 	fclose(fp);
@@ -710,7 +709,7 @@ static bool __LoadDefaultConfigFile(const char* configName)
 
 static bool __LoadGeneralConfigFile(const char* configName)
 {
-	FILE	*fp;
+	FILE* fp;
 
 	char	buf[256];
 	char	token_string[256];
@@ -766,7 +765,7 @@ static bool __LoadGeneralConfigFile(const char* configName)
 		{
 			strlcpy(db_addr, value_string, sizeof(db_addr));
 
-			for (int n =0; n < ADDRESS_MAX_LEN; ++n)
+			for (int n = 0; n < ADDRESS_MAX_LEN; ++n)
 			{
 				if (db_addr[n] == ' ')
 					db_addr[n] = '\0';
@@ -885,7 +884,7 @@ static bool __LoadGeneralConfigFile(const char* configName)
 			int flag = 0;
 			str_to_number(flag, value_string);
 			g_bEmpireShopPriceTripleDisable = !flag;
-			fprintf(stdout, "SHOP_PRICE_3X_TAX: %s\n", (!g_bEmpireShopPriceTripleDisable)?"ENABLED":"DISABLED");
+			fprintf(stdout, "SHOP_PRICE_3X_TAX: %s\n", (!g_bEmpireShopPriceTripleDisable) ? "ENABLED" : "DISABLED");
 			continue;
 		}
 
@@ -931,7 +930,7 @@ static bool __LoadGeneralConfigFile(const char* configName)
 			int flag = 0;
 			str_to_number(flag, value_string);
 			g_bDisablePrismNeed = !flag;
-			fprintf(stdout, "PRISM_ITEM_REQUIRE: %s\n", (!g_bDisablePrismNeed)?"ENABLED":"DISABLED");
+			fprintf(stdout, "PRISM_ITEM_REQUIRE: %s\n", (!g_bDisablePrismNeed) ? "ENABLED" : "DISABLED");
 			continue;
 		}
 
@@ -947,7 +946,7 @@ static bool __LoadGeneralConfigFile(const char* configName)
 			int flag = 0;
 			str_to_number(flag, value_string);
 			g_bGlobalShoutEnable = !!flag;
-			fprintf(stdout, "GLOBAL_SHOUT: %s\n", (g_bGlobalShoutEnable)?"ENABLED":"DISABLED");
+			fprintf(stdout, "GLOBAL_SHOUT: %s\n", (g_bGlobalShoutEnable) ? "ENABLED" : "DISABLED");
 			continue;
 		}
 
@@ -963,7 +962,7 @@ static bool __LoadGeneralConfigFile(const char* configName)
 			int flag = 0;
 			str_to_number(flag, value_string);
 			g_bDisableEmotionMask = !flag;
-			fprintf(stdout, "EMOTION_MASK_REQUIRE: %s\n", (g_bDisableEmotionMask)?"ENABLED":"DISABLED");
+			fprintf(stdout, "EMOTION_MASK_REQUIRE: %s\n", (g_bDisableEmotionMask) ? "ENABLED" : "DISABLED");
 			continue;
 		}
 
@@ -979,7 +978,7 @@ static bool __LoadGeneralConfigFile(const char* configName)
 			int flag = 0;
 			str_to_number(flag, value_string);
 			g_bEnableBootaryCheck = !!flag;
-			fprintf(stdout, "BOOTARY_CHECK: %s\n", (g_bEnableBootaryCheck)?"ENABLED":"DISABLED");
+			fprintf(stdout, "BOOTARY_CHECK: %s\n", (g_bEnableBootaryCheck) ? "ENABLED" : "DISABLED");
 			continue;
 		}
 
@@ -1139,7 +1138,7 @@ static bool __LoadGeneralConfigFile(const char* configName)
 			int flag = 0;
 			str_to_number(flag, value_string);
 			g_bDisableEmpireLanguageCheck = !flag;
-			fprintf(stdout, "EMPIRE_LANGUAGE_CHECK: %s\n", (g_bDisableEmpireLanguageCheck)?"DISABLED":"ENABLED");
+			fprintf(stdout, "EMPIRE_LANGUAGE_CHECK: %s\n", (g_bDisableEmpireLanguageCheck) ? "DISABLED" : "ENABLED");
 			continue;
 		}
 
@@ -1203,7 +1202,7 @@ static bool __LoadGeneralConfigFile(const char* configName)
 				if (is.fail())
 					break;
 				g_setQuestObjectDir.emplace(dir);
-				sys_log(0, "QUEST_OBJECT_DIR INSERT : %s", dir .c_str());
+				sys_log(0, "QUEST_OBJECT_DIR INSERT : %s", dir.c_str());
 			}
 		}
 
@@ -1270,8 +1269,8 @@ static bool __LoadGeneralConfigFile(const char* configName)
 
 		TOKEN("pk_protect_level")
 		{
-		    str_to_number(PK_PROTECT_LEVEL, value_string);
-		    fprintf(stderr, "PK_PROTECT_LEVEL: %d", PK_PROTECT_LEVEL);
+			str_to_number(PK_PROTECT_LEVEL, value_string);
+			fprintf(stderr, "PK_PROTECT_LEVEL: %d", PK_PROTECT_LEVEL);
 		}
 
 		TOKEN("max_level")
@@ -1287,7 +1286,6 @@ static bool __LoadGeneralConfigFile(const char* configName)
 		{
 			str_to_number(gShutdownAge, value_string);
 			fprintf(stderr, "SHUTDOWN_AGE: %d\n", gShutdownAge);
-
 		}
 
 		TOKEN("shutdown_enable")
@@ -1312,12 +1310,12 @@ static bool __LoadGeneralConfigFile(const char* configName)
 	}
 	fclose(fp);
 	return true;
-	}
+}
 
 #define ENABLE_CMD_PLAYER
 static bool __LoadDefaultCMDFile(const char* cmdName)
-	{
-	FILE	*fp;
+{
+	FILE* fp;
 	char	buf[256];
 
 	if ((fp = fopen(cmdName, "r")))
@@ -1384,9 +1382,9 @@ static bool __LoadExpTableFromDB(void)
 	if (pMsg->Get()->uiNumRows == 0)
 		return false;
 
-	static DWORD new_exp_table[PLAYER_MAX_LEVEL_CONST+1];
+	static DWORD new_exp_table[PLAYER_MAX_LEVEL_CONST + 1];
 	if (exp_table != NULL)
-		memcpy(new_exp_table, exp_table, (PLAYER_MAX_LEVEL_CONST+1)*sizeof(DWORD));
+		memcpy(new_exp_table, exp_table, (PLAYER_MAX_LEVEL_CONST + 1) * sizeof(DWORD));
 
 	MYSQL_ROW row = NULL;
 	while ((row = mysql_fetch_row(pMsg->Get()->pSQLResult)))
@@ -1407,7 +1405,7 @@ static bool __LoadExpTableFromDB(void)
 
 // #define ENABLE_GENERAL_CMD
 // #define ENABLE_GENERAL_CONFIG
-void config_init(const string& st_localeServiceName)
+void config_init(const string & st_localeServiceName)
 {
 	// LOCALE_SERVICE
 	string	st_configFileName;
@@ -1424,15 +1422,15 @@ void config_init(const string& st_localeServiceName)
 
 	if (!GetIPInfo())
 	{
-	//	fprintf(stderr, "Can not get public ip address\n");
-	//	exit(1);
+		//	fprintf(stderr, "Can not get public ip address\n");
+		//	exit(1);
 	}
 
 	// default config load (REQUIRED)
 	if (!__LoadConnectConfigFile(st_configFileName.c_str()) ||
 		!__LoadDefaultConfigFile(st_configFileName.c_str()) ||
 		!__LoadGeneralConfigFile(st_configFileName.c_str())
-	)
+		)
 	{
 		fprintf(stderr, "Can not open [%s]\n", st_configFileName.c_str());
 		exit(1);
@@ -1546,7 +1544,7 @@ void LoadValidCRCList()
 	s_set_dwProcessCRC.clear();
 	s_set_dwFileCRC.clear();
 
-	FILE * fp;
+	FILE* fp;
 	char buf[256];
 
 	if ((fp = fopen("CRC", "r")))
@@ -1573,7 +1571,7 @@ void LoadValidCRCList()
 
 bool LoadClientVersion()
 {
-	FILE * fp = fopen("VERSION", "r");
+	FILE* fp = fopen("VERSION", "r");
 
 	if (!fp)
 		return false;
@@ -1581,7 +1579,7 @@ bool LoadClientVersion()
 	char buf[256];
 	fgets(buf, 256, fp);
 
-	char * p = strchr(buf, '\n');
+	char* p = strchr(buf, '\n');
 	if (p) *p = '\0';
 
 	fprintf(stderr, "VERSION: \"%s\"\n", buf);
@@ -1593,7 +1591,7 @@ bool LoadClientVersion()
 
 void CheckClientVersion()
 {
-	const DESC_MANAGER::DESC_SET & set = DESC_MANAGER::instance().GetClientSet();
+	const DESC_MANAGER::DESC_SET& set = DESC_MANAGER::instance().GetClientSet();
 	DESC_MANAGER::DESC_SET::const_iterator it = set.begin();
 
 	while (it != set.end())
@@ -1613,7 +1611,7 @@ void CheckClientVersion()
 
 void LoadStateUserCount()
 {
-	FILE * fp = fopen("state_user_count", "r");
+	FILE* fp = fopen("state_user_count", "r");
 
 	if (!fp)
 		return;

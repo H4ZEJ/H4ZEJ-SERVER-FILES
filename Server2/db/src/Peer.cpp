@@ -67,27 +67,27 @@ void CPeer::SetUserCount(DWORD dwCount)
 	m_dwUserCount = dwCount;
 }
 
-bool CPeer::PeekPacket(int & iBytesProceed, BYTE & header, DWORD & dwHandle, DWORD & dwLength, const char ** data)
+bool CPeer::PeekPacket(int& iBytesProceed, BYTE& header, DWORD& dwHandle, DWORD& dwLength, const char** data)
 {
 	if (GetRecvLength() < iBytesProceed + 9)
 		return false;
 
-	const char * buf = (const char *) GetRecvBuffer();
+	const char* buf = (const char*)GetRecvBuffer();
 	buf += iBytesProceed;
 
-	header	= *(buf++);
+	header = *(buf++);
 
-	dwHandle	= *((DWORD *) buf);
-	buf		+= sizeof(DWORD);
+	dwHandle = *((DWORD*)buf);
+	buf += sizeof(DWORD);
 
-	dwLength	= *((DWORD *) buf);
-	buf		+= sizeof(DWORD);
+	dwLength = *((DWORD*)buf);
+	buf += sizeof(DWORD);
 
 	//sys_log(0, "%d header %d handle %u length %u", GetRecvLength(), header, dwHandle, dwLength);
-	if (iBytesProceed + dwLength + 9 > (DWORD) GetRecvLength())
+	if (iBytesProceed + dwLength + 9 > (DWORD)GetRecvLength())
 	{
 		sys_log(0, "PeekPacket: not enough buffer size: len %u, recv %d",
-				9+dwLength, GetRecvLength()-iBytesProceed);
+			9 + dwLength, GetRecvLength() - iBytesProceed);
 		return false;
 	}
 
@@ -127,7 +127,7 @@ void CPeer::SetP2PPort(WORD wPort)
 	m_wP2PPort = wPort;
 }
 
-void CPeer::SetMaps(long * pl)
+void CPeer::SetMaps(long* pl)
 {
 	thecore_memcpy(m_alMaps, pl, sizeof(m_alMaps));
 }
@@ -170,7 +170,7 @@ bool CPeer::SetSpareItemIDRange(TItemIDRangeTable itemRange)
 
 	m_itemSpareRange = itemRange;
 	sys_log(0, "ItemIDRange: SPARE SET %s %u ~ %u start: %u", GetPublicIP(), m_itemSpareRange.dwMin, m_itemSpareRange.dwMax,
-			m_itemSpareRange.dwUsableItemIDMin);
+		m_itemSpareRange.dwUsableItemIDMin);
 
 	return true;
 }
@@ -180,14 +180,14 @@ bool CPeer::CheckItemIDRangeCollision(TItemIDRangeTable itemRange)
 	if (m_itemRange.dwMin < itemRange.dwMax && m_itemRange.dwMax > itemRange.dwMin)
 	{
 		sys_err("ItemIDRange: Collision!! this %u ~ %u check %u ~ %u",
-				m_itemRange.dwMin, m_itemRange.dwMax, itemRange.dwMin, itemRange.dwMax);
+			m_itemRange.dwMin, m_itemRange.dwMax, itemRange.dwMin, itemRange.dwMax);
 		return false;
 	}
 
 	if (m_itemSpareRange.dwMin < itemRange.dwMax && m_itemSpareRange.dwMax > itemRange.dwMin)
 	{
 		sys_err("ItemIDRange: Collision with spare range this %u ~ %u check %u ~ %u",
-				m_itemSpareRange.dwMin, m_itemSpareRange.dwMax, itemRange.dwMin, itemRange.dwMax);
+			m_itemSpareRange.dwMin, m_itemSpareRange.dwMax, itemRange.dwMin, itemRange.dwMax);
 		return false;
 	}
 

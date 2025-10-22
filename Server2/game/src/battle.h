@@ -29,15 +29,15 @@ extern int	battle_count_attackers(LPCHARACTER ch);
 extern void	NormalAttackAffect(LPCHARACTER pkAttacker, LPCHARACTER pkVictim);
 
 inline void AttackAffect(LPCHARACTER pkAttacker,
-		LPCHARACTER pkVictim,
-		BYTE att_point,
-		DWORD immune_flag,
-		DWORD affect_idx,
-		BYTE affect_point,
-		long affect_amount,
-		DWORD affect_flag,
-		int time,
-		const char* name)
+	LPCHARACTER pkVictim,
+	BYTE att_point,
+	DWORD immune_flag,
+	DWORD affect_idx,
+	BYTE affect_point,
+	long affect_amount,
+	DWORD affect_flag,
+	int time,
+	const char* name)
 {
 	if (pkAttacker->GetPoint(att_point) && !pkVictim->IsAffectFlag(affect_flag))
 	{
@@ -58,14 +58,14 @@ inline void AttackAffect(LPCHARACTER pkAttacker,
 }
 
 inline void SkillAttackAffect(LPCHARACTER pkVictim,
-		int success_pct,
-		DWORD immune_flag,
-		DWORD affect_idx,
-		BYTE affect_point,
-		long affect_amount,
-		DWORD affect_flag,
-		int time,
-		const char* name)
+	int success_pct,
+	DWORD immune_flag,
+	DWORD affect_idx,
+	BYTE affect_point,
+	long affect_amount,
+	DWORD affect_flag,
+	int time,
+	const char* name)
 {
 	if (success_pct && !pkVictim->IsAffectFlag(affect_flag))
 	{
@@ -76,7 +76,7 @@ inline void SkillAttackAffect(LPCHARACTER pkVictim,
 			// SKILL_ATTACK_NO_LOG_TARGET_NAME_FIX
 			if (test_server)
 				pkVictim->ChatPacket(CHAT_TYPE_PARTY,
-						"%s(%d%%) -> %s SUCCESS", name, success_pct, name);
+					"%s(%d%%) -> %s SUCCESS", name, success_pct, name);
 			// END_OF_SKILL_ATTACK_LOG_NO_TARGET_NAME_FIX
 		}
 		else if (test_server)

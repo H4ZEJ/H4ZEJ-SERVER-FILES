@@ -3,11 +3,11 @@
 
 class CItemAddonManager : public singleton<CItemAddonManager>
 {
-	public:
-		CItemAddonManager();
-		virtual ~CItemAddonManager();
+public:
+	CItemAddonManager();
+	virtual ~CItemAddonManager();
 
-		void ApplyAddonTo(int iAddonType, LPITEM pItem);
+	void ApplyAddonTo(int iAddonType, LPITEM pItem);
 };
 
 #endif

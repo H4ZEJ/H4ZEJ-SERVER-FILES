@@ -6,7 +6,7 @@ enum
 	ADDRESS_MAX_LEN = 15
 };
 
-enum ItemDestroyTime {ITEM_DESTROY_TIME_AUTOGIVE, ITEM_DESTROY_TIME_DROPGOLD, ITEM_DESTROY_TIME_DROPITEM, ITEM_DESTROY_TIME_MAX};
+enum ItemDestroyTime { ITEM_DESTROY_TIME_AUTOGIVE, ITEM_DESTROY_TIME_DROPGOLD, ITEM_DESTROY_TIME_DROPITEM, ITEM_DESTROY_TIME_MAX };
 
 void config_init(const std::string& st_localeServiceName); // default "" is CONFIG
 
@@ -61,13 +61,13 @@ extern bool	g_bDisableEmpireLanguageCheck;
 extern BYTE	g_bChannel;
 
 extern bool	map_allow_find(int index);
-extern void	map_allow_copy(long * pl, int size);
+extern void	map_allow_copy(long* pl, int size);
 extern bool	no_wander;
 
 extern int		g_iUserLimit;
 extern time_t	g_global_time;
 
-const char *	get_table_postfix();
+const char* get_table_postfix();
 
 extern std::string	g_stHostname;
 extern std::string	g_stLocale;
@@ -76,8 +76,8 @@ extern std::string	g_stLocaleFilename;
 extern char		g_szPublicIP[16];
 extern char		g_szInternalIP[16];
 
-extern int (*is_twobyte) (const char * str);
-extern int (*check_name) (const char * str);
+extern int (*is_twobyte) (const char* str);
+extern int (*check_name) (const char* str);
 
 extern bool		g_bSkillDisable;
 

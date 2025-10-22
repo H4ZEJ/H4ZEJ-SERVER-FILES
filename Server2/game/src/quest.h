@@ -90,7 +90,7 @@ namespace quest
 	struct AStateScriptType
 	{
 		int		GetSize() const { return m_code.size(); }
-		const char*	GetCode() const { return &m_code[0]; }
+		const char* GetCode() const { return &m_code[0]; }
 
 		std::vector<char> m_code;
 	};
@@ -110,12 +110,13 @@ namespace quest
 
 		AArgScript()
 			: quest_index(0), state_index(0)
-		{}
+		{
+		}
 	};
 
 	struct QuestState
 	{
-		lua_State *	co;
+		lua_State* co;
 		int		ico;
 		short int	args;
 		BYTE		suspend_state;
@@ -130,12 +131,13 @@ namespace quest
 		int		_counter_value;
 		std::string	_icon_file;
 
-		std::vector<AArgScript *> chat_scripts;
+		std::vector<AArgScript*> chat_scripts;
 
 		QuestState()
 			: co(NULL), ico(0), args(0), suspend_state(SUSPEND_STATE_NONE), iIndex(0), bStart(false), st(-1),
 			_clock_value(0), _counter_value(0)
-		{}
+		{
+		}
 	};
 }
 #endif

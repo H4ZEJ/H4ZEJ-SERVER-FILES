@@ -36,18 +36,19 @@ typedef _boost_func_of_void::any any_void_function;
 template <class F>
 class void_binder
 {
-	protected:
-		F f;
-		typename F::argument_type value;
-	public:
-		void_binder(const F& f, const typename F::argument_type x)
-			: f(f), value(x) {}
-		void operator()() const {
-			return f(value);
-		}
+protected:
+	F f;
+	typename F::argument_type value;
+public:
+	void_binder(const F& f, const typename F::argument_type x)
+		: f(f), value(x) {
+	}
+	void operator()() const {
+		return f(value);
+	}
 };
 
-	template <class F, class Arg>
+template <class F, class Arg>
 inline void_binder<F> void_bind(const F& f, const Arg& arg)
 {
 	typedef typename F::argument_type arg_type;

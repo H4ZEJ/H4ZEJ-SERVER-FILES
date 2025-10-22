@@ -9,7 +9,7 @@
 
 #include "lobject.h"
 
-void luaA_pushobject (lua_State *L, const TObject *o);
+void luaA_pushobject(lua_State* L, const TObject* o);
 
 #endif
 //martysama0134's 8e0aa8057d3f54320e391131a48866b4

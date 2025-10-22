@@ -33,39 +33,39 @@ static void _send_bonus_info(LPCHARACTER ch)
 {
 	int	item_drop_bonus = 0;
 	int gold_drop_bonus = 0;
-	int gold10_drop_bonus	= 0;
-	int exp_bonus		= 0;
+	int gold10_drop_bonus = 0;
+	int exp_bonus = 0;
 
-	item_drop_bonus		= CPrivManager::instance().GetPriv(ch, PRIV_ITEM_DROP);
-	gold_drop_bonus		= CPrivManager::instance().GetPriv(ch, PRIV_GOLD_DROP);
-	gold10_drop_bonus	= CPrivManager::instance().GetPriv(ch, PRIV_GOLD10_DROP);
-	exp_bonus			= CPrivManager::instance().GetPriv(ch, PRIV_EXP_PCT);
+	item_drop_bonus = CPrivManager::instance().GetPriv(ch, PRIV_ITEM_DROP);
+	gold_drop_bonus = CPrivManager::instance().GetPriv(ch, PRIV_GOLD_DROP);
+	gold10_drop_bonus = CPrivManager::instance().GetPriv(ch, PRIV_GOLD10_DROP);
+	exp_bonus = CPrivManager::instance().GetPriv(ch, PRIV_EXP_PCT);
 
 	if (item_drop_bonus)
 	{
 		ch->ChatPacket(CHAT_TYPE_NOTICE,
-				LC_TEXT("아이템 드롭률  %d%% 추가 이벤트 중입니다."), item_drop_bonus);
+			LC_TEXT("아이템 드롭률  %d%% 추가 이벤트 중입니다."), item_drop_bonus);
 	}
 	if (gold_drop_bonus)
 	{
 		ch->ChatPacket(CHAT_TYPE_NOTICE,
-				LC_TEXT("골드 드롭률 %d%% 추가 이벤트 중입니다."), gold_drop_bonus);
+			LC_TEXT("골드 드롭률 %d%% 추가 이벤트 중입니다."), gold_drop_bonus);
 	}
 	if (gold10_drop_bonus)
 	{
 		ch->ChatPacket(CHAT_TYPE_NOTICE,
-				LC_TEXT("대박골드 드롭률 %d%% 추가 이벤트 중입니다."), gold10_drop_bonus);
+			LC_TEXT("대박골드 드롭률 %d%% 추가 이벤트 중입니다."), gold10_drop_bonus);
 	}
 	if (exp_bonus)
 	{
 		ch->ChatPacket(CHAT_TYPE_NOTICE,
-				LC_TEXT("경험치 %d%% 추가 획득 이벤트 중입니다."), exp_bonus);
+			LC_TEXT("경험치 %d%% 추가 획득 이벤트 중입니다."), exp_bonus);
 	}
 }
 
-void CInputLogin::Login(LPDESC d, const char * data)
+void CInputLogin::Login(LPDESC d, const char* data)
 {
-	TPacketCGLogin * pinfo = (TPacketCGLogin *) data;
+	TPacketCGLogin* pinfo = (TPacketCGLogin*)data;
 
 	char login[LOGIN_MAX_LEN + 1];
 	trim_and_lower(pinfo->login, login, sizeof(login));
@@ -93,7 +93,7 @@ void CInputLogin::Login(LPDESC d, const char * data)
 	if (g_iUserLimit > 0)
 	{
 		int iTotal;
-		int * paiEmpireUserCount;
+		int* paiEmpireUserCount;
 		int iLocal;
 
 		DESC_MANAGER::instance().GetUserCount(iTotal, &paiEmpireUserCount, iLocal);
@@ -115,9 +115,9 @@ void CInputLogin::Login(LPDESC d, const char * data)
 	db_clientdesc->DBPacket(HEADER_GD_LOGIN, d->GetHandle(), &login_packet, sizeof(TLoginPacket));
 }
 
-void CInputLogin::LoginByKey(LPDESC d, const char * data)
+void CInputLogin::LoginByKey(LPDESC d, const char* data)
 {
-	TPacketCGLogin2 * pinfo = (TPacketCGLogin2 *) data;
+	TPacketCGLogin2* pinfo = (TPacketCGLogin2*)data;
 
 	char login[LOGIN_MAX_LEN + 1];
 	trim_and_lower(pinfo->login, login, sizeof(login));
@@ -135,7 +135,7 @@ void CInputLogin::LoginByKey(LPDESC d, const char * data)
 	if (g_iUserLimit > 0)
 	{
 		int iTotal;
-		int * paiEmpireUserCount;
+		int* paiEmpireUserCount;
 		int iLocal;
 
 		DESC_MANAGER::instance().GetUserCount(iTotal, &paiEmpireUserCount, iLocal);
@@ -169,10 +169,10 @@ void CInputLogin::LoginByKey(LPDESC d, const char * data)
 	db_clientdesc->DBPacket(HEADER_GD_LOGIN_BY_KEY, d->GetHandle(), &ptod, sizeof(TPacketGDLoginByKey));
 }
 
-void CInputLogin::ChangeName(LPDESC d, const char * data)
+void CInputLogin::ChangeName(LPDESC d, const char* data)
 {
-	TPacketCGChangeName * p = (TPacketCGChangeName *) data;
-	const TAccountTable & c_r = d->GetAccountTable();
+	TPacketCGChangeName* p = (TPacketCGChangeName*)data;
+	const TAccountTable& c_r = d->GetAccountTable();
 
 	if (!c_r.id)
 	{
@@ -213,10 +213,10 @@ void CInputLogin::ChangeName(LPDESC d, const char * data)
 	db_clientdesc->DBPacket(HEADER_GD_CHANGE_NAME, d->GetHandle(), &pdb, sizeof(TPacketGDChangeName));
 }
 
-void CInputLogin::CharacterSelect(LPDESC d, const char * data)
+void CInputLogin::CharacterSelect(LPDESC d, const char* data)
 {
-	struct command_player_select * pinfo = (struct command_player_select *) data;
-	const TAccountTable & c_r = d->GetAccountTable();
+	struct command_player_select* pinfo = (struct command_player_select*)data;
+	const TAccountTable& c_r = d->GetAccountTable();
 
 	sys_log(0, "player_select: login: %s index: %d", c_r.login, pinfo->index);
 
@@ -242,28 +242,28 @@ void CInputLogin::CharacterSelect(LPDESC d, const char * data)
 	if (c_r.players[pinfo->index].bChangeName)
 	{
 		sys_err("name must be changed idx %d, login %s, name %s",
-				pinfo->index, c_r.login, c_r.players[pinfo->index].szName);
+			pinfo->index, c_r.login, c_r.players[pinfo->index].szName);
 		return;
 	}
 
 	TPlayerLoadPacket player_load_packet;
 
-	player_load_packet.account_id	= c_r.id;
-	player_load_packet.player_id	= c_r.players[pinfo->index].dwID;
-	player_load_packet.account_index	= pinfo->index;
+	player_load_packet.account_id = c_r.id;
+	player_load_packet.player_id = c_r.players[pinfo->index].dwID;
+	player_load_packet.account_index = pinfo->index;
 
 	db_clientdesc->DBPacket(HEADER_GD_PLAYER_LOAD, d->GetHandle(), &player_load_packet, sizeof(TPlayerLoadPacket));
 }
 
-bool NewPlayerTable(TPlayerTable * table,
-		const char * name,
-		BYTE job,
-		BYTE shape,
-		BYTE bEmpire,
-		BYTE bCon,
-		BYTE bInt,
-		BYTE bStr,
-		BYTE bDex)
+bool NewPlayerTable(TPlayerTable* table,
+	const char* name,
+	BYTE job,
+	BYTE shape,
+	BYTE bEmpire,
+	BYTE bCon,
+	BYTE bInt,
+	BYTE bStr,
+	BYTE bDex)
 {
 	if (job >= JOB_MAX_NUM)
 		return false;
@@ -286,13 +286,12 @@ bool NewPlayerTable(TPlayerTable * table,
 	table->sp = JobInitialPoints[job].max_sp + table->iq * JobInitialPoints[job].sp_per_iq;
 	table->stamina = JobInitialPoints[job].max_stamina;
 
-
-	table->x 	= CREATE_START_X(bEmpire) + number(-300, 300);
-	table->y 	= CREATE_START_Y(bEmpire) + number(-300, 300);
-	table->z	= 0;
-	table->dir	= 0;
+	table->x = CREATE_START_X(bEmpire) + number(-300, 300);
+	table->y = CREATE_START_Y(bEmpire) + number(-300, 300);
+	table->z = 0;
+	table->dir = 0;
 	table->playtime = 0;
-	table->gold 	= 0;
+	table->gold = 0;
 
 	table->skill_group = 0;
 
@@ -327,45 +326,45 @@ bool RaceToJob(unsigned race, unsigned* ret_job)
 
 	switch (race)
 	{
-		case MAIN_RACE_WARRIOR_M:
-			*ret_job = JOB_WARRIOR;
-			break;
+	case MAIN_RACE_WARRIOR_M:
+		*ret_job = JOB_WARRIOR;
+		break;
 
-		case MAIN_RACE_WARRIOR_W:
-			*ret_job = JOB_WARRIOR;
-			break;
+	case MAIN_RACE_WARRIOR_W:
+		*ret_job = JOB_WARRIOR;
+		break;
 
-		case MAIN_RACE_ASSASSIN_M:
-			*ret_job = JOB_ASSASSIN;
-			break;
+	case MAIN_RACE_ASSASSIN_M:
+		*ret_job = JOB_ASSASSIN;
+		break;
 
-		case MAIN_RACE_ASSASSIN_W:
-			*ret_job = JOB_ASSASSIN;
-			break;
+	case MAIN_RACE_ASSASSIN_W:
+		*ret_job = JOB_ASSASSIN;
+		break;
 
-		case MAIN_RACE_SURA_M:
-			*ret_job = JOB_SURA;
-			break;
+	case MAIN_RACE_SURA_M:
+		*ret_job = JOB_SURA;
+		break;
 
-		case MAIN_RACE_SURA_W:
-			*ret_job = JOB_SURA;
-			break;
+	case MAIN_RACE_SURA_W:
+		*ret_job = JOB_SURA;
+		break;
 
-		case MAIN_RACE_SHAMAN_M:
-			*ret_job = JOB_SHAMAN;
-			break;
+	case MAIN_RACE_SHAMAN_M:
+		*ret_job = JOB_SHAMAN;
+		break;
 
-		case MAIN_RACE_SHAMAN_W:
-			*ret_job = JOB_SHAMAN;
-			break;
+	case MAIN_RACE_SHAMAN_W:
+		*ret_job = JOB_SHAMAN;
+		break;
 
-		default:
-			return false;
+	default:
+		return false;
 	}
 	return true;
 }
 
-bool NewPlayerTable2(TPlayerTable * table, const char * name, BYTE race, BYTE shape, BYTE bEmpire)
+bool NewPlayerTable2(TPlayerTable* table, const char* name, BYTE race, BYTE shape, BYTE bEmpire)
 {
 	if (race >= MAIN_RACE_MAX_NUM)
 	{
@@ -387,43 +386,42 @@ bool NewPlayerTable2(TPlayerTable * table, const char * name, BYTE race, BYTE sh
 
 	strlcpy(table->name, name, sizeof(table->name));
 
-	table->level		= 1;
-	table->job			= race;
-	table->voice		= 0;
-	table->part_base	= shape;
+	table->level = 1;
+	table->job = race;
+	table->voice = 0;
+	table->part_base = shape;
 
-	table->st		= JobInitialPoints[job].st;
-	table->dx		= JobInitialPoints[job].dx;
-	table->ht		= JobInitialPoints[job].ht;
-	table->iq		= JobInitialPoints[job].iq;
+	table->st = JobInitialPoints[job].st;
+	table->dx = JobInitialPoints[job].dx;
+	table->ht = JobInitialPoints[job].ht;
+	table->iq = JobInitialPoints[job].iq;
 
-	table->hp		= JobInitialPoints[job].max_hp + table->ht * JobInitialPoints[job].hp_per_ht;
-	table->sp		= JobInitialPoints[job].max_sp + table->iq * JobInitialPoints[job].sp_per_iq;
-	table->stamina	= JobInitialPoints[job].max_stamina;
+	table->hp = JobInitialPoints[job].max_hp + table->ht * JobInitialPoints[job].hp_per_ht;
+	table->sp = JobInitialPoints[job].max_sp + table->iq * JobInitialPoints[job].sp_per_iq;
+	table->stamina = JobInitialPoints[job].max_stamina;
 
-
-	table->x		= CREATE_START_X(bEmpire) + number(-300, 300);
-	table->y		= CREATE_START_Y(bEmpire) + number(-300, 300);
-	table->z		= 0;
-	table->dir		= 0;
+	table->x = CREATE_START_X(bEmpire) + number(-300, 300);
+	table->y = CREATE_START_Y(bEmpire) + number(-300, 300);
+	table->z = 0;
+	table->dir = 0;
 	table->playtime = 0;
-	table->gold 	= 0;
+	table->gold = 0;
 
 	table->skill_group = 0;
 
 	return true;
 }
 
-void CInputLogin::CharacterCreate(LPDESC d, const char * data)
+void CInputLogin::CharacterCreate(LPDESC d, const char* data)
 {
-	struct command_player_create * pinfo = (struct command_player_create *) data;
+	struct command_player_create* pinfo = (struct command_player_create*)data;
 	TPlayerCreatePacket player_create_packet;
 
 	sys_log(0, "PlayerCreate: name %s pos %d job %d shape %d",
-			pinfo->name,
-			pinfo->index,
-			pinfo->job,
-			pinfo->shape);
+		pinfo->name,
+		pinfo->index,
+		pinfo->job,
+		pinfo->shape);
 
 	TPacketGCLoginFailure packFailure;
 	memset(&packFailure, 0, sizeof(packFailure));
@@ -448,9 +446,7 @@ void CInputLogin::CharacterCreate(LPDESC d, const char * data)
 		return;
 	}
 
-
-
-	const TAccountTable & c_rAccountTable = d->GetAccountTable();
+	const TAccountTable& c_rAccountTable = d->GetAccountTable();
 
 	if (0 == strcmp(c_rAccountTable.login, pinfo->name))
 	{
@@ -474,22 +470,22 @@ void CInputLogin::CharacterCreate(LPDESC d, const char * data)
 	trim_and_lower(c_rAccountTable.login, player_create_packet.login, sizeof(player_create_packet.login));
 	strlcpy(player_create_packet.passwd, c_rAccountTable.passwd, sizeof(player_create_packet.passwd));
 
-	player_create_packet.account_id	= c_rAccountTable.id;
-	player_create_packet.account_index	= pinfo->index;
+	player_create_packet.account_id = c_rAccountTable.id;
+	player_create_packet.account_index = pinfo->index;
 
 	sys_log(0, "PlayerCreate: name %s account_id %d, TPlayerCreatePacketSize(%d), Packet->Gold %d",
-			pinfo->name,
-			pinfo->index,
-			sizeof(TPlayerCreatePacket),
-			player_create_packet.player_table.gold);
+		pinfo->name,
+		pinfo->index,
+		sizeof(TPlayerCreatePacket),
+		player_create_packet.player_table.gold);
 
 	db_clientdesc->DBPacket(HEADER_GD_PLAYER_CREATE, d->GetHandle(), &player_create_packet, sizeof(TPlayerCreatePacket));
 }
 
-void CInputLogin::CharacterDelete(LPDESC d, const char * data)
+void CInputLogin::CharacterDelete(LPDESC d, const char* data)
 {
-	struct command_player_delete * pinfo = (struct command_player_delete *) data;
-	const TAccountTable & c_rAccountTable = d->GetAccountTable();
+	struct command_player_delete* pinfo = (struct command_player_delete*)data;
+	const TAccountTable& c_rAccountTable = d->GetAccountTable();
 
 	if (!c_rAccountTable.id)
 	{
@@ -515,8 +511,8 @@ void CInputLogin::CharacterDelete(LPDESC d, const char * data)
 	TPlayerDeletePacket	player_delete_packet;
 
 	trim_and_lower(c_rAccountTable.login, player_delete_packet.login, sizeof(player_delete_packet.login));
-	player_delete_packet.player_id	= c_rAccountTable.players[pinfo->index].dwID;
-	player_delete_packet.account_index	= pinfo->index;
+	player_delete_packet.player_id = c_rAccountTable.players[pinfo->index].dwID;
+	player_delete_packet.account_index = pinfo->index;
 	strlcpy(player_delete_packet.private_code, pinfo->private_code, sizeof(player_delete_packet.private_code));
 
 	db_clientdesc->DBPacket(HEADER_GD_PLAYER_DELETE, d->GetHandle(), &player_delete_packet, sizeof(TPlayerDeletePacket));
@@ -531,7 +527,7 @@ typedef struct SPacketGTLogin
 } TPacketGTLogin;
 #pragma pack()
 
-void CInputLogin::Entergame(LPDESC d, const char * data)
+void CInputLogin::Entergame(LPDESC d, const char* data)
 {
 	LPCHARACTER ch;
 
@@ -549,10 +545,10 @@ void CInputLogin::Entergame(LPDESC d, const char * data)
 		SECTREE_MANAGER::instance().GetRecallPositionByEmpire(ch->GetMapIndex(), ch->GetEmpire(), pos2);
 
 		sys_err("!GetMovablePosition (name %s %dx%d map %d changed to %dx%d)",
-				ch->GetName(),
-				pos.x, pos.y,
-				ch->GetMapIndex(),
-				pos2.x, pos2.y);
+			ch->GetName(),
+			pos.x, pos.y,
+			ch->GetMapIndex(),
+			pos2.x, pos2.y);
 		pos = pos2;
 	}
 
@@ -565,11 +561,11 @@ void CInputLogin::Entergame(LPDESC d, const char * data)
 
 	d->SetPhase(PHASE_GAME);
 
-	if(ch->GetItemAward_cmd())
-		quest::CQuestManager::instance().ItemInformer(ch->GetPlayerID(),ch->GetItemAward_vnum());
+	if (ch->GetItemAward_cmd())
+		quest::CQuestManager::instance().ItemInformer(ch->GetPlayerID(), ch->GetItemAward_vnum());
 
 	sys_log(0, "ENTERGAME: %s %dx%dx%d %s map_index %d",
-			ch->GetName(), ch->GetX(), ch->GetY(), ch->GetZ(), d->GetHostName(), ch->GetMapIndex());
+		ch->GetName(), ch->GetX(), ch->GetY(), ch->GetZ(), d->GetHostName(), ch->GetMapIndex());
 
 	ch->ResetPlayTime();
 
@@ -639,11 +635,11 @@ void CInputLogin::Entergame(LPDESC d, const char * data)
 				LogManager::instance().HackLog("VERSION_CONFLICT", ch);
 
 				sys_log(0, "VERSION : WRONG VERSION USER : account:%s name:%s hostName:%s server_version:%s client_version:%s",
-						d->GetAccountTable().login,
-						ch->GetName(),
-						d->GetHostName(),
-						g_stClientVersion.c_str(),
-						d->GetClientVersion());
+					d->GetAccountTable().login,
+					ch->GetName(),
+					d->GetHostName(),
+					g_stClientVersion.c_str(),
+					d->GetClientVersion());
 			}
 		}
 	}
@@ -672,7 +668,7 @@ void CInputLogin::Entergame(LPDESC d, const char * data)
 		{
 			ch->SetObserverMode(true);
 			ch->SetArenaObserverMode(true);
-			if (CArenaManager::instance().RegisterObserverPtr(ch, ch->GetMapIndex(), ch->GetX()/100, ch->GetY()/100))
+			if (CArenaManager::instance().RegisterObserverPtr(ch, ch->GetMapIndex(), ch->GetX() / 100, ch->GetY() / 100))
 			{
 				sys_log(0, "ARENA : Observer add failed");
 			}
@@ -731,7 +727,7 @@ void CInputLogin::Entergame(LPDESC d, const char * data)
 	else
 	{
 		if (CWarMapManager::instance().IsWarMap(ch->GetMapIndex()) ||
-				marriage::WeddingManager::instance().IsWeddingMap(ch->GetMapIndex()))
+			marriage::WeddingManager::instance().IsWeddingMap(ch->GetMapIndex()))
 		{
 			if (!test_server)
 				ch->WarpSet(EMPIRE_START_X(ch->GetEmpire()), EMPIRE_START_Y(ch->GetEmpire()));
@@ -756,7 +752,7 @@ void CInputLogin::Entergame(LPDESC d, const char * data)
 #endif
 }
 
-void CInputLogin::Empire(LPDESC d, const char * c_pData)
+void CInputLogin::Empire(LPDESC d, const char* c_pData)
 {
 	const TPacketCGEmpire* p = reinterpret_cast<const TPacketCGEmpire*>(c_pData);
 
@@ -796,7 +792,7 @@ int CInputLogin::GuildSymbolUpload(LPDESC d, const char* c_pData, size_t uiBytes
 
 	sys_log(0, "GuildSymbolUpload uiBytes %u", uiBytes);
 
-	TPacketCGGuildSymbolUpload* p = (TPacketCGGuildSymbolUpload*) c_pData;
+	TPacketCGGuildSymbolUpload* p = (TPacketCGGuildSymbolUpload*)c_pData;
 
 	if (uiBytes < p->size)
 		return -1;
@@ -835,11 +831,11 @@ int CInputLogin::GuildSymbolUpload(LPDESC d, const char* c_pData, size_t uiBytes
 
 void CInputLogin::GuildSymbolCRC(LPDESC d, const char* c_pData)
 {
-	const TPacketCGSymbolCRC & CGPacket = *((TPacketCGSymbolCRC *) c_pData);
+	const TPacketCGSymbolCRC& CGPacket = *((TPacketCGSymbolCRC*)c_pData);
 
 	sys_log(0, "GuildSymbolCRC %u %u %u", CGPacket.guild_id, CGPacket.crc, CGPacket.size);
 
-	const CGuildMarkManager::TGuildSymbol * pkGS = CGuildMarkManager::instance().GetGuildSymbol(CGPacket.guild_id);
+	const CGuildMarkManager::TGuildSymbol* pkGS = CGuildMarkManager::instance().GetGuildSymbol(CGPacket.guild_id);
 
 	if (!pkGS)
 		return;
@@ -858,13 +854,13 @@ void CInputLogin::GuildSymbolCRC(LPDESC d, const char* c_pData)
 		d->Packet(&pkGS->raw[0], pkGS->raw.size());
 
 		sys_log(0, "SendGuildSymbolHead %02X%02X%02X%02X Size %d",
-				pkGS->raw[0], pkGS->raw[1], pkGS->raw[2], pkGS->raw[3], pkGS->raw.size());
+			pkGS->raw[0], pkGS->raw[1], pkGS->raw[2], pkGS->raw[3], pkGS->raw.size());
 	}
 }
 
 void CInputLogin::GuildMarkUpload(LPDESC d, const char* c_pData)
 {
-	TPacketCGMarkUpload * p = (TPacketCGMarkUpload *) c_pData;
+	TPacketCGMarkUpload* p = (TPacketCGMarkUpload*)c_pData;
 
 #ifdef ENABLE_GUILD_TOKEN_AUTH
 	if (!p->gid || !CGuildManager::instance().IsCorrectGuildToken(p->gid, p->token)) {
@@ -874,7 +870,7 @@ void CInputLogin::GuildMarkUpload(LPDESC d, const char* c_pData)
 #endif
 
 	CGuildManager& rkGuildMgr = CGuildManager::instance();
-	CGuild * pkGuild{};
+	CGuild* pkGuild{};
 	if (!(pkGuild = rkGuildMgr.FindGuild(p->gid)))
 	{
 		sys_err("MARK_SERVER: GuildMarkUpload: no guild. gid %u", p->gid);
@@ -887,14 +883,14 @@ void CInputLogin::GuildMarkUpload(LPDESC d, const char* c_pData)
 		return;
 	}
 
-	CGuildMarkManager & rkMarkMgr = CGuildMarkManager::instance();
+	CGuildMarkManager& rkMarkMgr = CGuildMarkManager::instance();
 
 	sys_log(0, "MARK_SERVER: GuildMarkUpload: gid %u", p->gid);
 
 	bool isEmpty = true;
 
 	for (DWORD iPixel = 0; iPixel < SGuildMark::SIZE; ++iPixel)
-		if (*((DWORD *) p->image + iPixel) != 0x00000000)
+		if (*((DWORD*)p->image + iPixel) != 0x00000000)
 			isEmpty = false;
 
 	if (isEmpty)
@@ -905,14 +901,14 @@ void CInputLogin::GuildMarkUpload(LPDESC d, const char* c_pData)
 
 void CInputLogin::GuildMarkIDXList(LPDESC d, const char* c_pData)
 {
-	CGuildMarkManager & rkMarkMgr = CGuildMarkManager::instance();
+	CGuildMarkManager& rkMarkMgr = CGuildMarkManager::instance();
 
 	DWORD bufSize = sizeof(WORD) * 2 * rkMarkMgr.GetMarkCount();
-	char * buf = NULL;
+	char* buf = NULL;
 
 	if (bufSize > 0)
 	{
-		buf = (char *) malloc(bufSize);
+		buf = (char*)malloc(bufSize);
 		rkMarkMgr.CopyMarkIdx(buf);
 	}
 
@@ -935,9 +931,9 @@ void CInputLogin::GuildMarkIDXList(LPDESC d, const char* c_pData)
 
 void CInputLogin::GuildMarkCRCList(LPDESC d, const char* c_pData)
 {
-	TPacketCGMarkCRCList * pCG = (TPacketCGMarkCRCList *) c_pData;
+	TPacketCGMarkCRCList* pCG = (TPacketCGMarkCRCList*)c_pData;
 
-	std::map<BYTE, const SGuildMarkBlock *> mapDiffBlocks;
+	std::map<BYTE, const SGuildMarkBlock*> mapDiffBlocks;
 	CGuildMarkManager::instance().GetDiffBlocks(pCG->imgIdx, pCG->crclist, mapDiffBlocks);
 
 	DWORD blockCount = 0;
@@ -946,7 +942,7 @@ void CInputLogin::GuildMarkCRCList(LPDESC d, const char* c_pData)
 	for (itertype(mapDiffBlocks) it = mapDiffBlocks.begin(); it != mapDiffBlocks.end(); ++it)
 	{
 		BYTE posBlock = it->first;
-		const SGuildMarkBlock & rkBlock = *it->second;
+		const SGuildMarkBlock& rkBlock = *it->second;
 
 		buf.write(posBlock);
 		buf.write(rkBlock.m_sizeCompBuf);
@@ -973,99 +969,99 @@ void CInputLogin::GuildMarkCRCList(LPDESC d, const char* c_pData)
 		d->Packet(pGC);
 }
 
-int CInputLogin::Analyze(LPDESC d, BYTE bHeader, const char * c_pData)
+int CInputLogin::Analyze(LPDESC d, BYTE bHeader, const char* c_pData)
 {
 	int iExtraLen = 0;
 
 	switch (bHeader)
 	{
-		case HEADER_CG_PONG:
-			Pong(d);
-			break;
+	case HEADER_CG_PONG:
+		Pong(d);
+		break;
 
-		case HEADER_CG_TIME_SYNC:
-			Handshake(d, c_pData);
-			break;
+	case HEADER_CG_TIME_SYNC:
+		Handshake(d, c_pData);
+		break;
 
-		case HEADER_CG_LOGIN:
-			Login(d, c_pData);
-			break;
+	case HEADER_CG_LOGIN:
+		Login(d, c_pData);
+		break;
 
-		case HEADER_CG_LOGIN2:
-			LoginByKey(d, c_pData);
-			break;
+	case HEADER_CG_LOGIN2:
+		LoginByKey(d, c_pData);
+		break;
 
-		case HEADER_CG_CHARACTER_SELECT:
-			CharacterSelect(d, c_pData);
-			break;
+	case HEADER_CG_CHARACTER_SELECT:
+		CharacterSelect(d, c_pData);
+		break;
 
-		case HEADER_CG_CHARACTER_CREATE:
-			CharacterCreate(d, c_pData);
-			break;
+	case HEADER_CG_CHARACTER_CREATE:
+		CharacterCreate(d, c_pData);
+		break;
 
-		case HEADER_CG_CHARACTER_DELETE:
-			CharacterDelete(d, c_pData);
-			break;
+	case HEADER_CG_CHARACTER_DELETE:
+		CharacterDelete(d, c_pData);
+		break;
 
-		case HEADER_CG_ENTERGAME:
-			Entergame(d, c_pData);
-			break;
+	case HEADER_CG_ENTERGAME:
+		Entergame(d, c_pData);
+		break;
 
-		case HEADER_CG_EMPIRE:
-			Empire(d, c_pData);
-			break;
+	case HEADER_CG_EMPIRE:
+		Empire(d, c_pData);
+		break;
 
-		case HEADER_CG_MOVE:
-			break;
+	case HEADER_CG_MOVE:
+		break;
 
-			///////////////////////////////////////
-			// Guild Mark
-			/////////////////////////////////////
-		case HEADER_CG_MARK_CRCLIST:
-			GuildMarkCRCList(d, c_pData);
-			break;
+		///////////////////////////////////////
+		// Guild Mark
+		/////////////////////////////////////
+	case HEADER_CG_MARK_CRCLIST:
+		GuildMarkCRCList(d, c_pData);
+		break;
 
-		case HEADER_CG_MARK_IDXLIST:
-			GuildMarkIDXList(d, c_pData);
-			break;
+	case HEADER_CG_MARK_IDXLIST:
+		GuildMarkIDXList(d, c_pData);
+		break;
 
-		case HEADER_CG_MARK_UPLOAD:
-			GuildMarkUpload(d, c_pData);
-			break;
+	case HEADER_CG_MARK_UPLOAD:
+		GuildMarkUpload(d, c_pData);
+		break;
 
-			//////////////////////////////////////
-			// Guild Symbol
-			/////////////////////////////////////
-		case HEADER_CG_GUILD_SYMBOL_UPLOAD:
-			if ((iExtraLen = GuildSymbolUpload(d, c_pData, m_iBufferLeft)) < 0)
-				return -1;
-			break;
+		//////////////////////////////////////
+		// Guild Symbol
+		/////////////////////////////////////
+	case HEADER_CG_GUILD_SYMBOL_UPLOAD:
+		if ((iExtraLen = GuildSymbolUpload(d, c_pData, m_iBufferLeft)) < 0)
+			return -1;
+		break;
 
-		case HEADER_CG_SYMBOL_CRC:
-			GuildSymbolCRC(d, c_pData);
-			break;
-			/////////////////////////////////////
+	case HEADER_CG_SYMBOL_CRC:
+		GuildSymbolCRC(d, c_pData);
+		break;
+		/////////////////////////////////////
 
-		case HEADER_CG_HACK:
-			break;
+	case HEADER_CG_HACK:
+		break;
 
-		case HEADER_CG_CHANGE_NAME:
-			ChangeName(d, c_pData);
-			break;
+	case HEADER_CG_CHANGE_NAME:
+		ChangeName(d, c_pData);
+		break;
 
-		case HEADER_CG_CLIENT_VERSION2:
-			Version(d->GetCharacter(), c_pData);
-			break;
+	case HEADER_CG_CLIENT_VERSION2:
+		Version(d->GetCharacter(), c_pData);
+		break;
 
 		// @fixme120
-		case HEADER_CG_ITEM_USE:
-		case HEADER_CG_TARGET:
-			break;
+	case HEADER_CG_ITEM_USE:
+	case HEADER_CG_TARGET:
+		break;
 
-		default:
-			sys_err("login phase does not handle this packet! header %d", bHeader);
-			//d->SetPhase(PHASE_CLOSE);
-			return (0);
+	default:
+		sys_err("login phase does not handle this packet! header %d", bHeader);
+		//d->SetPhase(PHASE_CLOSE);
+		return (0);
 	}
 
 	return (iExtraLen);

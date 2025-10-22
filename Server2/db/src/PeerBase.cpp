@@ -168,7 +168,7 @@ int CPeerBase::Recv()
 
 	buffer_adjust_size(m_inBuffer, MAX_INPUT_LEN >> 2);
 	int bytes_to_read = buffer_has_space(m_inBuffer);
-	ssize_t bytes_read = socket_read(m_fd, (char *) buffer_write_peek(m_inBuffer), bytes_to_read);
+	ssize_t bytes_read = socket_read(m_fd, (char*)buffer_write_peek(m_inBuffer), bytes_to_read);
 
 	if (bytes_read < 0)
 	{
@@ -194,7 +194,7 @@ int CPeerBase::GetRecvLength()
 	return m_BytesRemain;
 }
 
-const void * CPeerBase::GetRecvBuffer()
+const void* CPeerBase::GetRecvBuffer()
 {
 	return buffer_read_peek(m_inBuffer);
 }
@@ -215,7 +215,7 @@ int CPeerBase::Send()
 	if (iBytesToWrite == 0)
 		return 0;
 
-	int result = socket_write(m_fd, (const char *) buffer_read_peek(m_outBuffer), iBytesToWrite);
+	int result = socket_write(m_fd, (const char*)buffer_read_peek(m_outBuffer), iBytesToWrite);
 
 	if (result == 0)
 	{

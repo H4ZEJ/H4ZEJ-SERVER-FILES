@@ -14,44 +14,44 @@ using namespace std;
 
 inline string trim_left(const string& str)
 {
-    string::size_type n = str.find_first_not_of(" \t\v\n\r");
-    return n == string::npos ? str : str.substr(n, str.length());
+	string::size_type n = str.find_first_not_of(" \t\v\n\r");
+	return n == string::npos ? str : str.substr(n, str.length());
 }
 
 inline string trim_right(const string& str)
 {
-    string::size_type n = str.find_last_not_of(" \t\v\n\r");
-    return n == string::npos ? str : str.substr(0, n + 1);
+	string::size_type n = str.find_last_not_of(" \t\v\n\r");
+	return n == string::npos ? str : str.substr(0, n + 1);
 }
 
-string trim(const string& str){return trim_left(trim_right(str));}
+string trim(const string& str) { return trim_left(trim_right(str)); }
 
 static string* StringSplit(string strOrigin, string strTok)
 {
-    size_t cutAt;
-    int index = 0;
-    string* strResult = new string[30];
+	size_t cutAt;
+	int index = 0;
+	string* strResult = new string[30];
 
-    while ((cutAt = strOrigin.find_first_of(strTok)) != strOrigin.npos)
-    {
-       if (cutAt > 0)
-       {
-            strResult[index++] = strOrigin.substr(0, cutAt);
-       }
-       strOrigin = strOrigin.substr(cutAt+1);
-    }
+	while ((cutAt = strOrigin.find_first_of(strTok)) != strOrigin.npos)
+	{
+		if (cutAt > 0)
+		{
+			strResult[index++] = strOrigin.substr(0, cutAt);
+		}
+		strOrigin = strOrigin.substr(cutAt + 1);
+	}
 
-    if(strOrigin.length() > 0)
-    {
-        strResult[index++] = strOrigin.substr(0, cutAt);
-    }
+	if (strOrigin.length() > 0)
+	{
+		strResult[index++] = strOrigin.substr(0, cutAt);
+	}
 
-	for( int i=0;i<index;i++)
+	for (int i = 0; i < index; i++)
 	{
 		strResult[i] = trim(strResult[i]);
 	}
 
-    return strResult;
+	return strResult;
 }
 
 static const std::vector<std::string> arItemType = {
@@ -100,7 +100,7 @@ int get_Item_Type_Value(std::string inputString)
 	return std::distance(std::begin(arItemType), it);
 }
 
-static const std::unordered_map<uint32_t, std::vector<std::string>> mapItemSubType {
+static const std::unordered_map<uint32_t, std::vector<std::string>> mapItemSubType{
 {
 	1, {
 		"WEAPON_SWORD",
@@ -300,7 +300,7 @@ int get_Item_SubType_Value(int type_value, std::string inputString)
 	if (itSubtype == vecSubtype.end())
 	{
 		sys_err("Subtype Out of range! (type_value: %d, input: %s)",
-				type_value, inputString.c_str());
+			type_value, inputString.c_str());
 		return -1;
 	}
 	return static_cast<int>(std::distance(vecSubtype.begin(), itSubtype));
@@ -327,24 +327,24 @@ int get_Item_AntiFlag_Value(string inputString)
 	"ANTI_STACK",
 	"ANTI_MYSHOP",
 	"ANTI_SAFEBOX"
-};
+	};
 
 	int retValue = 0;
 	string* arInputString = StringSplit(inputString, "|");
-	for(size_t i=0;i<_countof(arAntiFlag);i++) {
+	for (size_t i = 0; i < _countof(arAntiFlag); i++) {
 		string tempString = arAntiFlag[i];
-		for (size_t j=0; j<30 ; j++)
+		for (size_t j = 0; j < 30; j++)
 		{
 			string tempString2 = arInputString[j];
-			if (tempString2.compare(tempString)==0) {
-				retValue = retValue + pow((float)2,(float)i);
+			if (tempString2.compare(tempString) == 0) {
+				retValue = retValue + pow((float)2, (float)i);
 			}
 
-			if(tempString2.compare("") == 0)
+			if (tempString2.compare("") == 0)
 				break;
 		}
 	}
-	delete []arInputString;
+	delete[]arInputString;
 	//cout << "AntiFlag : " << antiFlagStr << " -> " << retValue << endl;
 
 	return retValue;
@@ -372,24 +372,24 @@ int get_Item_Flag_Value(string inputString)
 	"REFINEABLE",
 	"IRREMOVABLE",
 	"ITEM_APPLICABLE"
-};
+	};
 
 	int retValue = 0;
 	string* arInputString = StringSplit(inputString, "|");
-	for(size_t i=0;i<_countof(arFlag);i++) {
+	for (size_t i = 0; i < _countof(arFlag); i++) {
 		string tempString = arFlag[i];
-		for (size_t j=0; j<30 ; j++)
+		for (size_t j = 0; j < 30; j++)
 		{
 			string tempString2 = arInputString[j];
-			if (tempString2.compare(tempString)==0) {
-				retValue = retValue + pow((float)2,(float)i);
+			if (tempString2.compare(tempString) == 0) {
+				retValue = retValue + pow((float)2, (float)i);
 			}
 
-			if(tempString2.compare("") == 0)
+			if (tempString2.compare("") == 0)
 				break;
 		}
 	}
-	delete []arInputString;
+	delete[]arInputString;
 	//cout << "Flag : " << flagStr << " -> " << retValue << endl;
 
 	return retValue;
@@ -418,25 +418,24 @@ int get_Item_WearFlag_Value(string inputString)
 #ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 	"WEAR_COSTUME_MOUNT"
 #endif
-
-};
+	};
 
 	int retValue = 0;
 	string* arInputString = StringSplit(inputString, "|");
-	for(size_t i=0;i<_countof(arWearrFlag);i++) {
+	for (size_t i = 0; i < _countof(arWearrFlag); i++) {
 		string tempString = arWearrFlag[i];
-		for (size_t j=0; j<30 ; j++)
+		for (size_t j = 0; j < 30; j++)
 		{
 			string tempString2 = arInputString[j];
-			if (tempString2.compare(tempString)==0) {
-				retValue = retValue + pow((float)2,(float)i);
+			if (tempString2.compare(tempString) == 0) {
+				retValue = retValue + pow((float)2, (float)i);
 			}
 
-			if(tempString2.compare("") == 0)
+			if (tempString2.compare("") == 0)
 				break;
 		}
 	}
-	delete []arInputString;
+	delete[]arInputString;
 	//cout << "WearFlag : " << wearFlagStr << " -> " << retValue << endl;
 
 	return retValue;
@@ -452,24 +451,24 @@ int get_Item_Immune_Value(string inputString)
 	"SLOW",
 	"POISON",
 	"TERROR"
-};
+	};
 
 	int retValue = 0;
 	string* arInputString = StringSplit(inputString, "|");
-	for(size_t i=0;i<_countof(arImmune);i++) {
+	for (size_t i = 0; i < _countof(arImmune); i++) {
 		string tempString = arImmune[i];
-		for (size_t j=0; j<30 ; j++)
+		for (size_t j = 0; j < 30; j++)
 		{
 			string tempString2 = arInputString[j];
-			if (tempString2.compare(tempString)==0) {
-				retValue = retValue + pow((float)2,(float)i);
+			if (tempString2.compare(tempString) == 0) {
+				retValue = retValue + pow((float)2, (float)i);
 			}
 
-			if(tempString2.compare("") == 0)
+			if (tempString2.compare("") == 0)
 				break;
 		}
 	}
-	delete []arInputString;
+	delete[]arInputString;
 	//cout << "Immune : " << immuneStr << " -> " << retValue << endl;
 
 	return retValue;
@@ -488,17 +487,17 @@ int get_Item_LimitType_Value(string inputString)
 	"REAL_TIME",
 	"REAL_TIME_FIRST_USE",
 	"TIMER_BASED_ON_WEAR"
-};
+	};
 
 	int retInt = -1;
 	//cout << "LimitType : " << limitTypeStr << " -> ";
-	for (unsigned int j=0;j<_countof(arLimitType);j++) {
+	for (unsigned int j = 0; j < _countof(arLimitType); j++) {
 		string tempString = arLimitType[j];
 		string tempInputString = trim(inputString);
-		if	(tempInputString.compare(tempString)==0)
+		if (tempInputString.compare(tempString) == 0)
 		{
 			//cout << j << " ";
-			retInt =  j;
+			retInt = j;
 			break;
 		}
 	}
@@ -605,17 +604,17 @@ int get_Item_ApplyType_Value(string inputString)
 #ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 	,"APPLY_MOUNT"
 #endif
-};
+	};
 
 	int retInt = -1;
 	//cout << "ApplyType : " << applyTypeStr << " -> ";
-	for (size_t j=0;j<_countof(arApplyType);j++) {
+	for (size_t j = 0; j < _countof(arApplyType); j++) {
 		string tempString = arApplyType[j];
 		string tempInputString = trim(inputString);
-		if	(tempInputString.compare(tempString)==0)
+		if (tempInputString.compare(tempString) == 0)
 		{
 			//cout << j << " ";
-			retInt =  j;
+			retInt = j;
 			break;
 		}
 	}
@@ -633,17 +632,17 @@ int get_Mob_Rank_Value(string inputString)
 	"S_KNIGHT",
 	"BOSS",
 	"KING"
-};
+	};
 
 	int retInt = -1;
 	//cout << "Rank : " << rankStr << " -> ";
-	for (size_t j=0;j<_countof(arRank);j++) {
+	for (size_t j = 0; j < _countof(arRank); j++) {
 		string tempString = arRank[j];
 		string tempInputString = trim(inputString);
-		if	(tempInputString.compare(tempString)==0)
+		if (tempInputString.compare(tempString) == 0)
 		{
 			//cout << j << " ";
-			retInt =  j;
+			retInt = j;
 			break;
 		}
 	}
@@ -665,17 +664,17 @@ int get_Mob_Type_Value(string inputString)
 	"POLYMORPH_PC",
 	"HORSE",
 	"GOTO"
-};
+	};
 
 	int retInt = -1;
 	//cout << "Type : " << typeStr << " -> ";
-	for (size_t j=0;j<_countof(arType);j++) {
+	for (size_t j = 0; j < _countof(arType); j++) {
 		string tempString = arType[j];
 		string tempInputString = trim(inputString);
-		if	(tempInputString.compare(tempString)==0)
+		if (tempInputString.compare(tempString) == 0)
 		{
 			//cout << j << " ";
-			retInt =  j;
+			retInt = j;
 			break;
 		}
 	}
@@ -695,17 +694,17 @@ int get_Mob_BattleType_Value(string inputString)
 	"TANKER",
 	"SUPER_POWER",
 	"SUPER_TANKER"
-};
+	};
 
 	int retInt = -1;
 	//cout << "Battle Type : " << battleTypeStr << " -> ";
-	for (size_t j=0;j<_countof(arBattleType);j++) {
+	for (size_t j = 0; j < _countof(arBattleType); j++) {
 		string tempString = arBattleType[j];
 		string tempInputString = trim(inputString);
-		if	(tempInputString.compare(tempString)==0)
+		if (tempInputString.compare(tempString) == 0)
 		{
 			//cout << j << " ";
-			retInt =  j;
+			retInt = j;
 			break;
 		}
 	}
@@ -720,17 +719,17 @@ int get_Mob_Size_Value(string inputString)
 	"SMALL",
 	"MEDIUM",
 	"BIG"
-}; //@fixme201 SAMLL to SMALL
+	}; //@fixme201 SAMLL to SMALL
 
 	int retInt = 0;
 	//cout << "Size : " << sizeStr << " -> ";
-	for (size_t j=0;j<_countof(arSize);j++) {
+	for (size_t j = 0; j < _countof(arSize); j++) {
 		string tempString = arSize[j];
 		string tempInputString = trim(inputString);
-		if	(tempInputString.compare(tempString)==0)
+		if (tempInputString.compare(tempString) == 0)
 		{
 			//cout << j << " ";
-			retInt =  j + 1;
+			retInt = j + 1;
 			break;
 		}
 	}
@@ -754,24 +753,24 @@ int get_Mob_AIFlag_Value(string inputString)
 	"GODSPEED",
 	"DEATHBLOW",
 	"REVIVE",
-};
+	};
 
 	int retValue = 0;
 	string* arInputString = StringSplit(inputString, ",");
-	for (size_t i =0;i<_countof(arAIFlag);i++) {
+	for (size_t i = 0; i < _countof(arAIFlag); i++) {
 		string tempString = arAIFlag[i];
-		for (size_t j=0; j<30 ; j++)
+		for (size_t j = 0; j < 30; j++)
 		{
 			string tempString2 = arInputString[j];
-			if (tempString2.compare(tempString)==0) {
-				retValue = retValue + pow((float)2,(float)i);
+			if (tempString2.compare(tempString) == 0) {
+				retValue = retValue + pow((float)2, (float)i);
 			}
 
-			if(tempString2.compare("") == 0)
+			if (tempString2.compare("") == 0)
 				break;
 		}
 	}
-	delete []arInputString;
+	delete[]arInputString;
 	//cout << "AIFlag : " << aiFlagStr << " -> " << retValue << endl;
 
 	return retValue;
@@ -796,24 +795,24 @@ int get_Mob_RaceFlag_Value(string inputString)
 	"ATT_WIND",
 	"ATT_EARTH",
 	"ATT_DARK"
-};
+	};
 
 	int retValue = 0;
 	string* arInputString = StringSplit(inputString, ",");
-	for(size_t i =0;i<_countof(arRaceFlag);i++) {
+	for (size_t i = 0; i < _countof(arRaceFlag); i++) {
 		string tempString = arRaceFlag[i];
-		for (size_t j=0; j<30 ; j++)
+		for (size_t j = 0; j < 30; j++)
 		{
 			string tempString2 = arInputString[j];
-			if (tempString2.compare(tempString)==0) {
-				retValue = retValue + pow((float)2,(float)i);
+			if (tempString2.compare(tempString) == 0) {
+				retValue = retValue + pow((float)2, (float)i);
 			}
 
-			if(tempString2.compare("") == 0)
+			if (tempString2.compare("") == 0)
 				break;
 		}
 	}
-	delete []arInputString;
+	delete[]arInputString;
 	//cout << "Race Flag : " << raceFlagStr << " -> " << retValue << endl;
 
 	return retValue;
@@ -828,24 +827,24 @@ int get_Mob_ImmuneFlag_Value(string inputString)
 	"POISON",
 	"TERROR",
 	"REFLECT"
-};
+	};
 
 	int retValue = 0;
 	string* arInputString = StringSplit(inputString, ",");
-	for(size_t i =0;i<_countof(arImmuneFlag);i++) {
+	for (size_t i = 0; i < _countof(arImmuneFlag); i++) {
 		string tempString = arImmuneFlag[i];
-		for (size_t j=0; j<30 ; j++)
+		for (size_t j = 0; j < 30; j++)
 		{
 			string tempString2 = arInputString[j];
-			if (tempString2.compare(tempString)==0) {
-				retValue = retValue + pow((float)2,(float)i);
+			if (tempString2.compare(tempString) == 0) {
+				retValue = retValue + pow((float)2, (float)i);
 			}
 
-			if(tempString2.compare("") == 0)
+			if (tempString2.compare("") == 0)
 				break;
 		}
 	}
-	delete []arInputString;
+	delete[]arInputString;
 	//cout << "Immune Flag : " << immuneFlagStr << " -> " << retValue << endl;
 
 	return retValue;
@@ -853,7 +852,7 @@ int get_Mob_ImmuneFlag_Value(string inputString)
 
 #ifndef __DUMP_PROTO__
 
-bool Set_Proto_Mob_Table(TMobTable *mobTable, cCsvTable &csvTable,std::map<int,const char*> &nameMap)
+bool Set_Proto_Mob_Table(TMobTable* mobTable, cCsvTable& csvTable, std::map<int, const char*>& nameMap)
 {
 	int col = 0;
 	str_to_number(mobTable->dwVnum, csvTable.AsStringByIndex(col++));
@@ -861,9 +860,10 @@ bool Set_Proto_Mob_Table(TMobTable *mobTable, cCsvTable &csvTable,std::map<int,c
 
 	auto it = nameMap.find(mobTable->dwVnum);
 	if (it != nameMap.end()) {
-		const char * localeName = it->second;
+		const char* localeName = it->second;
 		strlcpy(mobTable->szLocaleName, localeName, sizeof(mobTable->szLocaleName));
-	} else {
+	}
+	else {
 		strlcpy(mobTable->szLocaleName, mobTable->szName, sizeof(mobTable->szLocaleName));
 	}
 
@@ -907,10 +907,10 @@ bool Set_Proto_Mob_Table(TMobTable *mobTable, cCsvTable &csvTable,std::map<int,c
 	str_to_number(mobTable->dwDamageRange[1], csvTable.AsStringByIndex(col++));
 	str_to_number(mobTable->dwMaxHP, csvTable.AsStringByIndex(col++));
 	str_to_number(mobTable->bRegenCycle, csvTable.AsStringByIndex(col++));
-	str_to_number(mobTable->bRegenPercent,	csvTable.AsStringByIndex(col++));
+	str_to_number(mobTable->bRegenPercent, csvTable.AsStringByIndex(col++));
 	str_to_number(mobTable->dwGoldMin, csvTable.AsStringByIndex(col++));
 	str_to_number(mobTable->dwGoldMax, csvTable.AsStringByIndex(col++));
-	str_to_number(mobTable->dwExp,	csvTable.AsStringByIndex(col++));
+	str_to_number(mobTable->dwExp, csvTable.AsStringByIndex(col++));
 	str_to_number(mobTable->wDef, csvTable.AsStringByIndex(col++));
 	str_to_number(mobTable->sAttackSpeed, csvTable.AsStringByIndex(col++));
 	str_to_number(mobTable->sMovingSpeed, csvTable.AsStringByIndex(col++));
@@ -957,47 +957,58 @@ bool Set_Proto_Mob_Table(TMobTable *mobTable, cCsvTable &csvTable,std::map<int,c
 	return true;
 }
 
-bool Set_Proto_Item_Table(TItemTable *itemTable, cCsvTable &csvTable,std::map<int,const char*> &nameMap)
+bool Set_Proto_Item_Table(TItemTable* itemTable, cCsvTable& csvTable, std::map<int, const char*>& nameMap)
 {
 	int col = 0;
 
 	int dataArray[33];
-	for (size_t i=0; i<_countof(dataArray);i++) {
+	for (size_t i = 0; i < _countof(dataArray); i++) {
 		int validCheck = 0;
-		if (i==2) {
+		if (i == 2) {
 			dataArray[i] = get_Item_Type_Value(csvTable.AsStringByIndex(col));
 			validCheck = dataArray[i];
-		} else if (i==3) {
-			dataArray[i] = get_Item_SubType_Value(dataArray[i-1], csvTable.AsStringByIndex(col));
+		}
+		else if (i == 3) {
+			dataArray[i] = get_Item_SubType_Value(dataArray[i - 1], csvTable.AsStringByIndex(col));
 			validCheck = dataArray[i];
-		} else if (i==5) {
+		}
+		else if (i == 5) {
 			dataArray[i] = get_Item_AntiFlag_Value(csvTable.AsStringByIndex(col));
 			validCheck = dataArray[i];
-		} else if (i==6) {
+		}
+		else if (i == 6) {
 			dataArray[i] = get_Item_Flag_Value(csvTable.AsStringByIndex(col));
 			validCheck = dataArray[i];
-		} else if (i==7) {
+		}
+		else if (i == 7) {
 			dataArray[i] = get_Item_WearFlag_Value(csvTable.AsStringByIndex(col));
 			validCheck = dataArray[i];
-		} else if (i==8) {
+		}
+		else if (i == 8) {
 			dataArray[i] = get_Item_Immune_Value(csvTable.AsStringByIndex(col));
 			validCheck = dataArray[i];
-		} else if (i==14) {
+		}
+		else if (i == 14) {
 			dataArray[i] = get_Item_LimitType_Value(csvTable.AsStringByIndex(col));
 			validCheck = dataArray[i];
-		} else if (i==16) {
+		}
+		else if (i == 16) {
 			dataArray[i] = get_Item_LimitType_Value(csvTable.AsStringByIndex(col));
 			validCheck = dataArray[i];
-		} else if (i==18) {
+		}
+		else if (i == 18) {
 			dataArray[i] = get_Item_ApplyType_Value(csvTable.AsStringByIndex(col));
 			validCheck = dataArray[i];
-		} else if (i==20) {
+		}
+		else if (i == 20) {
 			dataArray[i] = get_Item_ApplyType_Value(csvTable.AsStringByIndex(col));
 			validCheck = dataArray[i];
-		} else if (i==22) {
+		}
+		else if (i == 22) {
 			dataArray[i] = get_Item_ApplyType_Value(csvTable.AsStringByIndex(col));
 			validCheck = dataArray[i];
-		} else {
+		}
+		else {
 			str_to_number(dataArray[i], csvTable.AsStringByIndex(col));
 		}
 
@@ -1028,14 +1039,14 @@ bool Set_Proto_Item_Table(TItemTable *itemTable, cCsvTable &csvTable,std::map<in
 		}
 		else
 		{
-			std::string s_start_vnum (s.substr(0, pos));
-			std::string s_end_vnum (s.substr(pos +1 ));
+			std::string s_start_vnum(s.substr(0, pos));
+			std::string s_end_vnum(s.substr(pos + 1));
 
 			int start_vnum = atoi(s_start_vnum.c_str());
 			int end_vnum = atoi(s_end_vnum.c_str());
 			if (0 == start_vnum || (0 != end_vnum && end_vnum < start_vnum))
 			{
-				sys_err ("INVALID VNUM %s", s.c_str());
+				sys_err("INVALID VNUM %s", s.c_str());
 				return false;
 			}
 			itemTable->dwVnum = start_vnum;
@@ -1046,9 +1057,10 @@ bool Set_Proto_Item_Table(TItemTable *itemTable, cCsvTable &csvTable,std::map<in
 	strlcpy(itemTable->szName, csvTable.AsStringByIndex(1), sizeof(itemTable->szName));
 	auto it = nameMap.find(itemTable->dwVnum);
 	if (it != nameMap.end()) {
-		const char * localeName = it->second;
+		const char* localeName = it->second;
 		strlcpy(itemTable->szLocaleName, localeName, sizeof(itemTable->szLocaleName));
-	} else {
+	}
+	else {
 		strlcpy(itemTable->szLocaleName, itemTable->szName, sizeof(itemTable->szLocaleName));
 	}
 	itemTable->bType = dataArray[2];
@@ -1070,25 +1082,24 @@ bool Set_Proto_Item_Table(TItemTable *itemTable, cCsvTable &csvTable,std::map<in
 
 	for (i = 0; i < ITEM_LIMIT_MAX_NUM; ++i)
 	{
-		itemTable->aLimits[i].bType = dataArray[14+i*2];
-		itemTable->aLimits[i].lValue = dataArray[15+i*2];
+		itemTable->aLimits[i].bType = dataArray[14 + i * 2];
+		itemTable->aLimits[i].lValue = dataArray[15 + i * 2];
 
 		if (LIMIT_REAL_TIME_START_FIRST_USE == itemTable->aLimits[i].bType)
 			itemTable->cLimitRealTimeFirstUseIndex = (char)i;
 
 		if (LIMIT_TIMER_BASED_ON_WEAR == itemTable->aLimits[i].bType)
 			itemTable->cLimitTimerBasedOnWearIndex = (char)i;
-
 	}
 
 	for (i = 0; i < ITEM_APPLY_MAX_NUM; ++i)
 	{
-		itemTable->aApplies[i].bType = dataArray[18+i*2];
-		itemTable->aApplies[i].lValue = dataArray[19+i*2];
+		itemTable->aApplies[i].bType = dataArray[18 + i * 2];
+		itemTable->aApplies[i].lValue = dataArray[19 + i * 2];
 	}
 
 	for (i = 0; i < ITEM_VALUES_MAX_NUM; ++i)
-		itemTable->alValues[i] = dataArray[24+i];
+		itemTable->alValues[i] = dataArray[24 + i];
 
 	itemTable->bGainSocketPct = dataArray[31];
 	itemTable->sAddonType = dataArray[32];
@@ -1097,9 +1108,9 @@ bool Set_Proto_Item_Table(TItemTable *itemTable, cCsvTable &csvTable,std::map<in
 
 #ifdef ENABLE_CHECK_SELL_PRICE
 	auto dwPrice = itemTable->dwShopBuyPrice;
-	#ifndef ENABLE_NO_SELL_PRICE_DIVIDED_BY_5
+#ifndef ENABLE_NO_SELL_PRICE_DIVIDED_BY_5
 	dwPrice /= 5;
-	#endif
+#endif
 	if (dwPrice > itemTable->dwGold)
 	{
 		sys_err("ITEM: #%-5lu %-24s SELL_OVERFLOW dwGold: %u < dwShopBuyPrice %u",

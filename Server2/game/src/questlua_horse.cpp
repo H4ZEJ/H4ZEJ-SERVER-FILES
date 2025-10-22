@@ -80,7 +80,7 @@ namespace quest
 #endif
 		bool bFromFar = lua_isboolean(L, 1) ? lua_toboolean(L, 1) : false;
 
-		DWORD horseVnum= lua_isnumber(L, 2) ? lua_tonumber(L, 2) : 0;
+		DWORD horseVnum = lua_isnumber(L, 2) ? lua_tonumber(L, 2) : 0;
 
 		const char* name = lua_isstring(L, 3) ? lua_tostring(L, 3) : 0;
 		ch->HorseSummon(true, bFromFar, horseVnum, name);
@@ -200,7 +200,7 @@ namespace quest
 	ALUA(horse_is_dead)
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
-		lua_pushboolean(L, ch->GetHorseHealth()<=0);
+		lua_pushboolean(L, ch->GetHorseHealth() <= 0);
 		return 1;
 	}
 
@@ -227,21 +227,21 @@ namespace quest
 
 	ALUA(horse_set_name)
 	{
-		if ( lua_isstring(L, -1) != true ) return 0;
+		if (lua_isstring(L, -1) != true) return 0;
 
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
-		if ( ch->GetHorseLevel() > 0 )
+		if (ch->GetHorseLevel() > 0)
 		{
 			const char* pHorseName = lua_tostring(L, -1);
 
-			if ( pHorseName == NULL || check_name(pHorseName) == 0 )
+			if (pHorseName == NULL || check_name(pHorseName) == 0)
 			{
 				lua_pushnumber(L, 1);
 			}
 			else
 			{
-				int nHorseNameDuration = test_server == true ? 60*5 : 60*60*24*30;
+				int nHorseNameDuration = test_server == true ? 60 * 5 : 60 * 60 * 24 * 30;
 
 				ch->SetQuestFlag("horse_name.valid_till", get_global_time() + nHorseNameDuration);
 				ch->AddAffect(AFFECT_HORSE_NAME, 0, 0, 0, PASSES_PER_SEC(nHorseNameDuration), 0, true);
@@ -266,11 +266,11 @@ namespace quest
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
-		if ( ch != NULL )
+		if (ch != NULL)
 		{
 			const char* pHorseName = CHorseNameManager::instance().GetHorseName(ch->GetPlayerID());
 
-			if ( pHorseName != NULL )
+			if (pHorseName != NULL)
 			{
 				lua_pushstring(L, pHorseName);
 				return 1;

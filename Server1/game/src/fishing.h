@@ -20,10 +20,10 @@ namespace fishing
 		int		fish_id;
 
 		fishing_event_info()
-		: pid(0)
-		, step(0)
-		, hang_time(0)
-		, fish_id(0)
+			: pid(0)
+			, step(0)
+			, hang_time(0)
+			, fish_id(0)
 		{
 		}
 	};

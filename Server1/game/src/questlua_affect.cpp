@@ -18,9 +18,9 @@ namespace quest
 			return 0;
 		}
 
-		CQuestManager & q = CQuestManager::instance();
+		CQuestManager& q = CQuestManager::instance();
 
-		BYTE applyOn = (BYTE) lua_tonumber(L, 1);
+		BYTE applyOn = (BYTE)lua_tonumber(L, 1);
 
 		LPCHARACTER ch = q.GetCurrentCharacterPtr();
 
@@ -33,8 +33,8 @@ namespace quest
 		if (ch->FindAffect(AFFECT_QUEST_START_IDX, applyOn))
 			return 0;
 
-		long value = (long) lua_tonumber(L, 2);
-		long duration = (long) lua_tonumber(L, 3);
+		long value = (long)lua_tonumber(L, 2);
+		long duration = (long)lua_tonumber(L, 3);
 
 		ch->AddAffect(AFFECT_QUEST_START_IDX, aApplyInfo[applyOn].bPointType, value, 0, duration, 0, false);
 
@@ -43,12 +43,12 @@ namespace quest
 
 	ALUA(affect_remove)
 	{
-		CQuestManager & q = CQuestManager::instance();
+		CQuestManager& q = CQuestManager::instance();
 		int iType;
 
 		if (lua_isnumber(L, 1))
 		{
-			iType = (int) lua_tonumber(L, 1);
+			iType = (int)lua_tonumber(L, 1);
 
 			if (iType == 0)
 				iType = q.GetCurrentPC()->GetCurrentQuestIndex() + AFFECT_QUEST_START_IDX;
@@ -83,9 +83,9 @@ namespace quest
 			return 0;
 		}
 
-		CQuestManager & q = CQuestManager::instance();
+		CQuestManager& q = CQuestManager::instance();
 
-		BYTE applyOn = (BYTE) lua_tonumber(L, 1);
+		BYTE applyOn = (BYTE)lua_tonumber(L, 1);
 
 		LPCHARACTER ch = q.GetCurrentCharacterPtr();
 
@@ -95,8 +95,8 @@ namespace quest
 			return 0;
 		}
 
-		long value = (long) lua_tonumber(L, 2);
-		long duration = (long) lua_tonumber(L, 3);
+		long value = (long)lua_tonumber(L, 2);
+		long duration = (long)lua_tonumber(L, 3);
 
 		ch->AddAffect(AFFECT_HAIR, aApplyInfo[applyOn].bPointType, value, 0, duration, 0, false);
 
@@ -107,12 +107,12 @@ namespace quest
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
-		CAffect* pkAff = ch->FindAffect( AFFECT_HAIR );
+		CAffect* pkAff = ch->FindAffect(AFFECT_HAIR);
 
-		if ( pkAff != NULL )
+		if (pkAff != NULL)
 		{
 			lua_pushnumber(L, pkAff->lDuration);
-			ch->RemoveAffect( pkAff );
+			ch->RemoveAffect(pkAff);
 		}
 		else
 		{
@@ -137,13 +137,12 @@ namespace quest
 
 		CAffect* pkAff = ch->FindAffect(affectType);
 
-		if ( pkAff != NULL )
+		if (pkAff != NULL)
 			lua_pushnumber(L, pkAff->bApplyOn);
 		else
 			lua_pushnil(L);
 
 		return 1;
-
 	}
 
 	ALUA(affect_add_collect)
@@ -154,9 +153,9 @@ namespace quest
 			return 0;
 		}
 
-		CQuestManager & q = CQuestManager::instance();
+		CQuestManager& q = CQuestManager::instance();
 
-		BYTE applyOn = (BYTE) lua_tonumber(L, 1);
+		BYTE applyOn = (BYTE)lua_tonumber(L, 1);
 
 		LPCHARACTER ch = q.GetCurrentCharacterPtr();
 
@@ -166,8 +165,8 @@ namespace quest
 			return 0;
 		}
 
-		long value = (long) lua_tonumber(L, 2);
-		long duration = (long) lua_tonumber(L, 3);
+		long value = (long)lua_tonumber(L, 2);
+		long duration = (long)lua_tonumber(L, 3);
 
 		ch->AddAffect(AFFECT_COLLECT, aApplyInfo[applyOn].bPointType, value, 0, duration, 0, false);
 
@@ -182,9 +181,9 @@ namespace quest
 			return 0;
 		}
 
-		CQuestManager & q = CQuestManager::instance();
+		CQuestManager& q = CQuestManager::instance();
 
-		BYTE point_type = (BYTE) lua_tonumber(L, 1);
+		BYTE point_type = (BYTE)lua_tonumber(L, 1);
 
 		LPCHARACTER ch = q.GetCurrentCharacterPtr();
 
@@ -194,8 +193,8 @@ namespace quest
 			return 0;
 		}
 
-		long value = (long) lua_tonumber(L, 2);
-		long duration = (long) lua_tonumber(L, 3);
+		long value = (long)lua_tonumber(L, 2);
+		long duration = (long)lua_tonumber(L, 3);
 
 		ch->AddAffect(AFFECT_COLLECT, point_type, value, 0, duration, 0, false);
 
@@ -206,11 +205,11 @@ namespace quest
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
-		if ( ch != NULL )
+		if (ch != NULL)
 		{
 			BYTE bApply = (BYTE)lua_tonumber(L, 1);
 
-			if ( bApply >= MAX_APPLY_NUM ) return 0;
+			if (bApply >= MAX_APPLY_NUM) return 0;
 
 			bApply = aApplyInfo[bApply].bPointType;
 			long value = (long)lua_tonumber(L, 2);
@@ -218,13 +217,13 @@ namespace quest
 			const std::list<CAffect*>& rList = ch->GetAffectContainer();
 			const CAffect* pAffect = NULL;
 
-			for ( std::list<CAffect*>::const_iterator iter = rList.begin(); iter != rList.end(); ++iter )
+			for (std::list<CAffect*>::const_iterator iter = rList.begin(); iter != rList.end(); ++iter)
 			{
 				pAffect = *iter;
 
-				if ( pAffect->dwType == AFFECT_COLLECT )
+				if (pAffect->dwType == AFFECT_COLLECT)
 				{
-					if ( pAffect->bApplyOn == bApply && pAffect->lApplyValue == value )
+					if (pAffect->bApplyOn == bApply && pAffect->lApplyValue == value)
 					{
 						break;
 					}
@@ -233,9 +232,9 @@ namespace quest
 				pAffect = NULL;
 			}
 
-			if ( pAffect != NULL )
+			if (pAffect != NULL)
 			{
-				ch->RemoveAffect( const_cast<CAffect*>(pAffect) );
+				ch->RemoveAffect(const_cast<CAffect*>(pAffect));
 			}
 		}
 
@@ -246,7 +245,7 @@ namespace quest
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
-		if ( ch != NULL )
+		if (ch != NULL)
 		{
 			ch->RemoveAffect(AFFECT_COLLECT);
 		}

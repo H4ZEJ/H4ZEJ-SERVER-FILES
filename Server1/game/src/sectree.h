@@ -5,9 +5,9 @@
 
 enum ESectree
 {
-	SECTREE_SIZE	= 6400,
-	SECTREE_HALF_SIZE	= 3200,
-	CELL_SIZE		= 50
+	SECTREE_SIZE = 6400,
+	SECTREE_HALF_SIZE = 3200,
+	CELL_SIZE = 50
 };
 
 typedef struct sectree_coord
@@ -38,7 +38,7 @@ struct FCollectEntity {
 	template<typename F>
 	void ForEach(F& f) {
 		std::vector<LPENTITY>::iterator it = result.begin();
-		for ( ; it != result.end(); ++it) {
+		for (; it != result.end(); ++it) {
 			LPENTITY entity = *it;
 			f(entity);
 		}
@@ -51,134 +51,134 @@ class CAttribute;
 
 class SECTREE
 {
-	public:
-		friend class SECTREE_MANAGER;
-		friend class SECTREE_MAP;
+public:
+	friend class SECTREE_MANAGER;
+	friend class SECTREE_MAP;
 
-		template <class _Func> LPENTITY	find_if (_Func & func) const
-		{
+	template <class _Func> LPENTITY	find_if(_Func& func) const
+	{
 #ifdef __clang__
-			LPSECTREE_LIST::const_iterator it_tree = m_neighbor_list.begin();
+		LPSECTREE_LIST::const_iterator it_tree = m_neighbor_list.begin();
 #else
-			LPSECTREE_LIST::iterator it_tree = m_neighbor_list.begin();
+		LPSECTREE_LIST::iterator it_tree = m_neighbor_list.begin();
 #endif
 
-			while (it_tree != m_neighbor_list.end())
+		while (it_tree != m_neighbor_list.end())
+		{
+			ENTITY_SET::iterator it_entity = (*it_tree)->m_set_entity.begin();
+
+			while (it_entity != (*it_tree)->m_set_entity.end())
 			{
-				ENTITY_SET::iterator it_entity = (*it_tree)->m_set_entity.begin();
+				if (func(*it_entity))
+					return (*it_entity);
 
-				while (it_entity != (*it_tree)->m_set_entity.end())
-				{
-					if (func(*it_entity))
-						return (*it_entity);
-
-					++it_entity;
-				}
-
-				++it_tree;
+				++it_entity;
 			}
 
-			return NULL;
+			++it_tree;
 		}
 
-		template <class _Func> void ForEachAround(_Func & func)
-		{
-			// <Factor> Using snapshot copy to avoid side-effects
-			FCollectEntity collector;
+		return NULL;
+	}
+
+	template <class _Func> void ForEachAround(_Func& func)
+	{
+		// <Factor> Using snapshot copy to avoid side-effects
+		FCollectEntity collector;
 #ifdef __clang__
-			LPSECTREE_LIST::const_iterator it = m_neighbor_list.begin();
+		LPSECTREE_LIST::const_iterator it = m_neighbor_list.begin();
 #else
-			LPSECTREE_LIST::iterator it = m_neighbor_list.begin();
+		LPSECTREE_LIST::iterator it = m_neighbor_list.begin();
 #endif
-			for ( ; it != m_neighbor_list.end(); ++it)
-			{
-				LPSECTREE sectree = *it;
-				sectree->for_each_entity(collector);
-			}
-			collector.ForEach(func);
-		}
-
-		template <class _Func> void for_each_for_find_victim(_Func & func)
+		for (; it != m_neighbor_list.end(); ++it)
 		{
+			LPSECTREE sectree = *it;
+			sectree->for_each_entity(collector);
+		}
+		collector.ForEach(func);
+	}
+
+	template <class _Func> void for_each_for_find_victim(_Func& func)
+	{
 #ifdef __clang__
-			LPSECTREE_LIST::const_iterator it_tree = m_neighbor_list.begin();
+		LPSECTREE_LIST::const_iterator it_tree = m_neighbor_list.begin();
 #else
-			LPSECTREE_LIST::iterator it_tree = m_neighbor_list.begin();
+		LPSECTREE_LIST::iterator it_tree = m_neighbor_list.begin();
 #endif
 
-			while (it_tree != m_neighbor_list.end())
-			{
-				if ( (*(it_tree++))->for_each_entity_for_find_victim(func) )
-					return;
-			}
-		}
-		template <class _Func> bool for_each_entity_for_find_victim(_Func & func)
+		while (it_tree != m_neighbor_list.end())
 		{
-			itertype(m_set_entity) it = m_set_entity.begin();
-
-			while (it != m_set_entity.end())
-			{
-				if ( func(*it++) )
-					return true;
-			}
-			return false;
+			if ((*(it_tree++))->for_each_entity_for_find_victim(func))
+				return;
 		}
+	}
+	template <class _Func> bool for_each_entity_for_find_victim(_Func& func)
+	{
+		itertype(m_set_entity) it = m_set_entity.begin();
 
-	public:
-		SECTREE();
-		~SECTREE();
-
-		void				Initialize();
-		void				Destroy();
-
-		SECTREEID			GetID();
-
-		bool				InsertEntity(LPENTITY ent);
-		void				RemoveEntity(LPENTITY ent);
-
-		void				SetRegenEvent(LPEVENT event);
-		bool				Regen();
-
-		void				IncreasePC();
-		void				DecreasePC();
-
-		void				BindAttribute(CAttribute * pkAttribute);
-
-		CAttribute *			GetAttributePtr() { return m_pkAttribute; }
-
-		DWORD				GetAttribute(long x, long y);
-		bool				IsAttr(long x, long y, DWORD dwFlag);
-
-		void				CloneAttribute(LPSECTREE tree);
-
-		int				GetEventAttribute(long x, long y);
-
-		void				SetAttribute(DWORD x, DWORD y, DWORD dwAttr);
-		void				RemoveAttribute(DWORD x, DWORD y, DWORD dwAttr);
-
-	private:
-		template <class _Func> void for_each_entity(_Func & func)
+		while (it != m_set_entity.end())
 		{
-			itertype(m_set_entity) it = m_set_entity.begin();
-			for ( ; it != m_set_entity.end(); ++it) {
-				LPENTITY entity = *it;
-				// <Factor> Sanity check
-				if (entity->GetSectree() != this) {
-					sys_err("<Factor> SECTREE-ENTITY relationship mismatch");
-					m_set_entity.erase(it);
-					continue;
-				}
-				func(entity);
-			}
+			if (func(*it++))
+				return true;
 		}
+		return false;
+	}
 
-		SECTREEID			m_id;
-		ENTITY_SET			m_set_entity;
-		LPSECTREE_LIST			m_neighbor_list;
-		int				m_iPCCount;
-		bool				isClone;
+public:
+	SECTREE();
+	~SECTREE();
 
-		CAttribute *			m_pkAttribute;
+	void				Initialize();
+	void				Destroy();
+
+	SECTREEID			GetID();
+
+	bool				InsertEntity(LPENTITY ent);
+	void				RemoveEntity(LPENTITY ent);
+
+	void				SetRegenEvent(LPEVENT event);
+	bool				Regen();
+
+	void				IncreasePC();
+	void				DecreasePC();
+
+	void				BindAttribute(CAttribute* pkAttribute);
+
+	CAttribute* GetAttributePtr() { return m_pkAttribute; }
+
+	DWORD				GetAttribute(long x, long y);
+	bool				IsAttr(long x, long y, DWORD dwFlag);
+
+	void				CloneAttribute(LPSECTREE tree);
+
+	int				GetEventAttribute(long x, long y);
+
+	void				SetAttribute(DWORD x, DWORD y, DWORD dwAttr);
+	void				RemoveAttribute(DWORD x, DWORD y, DWORD dwAttr);
+
+private:
+	template <class _Func> void for_each_entity(_Func& func)
+	{
+		itertype(m_set_entity) it = m_set_entity.begin();
+		for (; it != m_set_entity.end(); ++it) {
+			LPENTITY entity = *it;
+			// <Factor> Sanity check
+			if (entity->GetSectree() != this) {
+				sys_err("<Factor> SECTREE-ENTITY relationship mismatch");
+				m_set_entity.erase(it);
+				continue;
+			}
+			func(entity);
+		}
+	}
+
+	SECTREEID			m_id;
+	ENTITY_SET			m_set_entity;
+	LPSECTREE_LIST			m_neighbor_list;
+	int				m_iPCCount;
+	bool				isClone;
+
+	CAttribute* m_pkAttribute;
 };
 
 #endif

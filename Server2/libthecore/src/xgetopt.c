@@ -22,7 +22,6 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-
 ///////////////////////////////////////////////////////////////////////////////
 // if you are using precompiled headers then include this line:
 #include "stdafx.h"
@@ -37,9 +36,7 @@
 //#include <tchar.h>
 ///////////////////////////////////////////////////////////////////////////////
 
-
 #include "xgetopt.h"
-
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -153,13 +150,13 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-TCHAR	*optarg;		// global argument pointer
+TCHAR* optarg;		// global argument pointer
 int		optind = 0; 	// global argv index
 int		optreset = 0;
 
-int getopt(int argc, TCHAR *argv[], TCHAR *optstring)
+int getopt(int argc, TCHAR* argv[], TCHAR* optstring)
 {
-	static TCHAR *next = NULL;
+	static TCHAR* next = NULL;
 
 	if (optreset != 0) {
 		optind = 0;
@@ -198,7 +195,7 @@ int getopt(int argc, TCHAR *argv[], TCHAR *optstring)
 	}
 
 	TCHAR c = *next++;
-	TCHAR *cp = _tcschr(optstring, c);
+	TCHAR* cp = _tcschr(optstring, c);
 
 	if (cp == NULL || c == _T(':'))
 		return _T('?');
@@ -225,11 +222,10 @@ int getopt(int argc, TCHAR *argv[], TCHAR *optstring)
 	return c;
 }
 
-
 char* _optarg = NULL;
 int _optind = 1;
 
-int getopt(int argc, char *const argv[], const char *optstring)
+int getopt(int argc, char* const argv[], const char* optstring)
 {
 	if ((_optind >= argc) || (argv[_optind][0] != '-') || (argv[_optind][0] == 0))
 	{
@@ -237,7 +233,7 @@ int getopt(int argc, char *const argv[], const char *optstring)
 	}
 
 	int opt = argv[_optind][1];
-	const char *p = strchr(optstring, opt);
+	const char* p = strchr(optstring, opt);
 
 	if (p == NULL)
 	{

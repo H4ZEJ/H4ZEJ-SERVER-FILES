@@ -53,49 +53,49 @@ const char* FN_weapon_type(int weapon)
 
 class ANI
 {
-	protected:
-		DWORD m_speed[MAIN_RACE_MAX_NUM][2][WEAPON_NUM_TYPES][9];
+protected:
+	DWORD m_speed[MAIN_RACE_MAX_NUM][2][WEAPON_NUM_TYPES][9];
 
-	public:
-		ANI();
+public:
+	ANI();
 
-	public:
-		bool	load();
-		bool	load_one_race(int race, const char *dir_name);
-		DWORD	load_one_weapon(const char *dir_name, int weapon, BYTE combo, bool horse);
-		DWORD	attack_speed(int race, int weapon, BYTE combo = 0, bool horse = false);
+public:
+	bool	load();
+	bool	load_one_race(int race, const char* dir_name);
+	DWORD	load_one_weapon(const char* dir_name, int weapon, BYTE combo, bool horse);
+	DWORD	attack_speed(int race, int weapon, BYTE combo = 0, bool horse = false);
 
-		void	print_attack_speed();
+	void	print_attack_speed();
 };
 
 static class ANI s_ANI;
 
-DWORD FN_attack_speed_from_file(const char *file)
+DWORD FN_attack_speed_from_file(const char* file)
 {
-	FILE * fp = fopen(file, "r");
+	FILE* fp = fopen(file, "r");
 
 	if (NULL == fp)
 		return 0;
 
 	int speed = 1000;
 
-	const char	*key	= "DirectInputTime";
-	const char	*delim	= " \t\r\n";
-	const char	*field, *value;
+	const char* key = "DirectInputTime";
+	const char* delim = " \t\r\n";
+	const char* field, * value;
 
 	char buf[1024];
 
 	while (fgets(buf, 1024, fp))
 	{
-		field	= strtok(buf, delim);
-		value	= strtok(NULL, delim);
+		field = strtok(buf, delim);
+		value = strtok(NULL, delim);
 
 		if (field && value)
 		{
 			if (0 == strcasecmp(field, key))
 			{
 				float f_speed = strtof(value, NULL);
-				speed = (int) (f_speed * 1000.0);
+				speed = (int)(f_speed * 1000.0);
 				break;
 			}
 		}
@@ -123,7 +123,7 @@ ANI::ANI()
 
 bool ANI::load()
 {
-	const char*	dir_name[MAIN_RACE_MAX_NUM] = {
+	const char* dir_name[MAIN_RACE_MAX_NUM] = {
 		"data/pc/warrior",
 		"data/pc/assassin",
 		"data/pc/sura",
@@ -132,10 +132,9 @@ bool ANI::load()
 		"data/pc2/assassin",
 		"data/pc2/sura",
 		"data/pc2/shaman",
-
 	};
 
-	for (int race = 0; race <MAIN_RACE_MAX_NUM; ++race)
+	for (int race = 0; race < MAIN_RACE_MAX_NUM; ++race)
 	{
 		if (false == load_one_race(race, dir_name[race]))
 		{
@@ -147,41 +146,39 @@ bool ANI::load()
 	return true;
 }
 
-DWORD ANI::load_one_weapon(const char *dir_name, int weapon, BYTE combo, bool horse)
+DWORD ANI::load_one_weapon(const char* dir_name, int weapon, BYTE combo, bool horse)
 {
 	char format[128];
 	char filename[256];
 
 	switch (weapon)
 	{
-		case WEAPON_SWORD:
-			strlcpy(format, "%s/%sonehand_sword/combo_%02d.msa", sizeof(format));
-			break;
+	case WEAPON_SWORD:
+		strlcpy(format, "%s/%sonehand_sword/combo_%02d.msa", sizeof(format));
+		break;
 
-		case WEAPON_DAGGER:
-			strlcpy(format, "%s/%sdualhand_sword/combo_%02d.msa", sizeof(format));
-			break;
+	case WEAPON_DAGGER:
+		strlcpy(format, "%s/%sdualhand_sword/combo_%02d.msa", sizeof(format));
+		break;
 
-		case WEAPON_BOW:
-			strlcpy(format, "%s/%sbow/attack.msa", sizeof(format));
-			break;
+	case WEAPON_BOW:
+		strlcpy(format, "%s/%sbow/attack.msa", sizeof(format));
+		break;
 
-		case WEAPON_TWO_HANDED:
-			strlcpy(format, "%s/%stwohand_sword/combo_%02d.msa", sizeof(format));
-			break;
+	case WEAPON_TWO_HANDED:
+		strlcpy(format, "%s/%stwohand_sword/combo_%02d.msa", sizeof(format));
+		break;
 
-		case WEAPON_BELL:
-			strlcpy(format, "%s/%sbell/combo_%02d.msa", sizeof(format));
-			break;
+	case WEAPON_BELL:
+		strlcpy(format, "%s/%sbell/combo_%02d.msa", sizeof(format));
+		break;
 
-		case WEAPON_FAN:
-			strlcpy(format, "%s/%sfan/combo_%02d.msa", sizeof(format));
-			break;
+	case WEAPON_FAN:
+		strlcpy(format, "%s/%sfan/combo_%02d.msa", sizeof(format));
+		break;
 
-
-
-		default:
-			return 1000;
+	default:
+		return 1000;
 	}
 
 	snprintf(filename, sizeof(filename), format, dir_name, horse ? "horse_" : "", combo);
@@ -193,7 +190,7 @@ DWORD ANI::load_one_weapon(const char *dir_name, int weapon, BYTE combo, bool ho
 	return speed;
 }
 
-bool ANI::load_one_race(int race, const char *dir_name)
+bool ANI::load_one_race(int race, const char* dir_name)
 {
 	if (NULL == dir_name || '\0' == dir_name[0])
 		return false;
@@ -211,7 +208,7 @@ bool ANI::load_one_race(int race, const char *dir_name)
 			m_speed[race][1][weapon][0] = MIN(m_speed[race][1][weapon][0], m_speed[race][1][weapon][combo]);
 
 			sys_log(1, "combo%02d speed=%d horse=%d",
-					combo, m_speed[race][0][weapon][combo], m_speed[race][1][weapon][combo]);
+				combo, m_speed[race][0][weapon][combo], m_speed[race][1][weapon][combo]);
 		}
 
 		sys_log(1, "minspeed=%u", m_speed[race][0][weapon][0]);
@@ -224,37 +221,37 @@ DWORD ANI::attack_speed(int race, int weapon, BYTE combo, bool horse)
 {
 	switch (race)
 	{
-		case MAIN_RACE_WARRIOR_M:
-		case MAIN_RACE_ASSASSIN_W:
-		case MAIN_RACE_SURA_M:
-		case MAIN_RACE_SHAMAN_W:
-		case MAIN_RACE_WARRIOR_W:
-		case MAIN_RACE_ASSASSIN_M:
-		case MAIN_RACE_SURA_W:
-		case MAIN_RACE_SHAMAN_M:
+	case MAIN_RACE_WARRIOR_M:
+	case MAIN_RACE_ASSASSIN_W:
+	case MAIN_RACE_SURA_M:
+	case MAIN_RACE_SHAMAN_W:
+	case MAIN_RACE_WARRIOR_W:
+	case MAIN_RACE_ASSASSIN_M:
+	case MAIN_RACE_SURA_W:
+	case MAIN_RACE_SHAMAN_M:
 
-			break;
-		default:
-			return 1000;
+		break;
+	default:
+		return 1000;
 	}
 
 	switch (weapon)
 	{
-		case WEAPON_SWORD:
-		case WEAPON_DAGGER:
-		case WEAPON_BOW:
-		case WEAPON_TWO_HANDED:
-		case WEAPON_BELL:
-		case WEAPON_FAN:
-		case WEAPON_ARROW:
-		case WEAPON_MOUNT_SPEAR:
+	case WEAPON_SWORD:
+	case WEAPON_DAGGER:
+	case WEAPON_BOW:
+	case WEAPON_TWO_HANDED:
+	case WEAPON_BELL:
+	case WEAPON_FAN:
+	case WEAPON_ARROW:
+	case WEAPON_MOUNT_SPEAR:
 
 #ifdef ENABLE_QUIVER_SYSTEM
-		case WEAPON_QUIVER:
+	case WEAPON_QUIVER:
 #endif
-			break;
-		default:
-			return 1000;
+		break;
+	default:
+		return 1000;
 	}
 
 	return m_speed[race][horse ? 1 : 0][weapon][combo];
@@ -264,16 +261,15 @@ const char* FN_race_string(int race)
 {
 	switch (race)
 	{
-		case MAIN_RACE_WARRIOR_M:	return "WARRIOR_M";
-		case MAIN_RACE_ASSASSIN_W:	return "ASSASSIN_W";
-		case MAIN_RACE_SURA_M:		return "SURA_M";
-		case MAIN_RACE_SHAMAN_W:	return "SHAMAN_W";
+	case MAIN_RACE_WARRIOR_M:	return "WARRIOR_M";
+	case MAIN_RACE_ASSASSIN_W:	return "ASSASSIN_W";
+	case MAIN_RACE_SURA_M:		return "SURA_M";
+	case MAIN_RACE_SHAMAN_W:	return "SHAMAN_W";
 
-		case MAIN_RACE_WARRIOR_W:	return "WARRIOR_W";
-		case MAIN_RACE_ASSASSIN_M:	return "ASSASSIN_M";
-		case MAIN_RACE_SURA_W:		return "SURA_W";
-		case MAIN_RACE_SHAMAN_M:	return "SHAMAN_M";
-
+	case MAIN_RACE_WARRIOR_W:	return "WARRIOR_W";
+	case MAIN_RACE_ASSASSIN_M:	return "ASSASSIN_M";
+	case MAIN_RACE_SURA_W:		return "SURA_W";
+	case MAIN_RACE_SHAMAN_M:	return "SHAMAN_M";
 	}
 
 	return "UNKNOWN_RACE";
@@ -283,17 +279,17 @@ const char* FN_weapon_string(int weapon)
 {
 	switch (weapon)
 	{
-		case WEAPON_SWORD:		return "SWORD";
-		case WEAPON_DAGGER:		return "DAGGER";
-		case WEAPON_BOW:		return "BOW";
-		case WEAPON_TWO_HANDED:	return "TWO_HANDED";
-		case WEAPON_BELL:		return "BELL";
-		case WEAPON_FAN:		return "FAN";
-		case WEAPON_ARROW:		return "ARROW";
-		case WEAPON_MOUNT_SPEAR:return "WEAPON_MOUNT_SPEAR";
+	case WEAPON_SWORD:		return "SWORD";
+	case WEAPON_DAGGER:		return "DAGGER";
+	case WEAPON_BOW:		return "BOW";
+	case WEAPON_TWO_HANDED:	return "TWO_HANDED";
+	case WEAPON_BELL:		return "BELL";
+	case WEAPON_FAN:		return "FAN";
+	case WEAPON_ARROW:		return "ARROW";
+	case WEAPON_MOUNT_SPEAR:return "WEAPON_MOUNT_SPEAR";
 
 #ifdef ENABLE_QUIVER_SYSTEM
-		case WEAPON_QUIVER:		return "QUIVER";
+	case WEAPON_QUIVER:		return "QUIVER";
 #endif
 	}
 
@@ -307,9 +303,9 @@ void ANI::print_attack_speed()
 		for (int weapon = 0; weapon < WEAPON_NUM_TYPES; ++weapon)
 		{
 			printf("[%s][%s] = %u\n",
-					FN_race_string(race),
-					FN_weapon_string(weapon),
-					attack_speed(race, weapon));
+				FN_race_string(race),
+				FN_weapon_string(weapon),
+				attack_speed(race, weapon));
 		}
 		printf("\n");
 	}
@@ -360,7 +356,7 @@ void ani_print_attack_speed()
 }
 
 #if 0
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
 	ani_init();
 	ani_print_attack_speed();

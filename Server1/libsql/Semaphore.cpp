@@ -121,10 +121,10 @@ int CSemaphore::Wait()
 	DWORD dwWaitResult = ::WaitForSingleObject(m_hSem, INFINITE);
 
 	switch (dwWaitResult) {
-		case WAIT_OBJECT_0:
-			return true;
-		default:
-			break;
+	case WAIT_OBJECT_0:
+		return true;
+	default:
+		break;
 	}
 	return false;
 }

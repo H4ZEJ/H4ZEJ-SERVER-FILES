@@ -22,10 +22,10 @@
 
 class CSymbol : public CBase
 {
-    private:
+private:
 	int	iType;
 
-    public:
+public:
 	CSymbol();
 	virtual ~CSymbol();
 

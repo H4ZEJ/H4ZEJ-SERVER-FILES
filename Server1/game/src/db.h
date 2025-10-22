@@ -21,76 +21,76 @@ enum
 
 class CQueryInfo
 {
-	public:
-		int	iQueryType;
+public:
+	int	iQueryType;
 };
 
 class CReturnQueryInfo : public CQueryInfo
 {
-	public:
-		int	iType;
-		DWORD	dwIdent;
-		void			*	pvData;
+public:
+	int	iType;
+	DWORD	dwIdent;
+	void* pvData;
 };
 
 class CFuncQueryInfo : public CQueryInfo
 {
-	public:
-		any_function f;
+public:
+	any_function f;
 };
 
 class CFuncAfterQueryInfo : public CQueryInfo
 {
-	public:
-		any_void_function f;
+public:
+	any_void_function f;
 };
 
 class CLoginData;
 
 class DBManager : public singleton<DBManager>
 {
-	public:
-		DBManager();
-		virtual ~DBManager();
+public:
+	DBManager();
+	virtual ~DBManager();
 
-		bool			IsConnected();
+	bool			IsConnected();
 
-		bool			Connect(const char * host, const int port, const char * user, const char * pwd, const char * db);
-		void			Query(const char * c_pszFormat, ...);
+	bool			Connect(const char* host, const int port, const char* user, const char* pwd, const char* db);
+	void			Query(const char* c_pszFormat, ...);
 
-		std::unique_ptr<SQLMsg>		DirectQuery(const char * c_pszFormat, ...);
-		void			ReturnQuery(int iType, DWORD dwIdent, void* pvData, const char * c_pszFormat, ...);
+	std::unique_ptr<SQLMsg>		DirectQuery(const char* c_pszFormat, ...);
+	void			ReturnQuery(int iType, DWORD dwIdent, void* pvData, const char* c_pszFormat, ...);
 
-		void			Process();
-		void			AnalyzeReturnQuery(SQLMsg * pmsg);
+	void			Process();
+	void			AnalyzeReturnQuery(SQLMsg* pmsg);
 
-		void			SendMoneyLog(BYTE type, DWORD vnum, int gold);
+	void			SendMoneyLog(BYTE type, DWORD vnum, int gold);
 
-		void			LoginPrepare(BYTE bBillType, DWORD dwBillID, long lRemainSecs, LPDESC d, DWORD * pdwClientKey, int * paiPremiumTimes = NULL);
-		void			SendAuthLogin(LPDESC d);
-		void			SendLoginPing(const char * c_pszLogin);
+	void			LoginPrepare(BYTE bBillType, DWORD dwBillID, long lRemainSecs, LPDESC d, DWORD* pdwClientKey, int* paiPremiumTimes = NULL);
+	void			SendAuthLogin(LPDESC d);
+	void			SendLoginPing(const char* c_pszLogin);
 
-		void			InsertLoginData(CLoginData * pkLD);
-		void			DeleteLoginData(CLoginData * pkLD);
-		CLoginData *		GetLoginData(DWORD dwKey);
+	void			InsertLoginData(CLoginData* pkLD);
+	void			DeleteLoginData(CLoginData* pkLD);
+	CLoginData* GetLoginData(DWORD dwKey);
 
-		DWORD			CountQuery()		{ return m_sql.CountQuery(); }
-		DWORD			CountQueryResult()	{ return m_sql.CountResult(); }
-		void			ResetQueryResult()	{ m_sql.ResetQueryFinished(); }
+	DWORD			CountQuery() { return m_sql.CountQuery(); }
+	DWORD			CountQueryResult() { return m_sql.CountResult(); }
+	void			ResetQueryResult() { m_sql.ResetQueryFinished(); }
 
-		template<class Functor> void FuncQuery(Functor f, const char * c_pszFormat, ...);
-		template<class Functor> void FuncAfterQuery(Functor f, const char * c_pszFormat, ...);
+	template<class Functor> void FuncQuery(Functor f, const char* c_pszFormat, ...);
+	template<class Functor> void FuncAfterQuery(Functor f, const char* c_pszFormat, ...);
 
-		size_t EscapeString(char* dst, size_t dstSize, const char *src, size_t srcSize);
+	size_t EscapeString(char* dst, size_t dstSize, const char* src, size_t srcSize);
 
-	private:
-		SQLMsg *				PopResult();
+private:
+	SQLMsg* PopResult();
 
-		CAsyncSQL				m_sql;
-		CAsyncSQL				m_sql_direct;
-		bool					m_bIsConnect;
+	CAsyncSQL				m_sql;
+	CAsyncSQL				m_sql_direct;
+	bool					m_bIsConnect;
 
-		std::map<DWORD, CLoginData *>		m_map_pkLoginData;
+	std::map<DWORD, CLoginData*>		m_map_pkLoginData;
 };
 
 template <class Functor> void DBManager::FuncQuery(Functor f, const char* c_pszFormat, ...)
@@ -102,7 +102,7 @@ template <class Functor> void DBManager::FuncQuery(Functor f, const char* c_pszF
 	vsnprintf(szQuery, 4096, c_pszFormat, args);
 	va_end(args);
 
-	CFuncQueryInfo * p = M2_NEW CFuncQueryInfo;
+	CFuncQueryInfo* p = M2_NEW CFuncQueryInfo;
 
 	p->iQueryType = QUERY_TYPE_FUNCTION;
 	p->f = f;
@@ -119,7 +119,7 @@ template <class Functor> void DBManager::FuncAfterQuery(Functor f, const char* c
 	vsnprintf(szQuery, 4096, c_pszFormat, args);
 	va_end(args);
 
-	CFuncAfterQueryInfo * p = M2_NEW CFuncAfterQueryInfo;
+	CFuncAfterQueryInfo* p = M2_NEW CFuncAfterQueryInfo;
 
 	p->iQueryType = QUERY_TYPE_AFTER_FUNCTION;
 	p->f = f;
@@ -131,28 +131,28 @@ template <class Functor> void DBManager::FuncAfterQuery(Functor f, const char* c
 // ACCOUNT_DB
 class AccountDB : public singleton<AccountDB>
 {
-	public:
-		AccountDB();
+public:
+	AccountDB();
 
-		bool IsConnected();
-		bool Connect(const char * host, const int port, const char * user, const char * pwd, const char * db);
-		bool ConnectAsync(const char * host, const int port, const char * user, const char * pwd, const char * db, const char * locale);
+	bool IsConnected();
+	bool Connect(const char* host, const int port, const char* user, const char* pwd, const char* db);
+	bool ConnectAsync(const char* host, const int port, const char* user, const char* pwd, const char* db, const char* locale);
 
-		std::unique_ptr<SQLMsg> DirectQuery(const char * query);
-		void ReturnQuery(int iType, DWORD dwIdent, void * pvData, const char * c_pszFormat, ...);
-		void AsyncQuery(const char* query);
+	std::unique_ptr<SQLMsg> DirectQuery(const char* query);
+	void ReturnQuery(int iType, DWORD dwIdent, void* pvData, const char* c_pszFormat, ...);
+	void AsyncQuery(const char* query);
 
-		void SetLocale(const std::string & stLocale);
+	void SetLocale(const std::string& stLocale);
 
-		void Process();
+	void Process();
 
-	private:
-		SQLMsg * PopResult();
-		void AnalyzeReturnQuery(SQLMsg * pMsg);
+private:
+	SQLMsg* PopResult();
+	void AnalyzeReturnQuery(SQLMsg* pMsg);
 
-		CAsyncSQL2	m_sql_direct;
-		CAsyncSQL2	m_sql;
-		bool		m_IsConnect;
+	CAsyncSQL2	m_sql_direct;
+	CAsyncSQL2	m_sql;
+	bool		m_IsConnect;
 };
 //END_ACCOUNT_DB
 

@@ -27,8 +27,8 @@ int get_Mob_RaceFlag_Value(std::string inputString);
 int get_Mob_ImmuneFlag_Value(std::string inputString);
 
 //
-bool Set_Proto_Mob_Table(TMobTable *mobTable, cCsvTable &csvTable, std::map<int,const char*> &nameMap);
-bool Set_Proto_Item_Table(TItemTable *itemTable, cCsvTable &csvTable,std::map<int,const char*> &nameMap);
+bool Set_Proto_Mob_Table(TMobTable* mobTable, cCsvTable& csvTable, std::map<int, const char*>& nameMap);
+bool Set_Proto_Item_Table(TItemTable* itemTable, cCsvTable& csvTable, std::map<int, const char*>& nameMap);
 
 #endif
 //martysama0134's 8e0aa8057d3f54320e391131a48866b4

@@ -7,7 +7,7 @@
 #include "QID.h"
 #include "GuildManager.h"
 
-void CClientManager::GuildCreate(CPeer * peer, DWORD dwGuildID)
+void CClientManager::GuildCreate(CPeer* peer, DWORD dwGuildID)
 {
 	sys_log(0, "GuildCreate %u", dwGuildID);
 	ForwardPacket(HEADER_DG_GUILD_LOAD, &dwGuildID, sizeof(DWORD));
@@ -21,7 +21,7 @@ void CClientManager::GuildChangeGrade(CPeer* peer, TPacketGuild* p)
 	ForwardPacket(HEADER_DG_GUILD_CHANGE_GRADE, p, sizeof(TPacketGuild));
 }
 
-void CClientManager::GuildAddMember(CPeer* peer, TPacketGDGuildAddMember * p)
+void CClientManager::GuildAddMember(CPeer* peer, TPacketGDGuildAddMember* p)
 {
 	CGuildManager::instance().TouchGuild(p->dwGuild);
 	sys_log(0, "GuildAddMember %u %u", p->dwGuild, p->dwPID);
@@ -29,13 +29,13 @@ void CClientManager::GuildAddMember(CPeer* peer, TPacketGDGuildAddMember * p)
 	char szQuery[512];
 
 	snprintf(szQuery, sizeof(szQuery),
-			"INSERT INTO guild_member%s VALUES(%u, %u, %d, 0, 0)",
-			GetTablePostfix(), p->dwPID, p->dwGuild, p->bGrade);
+		"INSERT INTO guild_member%s VALUES(%u, %u, %d, 0, 0)",
+		GetTablePostfix(), p->dwPID, p->dwGuild, p->bGrade);
 
 	auto pmsg_insert(CDBManager::instance().DirectQuery(szQuery));
 
 	snprintf(szQuery, sizeof(szQuery),
-			"SELECT pid, grade, is_general, offer, level, job, name FROM guild_member%s, player%s WHERE guild_id = %u and pid = id and pid = %u", GetTablePostfix(), GetTablePostfix(), p->dwGuild, p->dwPID);
+		"SELECT pid, grade, is_general, offer, level, job, name FROM guild_member%s, player%s WHERE guild_id = %u and pid = id and pid = %u", GetTablePostfix(), GetTablePostfix(), p->dwGuild, p->dwPID);
 
 	auto pmsg(CDBManager::instance().DirectQuery(szQuery));
 	if (pmsg->Get()->uiNumRows == 0)
@@ -72,7 +72,7 @@ void CClientManager::GuildRemoveMember(CPeer* peer, TPacketGuild* p)
 	CDBManager::instance().AsyncQuery(szQuery);
 
 	// @fixme202 new_+withdraw_time
-	snprintf(szQuery, sizeof(szQuery), "REPLACE INTO quest%s (dwPID, szName, szState, lValue) VALUES(%u, 'guild_manage', 'new_withdraw_time', %u)", GetTablePostfix(), p->dwInfo, (DWORD) GetCurrentTime());
+	snprintf(szQuery, sizeof(szQuery), "REPLACE INTO quest%s (dwPID, szName, szState, lValue) VALUES(%u, 'guild_manage', 'new_withdraw_time', %u)", GetTablePostfix(), p->dwInfo, (DWORD)GetCurrentTime());
 	CDBManager::instance().AsyncQuery(szQuery);
 
 	ForwardPacket(HEADER_DG_GUILD_REMOVE_MEMBER, p, sizeof(TPacketGuild));
@@ -109,7 +109,7 @@ void CClientManager::GuildDisband(CPeer* peer, TPacketGuild* p)
 	CDBManager::instance().AsyncQuery(szQuery);
 
 	// @fixme401 (withdraw -> new_disband)_time
-	snprintf(szQuery, sizeof(szQuery), "REPLACE INTO quest%s (dwPID, szName, szState, lValue) SELECT pid, 'guild_manage', 'new_disband_time', %u FROM guild_member%s WHERE guild_id = %u", GetTablePostfix(), (DWORD) GetCurrentTime(), GetTablePostfix(), p->dwGuild);
+	snprintf(szQuery, sizeof(szQuery), "REPLACE INTO quest%s (dwPID, szName, szState, lValue) SELECT pid, 'guild_manage', 'new_disband_time', %u FROM guild_member%s WHERE guild_id = %u", GetTablePostfix(), (DWORD)GetCurrentTime(), GetTablePostfix(), p->dwGuild);
 	CDBManager::instance().AsyncQuery(szQuery);
 
 	snprintf(szQuery, sizeof(szQuery), "DELETE FROM guild_member%s WHERE guild_id=%u", GetTablePostfix(), p->dwGuild);
@@ -125,14 +125,14 @@ const char* __GetWarType(int n)
 {
 	switch (n)
 	{
-		case 0 :
-			return "Field";
-		case 1 :
-			return "Theater";
-		case 2 :
-			return "CTF"; //Capture The Flag
-		default :
-			return "Wrong number";
+	case 0:
+		return "Field";
+	case 1:
+		return "Theater";
+	case 2:
+		return "CTF"; //Capture The Flag
+	default:
+		return "Wrong number";
 	}
 }
 
@@ -140,65 +140,65 @@ void CClientManager::GuildWar(CPeer* peer, TPacketGuildWar* p)
 {
 	switch (p->bWar)
 	{
-		case GUILD_WAR_SEND_DECLARE:
-			sys_log(0, "GuildWar: GUILD_WAR_SEND_DECLARE type(%s) guild(%d - %d)",  __GetWarType(p->bType), p->dwGuildFrom, p->dwGuildTo);
-			CGuildManager::instance().AddDeclare(p->bType, p->dwGuildFrom, p->dwGuildTo);
-			break;
+	case GUILD_WAR_SEND_DECLARE:
+		sys_log(0, "GuildWar: GUILD_WAR_SEND_DECLARE type(%s) guild(%d - %d)", __GetWarType(p->bType), p->dwGuildFrom, p->dwGuildTo);
+		CGuildManager::instance().AddDeclare(p->bType, p->dwGuildFrom, p->dwGuildTo);
+		break;
 
-		case GUILD_WAR_REFUSE:
-			sys_log(0, "GuildWar: GUILD_WAR_REFUSE type(%s) guild(%d - %d)", __GetWarType(p->bType), p->dwGuildFrom, p->dwGuildTo);
-			CGuildManager::instance().RemoveDeclare(p->dwGuildFrom, p->dwGuildTo);
-			break;
-			/*
-			   case GUILD_WAR_WAIT_START:
-			   CGuildManager::instance().RemoveDeclare(p->dwGuildFrom, p->dwGuildTo);
+	case GUILD_WAR_REFUSE:
+		sys_log(0, "GuildWar: GUILD_WAR_REFUSE type(%s) guild(%d - %d)", __GetWarType(p->bType), p->dwGuildFrom, p->dwGuildTo);
+		CGuildManager::instance().RemoveDeclare(p->dwGuildFrom, p->dwGuildTo);
+		break;
+		/*
+		   case GUILD_WAR_WAIT_START:
+		   CGuildManager::instance().RemoveDeclare(p->dwGuildFrom, p->dwGuildTo);
 
-			   if (!CGuildManager::instance().WaitStart(p))
-			   p->bWar = GUILD_WAR_CANCEL;
+		   if (!CGuildManager::instance().WaitStart(p))
+		   p->bWar = GUILD_WAR_CANCEL;
 
-			   break;
-			   */
+		   break;
+		   */
 
-		case GUILD_WAR_WAIT_START:
-			sys_log(0, "GuildWar: GUILD_WAR_WAIT_START type(%s) guild(%d - %d)", __GetWarType(p->bType), p->dwGuildFrom, p->dwGuildTo);
-		case GUILD_WAR_RESERVE:
-			if (p->bWar != GUILD_WAR_WAIT_START)
-				sys_log(0, "GuildWar: GUILD_WAR_RESERVE type(%s) guild(%d - %d)", __GetWarType(p->bType), p->dwGuildFrom, p->dwGuildTo);
-			CGuildManager::instance().RemoveDeclare(p->dwGuildFrom, p->dwGuildTo);
+	case GUILD_WAR_WAIT_START:
+		sys_log(0, "GuildWar: GUILD_WAR_WAIT_START type(%s) guild(%d - %d)", __GetWarType(p->bType), p->dwGuildFrom, p->dwGuildTo);
+	case GUILD_WAR_RESERVE:
+		if (p->bWar != GUILD_WAR_WAIT_START)
+			sys_log(0, "GuildWar: GUILD_WAR_RESERVE type(%s) guild(%d - %d)", __GetWarType(p->bType), p->dwGuildFrom, p->dwGuildTo);
+		CGuildManager::instance().RemoveDeclare(p->dwGuildFrom, p->dwGuildTo);
 
-			if (!CGuildManager::instance().ReserveWar(p))
-				p->bWar = GUILD_WAR_CANCEL;
-			else
-				p->bWar = GUILD_WAR_RESERVE;
+		if (!CGuildManager::instance().ReserveWar(p))
+			p->bWar = GUILD_WAR_CANCEL;
+		else
+			p->bWar = GUILD_WAR_RESERVE;
 
-			break;
+		break;
 
-		case GUILD_WAR_ON_WAR:
-			sys_log(0, "GuildWar: GUILD_WAR_ON_WAR type(%s) guild(%d - %d)", __GetWarType(p->bType), p->dwGuildFrom, p->dwGuildTo);
-			CGuildManager::instance().RemoveDeclare(p->dwGuildFrom, p->dwGuildTo);
-			CGuildManager::instance().StartWar(p->bType, p->dwGuildFrom, p->dwGuildTo);
-			break;
+	case GUILD_WAR_ON_WAR:
+		sys_log(0, "GuildWar: GUILD_WAR_ON_WAR type(%s) guild(%d - %d)", __GetWarType(p->bType), p->dwGuildFrom, p->dwGuildTo);
+		CGuildManager::instance().RemoveDeclare(p->dwGuildFrom, p->dwGuildTo);
+		CGuildManager::instance().StartWar(p->bType, p->dwGuildFrom, p->dwGuildTo);
+		break;
 
-		case GUILD_WAR_OVER:
-			sys_log(0, "GuildWar: GUILD_WAR_OVER type(%s) guild(%d - %d)", __GetWarType(p->bType), p->dwGuildFrom, p->dwGuildTo);
-			CGuildManager::instance().RecvWarOver(p->dwGuildFrom, p->dwGuildTo, p->bType, p->lWarPrice);
-			break;
+	case GUILD_WAR_OVER:
+		sys_log(0, "GuildWar: GUILD_WAR_OVER type(%s) guild(%d - %d)", __GetWarType(p->bType), p->dwGuildFrom, p->dwGuildTo);
+		CGuildManager::instance().RecvWarOver(p->dwGuildFrom, p->dwGuildTo, p->bType, p->lWarPrice);
+		break;
 
-		case GUILD_WAR_END:
-			sys_log(0, "GuildWar: GUILD_WAR_END type(%s) guild(%d - %d)", __GetWarType(p->bType), p->dwGuildFrom, p->dwGuildTo);
-			CGuildManager::instance().RecvWarEnd(p->dwGuildFrom, p->dwGuildTo);
-			return;
+	case GUILD_WAR_END:
+		sys_log(0, "GuildWar: GUILD_WAR_END type(%s) guild(%d - %d)", __GetWarType(p->bType), p->dwGuildFrom, p->dwGuildTo);
+		CGuildManager::instance().RecvWarEnd(p->dwGuildFrom, p->dwGuildTo);
+		return;
 
-		case GUILD_WAR_CANCEL :
-			sys_log(0, "GuildWar: GUILD_WAR_CANCEL type(%s) guild(%d - %d)", __GetWarType(p->bType), p->dwGuildFrom, p->dwGuildTo);
-			CGuildManager::instance().CancelWar(p->dwGuildFrom, p->dwGuildTo);
-			break;
+	case GUILD_WAR_CANCEL:
+		sys_log(0, "GuildWar: GUILD_WAR_CANCEL type(%s) guild(%d - %d)", __GetWarType(p->bType), p->dwGuildFrom, p->dwGuildTo);
+		CGuildManager::instance().CancelWar(p->dwGuildFrom, p->dwGuildTo);
+		break;
 	}
 
 	ForwardPacket(HEADER_DG_GUILD_WAR, p, sizeof(TPacketGuildWar));
 }
 
-void CClientManager::GuildWarScore(CPeer* peer, TPacketGuildWarScore * p)
+void CClientManager::GuildWarScore(CPeer* peer, TPacketGuildWarScore* p)
 {
 	CGuildManager::instance().UpdateScore(p->dwGuildGainPoint, p->dwGuildOpponent, p->lScore, p->lBetScore);
 }
@@ -218,7 +218,7 @@ void CClientManager::GuildUseSkill(TPacketGuildUseSkill* p)
 
 void CClientManager::SendGuildSkillUsable(DWORD guild_id, DWORD dwSkillVnum, bool bUsable)
 {
-	sys_log(0, "SendGuildSkillUsable Send %u %d %s", guild_id, dwSkillVnum, bUsable?"true":"false");
+	sys_log(0, "SendGuildSkillUsable Send %u %d %s", guild_id, dwSkillVnum, bUsable ? "true" : "false");
 
 	TPacketGuildSkillUsableChange p;
 

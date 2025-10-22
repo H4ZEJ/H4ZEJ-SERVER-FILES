@@ -6,9 +6,9 @@
 #include "config.h"
 
 void CEntity::ViewCleanup(
-	#ifdef ENABLE_GOTO_LAG_FIX
+#ifdef ENABLE_GOTO_LAG_FIX
 	bool recursive
-	#endif
+#endif
 )
 {
 	ENTITY_MAP::iterator it = m_map_view.begin();
@@ -18,11 +18,11 @@ void CEntity::ViewCleanup(
 		LPENTITY entity = it->first;
 		++it;
 
-		#ifdef ENABLE_GOTO_LAG_FIX
+#ifdef ENABLE_GOTO_LAG_FIX
 		entity->ViewRemove(this, recursive);
-		#else
+#else
 		entity->ViewRemove(this, false);
-		#endif
+#endif
 	}
 
 	m_map_view.clear();
@@ -91,79 +91,79 @@ void CEntity::ViewRemove(LPENTITY entity, bool recursive)
 
 class CFuncViewInsert
 {
-	private:
-		int dwViewRange;
+private:
+	int dwViewRange;
 
-	public:
-		LPENTITY m_me;
+public:
+	LPENTITY m_me;
 
-		CFuncViewInsert(LPENTITY ent) :
-			dwViewRange(VIEW_RANGE + VIEW_BONUS_RANGE),
-			m_me(ent)
+	CFuncViewInsert(LPENTITY ent) :
+		dwViewRange(VIEW_RANGE + VIEW_BONUS_RANGE),
+		m_me(ent)
+	{
+	}
+
+	void operator () (LPENTITY ent)
+	{
+		if (!ent->IsType(ENTITY_OBJECT))
 		{
+			if (DISTANCE_APPROX(ent->GetX() - m_me->GetX(), ent->GetY() - m_me->GetY()) > dwViewRange)
+				return;
 		}
 
-		void operator () (LPENTITY ent)
+#ifdef ENABLE_REDUCED_ENTITY_VIEW
+		if (m_me->IsType(ENTITY_CHARACTER))
 		{
-			if (!ent->IsType(ENTITY_OBJECT))
+			LPCHARACTER chMe = (LPCHARACTER)m_me;
+
+			// players view every entity
+			if (chMe->IsPC())
+				m_me->ViewInsert(ent);
+
+			// npcs view only a restricted amount of entities
+			else if (chMe->IsNPC() && ent->IsType(ENTITY_CHARACTER))
 			{
-				if (DISTANCE_APPROX(ent->GetX() - m_me->GetX(), ent->GetY() - m_me->GetY()) > dwViewRange)
-					return;
-			}
+				constexpr auto DefenseWaveMast = 20434;
+				LPCHARACTER chEnt = (LPCHARACTER)ent;
 
-			#ifdef ENABLE_REDUCED_ENTITY_VIEW
-			if (m_me->IsType(ENTITY_CHARACTER))
-			{
-				LPCHARACTER chMe = (LPCHARACTER) m_me;
-
-				// players view every entity
-				if (chMe->IsPC())
-					m_me->ViewInsert(ent);
-
-				// npcs view only a restricted amount of entities
-				else if (chMe->IsNPC() && ent->IsType(ENTITY_CHARACTER))
-				{
-					constexpr auto DefenseWaveMast = 20434;
-					LPCHARACTER chEnt = (LPCHARACTER) ent;
-
-					// mobs view every player
-					if (chEnt->IsPC())
-						m_me->ViewInsert(ent);
-
-					// aiflag healers view their party
-					else if (IS_SET(chMe->GetAIFlag(), AIFLAG_HEALER) && chMe->GetParty() && chMe->GetParty() == chEnt->GetParty())
-						m_me->ViewInsert(ent);
-
-					// hydra mast is seen by other mobs
-					else if (chEnt->GetRaceNum() == DefenseWaveMast)
-						m_me->ViewInsert(ent);
-
-					// city guardians see all mobs
-					else if (chMe->IsGuardNPC())
-						m_me->ViewInsert(ent);
-				}
-			}
-			else if (ent->IsType(ENTITY_CHARACTER))
-			{
-				LPCHARACTER chEnt = (LPCHARACTER) ent;
-
-				// other entities see every player
+				// mobs view every player
 				if (chEnt->IsPC())
 					m_me->ViewInsert(ent);
-			}
-			#else
-			m_me->ViewInsert(ent);
-			#endif
 
-			if (ent->IsType(ENTITY_CHARACTER) && m_me->IsType(ENTITY_CHARACTER))
-			{
-				LPCHARACTER chMe = (LPCHARACTER) m_me;
-				LPCHARACTER chEnt = (LPCHARACTER) ent;
+				// aiflag healers view their party
+				else if (IS_SET(chMe->GetAIFlag(), AIFLAG_HEALER) && chMe->GetParty() && chMe->GetParty() == chEnt->GetParty())
+					m_me->ViewInsert(ent);
 
-				if (chMe->IsPC() && !chEnt->IsPC() && !chEnt->IsWarp() && !chEnt->IsGoto())
-					chEnt->StartStateMachine();
+				// hydra mast is seen by other mobs
+				else if (chEnt->GetRaceNum() == DefenseWaveMast)
+					m_me->ViewInsert(ent);
+
+				// city guardians see all mobs
+				else if (chMe->IsGuardNPC())
+					m_me->ViewInsert(ent);
 			}
 		}
+		else if (ent->IsType(ENTITY_CHARACTER))
+		{
+			LPCHARACTER chEnt = (LPCHARACTER)ent;
+
+			// other entities see every player
+			if (chEnt->IsPC())
+				m_me->ViewInsert(ent);
+		}
+#else
+		m_me->ViewInsert(ent);
+#endif
+
+		if (ent->IsType(ENTITY_CHARACTER) && m_me->IsType(ENTITY_CHARACTER))
+		{
+			LPCHARACTER chMe = (LPCHARACTER)m_me;
+			LPCHARACTER chEnt = (LPCHARACTER)ent;
+
+			if (chMe->IsPC() && !chEnt->IsPC() && !chEnt->IsWarp() && !chEnt->IsGoto())
+				chEnt->StartStateMachine();
+		}
+	}
 };
 
 void CEntity::UpdateSectree()
@@ -172,8 +172,8 @@ void CEntity::UpdateSectree()
 	{
 		if (IsType(ENTITY_CHARACTER))
 		{
-			LPCHARACTER tch = (LPCHARACTER) this;
-			sys_err("null sectree name: %s %d %d",  tch->GetName(), GetX(), GetY());
+			LPCHARACTER tch = (LPCHARACTER)this;
+			sys_err("null sectree name: %s %d %d", tch->GetName(), GetX(), GetY());
 		}
 
 		return;

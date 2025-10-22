@@ -7,31 +7,31 @@
 
 class CPeer : public CPeerBase
 {
-    protected:
+protected:
 	virtual void OnAccept();
 	virtual void OnClose();
 	virtual void OnConnect();
 
-    public:
+public:
 #pragma pack(1)
 	typedef struct _header
 	{
-	    BYTE    bHeader;
-	    DWORD   dwHandle;
-	    DWORD   dwSize;
+		BYTE    bHeader;
+		DWORD   dwHandle;
+		DWORD   dwSize;
 	} HEADER;
 #pragma pack()
 	enum EState
 	{
-	    STATE_CLOSE = 0,
-	    STATE_PLAYING = 1
+		STATE_CLOSE = 0,
+		STATE_PLAYING = 1
 	};
 
 	CPeer();
 	virtual ~CPeer();
 
 	void	EncodeHeader(BYTE header, DWORD dwHandle, DWORD dwSize);
-	bool 	PeekPacket(int & iBytesProceed, BYTE & header, DWORD & dwHandle, DWORD & dwLength, const char ** data);
+	bool 	PeekPacket(int& iBytesProceed, BYTE& header, DWORD& dwHandle, DWORD& dwLength, const char** data);
 	void	EncodeReturn(BYTE header, DWORD dwHandle);
 
 	void	ProcessInput();
@@ -41,11 +41,11 @@ class CPeer : public CPeerBase
 	DWORD	GetUserCount();
 	void	SetUserCount(DWORD dwCount);
 
-	void	SetPublicIP(const char * ip)	{ m_stPublicIP = ip; }
-	const char * GetPublicIP()		{ return m_stPublicIP.c_str(); }
+	void	SetPublicIP(const char* ip) { m_stPublicIP = ip; }
+	const char* GetPublicIP() { return m_stPublicIP.c_str(); }
 
-	void	SetChannel(BYTE bChannel)	{ m_bChannel = bChannel; }
-	BYTE	GetChannel()			{ return m_bChannel; }
+	void	SetChannel(BYTE bChannel) { m_bChannel = bChannel; }
+	BYTE	GetChannel() { return m_bChannel; }
 
 	void	SetListenPort(WORD wPort) { m_wListenPort = wPort; }
 	WORD	GetListenPort() { return m_wListenPort; }
@@ -54,14 +54,14 @@ class CPeer : public CPeerBase
 	WORD	GetP2PPort() { return m_wP2PPort; }
 
 	void	SetMaps(long* pl);
-	long *	GetMaps() { return &m_alMaps[0]; }
+	long* GetMaps() { return &m_alMaps[0]; }
 
 	bool	SetItemIDRange(TItemIDRangeTable itemRange);
 	bool	SetSpareItemIDRange(TItemIDRangeTable itemRange);
 	bool	CheckItemIDRangeCollision(TItemIDRangeTable itemRange);
 	void	SendSpareItemIDRange();
 
-    private:
+private:
 	int	m_state;
 
 	BYTE	m_bChannel;

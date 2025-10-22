@@ -16,12 +16,12 @@ TEMP_BUFFER::~TEMP_BUFFER()
 	buffer_delete(buf);
 }
 
-const void * TEMP_BUFFER::read_peek()
+const void* TEMP_BUFFER::read_peek()
 {
 	return (buffer_read_peek(buf));
 }
 
-void TEMP_BUFFER::write(const void * data, int size)
+void TEMP_BUFFER::write(const void* data, int size)
 {
 	buffer_write(buf, data, size);
 }

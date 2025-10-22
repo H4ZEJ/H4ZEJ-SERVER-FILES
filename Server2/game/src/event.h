@@ -30,8 +30,8 @@ struct event
 		}
 	}
 	TEVENTFUNC			func;
-	event_info_data* 	info;
-	TQueueElement *		q_el;
+	event_info_data* info;
+	TQueueElement* q_el;
 	char				is_force_to_end;
 	char				is_processing;
 
@@ -52,14 +52,14 @@ extern int		event_count();
 
 #define event_create(func, info, when) event_create_ex(func, info, when)
 extern LPEVENT	event_create_ex(TEVENTFUNC func, event_info_data* info, long when);
-extern void		event_cancel(LPEVENT * event);
+extern void		event_cancel(LPEVENT* event);
 extern long		event_processing_time(LPEVENT event);
 extern long		event_time(LPEVENT event);
 extern void		event_reset_time(LPEVENT event, long when);
 extern void		event_set_verbose(int level);
 
 extern event_info_data* FindEventInfo(DWORD dwID);
-extern event_info_data*	event_info(LPEVENT event);
+extern event_info_data* event_info(LPEVENT event);
 
 #define EVENT_CANCEL_EX(event) if (event) { event_cancel(&event); event = nullptr; }
 #endif

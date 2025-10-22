@@ -29,11 +29,11 @@ CItem::CItem(DWORD dwVnum)
 	: m_dwVnum(dwVnum), m_bWindow(0), m_dwID(0), m_bEquipped(false), m_dwVID(0), m_wCell(0), m_dwCount(0), m_lFlag(0), m_dwLastOwnerPID(0),
 	m_bExchanging(false), m_pkDestroyEvent(NULL), m_pkExpireEvent(NULL), m_pkUniqueExpireEvent(NULL),
 	m_pkTimerBasedOnWearExpireEvent(NULL), m_pkRealTimeExpireEvent(NULL),
-   	m_pkAccessorySocketExpireEvent(NULL), m_pkOwnershipEvent(NULL), m_dwOwnershipPID(0), m_bSkipSave(false), m_isLocked(false),
-	m_dwMaskVnum(0), m_dwSIGVnum (0)
+	m_pkAccessorySocketExpireEvent(NULL), m_pkOwnershipEvent(NULL), m_dwOwnershipPID(0), m_bSkipSave(false), m_isLocked(false),
+	m_dwMaskVnum(0), m_dwSIGVnum(0)
 {
-	memset( &m_alSockets, 0, sizeof(m_alSockets) );
-	memset( &m_aAttr, 0, sizeof(m_aAttr) );
+	memset(&m_alSockets, 0, sizeof(m_alSockets));
+	memset(&m_aAttr, 0, sizeof(m_aAttr));
 }
 
 CItem::~CItem()
@@ -86,11 +86,11 @@ void CItem::Destroy()
 
 EVENTFUNC(item_destroy_event)
 {
-	item_event_info* info = dynamic_cast<item_event_info*>( event->info );
+	item_event_info* info = dynamic_cast<item_event_info*>(event->info);
 
-	if ( info == NULL )
+	if (info == NULL)
 	{
-		sys_err( "item_destroy_event> <Factor> Null pointer" );
+		sys_err("item_destroy_event> <Factor> Null pointer");
 		return 0;
 	}
 
@@ -127,27 +127,27 @@ void CItem::EncodeInsertPacket(LPENTITY ent)
 	if (!(d = ent->GetDesc()))
 		return;
 
-	const PIXEL_POSITION & c_pos = GetXYZ();
+	const PIXEL_POSITION& c_pos = GetXYZ();
 
 	struct packet_item_ground_add pack;
 
-	pack.bHeader	= HEADER_GC_ITEM_GROUND_ADD;
-	pack.x		= c_pos.x;
-	pack.y		= c_pos.y;
-	pack.z		= c_pos.z;
-	pack.dwVnum		= GetVnum();
-	pack.dwVID		= m_dwVID;
+	pack.bHeader = HEADER_GC_ITEM_GROUND_ADD;
+	pack.x = c_pos.x;
+	pack.y = c_pos.y;
+	pack.z = c_pos.z;
+	pack.dwVnum = GetVnum();
+	pack.dwVID = m_dwVID;
 	//pack.count	= m_dwCount;
 
 	d->Packet(pack);
 
 	if (m_pkOwnershipEvent != NULL)
 	{
-		item_event_info * info = dynamic_cast<item_event_info *>(m_pkOwnershipEvent->info);
+		item_event_info* info = dynamic_cast<item_event_info*>(m_pkOwnershipEvent->info);
 
-		if ( info == NULL )
+		if (info == NULL)
 		{
-			sys_err( "CItem::EncodeInsertPacket> <Factor> Null pointer" );
+			sys_err("CItem::EncodeInsertPacket> <Factor> Null pointer");
 			return;
 		}
 
@@ -170,30 +170,30 @@ void CItem::EncodeRemovePacket(LPENTITY ent)
 
 	struct packet_item_ground_del pack;
 
-	pack.bHeader	= HEADER_GC_ITEM_GROUND_DEL;
-	pack.dwVID		= m_dwVID;
+	pack.bHeader = HEADER_GC_ITEM_GROUND_DEL;
+	pack.dwVID = m_dwVID;
 
 	d->Packet(pack);
-	sys_log(2, "Item::EncodeRemovePacket %s to %s", GetName(), ((LPCHARACTER) ent)->GetName());
+	sys_log(2, "Item::EncodeRemovePacket %s to %s", GetName(), ((LPCHARACTER)ent)->GetName());
 }
 
-void CItem::SetProto(const TItemTable * table)
+void CItem::SetProto(const TItemTable* table)
 {
 	assert(table != NULL);
 	m_pProto = table;
 	SetFlag(m_pProto->dwFlags);
 }
 
-void CItem::UsePacketEncode(LPCHARACTER ch, LPCHARACTER victim, struct packet_item_use *packet)
+void CItem::UsePacketEncode(LPCHARACTER ch, LPCHARACTER victim, struct packet_item_use* packet)
 {
 	if (!GetVnum())
 		return;
 
-	packet->header 	= HEADER_GC_ITEM_USE;
-	packet->ch_vid 	= ch->GetVID();
-	packet->victim_vid 	= victim->GetVID();
+	packet->header = HEADER_GC_ITEM_USE;
+	packet->ch_vid = ch->GetVID();
+	packet->victim_vid = victim->GetVID();
 	packet->Cell = TItemPos(GetWindow(), m_wCell);
-	packet->vnum	= GetVnum();
+	packet->vnum = GetVnum();
 }
 
 void CItem::RemoveFlag(long bit)
@@ -215,7 +215,7 @@ void CItem::UpdatePacket()
 
 	pack.header = HEADER_GC_ITEM_UPDATE;
 	pack.Cell = TItemPos(GetWindow(), m_wCell);
-	pack.count	= m_dwCount;
+	pack.count = m_dwCount;
 
 	for (int i = 0; i < ITEM_SOCKET_MAX_NUM; ++i)
 		pack.alSockets[i] = m_alSockets[i];
@@ -404,7 +404,7 @@ LPITEM CItem::RemoveFromGround()
 	return (this);
 }
 
-bool CItem::AddToGround(long lMapIndex, const PIXEL_POSITION & pos, bool skipOwnerCheck)
+bool CItem::AddToGround(long lMapIndex, const PIXEL_POSITION& pos, bool skipOwnerCheck)
 {
 	if (0 == lMapIndex)
 	{
@@ -458,26 +458,25 @@ bool CItem::CanUsedBy(LPCHARACTER ch)
 	// Anti flag check
 	switch (ch->GetJob())
 	{
-		case JOB_WARRIOR:
-			if (GetAntiFlag() & ITEM_ANTIFLAG_WARRIOR)
-				return false;
-			break;
+	case JOB_WARRIOR:
+		if (GetAntiFlag() & ITEM_ANTIFLAG_WARRIOR)
+			return false;
+		break;
 
-		case JOB_ASSASSIN:
-			if (GetAntiFlag() & ITEM_ANTIFLAG_ASSASSIN)
-				return false;
-			break;
+	case JOB_ASSASSIN:
+		if (GetAntiFlag() & ITEM_ANTIFLAG_ASSASSIN)
+			return false;
+		break;
 
-		case JOB_SHAMAN:
-			if (GetAntiFlag() & ITEM_ANTIFLAG_SHAMAN)
-				return false;
-			break;
+	case JOB_SHAMAN:
+		if (GetAntiFlag() & ITEM_ANTIFLAG_SHAMAN)
+			return false;
+		break;
 
-		case JOB_SURA:
-			if (GetAntiFlag() & ITEM_ANTIFLAG_SURA)
-				return false;
-			break;
-
+	case JOB_SURA:
+		if (GetAntiFlag() & ITEM_ANTIFLAG_SURA)
+			return false;
+		break;
 	}
 
 	return true;
@@ -487,7 +486,7 @@ int CItem::FindEquipCell(LPCHARACTER ch, int iCandidateCell)
 {
 	if ((0 == GetWearFlag() || ITEM_TOTEM == GetType()) && ITEM_COSTUME != GetType() && ITEM_DS != GetType() && ITEM_SPECIAL_DS != GetType() && ITEM_RING != GetType() && ITEM_BELT != GetType()
 
-	)
+		)
 		return -1;
 
 	if (GetType() == ITEM_DS || GetType() == ITEM_SPECIAL_DS)
@@ -609,7 +608,7 @@ void CItem::ModifyPoints(bool bAdd)
 				if ((dwVnum = GetSocket(i)) <= 2)
 					continue;
 
-				TItemTable * p = ITEM_MANAGER::instance().GetTable(dwVnum);
+				TItemTable* p = ITEM_MANAGER::instance().GetTable(dwVnum);
 
 				if (!p)
 				{
@@ -641,8 +640,6 @@ void CItem::ModifyPoints(bool bAdd)
 		accessoryGrade = MIN(GetAccessorySocketGrade(), ITEM_ACCESSORY_SOCKET_MAX_NUM);
 	}
 
-
-
 	for (int i = 0; i < ITEM_APPLY_MAX_NUM; ++i)
 	{
 		if (m_pProto->aApplies[i].bType == APPLY_NONE)
@@ -659,8 +656,6 @@ void CItem::ModifyPoints(bool bAdd)
 		}
 	}
 
-
-
 	if (true == CItemVnumHelper::IsRamadanMoonRing(GetVnum()) || true == CItemVnumHelper::IsHalloweenCandy(GetVnum())
 		|| true == CItemVnumHelper::IsHappinessRing(GetVnum()) || true == CItemVnumHelper::IsLovePendant(GetVnum()))
 	{
@@ -672,7 +667,7 @@ void CItem::ModifyPoints(bool bAdd)
 		{
 			if (GetAttributeType(i))
 			{
-				const TPlayerItemAttribute &ia = GetAttribute(i);
+				const TPlayerItemAttribute& ia = GetAttribute(i);
 				auto value = ia.sValue;
 
 				if (ia.bType == APPLY_SKILL)
@@ -685,96 +680,95 @@ void CItem::ModifyPoints(bool bAdd)
 
 	switch (m_pProto->bType)
 	{
-		case ITEM_PICK:
-		case ITEM_ROD:
-			{
-				if (bAdd)
-				{
-					if (m_wCell == INVENTORY_MAX_NUM + WEAR_WEAPON)
-						m_pOwner->SetPart(PART_WEAPON, GetVnum());
-				}
-				else
-				{
-					if (m_wCell == INVENTORY_MAX_NUM + WEAR_WEAPON)
-						m_pOwner->SetPart(PART_WEAPON, 0);
-				}
-			}
-			break;
+	case ITEM_PICK:
+	case ITEM_ROD:
+	{
+		if (bAdd)
+		{
+			if (m_wCell == INVENTORY_MAX_NUM + WEAR_WEAPON)
+				m_pOwner->SetPart(PART_WEAPON, GetVnum());
+		}
+		else
+		{
+			if (m_wCell == INVENTORY_MAX_NUM + WEAR_WEAPON)
+				m_pOwner->SetPart(PART_WEAPON, 0);
+		}
+	}
+	break;
 
-		case ITEM_WEAPON:
-			{
+	case ITEM_WEAPON:
+	{
 #ifdef ENABLE_WEAPON_COSTUME_SYSTEM
-				if (0 != m_pOwner->GetWear(WEAR_COSTUME_WEAPON))
-					break;
+		if (0 != m_pOwner->GetWear(WEAR_COSTUME_WEAPON))
+			break;
 #endif
 
-				if (bAdd)
-				{
-					if (m_wCell == INVENTORY_MAX_NUM + WEAR_WEAPON)
-						m_pOwner->SetPart(PART_WEAPON, GetVnum());
-				}
-				else
-				{
-					if (m_wCell == INVENTORY_MAX_NUM + WEAR_WEAPON)
-						m_pOwner->SetPart(PART_WEAPON, 0);
-				}
-			}
+		if (bAdd)
+		{
+			if (m_wCell == INVENTORY_MAX_NUM + WEAR_WEAPON)
+				m_pOwner->SetPart(PART_WEAPON, GetVnum());
+		}
+		else
+		{
+			if (m_wCell == INVENTORY_MAX_NUM + WEAR_WEAPON)
+				m_pOwner->SetPart(PART_WEAPON, 0);
+		}
+	}
+	break;
+
+	case ITEM_ARMOR:
+	{
+		if (0 != m_pOwner->GetWear(WEAR_COSTUME_BODY))
 			break;
 
-		case ITEM_ARMOR:
+		if (GetSubType() == ARMOR_BODY || GetSubType() == ARMOR_HEAD || GetSubType() == ARMOR_FOOTS || GetSubType() == ARMOR_SHIELD)
+		{
+			if (bAdd)
 			{
-				if (0 != m_pOwner->GetWear(WEAR_COSTUME_BODY))
-					break;
-
-				if (GetSubType() == ARMOR_BODY || GetSubType() == ARMOR_HEAD || GetSubType() == ARMOR_FOOTS || GetSubType() == ARMOR_SHIELD)
-				{
-					if (bAdd)
-					{
-						if (GetProto()->bSubType == ARMOR_BODY)
-							m_pOwner->SetPart(PART_MAIN, GetVnum());
-					}
-					else
-					{
-						if (GetProto()->bSubType == ARMOR_BODY)
-							m_pOwner->SetPart(PART_MAIN, m_pOwner->GetOriginalPart(PART_MAIN));
-					}
-				}
+				if (GetProto()->bSubType == ARMOR_BODY)
+					m_pOwner->SetPart(PART_MAIN, GetVnum());
 			}
-			break;
-
-		case ITEM_COSTUME:
+			else
 			{
-				DWORD toSetValue = this->GetVnum();
-				EParts toSetPart = PART_MAX_NUM;
+				if (GetProto()->bSubType == ARMOR_BODY)
+					m_pOwner->SetPart(PART_MAIN, m_pOwner->GetOriginalPart(PART_MAIN));
+			}
+		}
+	}
+	break;
 
-				if (GetSubType() == COSTUME_BODY)
-				{
-					toSetPart = PART_MAIN;
+	case ITEM_COSTUME:
+	{
+		DWORD toSetValue = this->GetVnum();
+		EParts toSetPart = PART_MAX_NUM;
 
-					if (false == bAdd)
-					{
-						const CItem* pArmor = m_pOwner->GetWear(WEAR_BODY);
-						toSetValue = (NULL != pArmor) ? pArmor->GetVnum() : m_pOwner->GetOriginalPart(PART_MAIN);
-					}
+		if (GetSubType() == COSTUME_BODY)
+		{
+			toSetPart = PART_MAIN;
 
-				}
+			if (false == bAdd)
+			{
+				const CItem* pArmor = m_pOwner->GetWear(WEAR_BODY);
+				toSetValue = (NULL != pArmor) ? pArmor->GetVnum() : m_pOwner->GetOriginalPart(PART_MAIN);
+			}
+		}
 
-				else if (GetSubType() == COSTUME_HAIR)
-				{
-					toSetPart = PART_HAIR;
-					toSetValue = (true == bAdd) ? this->GetValue(3) : 0;
-				}
+		else if (GetSubType() == COSTUME_HAIR)
+		{
+			toSetPart = PART_HAIR;
+			toSetValue = (true == bAdd) ? this->GetValue(3) : 0;
+		}
 
 #ifdef ENABLE_WEAPON_COSTUME_SYSTEM
-				else if (GetSubType() == COSTUME_WEAPON)
-				{
-					toSetPart = PART_WEAPON;
-					if (false == bAdd)
-					{
-						const CItem* pWeapon = m_pOwner->GetWear(WEAR_WEAPON);
-						toSetValue = (NULL != pWeapon) ? pWeapon->GetVnum() : 0;
-					}
-				}
+		else if (GetSubType() == COSTUME_WEAPON)
+		{
+			toSetPart = PART_WEAPON;
+			if (false == bAdd)
+			{
+				const CItem* pWeapon = m_pOwner->GetWear(WEAR_WEAPON);
+				toSetValue = (NULL != pWeapon) ? pWeapon->GetVnum() : 0;
+			}
+		}
 #endif
 
 #ifdef ENABLE_MOUNT_COSTUME_SYSTEM
@@ -784,31 +778,31 @@ void CItem::ModifyPoints(bool bAdd)
 		}
 #endif
 
-				if (PART_MAX_NUM != toSetPart)
-				{
-					m_pOwner->SetPart((BYTE)toSetPart, toSetValue);
-					m_pOwner->UpdatePacket();
-				}
-			}
-			break;
-		case ITEM_UNIQUE:
+		if (PART_MAX_NUM != toSetPart)
+		{
+			m_pOwner->SetPart((BYTE)toSetPart, toSetValue);
+			m_pOwner->UpdatePacket();
+		}
+	}
+	break;
+	case ITEM_UNIQUE:
+	{
+		if (0 != GetSIGVnum())
+		{
+			const CSpecialItemGroup* pItemGroup = ITEM_MANAGER::instance().GetSpecialItemGroup(GetSIGVnum());
+			if (NULL == pItemGroup)
+				break;
+			DWORD dwAttrVnum = pItemGroup->GetAttrVnum(GetVnum());
+			const CSpecialAttrGroup* pAttrGroup = ITEM_MANAGER::instance().GetSpecialAttrGroup(dwAttrVnum);
+			if (NULL == pAttrGroup)
+				break;
+			for (itertype(pAttrGroup->m_vecAttrs) it = pAttrGroup->m_vecAttrs.begin(); it != pAttrGroup->m_vecAttrs.end(); it++)
 			{
-				if (0 != GetSIGVnum())
-				{
-					const CSpecialItemGroup* pItemGroup = ITEM_MANAGER::instance().GetSpecialItemGroup(GetSIGVnum());
-					if (NULL == pItemGroup)
-						break;
-					DWORD dwAttrVnum = pItemGroup->GetAttrVnum(GetVnum());
-					const CSpecialAttrGroup* pAttrGroup = ITEM_MANAGER::instance().GetSpecialAttrGroup(dwAttrVnum);
-					if (NULL == pAttrGroup)
-						break;
-					for (itertype (pAttrGroup->m_vecAttrs) it = pAttrGroup->m_vecAttrs.begin(); it != pAttrGroup->m_vecAttrs.end(); it++)
-					{
-						m_pOwner->ApplyPoint(it->apply_type, bAdd ? it->apply_value : -it->apply_value);
-					}
-				}
+				m_pOwner->ApplyPoint(it->apply_type, bAdd ? it->apply_value : -it->apply_value);
 			}
-			break;
+		}
+	}
+	break;
 	}
 }
 
@@ -837,10 +831,10 @@ bool CItem::IsEquipable() const
 bool CItem::EquipTo(LPCHARACTER ch, BYTE bWearCell)
 {
 #ifdef ENABLE_MOUNT_COSTUME_SYSTEM
-    if (ITEM_COSTUME == GetType() && COSTUME_MOUNT == GetSubType()) 
+	if (ITEM_COSTUME == GetType() && COSTUME_MOUNT == GetSubType())
 	{
-        if (auto* ms = ch->GetMountSystem()) ms->UnsummonAll();
-    }
+		if (auto* ms = ch->GetMountSystem()) ms->UnsummonAll();
+	}
 #endif
 
 	if (!ch)
@@ -879,7 +873,7 @@ bool CItem::EquipTo(LPCHARACTER ch, BYTE bWearCell)
 
 	m_pOwner = ch;
 	m_bEquipped = true;
-	m_wCell	= INVENTORY_MAX_NUM + bWearCell;
+	m_wCell = INVENTORY_MAX_NUM + bWearCell;
 
 #ifndef ENABLE_IMMUNE_FIX
 	DWORD dwImmuneFlag = 0;
@@ -936,17 +930,17 @@ bool CItem::EquipTo(LPCHARACTER ch, BYTE bWearCell)
 bool CItem::Unequip()
 {
 #ifdef ENABLE_MOUNT_COSTUME_SYSTEM
-    if (GetType() == ITEM_COSTUME && GetSubType() == COSTUME_MOUNT) 
+	if (GetType() == ITEM_COSTUME && GetSubType() == COSTUME_MOUNT)
 	{
-        if (auto* ms = m_pOwner->GetMountSystem()) ms->UnsummonAll();
-    }
+		if (auto* ms = m_pOwner->GetMountSystem()) ms->UnsummonAll();
+	}
 #endif
 
 	if (!m_pOwner || GetCell() < INVENTORY_MAX_NUM)
 	{
 		// ITEM_OWNER_INVALID_PTR_BUG
 		sys_err("%s %u m_pOwner %p, GetCell %d",
-				GetName(), GetID(), get_pointer(m_pOwner), GetCell());
+			GetName(), GetID(), get_pointer(m_pOwner), GetCell());
 		// END_OF_ITEM_OWNER_INVALID_PTR_BUG
 		return false;
 	}
@@ -961,7 +955,7 @@ bool CItem::Unequip()
 	if (GetType() == ITEM_COSTUME && GetSubType() == COSTUME_MOUNT)
 	{
 		CMountSystem* MountSystem = m_pOwner->GetMountSystem();
-		DWORD mobVnum = item->FindApplyValue(APPLY_MOUNT);
+		DWORD mobVnum = FindApplyValue(APPLY_MOUNT);
 		if (MountSystem)
 		{
 			MountSystem->Unsummon(mobVnum);
@@ -1015,7 +1009,7 @@ bool CItem::Unequip()
 
 	m_pOwner = NULL;
 	m_wCell = 0;
-	m_bEquipped	= false;
+	m_bEquipped = false;
 
 	return true;
 }
@@ -1060,7 +1054,7 @@ bool CItem::CreateSocket(BYTE bSlot, BYTE bGold)
 	return true;
 }
 
-void CItem::SetSockets(const long * c_al)
+void CItem::SetSockets(const long* c_al)
 {
 	thecore_memcpy(m_alSockets, c_al, sizeof(m_alSockets));
 	Save();
@@ -1075,9 +1069,9 @@ void CItem::SetSocket(int i, long v, bool bLog)
 	if (bLog)
 	{
 #ifdef ENABLE_NEWSTUFF
-		if (g_iDbLogLevel>=LOG_LEVEL_MAX)
+		if (g_iDbLogLevel >= LOG_LEVEL_MAX)
 #endif
-		LogManager::instance().ItemLog(i, v, 0, GetID(), "SET_SOCKET", "", "", GetOriginalVnum());
+			LogManager::instance().ItemLog(i, v, 0, GetID(), "SET_SOCKET", "", "", GetOriginalVnum());
 	}
 }
 
@@ -1109,11 +1103,11 @@ bool CItem::IsOwnership(LPCHARACTER ch)
 
 EVENTFUNC(ownership_event)
 {
-	item_event_info* info = dynamic_cast<item_event_info*>( event->info );
+	item_event_info* info = dynamic_cast<item_event_info*>(event->info);
 
 	if (!info)
 	{
-		sys_err( "ownership_event> <Factor> Null pointer" );
+		sys_err("ownership_event> <Factor> Null pointer");
 		return 0;
 	}
 
@@ -1123,9 +1117,9 @@ EVENTFUNC(ownership_event)
 
 	TPacketGCItemOwnership p;
 
-	p.bHeader	= HEADER_GC_ITEM_OWNERSHIP;
-	p.dwVID	= pkItem->GetVID();
-	p.szName[0]	= '\0';
+	p.bHeader = HEADER_GC_ITEM_OWNERSHIP;
+	p.dwVID = pkItem->GetVID();
+	p.szName[0] = '\0';
 
 	pkItem->PacketAround(&p, sizeof(p));
 	return 0;
@@ -1147,9 +1141,9 @@ void CItem::SetOwnership(LPCHARACTER ch, int iSec)
 
 			TPacketGCItemOwnership p;
 
-			p.bHeader	= HEADER_GC_ITEM_OWNERSHIP;
-			p.dwVID	= m_dwVID;
-			p.szName[0]	= '\0';
+			p.bHeader = HEADER_GC_ITEM_OWNERSHIP;
+			p.dwVID = m_dwVID;
+			p.szName[0] = '\0';
 
 			PacketAround(&p, sizeof(p));
 		}
@@ -1240,27 +1234,27 @@ void CItem::AlterToMagicItem()
 
 	switch (GetType())
 	{
-		case ITEM_WEAPON:
-			iSecondPct = 20;
-			iThirdPct = 5;
-			break;
+	case ITEM_WEAPON:
+		iSecondPct = 20;
+		iThirdPct = 5;
+		break;
 
-		case ITEM_ARMOR:
-		case ITEM_COSTUME:
-			if (GetSubType() == ARMOR_BODY)
-			{
-				iSecondPct = 10;
-				iThirdPct = 2;
-			}
-			else
-			{
-				iSecondPct = 10;
-				iThirdPct = 1;
-			}
-			break;
+	case ITEM_ARMOR:
+	case ITEM_COSTUME:
+		if (GetSubType() == ARMOR_BODY)
+		{
+			iSecondPct = 10;
+			iThirdPct = 2;
+		}
+		else
+		{
+			iSecondPct = 10;
+			iThirdPct = 1;
+		}
+		break;
 
-		default:
-			return;
+	default:
+		return;
 	}
 
 	PutAttribute(aiItemMagicAttributePercentHigh);
@@ -1286,7 +1280,7 @@ int CItem::GetRefineLevel()
 		return 0;
 
 	int	rtn = 0;
-	str_to_number(rtn, p+1);
+	str_to_number(rtn, p + 1);
 
 	const char* locale_name = GetName();
 	p = const_cast<char*>(strrchr(locale_name, '+'));
@@ -1294,7 +1288,7 @@ int CItem::GetRefineLevel()
 	if (p)
 	{
 		int	locale_rtn = 0;
-		str_to_number(locale_rtn, p+1);
+		str_to_number(locale_rtn, p + 1);
 		if (locale_rtn != rtn)
 		{
 			sys_err("refine_level_based_on_NAME(%d) is not equal to refine_level_based_on_LOCALE_NAME(%d).", rtn, locale_rtn);
@@ -1311,11 +1305,11 @@ bool CItem::IsPolymorphItem()
 
 EVENTFUNC(unique_expire_event)
 {
-	item_event_info* info = dynamic_cast<item_event_info*>( event->info );
+	item_event_info* info = dynamic_cast<item_event_info*>(event->info);
 
 	if (!info)
 	{
-		sys_err( "unique_expire_event> <Factor> Null pointer" );
+		sys_err("unique_expire_event> <Factor> Null pointer");
 		return 0;
 	}
 
@@ -1358,16 +1352,16 @@ EVENTFUNC(unique_expire_event)
 
 EVENTFUNC(timer_based_on_wear_expire_event)
 {
-	item_event_info* info = dynamic_cast<item_event_info*>( event->info );
+	item_event_info* info = dynamic_cast<item_event_info*>(event->info);
 
 	if (!info)
 	{
-		sys_err( "expire_event <Factor> Null pointer" );
+		sys_err("expire_event <Factor> Null pointer");
 		return 0;
 	}
 
 	LPITEM pkItem = info->item;
-	int remain_time = pkItem->GetSocket(ITEM_SOCKET_REMAIN_SEC) - processing_time/passes_per_sec;
+	int remain_time = pkItem->GetSocket(ITEM_SOCKET_REMAIN_SEC) - processing_time / passes_per_sec;
 	if (remain_time <= 0)
 	{
 		sys_log(0, "ITEM EXPIRED : expired %s %u", pkItem->GetName(), pkItem->GetID());
@@ -1385,7 +1379,7 @@ EVENTFUNC(timer_based_on_wear_expire_event)
 		return 0;
 	}
 	pkItem->SetSocket(ITEM_SOCKET_REMAIN_SEC, remain_time);
-	return PASSES_PER_SEC (MIN (60, remain_time));
+	return PASSES_PER_SEC(MIN(60, remain_time));
 }
 
 void CItem::SetUniqueExpireEvent(LPEVENT pkEvent)
@@ -1405,7 +1399,7 @@ EVENTFUNC(real_time_expire_event)
 	if (!info)
 		return 0;
 
-	const LPITEM item = ITEM_MANAGER::instance().FindByVID( info->item_vid );
+	const LPITEM item = ITEM_MANAGER::instance().FindByVID(info->item_vid);
 
 	if (!item)
 		return 0;
@@ -1429,14 +1423,14 @@ void CItem::StartRealTimeExpireEvent()
 {
 	if (m_pkRealTimeExpireEvent)
 		return;
-	for (int i=0 ; i < ITEM_LIMIT_MAX_NUM ; i++)
+	for (int i = 0; i < ITEM_LIMIT_MAX_NUM; i++)
 	{
 		if (LIMIT_REAL_TIME == GetProto()->aLimits[i].bType || LIMIT_REAL_TIME_START_FIRST_USE == GetProto()->aLimits[i].bType)
 		{
 			item_vid_event_info* info = AllocEventInfo<item_vid_event_info>();
 			info->item_vid = GetVID();
 
-			m_pkRealTimeExpireEvent = event_create( real_time_expire_event, info, PASSES_PER_SEC(1));
+			m_pkRealTimeExpireEvent = event_create(real_time_expire_event, info, PASSES_PER_SEC(1));
 
 			sys_log(0, "REAL_TIME_EXPIRE: StartRealTimeExpireEvent");
 
@@ -1447,9 +1441,9 @@ void CItem::StartRealTimeExpireEvent()
 
 bool CItem::IsRealTimeItem()
 {
-	if(!GetProto())
+	if (!GetProto())
 		return false;
-	for (int i=0 ; i < ITEM_LIMIT_MAX_NUM ; i++)
+	for (int i = 0; i < ITEM_LIMIT_MAX_NUM; i++)
 	{
 		if (LIMIT_REAL_TIME == GetProto()->aLimits[i].bType)
 			return true;
@@ -1584,11 +1578,11 @@ void CItem::SetAccessorySocketDownGradeTime(DWORD time)
 
 EVENTFUNC(accessory_socket_expire_event)
 {
-	item_vid_event_info* info = dynamic_cast<item_vid_event_info*>( event->info );
+	item_vid_event_info* info = dynamic_cast<item_vid_event_info*>(event->info);
 
 	if (!info)
 	{
-		sys_err( "accessory_socket_expire_event> <Factor> Null pointer" );
+		sys_err("accessory_socket_expire_event> <Factor> Null pointer");
 		return 0;
 	}
 
@@ -1596,7 +1590,7 @@ EVENTFUNC(accessory_socket_expire_event)
 
 	if (item->GetAccessorySocketDownGradeTime() <= 1)
 	{
-degrade:
+	degrade:
 		item->SetAccessorySocketExpireEvent(NULL);
 		item->AccessorySocketDegrade();
 		return 0;
@@ -1690,6 +1684,15 @@ bool CItem::IsRamadanRing()
 	return false;
 }
 
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
+bool CItem::IsMountItem()
+{
+	if (GetType() == ITEM_COSTUME && GetSubType() == COSTUME_MOUNT)
+		return true;
+	return false;
+}
+#endif
+
 void CItem::ClearMountAttributeAndAffect()
 {
 	LPCHARACTER ch = GetOwner();
@@ -1733,7 +1736,7 @@ void CItem::AccessorySocketDegrade()
 		}
 
 		ModifyPoints(false);
-		SetAccessorySocketGrade(GetAccessorySocketGrade()-1);
+		SetAccessorySocketGrade(GetAccessorySocketGrade() - 1);
 		ModifyPoints(true);
 
 		int iDownTime = aiAccessorySocketDegradeTime[GetAccessorySocketGrade()];
@@ -1759,7 +1762,7 @@ bool CItem::CanPutInto(LPITEM item)
 	if (item->GetType() == ITEM_BELT)
 		return this->GetSubType() == USE_PUT_INTO_BELT_SOCKET;
 
-	else if(item->GetType() == ITEM_RING)
+	else if (item->GetType() == ITEM_RING)
 		return CanPutIntoRing(item, this);
 
 	else if (item->GetType() != ITEM_ARMOR)
@@ -1787,7 +1790,7 @@ bool CItem::CanPutInto(LPITEM item)
 	for (size_t i = 0; i < sizeof(infos) / sizeof(infos[0]); i++)
 	{
 		const JewelAccessoryInfo& info = infos[i];
-		switch(item->GetSubType())
+		switch (item->GetSubType())
 		{
 		case ARMOR_WRIST:
 			if (info.wrist == item_type)
@@ -1905,12 +1908,12 @@ void CItem::CopySocketTo(LPITEM pItem)
 
 int CItem::GetAccessorySocketGrade()
 {
-   	return MINMAX(0, GetSocket(0), GetAccessorySocketMaxGrade());
+	return MINMAX(0, GetSocket(0), GetAccessorySocketMaxGrade());
 }
 
 int CItem::GetAccessorySocketMaxGrade()
 {
-   	return MINMAX(0, GetSocket(1), ITEM_ACCESSORY_SOCKET_MAX_NUM);
+	return MINMAX(0, GetSocket(1), ITEM_ACCESSORY_SOCKET_MAX_NUM);
 }
 
 int CItem::GetAccessorySocketDownGradeTime()
@@ -1920,7 +1923,7 @@ int CItem::GetAccessorySocketDownGradeTime()
 
 void CItem::AttrLog()
 {
-	const char * pszIP = NULL;
+	const char* pszIP = NULL;
 
 	if (GetOwner() && GetOwner()->GetDesc())
 		pszIP = GetOwner()->GetDesc()->GetHostName();
@@ -1930,23 +1933,23 @@ void CItem::AttrLog()
 		if (m_alSockets[i])
 		{
 #ifdef ENABLE_NEWSTUFF
-			if (g_iDbLogLevel>=LOG_LEVEL_MAX)
+			if (g_iDbLogLevel >= LOG_LEVEL_MAX)
 #endif
-			LogManager::instance().ItemLog(i, m_alSockets[i], 0, GetID(), "INFO_SOCKET", "", pszIP ? pszIP : "", GetOriginalVnum());
+				LogManager::instance().ItemLog(i, m_alSockets[i], 0, GetID(), "INFO_SOCKET", "", pszIP ? pszIP : "", GetOriginalVnum());
 		}
 	}
 
-	for (int i = 0; i<ITEM_ATTRIBUTE_MAX_NUM; ++i)
+	for (int i = 0; i < ITEM_ATTRIBUTE_MAX_NUM; ++i)
 	{
-		int	type	= m_aAttr[i].bType;
-		int value	= m_aAttr[i].sValue;
+		int	type = m_aAttr[i].bType;
+		int value = m_aAttr[i].sValue;
 
 		if (type)
 		{
 #ifdef ENABLE_NEWSTUFF
-			if (g_iDbLogLevel>=LOG_LEVEL_MAX)
+			if (g_iDbLogLevel >= LOG_LEVEL_MAX)
 #endif
-			LogManager::instance().ItemLog(i, type, value, GetID(), "INFO_ATTR", "", pszIP ? pszIP : "", GetOriginalVnum());
+				LogManager::instance().ItemLog(i, type, value, GetID(), "INFO_ATTR", "", pszIP ? pszIP : "", GetOriginalVnum());
 		}
 	}
 }
@@ -1970,7 +1973,7 @@ bool CItem::HasTimeLimit() const
 		if (this->m_pProto->aLimits[i].bType == LIMIT_REAL_TIME
 			|| this->m_pProto->aLimits[i].bType == LIMIT_REAL_TIME_START_FIRST_USE
 			|| this->m_pProto->aLimits[i].bType == LIMIT_TIMER_BASED_ON_WEAR
-		)
+			)
 			return true;
 	}
 	return false;
@@ -1978,7 +1981,7 @@ bool CItem::HasTimeLimit() const
 
 int CItem::GetRealUseLimit()
 {
-	for (int i=0 ; i < ITEM_LIMIT_MAX_NUM ; i++) {
+	for (int i = 0; i < ITEM_LIMIT_MAX_NUM; i++) {
 		if (LIMIT_REAL_TIME == GetProto()->aLimits[i].bType || LIMIT_REAL_TIME_START_FIRST_USE == GetProto()->aLimits[i].bType)
 			return this->m_pProto->aLimits[i].lValue;
 	}
@@ -2054,10 +2057,10 @@ int CItem::GiveMoreTime_Fix(DWORD dwTime)
 
 int	CItem::GetDuration()
 {
-	if(!GetProto())
+	if (!GetProto())
 		return -1;
 
-	for (int i=0 ; i < ITEM_LIMIT_MAX_NUM ; i++)
+	for (int i = 0; i < ITEM_LIMIT_MAX_NUM; i++)
 	{
 		if (LIMIT_REAL_TIME == GetProto()->aLimits[i].bType)
 			return GetProto()->aLimits[i].lValue;

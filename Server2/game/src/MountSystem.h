@@ -24,11 +24,12 @@ public:
 	DWORD			GetVID() const { return m_dwVID; }
 	DWORD			GetVnum() const { return m_dwVnum; }
 	void			SetName();
-	bool			Mount(LPITEM mountItem);
+	void			Mount(LPITEM mountItem);
 	void			Unmount();
 	DWORD			Summon(LPITEM pSummonItem, bool bSpawnFar = false);
 	void			Unsummon();
 	bool			IsSummoned() const { return 0 != m_pkChar; }
+	bool			IsMounting() const { return m_dwMounted; }
 	void			SetSummonItem(LPITEM pItem);
 	DWORD			GetSummonItemVID() { return m_dwSummonItemVID; }
 private:
@@ -40,6 +41,7 @@ private:
 
 	short			m_originalMoveSpeed;
 
+	bool			m_dwMounted;
 	std::string		m_name;
 
 	LPCHARACTER		m_pkChar;
@@ -67,15 +69,22 @@ public:
 	void		SetUpdatePeriod(DWORD ms);
 
 	void		Summon(DWORD mobVnum, LPITEM pSummonItem, bool bSpawnFar);
+	void		SummonSilent(DWORD mobVnum);
 
 	void		Unsummon(DWORD mobVnum, bool bDeleteFromList = false);
 	void		Unsummon(CMountActor* mountActor, bool bDeleteFromList = false);
+	void        UnsummonAll();
 
 	void		Mount(DWORD mobVnum, LPITEM mountItem);
 	void		Unmount(DWORD mobVnum);
 
 	void		DeleteMount(DWORD mobVnum);
 	void		DeleteMount(CMountActor* mountActor);
+
+	bool		IsActiveMount();
+	bool		IsMounting(DWORD mobVnum);
+	void		EnsureUpdateEventStarted();
+
 private:
 	TMountActorMap	m_mountActorMap;
 	LPCHARACTER		m_pkOwner;

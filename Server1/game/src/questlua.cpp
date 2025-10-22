@@ -34,18 +34,18 @@ namespace quest
 		lua_State* L = CQuestManager::instance().GetLuaState();
 		int x = lua_gettop(L);
 
-		int errcode = lua_dobuffer(L, ("return "+str).c_str(), str.size()+7, "ScriptToString");
+		int errcode = lua_dobuffer(L, ("return " + str).c_str(), str.size() + 7, "ScriptToString");
 		string retstr;
 		if (!errcode)
 		{
-			if (lua_isstring(L,-1))
+			if (lua_isstring(L, -1))
 				retstr = lua_tostring(L, -1);
 		}
 		else
 		{
 			sys_err("LUA ScriptRunError (code:%d src:[%s])", errcode, str.c_str());
 		}
-		lua_settop(L,x);
+		lua_settop(L, x);
 		return retstr;
 	}
 
@@ -53,7 +53,7 @@ namespace quest
 	{
 		if (ch->IsPC())
 		{
-			ch->SetWarpLocation (map_index, x, y);
+			ch->SetWarpLocation(map_index, x, y);
 		}
 	}
 
@@ -62,7 +62,7 @@ namespace quest
 		if (!ch->IsPC())
 			return;
 
-		PC * pPC = CQuestManager::instance().GetPCForce(ch->GetPlayerID());
+		PC* pPC = CQuestManager::instance().GetPCForce(ch->GetPlayerID());
 
 		if (pPC)
 			pPC->SetFlag(flagname, value);
@@ -73,7 +73,7 @@ namespace quest
 		if (!ch->IsPC())
 			return false;
 
-		PC * pPC = CQuestManager::instance().GetPCForce(ch->GetPlayerID());
+		PC* pPC = CQuestManager::instance().GetPCForce(ch->GetPlayerID());
 		bool returnBool = false;
 		if (pPC)
 		{
@@ -105,7 +105,7 @@ namespace quest
 	{
 		if (ent->IsType(ENTITY_CHARACTER))
 		{
-			LPCHARACTER ch = (LPCHARACTER) ent;
+			LPCHARACTER ch = (LPCHARACTER)ent;
 
 			if (ch->GetDesc())
 			{
@@ -119,7 +119,7 @@ namespace quest
 	{
 		if (ent->IsType(ENTITY_CHARACTER))
 		{
-			LPCHARACTER ch = (LPCHARACTER) ent;
+			LPCHARACTER ch = (LPCHARACTER)ent;
 			ch->ChatPacket(m_chat_type, "%s", m_text.c_str());
 		}
 	}
@@ -129,7 +129,7 @@ namespace quest
 	{
 		if (ent->IsType(ENTITY_CHARACTER))
 		{
-			LPCHARACTER ch = (LPCHARACTER) ent;
+			LPCHARACTER ch = (LPCHARACTER)ent;
 
 			if (ch->GetDesc())
 			{
@@ -143,7 +143,7 @@ namespace quest
 	{
 		if (ent->IsType(ENTITY_CHARACTER))
 		{
-			LPCHARACTER ch = (LPCHARACTER) ent;
+			LPCHARACTER ch = (LPCHARACTER)ent;
 
 			if (ch->IsPC() && ch->GetEmpire() == m_bEmpire)
 			{
@@ -152,7 +152,7 @@ namespace quest
 		}
 	}
 
-	FBuildLuaGuildWarList::FBuildLuaGuildWarList(lua_State * lua_state) : L(lua_state), m_count(1)
+	FBuildLuaGuildWarList::FBuildLuaGuildWarList(lua_State* lua_state) : L(lua_state), m_count(1)
 	{
 		lua_newtable(lua_state);
 	}
@@ -180,7 +180,7 @@ namespace quest
 
 	bool IsScriptTrue(const char* code, int size)
 	{
-		if (size==0)
+		if (size == 0)
 			return true;
 
 		lua_State* L = CQuestManager::instance().GetLuaState();
@@ -193,11 +193,11 @@ namespace quest
 			snprintf(buf, sizeof(buf), "LUA ScriptRunError (code:%%d src:[%%%ds])", size);
 			sys_err(buf, errcode, code);
 		}
-		lua_settop(L,x);
+		lua_settop(L, x);
 		return bStart != 0;
 	}
 
-	void combine_lua_string(lua_State * L, ostringstream & s)
+	void combine_lua_string(lua_State* L, ostringstream& s)
 	{
 		char buf[32];
 
@@ -206,12 +206,12 @@ namespace quest
 
 		for (i = 1; i <= n; ++i)
 		{
-			if (lua_isstring(L,i))
+			if (lua_isstring(L, i))
 				//printf("%s\n",lua_tostring(L,i));
 				s << lua_tostring(L, i);
 			else if (lua_isnumber(L, i))
 			{
-				snprintf(buf, sizeof(buf), "%.14g\n", lua_tonumber(L,i));
+				snprintf(buf, sizeof(buf), "%.14g\n", lua_tonumber(L, i));
 				s << buf;
 			}
 		}
@@ -250,11 +250,11 @@ namespace quest
 		}
 
 		DWORD mob_vnum = (DWORD)lua_tonumber(L, 1);
-		long local_x = (long) lua_tonumber(L, 2)*100;
-		long local_y = (long) lua_tonumber(L, 3)*100;
-		float radius = (float) lua_tonumber(L, 4)*100;
+		long local_x = (long)lua_tonumber(L, 2) * 100;
+		long local_y = (long)lua_tonumber(L, 3) * 100;
+		float radius = (float)lua_tonumber(L, 4) * 100;
 		bool bAggressive = lua_toboolean(L, 5);
-		DWORD count = (lua_isnumber(L, 6))?(DWORD) lua_tonumber(L, 6):1;
+		DWORD count = (lua_isnumber(L, 6)) ? (DWORD)lua_tonumber(L, 6) : 1;
 
 		if (count == 0)
 			count = 1;
@@ -300,7 +300,7 @@ namespace quest
 				if (!ret)
 				{
 					ret = true;
-					lua_pushnumber(L, (DWORD) mob->GetVID());
+					lua_pushnumber(L, (DWORD)mob->GetVID());
 				}
 			}
 		}
@@ -321,11 +321,11 @@ namespace quest
 		}
 
 		DWORD group_vnum = (DWORD)lua_tonumber(L, 1);
-		long local_x = (long) lua_tonumber(L, 2) * 100;
-		long local_y = (long) lua_tonumber(L, 3) * 100;
-		float radius = (float) lua_tonumber(L, 4) * 100;
+		long local_x = (long)lua_tonumber(L, 2) * 100;
+		long local_y = (long)lua_tonumber(L, 3) * 100;
+		float radius = (float)lua_tonumber(L, 4) * 100;
 		bool bAggressive = lua_toboolean(L, 5);
-		DWORD count = (DWORD) lua_tonumber(L, 6);
+		DWORD count = (DWORD)lua_tonumber(L, 6);
 
 		if (count == 0)
 			count = 1;
@@ -351,7 +351,7 @@ namespace quest
 			for (int loop = 0; loop < 8; ++loop)
 			{
 				float angle = number(0, 999) * M_PI * 2 / 1000;
-				float r = number(0, 999)*radius/1000;
+				float r = number(0, 999) * radius / 1000;
 
 				long x = local_x + pMap->m_setting.iBaseX + (long)(r * cos(angle));
 				long y = local_y + pMap->m_setting.iBaseY + (long)(r * sin(angle));
@@ -369,7 +369,7 @@ namespace quest
 				if (!ret)
 				{
 					ret = true;
-					lua_pushnumber(L, (DWORD) mob->GetVID());
+					lua_pushnumber(L, (DWORD)mob->GetVID());
 				}
 			}
 		}
@@ -384,7 +384,7 @@ namespace quest
 
 	// Registers Lua function table
 
-	void CQuestManager::AddLuaFunctionTable(const char * c_pszName, luaL_reg * preg, bool bCheckIfExists)
+	void CQuestManager::AddLuaFunctionTable(const char* c_pszName, luaL_reg* preg, bool bCheckIfExists)
 	{
 #ifdef ENABLE_NEWSTUFF
 		bool bIsExists = false;
@@ -415,7 +415,7 @@ namespace quest
 		lua_setglobal(L, c_pszName);
 	}
 
-	void CQuestManager::AddLuaFunctionSubTable(const char * c_pszName, const char * c_pszSubName, luaL_reg * preg)
+	void CQuestManager::AddLuaFunctionSubTable(const char* c_pszName, const char* c_pszSubName, luaL_reg* preg)
 	{
 		// lua_State* L = CQuestManager::instance().GetLuaState();
 		int x = lua_gettop(L);
@@ -445,7 +445,7 @@ namespace quest
 	}
 
 #ifdef ENABLE_NEWSTUFF
-	void CQuestManager::AppendLuaFunctionTable(const char * c_pszName, luaL_reg * preg, bool bForceCreation)
+	void CQuestManager::AppendLuaFunctionTable(const char* c_pszName, luaL_reg* preg, bool bForceCreation)
 	{
 		int x = lua_gettop(L);
 		{
@@ -472,7 +472,7 @@ namespace quest
 		lua_settop(L, x);
 	}
 
-	void CQuestManager::AddLuaConstantGlobal(const char * c_pszName, lua_Number lNumber, bool bOverwrite)
+	void CQuestManager::AddLuaConstantGlobal(const char* c_pszName, lua_Number lNumber, bool bOverwrite)
 	{
 		int x = lua_gettop(L);
 		{
@@ -492,7 +492,7 @@ namespace quest
 		lua_settop(L, x);
 	}
 
-	void CQuestManager::AddLuaConstantInTable(const char * c_pszName, const char * c_pszSubName, lua_Number lNumber, bool bForceCreation)
+	void CQuestManager::AddLuaConstantInTable(const char* c_pszName, const char* c_pszSubName, lua_Number lNumber, bool bForceCreation)
 	{
 		int x = lua_gettop(L);
 		{
@@ -517,7 +517,7 @@ namespace quest
 		lua_settop(L, x);
 	}
 
-	void CQuestManager::AddLuaConstantInTable(const char * c_pszName, const char * c_pszSubName, const char * szString, bool bForceCreation)
+	void CQuestManager::AddLuaConstantInTable(const char* c_pszName, const char* c_pszSubName, const char* szString, bool bForceCreation)
 	{
 		int x = lua_gettop(L);
 		{
@@ -542,7 +542,7 @@ namespace quest
 		lua_settop(L, x);
 	}
 
-	void CQuestManager::AddLuaConstantSubTable(const char * c_pszName, const char * c_pszSubName, luaC_tab * preg)
+	void CQuestManager::AddLuaConstantSubTable(const char* c_pszName, const char* c_pszSubName, luaC_tab* preg)
 	{
 		// lua_State* L = CQuestManager::instance().GetLuaState();
 		int x = lua_gettop(L);
@@ -562,18 +562,18 @@ namespace quest
 					lua_pushstring(L, preg->name);
 					switch (preg->val.type)
 					{
-						case ETL_CFUN:
-							lua_pushcfunction(L, preg->val.cfVal);
-							break;
-						case ETL_LNUM:
-							lua_pushnumber(L, preg->val.lnVal);
-							break;
-						case ETL_LSTR:
-							lua_pushstring(L, preg->val.lsVal);
-							break;
-						case ETL_NIL:
-							lua_pushnil(L);
-							break;
+					case ETL_CFUN:
+						lua_pushcfunction(L, preg->val.cfVal);
+						break;
+					case ETL_LNUM:
+						lua_pushnumber(L, preg->val.lnVal);
+						break;
+					case ETL_LSTR:
+						lua_pushstring(L, preg->val.lsVal);
+						break;
+					case ETL_NIL:
+						lua_pushnil(L);
+						break;
 					}
 					lua_rawset(L, -3);
 					preg++;
@@ -591,10 +591,10 @@ namespace quest
 		int x = lua_gettop(L);
 		lua_getglobal(L, questName);
 
-		if (lua_isnil(L,-1))
+		if (lua_isnil(L, -1))
 		{
-			sys_err("QUEST wrong quest state file for quest %s",questName);
-			lua_settop(L,x);
+			sys_err("QUEST wrong quest state file for quest %s", questName);
+			lua_settop(L, x);
 			return;
 		}
 
@@ -632,7 +632,7 @@ namespace quest
 		luaL_openlibs(L);
 		//luaopen_debug(L);
 #else
-	#error "lua version not found"
+#error "lua version not found"
 #endif
 
 		RegisterAffectFunctionTable();
@@ -750,12 +750,12 @@ namespace quest
 			const string& stQuestObjectDir = *it;
 			char buf[PATH_MAX];
 			snprintf(buf, sizeof(buf), "%s/state/", stQuestObjectDir.c_str());
-			DIR * pdir = opendir(buf);
+			DIR* pdir = opendir(buf);
 			int iQuestIdx = 0;
 
 			if (pdir)
 			{
-				dirent * pde;
+				dirent* pde;
 
 				while ((pde = readdir(pdir)))
 				{
@@ -795,29 +795,29 @@ namespace quest
 		ostringstream os;
 		os << "[QUESTION ";
 
-		for (int i=1; i<=n; i++)
+		for (int i = 1; i <= n; i++)
 		{
-			lua_rawgeti(qs.co,-1,i);
-			if (lua_isstring(qs.co,-1))
+			lua_rawgeti(qs.co, -1, i);
+			if (lua_isstring(qs.co, -1))
 			{
 				//printf("%d\t%s\n",i,lua_tostring(qs.co,-1));
 				if (i != 1)
 					os << "|";
-				os << i << ";" << lua_tostring(qs.co,-1);
+				os << i << ";" << lua_tostring(qs.co, -1);
 			}
 			else
 			{
 				sys_err("SELECT wrong data %s", lua_typename(qs.co, -1));
 				sys_err("here");
 			}
-			lua_pop(qs.co,1);
+			lua_pop(qs.co, 1);
 		}
 		os << "]";
 
 		AddScript(os.str());
 		qs.suspend_state = SUSPEND_STATE_SELECT;
-		if ( test_server )
-			sys_log( 0, "%s", m_strScript.c_str() );
+		if (test_server)
+			sys_log(0, "%s", m_strScript.c_str());
 		SendScript();
 	}
 
@@ -827,19 +827,19 @@ namespace quest
 		DWORD dwReplyPID;
 
 		confirm_timeout_event_info()
-		: dwWaitPID( 0 )
-		, dwReplyPID( 0 )
+			: dwWaitPID(0)
+			, dwReplyPID(0)
 		{
 		}
 	};
 
 	EVENTFUNC(confirm_timeout_event)
 	{
-		confirm_timeout_event_info * info = dynamic_cast<confirm_timeout_event_info *>(event->info);
+		confirm_timeout_event_info* info = dynamic_cast<confirm_timeout_event_info*>(event->info);
 
-		if ( info == NULL )
+		if (info == NULL)
 		{
-			sys_err( "confirm_timeout_event> <Factor> Null pointer" );
+			sys_err("confirm_timeout_event> <Factor> Null pointer");
 			return 0;
 		}
 
@@ -858,12 +858,12 @@ namespace quest
 		return 0;
 	}
 
-	void CQuestManager::GotoConfirmState(QuestState & qs)
+	void CQuestManager::GotoConfirmState(QuestState& qs)
 	{
 		qs.suspend_state = SUSPEND_STATE_CONFIRM;
-		DWORD dwVID = (DWORD) lua_tonumber(qs.co, -3);
+		DWORD dwVID = (DWORD)lua_tonumber(qs.co, -3);
 		const char* szMsg = lua_tostring(qs.co, -2);
-		int iTimeout = (int) lua_tonumber(qs.co, -1);
+		int iTimeout = (int)lua_tonumber(qs.co, -1);
 
 		sys_log(0, "GotoConfirmState vid %u msg '%s', timeout %d", dwVID, szMsg, iTimeout);
 
@@ -875,7 +875,7 @@ namespace quest
 		}
 
 		// 2
-		GetCurrentPC()->SetConfirmWait((ch && ch->IsPC())?ch->GetPlayerID():0);
+		GetCurrentPC()->SetConfirmWait((ch && ch->IsPC()) ? ch->GetPlayerID() : 0);
 		ostringstream os;
 		os << "[CONFIRM_WAIT timeout;" << iTimeout << "]";
 		AddScript(os.str());
@@ -897,21 +897,21 @@ namespace quest
 		SendScript();
 	}
 
-	void CQuestManager::GotoInputState(QuestState & qs)
+	void CQuestManager::GotoInputState(QuestState& qs)
 	{
 		qs.suspend_state = SUSPEND_STATE_INPUT;
 		AddScript("[INPUT]");
 		SendScript();
 	}
 
-	void CQuestManager::GotoPauseState(QuestState & qs)
+	void CQuestManager::GotoPauseState(QuestState& qs)
 	{
 		qs.suspend_state = SUSPEND_STATE_PAUSE;
 		AddScript("[NEXT]");
 		SendScript();
 	}
 
-	void CQuestManager::GotoEndState(QuestState & qs)
+	void CQuestManager::GotoEndState(QuestState& qs)
 	{
 		AddScript("[DONE]");
 		SendScript();
@@ -924,7 +924,7 @@ namespace quest
 	QuestState CQuestManager::OpenState(const string& quest_name, int state_index)
 	{
 		QuestState qs;
-		qs.args=0;
+		qs.args = 0;
 		qs.st = state_index;
 		qs.co = lua_newthread(L);
 		qs.ico = lua_ref(L, 1/*qs.co*/);
@@ -935,7 +935,7 @@ namespace quest
 
 	// decides script to wait for user input, or finish
 
-	bool CQuestManager::RunState(QuestState & qs)
+	bool CQuestManager::RunState(QuestState& qs)
 	{
 		ClearError();
 

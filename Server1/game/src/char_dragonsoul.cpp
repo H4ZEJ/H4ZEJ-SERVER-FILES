@@ -36,16 +36,16 @@ bool CHARACTER::DragonSoul_IsDeckActivated() const
 
 bool CHARACTER::DragonSoul_IsQualified() const
 {
-	#ifdef ENABLE_NO_DSS_QUALIFICATION
+#ifdef ENABLE_NO_DSS_QUALIFICATION
 	return true;
-	#else
+#else
 	return FindAffect(AFFECT_DRAGON_SOUL_QUALIFIED) != NULL;
-	#endif
+#endif
 }
 
 void CHARACTER::DragonSoul_GiveQualification()
 {
-	if(NULL == FindAffect(AFFECT_DRAGON_SOUL_QUALIFIED))
+	if (NULL == FindAffect(AFFECT_DRAGON_SOUL_QUALIFIED))
 	{
 		LogManager::instance().CharLog(this, 0, "DS_QUALIFIED", "");
 	}
@@ -119,7 +119,7 @@ bool CHARACTER::DragonSoul_RefineWindow_Open(LPENTITY pEntity)
 
 	if (NULL == d)
 	{
-		sys_err ("User(%s)'s DESC is NULL POINT.", GetName());
+		sys_err("User(%s)'s DESC is NULL POINT.", GetName());
 		return false;
 	}
 

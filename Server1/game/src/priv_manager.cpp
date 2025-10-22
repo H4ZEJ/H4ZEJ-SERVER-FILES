@@ -9,12 +9,12 @@
 #include "utils.h"
 #include "log.h"
 
-static const char * GetEmpireName(int priv)
+static const char* GetEmpireName(int priv)
 {
 	return LC_TEXT(c_apszEmpireNames[priv]);
 }
 
-static const char * GetPrivName(int priv)
+static const char* GetPrivName(int priv)
 {
 	return LC_TEXT(c_apszPrivNames[priv]);
 }
@@ -33,7 +33,7 @@ void CPrivManager::RequestGiveGuildPriv(DWORD guild_id, BYTE type, int value, ti
 	}
 
 	value = MINMAX(0, value, 50);
-	duration_sec = MINMAX(0, duration_sec, 60*60*24*7);
+	duration_sec = MINMAX(0, duration_sec, 60 * 60 * 24 * 7);
 
 	TPacketGiveGuildPriv p;
 	p.type = type;
@@ -53,7 +53,7 @@ void CPrivManager::RequestGiveEmpirePriv(BYTE empire, BYTE type, int value, time
 	}
 
 	value = MINMAX(0, value, 200);
-	duration_sec = MINMAX(0, duration_sec, 60*60*24*7);
+	duration_sec = MINMAX(0, duration_sec, 60 * 60 * 24 * 7);
 
 	TPacketGiveEmpirePriv p;
 	p.type = type;
@@ -90,10 +90,10 @@ void CPrivManager::GiveGuildPriv(DWORD guild_id, BYTE type, int value, BYTE bLog
 		return;
 	}
 
-	sys_log(0,"Set Guild Priv: guild_id(%u) type(%d) value(%d) duration_sec(%d)", guild_id, type, value, end_time_sec - get_global_time());
+	sys_log(0, "Set Guild Priv: guild_id(%u) type(%d) value(%d) duration_sec(%d)", guild_id, type, value, end_time_sec - get_global_time());
 
 	value = MINMAX(0, value, 50);
-	end_time_sec = MINMAX(0, end_time_sec, get_global_time()+60*60*24*7);
+	end_time_sec = MINMAX(0, end_time_sec, get_global_time() + 60 * 60 * 24 * 7);
 
 	m_aPrivGuild[type][guild_id].value = value;
 	m_aPrivGuild[type][guild_id].end_time_sec = end_time_sec;
@@ -130,7 +130,7 @@ void CPrivManager::GiveCharacterPriv(DWORD pid, BYTE type, int value, BYTE bLog)
 		return;
 	}
 
-	sys_log(0,"Set Character Priv %u %d %d", pid, type, value);
+	sys_log(0, "Set Character Priv %u %d %d", pid, type, value);
 
 	value = MINMAX(0, value, 100);
 
@@ -148,12 +148,12 @@ void CPrivManager::GiveEmpirePriv(BYTE empire, BYTE type, int value, BYTE bLog, 
 		return;
 	}
 
-	sys_log(0, "Set Empire Priv: empire(%d) type(%d) value(%d) duration_sec(%d)", empire, type, value, end_time_sec-get_global_time());
+	sys_log(0, "Set Empire Priv: empire(%d) type(%d) value(%d) duration_sec(%d)", empire, type, value, end_time_sec - get_global_time());
 
 	value = MINMAX(0, value, 200);
-	end_time_sec = MINMAX(0, end_time_sec, get_global_time()+60*60*24*7);
+	end_time_sec = MINMAX(0, end_time_sec, get_global_time() + 60 * 60 * 24 * 7);
 
-	SPrivEmpireData& rkPrivEmpireData=m_aakPrivEmpireData[type][empire];
+	SPrivEmpireData& rkPrivEmpireData = m_aakPrivEmpireData[type][empire];
 	rkPrivEmpireData.m_value = value;
 	rkPrivEmpireData.m_end_time_sec = end_time_sec;
 
@@ -204,7 +204,7 @@ void CPrivManager::RemoveEmpirePriv(BYTE empire, BYTE type)
 		return;
 	}
 
-	SPrivEmpireData& rkPrivEmpireData=m_aakPrivEmpireData[type][empire];
+	SPrivEmpireData& rkPrivEmpireData = m_aakPrivEmpireData[type][empire];
 	rkPrivEmpireData.m_value = 0;
 	rkPrivEmpireData.m_end_time_sec = 0;
 }
@@ -269,22 +269,22 @@ int CPrivManager::GetPrivByGuild(DWORD guild_id, BYTE type)
 	if (type >= MAX_PRIV_NUM)
 		return 0;
 
-	itertype( m_aPrivGuild[ type ] ) itFind = m_aPrivGuild[ type ].find( guild_id );
+	itertype(m_aPrivGuild[type]) itFind = m_aPrivGuild[type].find(guild_id);
 
-	if ( itFind == m_aPrivGuild[ type ].end() )
+	if (itFind == m_aPrivGuild[type].end())
 		return 0;
 
 	return itFind->second.value;
 }
 
-const CPrivManager::SPrivGuildData* CPrivManager::GetPrivByGuildEx( DWORD dwGuildID, BYTE byType ) const
+const CPrivManager::SPrivGuildData* CPrivManager::GetPrivByGuildEx(DWORD dwGuildID, BYTE byType) const
 {
-	if ( byType >= MAX_PRIV_NUM )
+	if (byType >= MAX_PRIV_NUM)
 		return NULL;
 
-	itertype( m_aPrivGuild[ byType ] ) itFind = m_aPrivGuild[ byType ].find( dwGuildID );
+	itertype(m_aPrivGuild[byType]) itFind = m_aPrivGuild[byType].find(dwGuildID);
 
-	if ( itFind == m_aPrivGuild[ byType ].end() )
+	if (itFind == m_aPrivGuild[byType].end())
 		return NULL;
 
 	return &itFind->second;

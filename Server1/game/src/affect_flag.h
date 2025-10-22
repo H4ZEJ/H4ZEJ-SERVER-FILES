@@ -22,7 +22,7 @@ struct TAffectFlag
 	DWORD bits[2];
 
 	inline TAffectFlag() { bits[0] = 0; bits[1] = 0; }
-	inline TAffectFlag(DWORD v1, DWORD v2 = 0) {bits[0] = v1; bits[1] = v2;}
+	inline TAffectFlag(DWORD v1, DWORD v2 = 0) { bits[0] = v1; bits[1] = v2; }
 
 	inline bool IsSet(int flag) const
 	{
@@ -37,7 +37,7 @@ struct TAffectFlag
 		if (AFF_BITS_MAX <= flag || 0 >= flag)
 			return;
 
-		SET_BIT(bits[(flag-1)>>5], (((DWORD)1)<<((flag-1)&31)));
+		SET_BIT(bits[(flag - 1) >> 5], (((DWORD)1) << ((flag - 1) & 31)));
 	}
 
 	inline void Reset(int flag)
@@ -45,7 +45,7 @@ struct TAffectFlag
 		if (AFF_BITS_MAX <= flag || 0 >= flag)
 			return;
 
-		REMOVE_BIT(bits[(flag-1)>>5], (((DWORD)1)<<((flag-1)&31)));
+		REMOVE_BIT(bits[(flag - 1) >> 5], (((DWORD)1) << ((flag - 1) & 31)));
 	}
 
 	inline TAffectFlag& operator = (const TAffectFlag& rhs)

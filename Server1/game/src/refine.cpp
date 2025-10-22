@@ -9,7 +9,7 @@ CRefineManager::~CRefineManager()
 {
 }
 
-bool CRefineManager::Initialize(TRefineTable * table, int size)
+bool CRefineManager::Initialize(TRefineTable* table, int size)
 {
 	for (int i = 0; i < size; ++i, ++table)
 	{

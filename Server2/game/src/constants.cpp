@@ -19,7 +19,6 @@ TJobInitialPoints JobInitialPoints[JOB_MAX_NUM] =
 	{   4,  3,  6,  3,  650,   200,     40,    20,    36, 44,     18, 22,     800,      5,      1, 3  }, // JOB_ASSASSIN 16
 	{   5,  3,  3,  5,  650,   200,     40,    20,    36, 44,     18, 22,     800,      5,      1, 3  }, // JOB_SURA	 16
 	{   3,  4,  3,  6,  700,   200,     40,    20,    36, 44,     18, 22,     800,      5,      1, 3  },  // JOB_SHAMANa  16
-
 };
 
 const TMobRankStat MobRankStats[MOB_RANK_MAX_NUM] =
@@ -51,7 +50,7 @@ TBattleTypeStat BattleTypeStats[BATTLE_TYPE_MAX_NUM] =
 	{	-20,	 20,	-10,	  0	}, // BATTLE_TYPE_SUPER_TANKER,
 };
 
-const DWORD * exp_table = NULL;
+const DWORD* exp_table = NULL;
 
 const DWORD exp_table_common[PLAYER_MAX_LEVEL_CONST + 1] =
 {
@@ -192,8 +191,8 @@ const DWORD exp_table_common[PLAYER_MAX_LEVEL_CONST + 1] =
 	2500000000u,2500000000u,2500000000u,2500000000u,2500000000u,2500000000u,2500000000u,2500000000u,2500000000u,2500000000u, // 250
 };
 
-const int * aiPercentByDeltaLev = NULL;
-const int * aiPercentByDeltaLevForBoss = NULL;
+const int* aiPercentByDeltaLev = NULL;
+const int* aiPercentByDeltaLevForBoss = NULL;
 
 const int aiPercentByDeltaLevForBoss_euckr[MAX_EXP_DELTA_OF_LEV] =
 {
@@ -460,7 +459,7 @@ Coord aArroundCoords[ARROUND_COORD_MAX_NUM] =
 	{       -707,   707     },
 };
 
-const DWORD guild_exp_table[GUILD_MAX_LEVEL+1] =
+const DWORD guild_exp_table[GUILD_MAX_LEVEL + 1] =
 {
 	0,
 	15000UL,
@@ -485,7 +484,7 @@ const DWORD guild_exp_table[GUILD_MAX_LEVEL+1] =
 	42000000UL
 };
 
-const DWORD guild_exp_table2[GUILD_MAX_LEVEL+1] =
+const DWORD guild_exp_table2[GUILD_MAX_LEVEL + 1] =
 {
 	0,
 	6000UL,
@@ -518,7 +517,6 @@ const int aiMobEnchantApplyIdx[MOB_ENCHANTS_MAX_NUM] =
 	APPLY_STUN_PCT,
 	APPLY_CRITICAL_PCT,
 	APPLY_PENETRATE_PCT,
-
 };
 
 const int aiMobResistsApplyIdx[MOB_RESISTS_MAX_NUM] =
@@ -534,7 +532,6 @@ const int aiMobResistsApplyIdx[MOB_RESISTS_MAX_NUM] =
 	APPLY_RESIST_MAGIC,
 	APPLY_RESIST_WIND,
 	APPLY_POISON_REDUCE,
-
 };
 
 const int aiSocketPercentByQty[5][4] =
@@ -742,16 +739,16 @@ const int aiGrandMasterSkillBookCountForLevelUp[10] =
 
 const int aiGrandMasterSkillBookMinCount[10] =
 {
-//	1, 1, 3, 5, 10, 15, 20, 30, 40, 50,
-//	3, 3, 5, 5, 10, 10, 15, 15, 20, 30
-	1, 1, 1, 2,  2,  3,  3,  4,  5,  6
+	//	1, 1, 3, 5, 10, 15, 20, 30, 40, 50,
+	//	3, 3, 5, 5, 10, 10, 15, 15, 20, 30
+		1, 1, 1, 2,  2,  3,  3,  4,  5,  6
 };
 
 const int aiGrandMasterSkillBookMaxCount[10] =
 {
-//	6, 15, 30, 45, 60, 80, 100, 120, 160, 200,
-//	6, 10, 15, 20, 30, 40, 50, 60, 70, 80
-	5,  7,  9, 11, 13, 15, 20, 25, 30, 35
+	//	6, 15, 30, 45, 60, 80, 100, 120, 160, 200,
+	//	6, 10, 15, 20, 30, 40, 50, 60, 70, 80
+		5,  7,  9, 11, 13, 15, 20, 25, 30, 35
 };
 // END_OF_ADD_GRANDMASTER_SKILL
 
@@ -778,19 +775,19 @@ const int KOR_aiUniqueItemPartyBonusExpPercentByMemberCount[9] =
 {
 	0,
 	0,
-	15*2,
-	14*3,
-	13*4,
-	12*5,
-	11*6,
-	10*7,
-	10*8,
+	15 * 2,
+	14 * 3,
+	13 * 4,
+	12 * 5,
+	11 * 6,
+	10 * 7,
+	10 * 8,
 };
 // END_OF_UPGRADE_PARTY_BONUS
 
-const int * aiChainLightningCountBySkillLevel = NULL;
+const int* aiChainLightningCountBySkillLevel = NULL;
 
-const int aiChainLightningCountBySkillLevel_euckr[SKILL_MAX_LEVEL+1] =
+const int aiChainLightningCountBySkillLevel_euckr[SKILL_MAX_LEVEL + 1] =
 {
 	0,	// 0
 	2,	// 1
@@ -850,7 +847,7 @@ const SStoneDropInfo aStoneDrop[STONE_INFO_MAX_NUM] =
 	{8014,	60,	{0,	26,	41,	30,	3}	},
 };
 
-const char * c_apszEmpireNames[EMPIRE_MAX_NUM] =
+const char* c_apszEmpireNames[EMPIRE_MAX_NUM] =
 {
 	"전제국",
 	"신수국",
@@ -858,7 +855,7 @@ const char * c_apszEmpireNames[EMPIRE_MAX_NUM] =
 	"진노국"
 };
 
-const char * c_apszPrivNames[MAX_PRIV_NUM] =
+const char* c_apszPrivNames[MAX_PRIV_NUM] =
 {
 	"",
 	"아이템이 나올 확률",
@@ -952,112 +949,111 @@ const int aiAccessorySocketPutPct[ITEM_ACCESSORY_SOCKET_MAX_NUM + 1] =
 
 typedef struct SValueName
 {
-    const char *	c_pszName;
-    long		lValue;
+	const char* c_pszName;
+	long		lValue;
 } TValueName;
 
 TValueName c_aApplyTypeNames[] =
 {
-    { "STR",		APPLY_STR		},
-    { "DEX",		APPLY_DEX		},
-    { "CON",		APPLY_CON		},
-    { "INT",		APPLY_INT		},
-    { "MAX_HP",		APPLY_MAX_HP		},
-    { "MAX_SP",		APPLY_MAX_SP		},
-    { "MAX_STAMINA",	APPLY_MAX_STAMINA	},
-    { "POISON_REDUCE",	APPLY_POISON_REDUCE	},
-    { "EXP_DOUBLE_BONUS", APPLY_EXP_DOUBLE_BONUS },
-    { "GOLD_DOUBLE_BONUS", APPLY_GOLD_DOUBLE_BONUS },
-    { "ITEM_DROP_BONUS", APPLY_ITEM_DROP_BONUS	},
-    { "HP_REGEN",	APPLY_HP_REGEN		},
-    { "SP_REGEN",	APPLY_SP_REGEN		},
-    { "ATTACK_SPEED",	APPLY_ATT_SPEED		},
-    { "MOVE_SPEED",	APPLY_MOV_SPEED		},
-    { "CAST_SPEED",	APPLY_CAST_SPEED	},
-    { "ATT_BONUS",	APPLY_ATT_GRADE_BONUS	},
-    { "DEF_BONUS",	APPLY_DEF_GRADE_BONUS	},
-    { "MAGIC_ATT_GRADE",APPLY_MAGIC_ATT_GRADE	},
-    { "MAGIC_DEF_GRADE",APPLY_MAGIC_DEF_GRADE	},
-    { "SKILL",		APPLY_SKILL		},
-    { "ATTBONUS_ANIMAL",APPLY_ATTBONUS_ANIMAL	},
-    { "ATTBONUS_UNDEAD",APPLY_ATTBONUS_UNDEAD	},
-    { "ATTBONUS_DEVIL", APPLY_ATTBONUS_DEVIL	},
-    { "ATTBONUS_HUMAN", APPLY_ATTBONUS_HUMAN	},
-    { "ADD_BOW_DISTANCE",APPLY_BOW_DISTANCE	},
-    { "DODGE",		APPLY_DODGE		},
-    { "BLOCK",		APPLY_BLOCK		},
-    { "RESIST_SWORD",	APPLY_RESIST_SWORD	},
-    { "RESIST_TWOHAND",	APPLY_RESIST_TWOHAND	},
-    { "RESIST_DAGGER",	APPLY_RESIST_DAGGER    },
-    { "RESIST_BELL",	APPLY_RESIST_BELL	},
-    { "RESIST_FAN",	APPLY_RESIST_FAN	},
-    { "RESIST_BOW",	APPLY_RESIST_BOW	},
-    { "RESIST_FIRE",	APPLY_RESIST_FIRE	},
-    { "RESIST_ELEC",	APPLY_RESIST_ELEC	},
-    { "RESIST_MAGIC",	APPLY_RESIST_MAGIC	},
-    { "RESIST_WIND",	APPLY_RESIST_WIND	},
+	{ "STR",		APPLY_STR		},
+	{ "DEX",		APPLY_DEX		},
+	{ "CON",		APPLY_CON		},
+	{ "INT",		APPLY_INT		},
+	{ "MAX_HP",		APPLY_MAX_HP		},
+	{ "MAX_SP",		APPLY_MAX_SP		},
+	{ "MAX_STAMINA",	APPLY_MAX_STAMINA	},
+	{ "POISON_REDUCE",	APPLY_POISON_REDUCE	},
+	{ "EXP_DOUBLE_BONUS", APPLY_EXP_DOUBLE_BONUS },
+	{ "GOLD_DOUBLE_BONUS", APPLY_GOLD_DOUBLE_BONUS },
+	{ "ITEM_DROP_BONUS", APPLY_ITEM_DROP_BONUS	},
+	{ "HP_REGEN",	APPLY_HP_REGEN		},
+	{ "SP_REGEN",	APPLY_SP_REGEN		},
+	{ "ATTACK_SPEED",	APPLY_ATT_SPEED		},
+	{ "MOVE_SPEED",	APPLY_MOV_SPEED		},
+	{ "CAST_SPEED",	APPLY_CAST_SPEED	},
+	{ "ATT_BONUS",	APPLY_ATT_GRADE_BONUS	},
+	{ "DEF_BONUS",	APPLY_DEF_GRADE_BONUS	},
+	{ "MAGIC_ATT_GRADE",APPLY_MAGIC_ATT_GRADE	},
+	{ "MAGIC_DEF_GRADE",APPLY_MAGIC_DEF_GRADE	},
+	{ "SKILL",		APPLY_SKILL		},
+	{ "ATTBONUS_ANIMAL",APPLY_ATTBONUS_ANIMAL	},
+	{ "ATTBONUS_UNDEAD",APPLY_ATTBONUS_UNDEAD	},
+	{ "ATTBONUS_DEVIL", APPLY_ATTBONUS_DEVIL	},
+	{ "ATTBONUS_HUMAN", APPLY_ATTBONUS_HUMAN	},
+	{ "ADD_BOW_DISTANCE",APPLY_BOW_DISTANCE	},
+	{ "DODGE",		APPLY_DODGE		},
+	{ "BLOCK",		APPLY_BLOCK		},
+	{ "RESIST_SWORD",	APPLY_RESIST_SWORD	},
+	{ "RESIST_TWOHAND",	APPLY_RESIST_TWOHAND	},
+	{ "RESIST_DAGGER",	APPLY_RESIST_DAGGER    },
+	{ "RESIST_BELL",	APPLY_RESIST_BELL	},
+	{ "RESIST_FAN",	APPLY_RESIST_FAN	},
+	{ "RESIST_BOW",	APPLY_RESIST_BOW	},
+	{ "RESIST_FIRE",	APPLY_RESIST_FIRE	},
+	{ "RESIST_ELEC",	APPLY_RESIST_ELEC	},
+	{ "RESIST_MAGIC",	APPLY_RESIST_MAGIC	},
+	{ "RESIST_WIND",	APPLY_RESIST_WIND	},
 	{ "REFLECT_MELEE",	APPLY_REFLECT_MELEE },
 	{ "REFLECT_CURSE",	APPLY_REFLECT_CURSE },
-    { "RESIST_ICE",		APPLY_RESIST_ICE	},
-    { "RESIST_EARTH",	APPLY_RESIST_EARTH	},
-    { "RESIST_DARK",	APPLY_RESIST_DARK	},
-    { "RESIST_CRITICAL",	APPLY_ANTI_CRITICAL_PCT	},
-    { "RESIST_PENETRATE",	APPLY_ANTI_PENETRATE_PCT	},
-    { "POISON",		APPLY_POISON_PCT	},
-    { "SLOW",		APPLY_SLOW_PCT		},
-    { "STUN",		APPLY_STUN_PCT		},
-    { "STEAL_HP",	APPLY_STEAL_HP		},
-    { "STEAL_SP",	APPLY_STEAL_SP		},
-    { "MANA_BURN_PCT",	APPLY_MANA_BURN_PCT	},
-    { "CRITICAL",	APPLY_CRITICAL_PCT	},
-    { "PENETRATE",	APPLY_PENETRATE_PCT	},
-    { "KILL_SP_RECOVER",APPLY_KILL_SP_RECOVER	},
-    { "KILL_HP_RECOVER",APPLY_KILL_HP_RECOVER	},
-    { "PENETRATE_PCT",	APPLY_PENETRATE_PCT	},
-    { "CRITICAL_PCT",	APPLY_CRITICAL_PCT	},
-    { "POISON_PCT",	APPLY_POISON_PCT	},
-    { "STUN_PCT",	APPLY_STUN_PCT		},
-    { "ATT_BONUS_TO_WARRIOR",	APPLY_ATTBONUS_WARRIOR  },
-    { "ATT_BONUS_TO_ASSASSIN",	APPLY_ATTBONUS_ASSASSIN },
-    { "ATT_BONUS_TO_SURA",	APPLY_ATTBONUS_SURA	    },
-    { "ATT_BONUS_TO_SHAMAN",	APPLY_ATTBONUS_SHAMAN   },
-    { "ATT_BONUS_TO_MONSTER",	APPLY_ATTBONUS_MONSTER  },
-    { "ATT_BONUS_TO_MOB",	APPLY_ATTBONUS_MONSTER  },
-    { "MALL_ATTBONUS",	APPLY_MALL_ATTBONUS	},
-    { "MALL_EXPBONUS",	APPLY_MALL_EXPBONUS	},
-    { "MALL_DEFBONUS",	APPLY_MALL_DEFBONUS	},
-    { "MALL_ITEMBONUS",	APPLY_MALL_ITEMBONUS	},
-    { "MALL_GOLDBONUS", APPLY_MALL_GOLDBONUS	},
-    { "MAX_HP_PCT",	APPLY_MAX_HP_PCT	},
-    { "MAX_SP_PCT",	APPLY_MAX_SP_PCT	},
-    { "SKILL_DAMAGE_BONUS",	APPLY_SKILL_DAMAGE_BONUS	},
-    { "NORMAL_HIT_DAMAGE_BONUS",APPLY_NORMAL_HIT_DAMAGE_BONUS	},
-    { "SKILL_DEFEND_BONUS",	APPLY_SKILL_DEFEND_BONUS	},
-    { "NORMAL_HIT_DEFEND_BONUS",APPLY_NORMAL_HIT_DEFEND_BONUS	},
+	{ "RESIST_ICE",		APPLY_RESIST_ICE	},
+	{ "RESIST_EARTH",	APPLY_RESIST_EARTH	},
+	{ "RESIST_DARK",	APPLY_RESIST_DARK	},
+	{ "RESIST_CRITICAL",	APPLY_ANTI_CRITICAL_PCT	},
+	{ "RESIST_PENETRATE",	APPLY_ANTI_PENETRATE_PCT	},
+	{ "POISON",		APPLY_POISON_PCT	},
+	{ "SLOW",		APPLY_SLOW_PCT		},
+	{ "STUN",		APPLY_STUN_PCT		},
+	{ "STEAL_HP",	APPLY_STEAL_HP		},
+	{ "STEAL_SP",	APPLY_STEAL_SP		},
+	{ "MANA_BURN_PCT",	APPLY_MANA_BURN_PCT	},
+	{ "CRITICAL",	APPLY_CRITICAL_PCT	},
+	{ "PENETRATE",	APPLY_PENETRATE_PCT	},
+	{ "KILL_SP_RECOVER",APPLY_KILL_SP_RECOVER	},
+	{ "KILL_HP_RECOVER",APPLY_KILL_HP_RECOVER	},
+	{ "PENETRATE_PCT",	APPLY_PENETRATE_PCT	},
+	{ "CRITICAL_PCT",	APPLY_CRITICAL_PCT	},
+	{ "POISON_PCT",	APPLY_POISON_PCT	},
+	{ "STUN_PCT",	APPLY_STUN_PCT		},
+	{ "ATT_BONUS_TO_WARRIOR",	APPLY_ATTBONUS_WARRIOR  },
+	{ "ATT_BONUS_TO_ASSASSIN",	APPLY_ATTBONUS_ASSASSIN },
+	{ "ATT_BONUS_TO_SURA",	APPLY_ATTBONUS_SURA	    },
+	{ "ATT_BONUS_TO_SHAMAN",	APPLY_ATTBONUS_SHAMAN   },
+	{ "ATT_BONUS_TO_MONSTER",	APPLY_ATTBONUS_MONSTER  },
+	{ "ATT_BONUS_TO_MOB",	APPLY_ATTBONUS_MONSTER  },
+	{ "MALL_ATTBONUS",	APPLY_MALL_ATTBONUS	},
+	{ "MALL_EXPBONUS",	APPLY_MALL_EXPBONUS	},
+	{ "MALL_DEFBONUS",	APPLY_MALL_DEFBONUS	},
+	{ "MALL_ITEMBONUS",	APPLY_MALL_ITEMBONUS	},
+	{ "MALL_GOLDBONUS", APPLY_MALL_GOLDBONUS	},
+	{ "MAX_HP_PCT",	APPLY_MAX_HP_PCT	},
+	{ "MAX_SP_PCT",	APPLY_MAX_SP_PCT	},
+	{ "SKILL_DAMAGE_BONUS",	APPLY_SKILL_DAMAGE_BONUS	},
+	{ "NORMAL_HIT_DAMAGE_BONUS",APPLY_NORMAL_HIT_DAMAGE_BONUS	},
+	{ "SKILL_DEFEND_BONUS",	APPLY_SKILL_DEFEND_BONUS	},
+	{ "NORMAL_HIT_DEFEND_BONUS",APPLY_NORMAL_HIT_DEFEND_BONUS	},
 
-    { "PCBANG_EXP_BONUS", APPLY_PC_BANG_EXP_BONUS	},
-    { "PCBANG_DROP_BONUS", APPLY_PC_BANG_DROP_BONUS	},
+	{ "PCBANG_EXP_BONUS", APPLY_PC_BANG_EXP_BONUS	},
+	{ "PCBANG_DROP_BONUS", APPLY_PC_BANG_DROP_BONUS	},
 
-    { "RESIST_WARRIOR",	APPLY_RESIST_WARRIOR},
-    { "RESIST_ASSASSIN",	APPLY_RESIST_ASSASSIN},
-    { "RESIST_SURA",		APPLY_RESIST_SURA},
-    { "RESIST_SHAMAN",	APPLY_RESIST_SHAMAN},
-    { "INFINITE_AFFECT_DURATION", 0x1FFFFFFF	},
+	{ "RESIST_WARRIOR",	APPLY_RESIST_WARRIOR},
+	{ "RESIST_ASSASSIN",	APPLY_RESIST_ASSASSIN},
+	{ "RESIST_SURA",		APPLY_RESIST_SURA},
+	{ "RESIST_SHAMAN",	APPLY_RESIST_SHAMAN},
+	{ "INFINITE_AFFECT_DURATION", 0x1FFFFFFF	},
 	{ "ENERGY", APPLY_ENERGY },
 	{ "COSTUME_ATTR_BONUS", APPLY_COSTUME_ATTR_BONUS },
 	{ "MAGIC_ATTBONUS_PER",	APPLY_MAGIC_ATTBONUS_PER	},
-    { "MELEE_MAGIC_ATTBONUS_PER",	APPLY_MELEE_MAGIC_ATTBONUS_PER	},
+	{ "MELEE_MAGIC_ATTBONUS_PER",	APPLY_MELEE_MAGIC_ATTBONUS_PER	},
 
-
-    { NULL,		0			}
+	{ NULL,		0			}
 };
 
-long FN_get_apply_type(const char *apply_type_string)
+long FN_get_apply_type(const char* apply_type_string)
 {
-	TValueName	*value_name;
+	TValueName* value_name;
 	for (value_name = c_aApplyTypeNames; value_name->c_pszName; ++value_name)
 	{
-		if (0==strcasecmp(value_name->c_pszName, apply_type_string))
+		if (0 == strcasecmp(value_name->c_pszName, apply_type_string))
 			return value_name->lValue;
 	}
 	return 0;

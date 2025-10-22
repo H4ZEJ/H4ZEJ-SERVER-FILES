@@ -34,13 +34,13 @@ void SECTREE::Destroy()
 
 		ENTITY_SET::iterator it = m_set_entity.begin();
 
-		for ( ; it != m_set_entity.end(); ++it)
+		for (; it != m_set_entity.end(); ++it)
 		{
 			LPENTITY ent = *it;
 
 			if (ent->IsType(ENTITY_CHARACTER))
 			{
-				LPCHARACTER ch = (LPCHARACTER) ent;
+				LPCHARACTER ch = (LPCHARACTER)ent;
 
 				sys_err("Sectree: destroying character: %s is_pc %d", ch->GetName(), ch->IsPC() ? 1 : 0);
 
@@ -51,7 +51,7 @@ void SECTREE::Destroy()
 			}
 			else if (ent->IsType(ENTITY_ITEM))
 			{
-				LPITEM item = (LPITEM) ent;
+				LPITEM item = (LPITEM)ent;
 
 				sys_err("Sectree: destroying Item: %s", item->GetName());
 
@@ -113,7 +113,7 @@ void SECTREE::DecreasePC()
 
 				if (pkEnt->IsType(ENTITY_CHARACTER))
 				{
-					LPCHARACTER ch = (LPCHARACTER) pkEnt;
+					LPCHARACTER ch = (LPCHARACTER)pkEnt;
 					ch->StopStateMachine();
 				}
 			}
@@ -143,7 +143,7 @@ bool SECTREE::InsertEntity(LPENTITY pkEnt)
 
 	if (pkEnt->IsType(ENTITY_CHARACTER))
 	{
-		LPCHARACTER pkChr = (LPCHARACTER) pkEnt;
+		LPCHARACTER pkChr = (LPCHARACTER)pkEnt;
 
 		if (pkChr->IsPC())
 		{
@@ -174,12 +174,12 @@ void SECTREE::RemoveEntity(LPENTITY pkEnt)
 
 	if (pkEnt->IsType(ENTITY_CHARACTER))
 	{
-		if (((LPCHARACTER) pkEnt)->IsPC())
+		if (((LPCHARACTER)pkEnt)->IsPC())
 			DecreasePC();
 	}
 }
 
-void SECTREE::BindAttribute(CAttribute * pkAttribute)
+void SECTREE::BindAttribute(CAttribute* pkAttribute)
 {
 	m_pkAttribute = pkAttribute;
 }

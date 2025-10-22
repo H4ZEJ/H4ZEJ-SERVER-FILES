@@ -13,16 +13,16 @@ int CHARACTER::ChangeEmpire(BYTE empire)
 	if (GetEmpire() == empire)
 		return 1;
 
-	char szQuery[1024+1];
+	char szQuery[1024 + 1];
 	DWORD dwAID;
 	DWORD dwPID[PLAYER_PER_ACCOUNT];
 	memset(dwPID, 0, sizeof(dwPID));
 
 	{
 		snprintf(szQuery, sizeof(szQuery),
-				"SELECT id, pid1, pid2, pid3, pid4"
-				" FROM player_index%s WHERE pid1=%u OR pid2=%u OR pid3=%u OR pid4=%u AND empire=%u",
-				get_table_postfix(), GetPlayerID(), GetPlayerID(), GetPlayerID(), GetPlayerID(), GetEmpire());
+			"SELECT id, pid1, pid2, pid3, pid4"
+			" FROM player_index%s WHERE pid1=%u OR pid2=%u OR pid3=%u OR pid4=%u AND empire=%u",
+			get_table_postfix(), GetPlayerID(), GetPlayerID(), GetPlayerID(), GetPlayerID(), GetEmpire());
 		auto msg(DBManager::instance().DirectQuery(szQuery));
 		if (msg->Get()->uiNumRows == 0)
 		{
@@ -42,7 +42,7 @@ int CHARACTER::ChangeEmpire(BYTE empire)
 
 	{
 		DWORD dwGuildID[PLAYER_PER_ACCOUNT];
-		CGuild * pGuild[PLAYER_PER_ACCOUNT];
+		CGuild* pGuild[PLAYER_PER_ACCOUNT];
 		std::unique_ptr<SQLMsg> pMsg;
 
 		for (int i = 0; i < loop; ++i)
@@ -83,8 +83,8 @@ int CHARACTER::ChangeEmpire(BYTE empire)
 
 	{
 		snprintf(szQuery, sizeof(szQuery), "UPDATE player_index%s SET empire=%u WHERE pid1=%u OR pid2=%u OR pid3=%u OR pid4=%u"
-				" AND empire=%u",
-				get_table_postfix(), empire, GetPlayerID(), GetPlayerID(), GetPlayerID(), GetPlayerID(), GetEmpire());
+			" AND empire=%u",
+			get_table_postfix(), empire, GetPlayerID(), GetPlayerID(), GetPlayerID(), GetPlayerID(), GetEmpire());
 
 		auto msg(DBManager::instance().DirectQuery(szQuery));
 		if (msg->Get()->uiAffectedRows > 0)
@@ -100,7 +100,7 @@ int CHARACTER::ChangeEmpire(BYTE empire)
 
 int CHARACTER::GetChangeEmpireCount() const
 {
-	char szQuery[1024+1];
+	char szQuery[1024 + 1];
 	DWORD dwAID = GetAID();
 
 	if (dwAID == 0)
@@ -126,7 +126,7 @@ int CHARACTER::GetChangeEmpireCount() const
 
 void CHARACTER::SetChangeEmpireCount()
 {
-	char szQuery[1024+1];
+	char szQuery[1024 + 1];
 
 	DWORD dwAID = GetAID();
 
@@ -152,7 +152,7 @@ DWORD CHARACTER::GetAccountID() const
 {
 	if (!GetDesc())
 		return 0;
-	const auto & rkTab = GetDesc()->GetAccountTable();
+	const auto& rkTab = GetDesc()->GetAccountTable();
 	return rkTab.id;
 }
 
@@ -161,11 +161,11 @@ DWORD CHARACTER::GetAID() const
 	if (auto accountID = GetAccountID(); accountID) // @fixme318
 		return accountID;
 
-	char szQuery[1024+1];
+	char szQuery[1024 + 1];
 	DWORD dwAID = 0;
 	snprintf(szQuery, sizeof(szQuery), "SELECT id FROM player_index%s WHERE pid1=%u OR pid2=%u OR pid3=%u OR pid4=%u"
-			" AND empire=%u",
-			get_table_postfix(), GetPlayerID(), GetPlayerID(), GetPlayerID(), GetPlayerID(), GetEmpire());
+		" AND empire=%u",
+		get_table_postfix(), GetPlayerID(), GetPlayerID(), GetPlayerID(), GetPlayerID(), GetEmpire());
 
 	auto pMsg = DBManager::instance().DirectQuery(szQuery);
 	if (pMsg != NULL)

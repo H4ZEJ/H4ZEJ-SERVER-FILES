@@ -15,7 +15,7 @@
 
 struct valid_ip
 {
-	const char *	ip;
+	const char* ip;
 	BYTE	network;
 	BYTE	mask;
 };
@@ -26,7 +26,7 @@ static struct valid_ip admin_ip[] =
 	{ "\n",             0,      0       }
 };
 
-int IsValidIP(struct valid_ip* ip_table, const char *host)
+int IsValidIP(struct valid_ip* ip_table, const char* host)
 {
 	int         i, j;
 	char        ip_addr[256];
@@ -44,8 +44,7 @@ int IsValidIP(struct valid_ip* ip_table, const char *host)
 
 			if (!j)
 				break;
-		}
-		while (j--);
+		} while (j--);
 	}
 
 	return FALSE;
@@ -130,13 +129,12 @@ RETRY:
 	{
 		DWORD val = msl::random_int(0, 1024 * 1024);
 
-		*(DWORD *) (crc_buf    ) = val;
-		*((DWORD *) crc_buf + 1) = get_global_time();
+		*(DWORD*)(crc_buf) = val;
+		*((DWORD*)crc_buf + 1) = get_global_time();
 
 		crc = GetCRC32(crc_buf, 8);
 		it = m_map_handshake.find(crc);
-	}
-	while (it != m_map_handshake.end());
+	} while (it != m_map_handshake.end());
 
 	if (crc == 0)
 		goto RETRY;
@@ -215,7 +213,7 @@ LPDESC DESC_MANAGER::AcceptP2PDesc(LPFDWATCH fdw, socket_t bind_fd)
 
 void DESC_MANAGER::ConnectAccount(const std::string& login, LPDESC d)
 {
-	m_map_loginName.emplace(login,d);
+	m_map_loginName.emplace(login, d);
 }
 
 void DESC_MANAGER::DisconnectAccount(const std::string& login)
@@ -250,7 +248,7 @@ void DESC_MANAGER::DestroyDesc(LPDESC d, bool bEraseFromSet)
 	if (d->GetHandle() != 0)
 		m_map_handle.erase(d->GetHandle());
 	else
-		m_set_pkClientDesc.erase((LPCLIENT_DESC) d);
+		m_set_pkClientDesc.erase((LPCLIENT_DESC)d);
 
 	// Explicit call to the virtual function Destroy()
 	d->Destroy();
@@ -308,16 +306,16 @@ LPDESC DESC_MANAGER::FindByHandle(DWORD handle)
 	return (it->second);
 }
 
-const DESC_MANAGER::DESC_SET & DESC_MANAGER::GetClientSet()
+const DESC_MANAGER::DESC_SET& DESC_MANAGER::GetClientSet()
 {
 	return m_set_pkDesc;
 }
 
 struct name_with_desc_func
 {
-	const char * m_name;
+	const char* m_name;
 
-	name_with_desc_func(const char * name) : m_name(name)
+	name_with_desc_func(const char* name) : m_name(name)
 	{
 	}
 
@@ -330,13 +328,13 @@ struct name_with_desc_func
 	}
 };
 
-LPDESC DESC_MANAGER::FindByCharacterName(const char *name)
+LPDESC DESC_MANAGER::FindByCharacterName(const char* name)
 {
-	DESC_SET::iterator it = std::find_if (m_set_pkDesc.begin(), m_set_pkDesc.end(), name_with_desc_func(name));
+	DESC_SET::iterator it = std::find_if(m_set_pkDesc.begin(), m_set_pkDesc.end(), name_with_desc_func(name));
 	return (it == m_set_pkDesc.end()) ? NULL : (*it);
 }
 
-LPCLIENT_DESC DESC_MANAGER::CreateConnectionDesc(LPFDWATCH fdw, const char * host, WORD port, int iPhaseWhenSucceed, bool bRetryWhenClosed)
+LPCLIENT_DESC DESC_MANAGER::CreateConnectionDesc(LPFDWATCH fdw, const char* host, WORD port, int iPhaseWhenSucceed, bool bRetryWhenClosed)
 {
 	LPCLIENT_DESC newd;
 
@@ -367,7 +365,7 @@ void DESC_MANAGER::TryConnect()
 	std::for_each(m_set_pkClientDesc.begin(), m_set_pkClientDesc.end(), f);
 }
 
-bool DESC_MANAGER::IsP2PDescExist(const char * szHost, WORD wPort)
+bool DESC_MANAGER::IsP2PDescExist(const char* szHost, WORD wPort)
 {
 	CLIENT_DESC_SET::iterator it = m_set_pkClientDesc.begin();
 
@@ -394,29 +392,29 @@ LPDESC DESC_MANAGER::FindByHandshake(DWORD dwHandshake)
 
 class FuncWho
 {
-	public:
-		int iTotalCount;
-		int aiEmpireUserCount[EMPIRE_MAX_NUM];
+public:
+	int iTotalCount;
+	int aiEmpireUserCount[EMPIRE_MAX_NUM];
 
-		FuncWho()
-		{
-			iTotalCount = 0;
-			memset(aiEmpireUserCount, 0, sizeof(aiEmpireUserCount));
-		}
+	FuncWho()
+	{
+		iTotalCount = 0;
+		memset(aiEmpireUserCount, 0, sizeof(aiEmpireUserCount));
+	}
 
-		void operator() (LPDESC d)
+	void operator() (LPDESC d)
+	{
+		if (d->GetCharacter())
 		{
-			if (d->GetCharacter())
-			{
-				++iTotalCount;
-				++aiEmpireUserCount[d->GetEmpire()];
-			}
+			++iTotalCount;
+			++aiEmpireUserCount[d->GetEmpire()];
 		}
+	}
 };
 
 void DESC_MANAGER::UpdateLocalUserCount()
 {
-	const DESC_SET & c_ref_set = GetClientSet();
+	const DESC_SET& c_ref_set = GetClientSet();
 	FuncWho f;
 	f = std::for_each(c_ref_set.begin(), c_ref_set.end(), f);
 
@@ -428,7 +426,7 @@ void DESC_MANAGER::UpdateLocalUserCount()
 	m_aiEmpireUserCount[3] += P2P_MANAGER::instance().GetEmpireUserCount(3);
 }
 
-void DESC_MANAGER::GetUserCount(int & iTotal, int ** paiEmpireUserCount, int & iLocalCount)
+void DESC_MANAGER::GetUserCount(int& iTotal, int** paiEmpireUserCount, int& iLocalCount)
 {
 	*paiEmpireUserCount = &m_aiEmpireUserCount[0];
 
@@ -461,7 +459,7 @@ bool DESC_MANAGER::GetRandomKey(DWORD dwHandle, DWORD* prandom_key)
 
 LPDESC DESC_MANAGER::FindByLoginKey(DWORD dwKey)
 {
-	std::map<DWORD, CLoginKey *>::iterator it = m_map_pkLoginKey.find(dwKey);
+	std::map<DWORD, CLoginKey*>::iterator it = m_map_pkLoginKey.find(dwKey);
 
 	if (it == m_map_pkLoginKey.end())
 		return NULL;
@@ -480,7 +478,7 @@ DWORD DESC_MANAGER::CreateLoginKey(LPDESC d)
 		if (m_map_pkLoginKey.find(dwKey) != m_map_pkLoginKey.end())
 			continue;
 
-		CLoginKey * pkKey = M2_NEW CLoginKey(dwKey, d);
+		CLoginKey* pkKey = M2_NEW CLoginKey(dwKey, d);
 		d->SetLoginKey(pkKey);
 		m_map_pkLoginKey.emplace(dwKey, pkKey);
 		break;
@@ -493,7 +491,7 @@ void DESC_MANAGER::ProcessExpiredLoginKey()
 {
 	DWORD dwCurrentTime = get_dword_time();
 
-	std::map<DWORD, CLoginKey *>::iterator it, it2;
+	std::map<DWORD, CLoginKey*>::iterator it, it2;
 
 	it = m_map_pkLoginKey.begin();
 
@@ -517,9 +515,9 @@ bool DESC_MANAGER::LoadClientPackageCryptInfo(const char* pDirName)
 	return m_pPackageCrypt->LoadPackageCryptInfo(pDirName);
 }
 
-void DESC_MANAGER::SendClientPackageCryptKey( LPDESC desc )
+void DESC_MANAGER::SendClientPackageCryptKey(LPDESC desc)
 {
-	if( !desc )
+	if (!desc)
 	{
 		return;
 	}
@@ -527,38 +525,38 @@ void DESC_MANAGER::SendClientPackageCryptKey( LPDESC desc )
 	TPacketGCHybridCryptKeys packet;
 	{
 		packet.bHeader = HEADER_GC_HYBRIDCRYPT_KEYS;
-		m_pPackageCrypt->GetPackageCryptKeys( &(packet.pDataKeyStream), packet.KeyStreamLen );
+		m_pPackageCrypt->GetPackageCryptKeys(&(packet.pDataKeyStream), packet.KeyStreamLen);
 	}
 
-	if( packet.KeyStreamLen > 0 )
+	if (packet.KeyStreamLen > 0)
 	{
 		if (test_server)
 		{
 			sys_log(0, "[PackageCryptInfo] send to %s. (keys: %s, len: %d)", desc->GetAccountTable().login, std::string((char*)packet.pDataKeyStream).c_str(), packet.KeyStreamLen);
 		}
-		desc->Packet( packet.GetStreamData(), packet.GetStreamSize() );
+		desc->Packet(packet.GetStreamData(), packet.GetStreamSize());
 	}
 }
 
-void DESC_MANAGER::SendClientPackageSDBToLoadMap( LPDESC desc, const char* pMapName )
+void DESC_MANAGER::SendClientPackageSDBToLoadMap(LPDESC desc, const char* pMapName)
 {
-	if( !desc )
+	if (!desc)
 	{
 		return;
 	}
 
 	TPacketGCPackageSDB packet;
 	{
-		packet.bHeader      = HEADER_GC_HYBRIDCRYPT_SDB;
-		if( !m_pPackageCrypt->GetRelatedMapSDBStreams( pMapName, &(packet.m_pDataSDBStream), packet.iStreamLen ) )
+		packet.bHeader = HEADER_GC_HYBRIDCRYPT_SDB;
+		if (!m_pPackageCrypt->GetRelatedMapSDBStreams(pMapName, &(packet.m_pDataSDBStream), packet.iStreamLen))
 			return;
 		if (test_server)
 			sys_log(0, "[PackageCryptInfo] send to %s from map %s. (SDB len: %d)", desc->GetAccountTable().login, pMapName, packet.iStreamLen);
 	}
 
-	if( packet.iStreamLen > 0 )
+	if (packet.iStreamLen > 0)
 	{
-		desc->Packet( packet.GetStreamData(), packet.GetStreamSize());
+		desc->Packet(packet.GetStreamData(), packet.GetStreamSize());
 	}
 }
 //martysama0134's 8e0aa8057d3f54320e391131a48866b4

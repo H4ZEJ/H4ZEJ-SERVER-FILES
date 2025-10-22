@@ -10,7 +10,7 @@ extern DWORD g_create_position[4][2];
 extern DWORD g_create_position_canada[4][2];
 extern DWORD arena_return_position[4][2];
 
-inline const char* EMPIRE_NAME( BYTE e)
+inline const char* EMPIRE_NAME(BYTE e)
 {
 	return LC_TEXT(g_nation_name[e]);
 }

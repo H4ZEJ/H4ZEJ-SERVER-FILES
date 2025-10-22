@@ -66,23 +66,23 @@ class CMob;
 
 class CMotion
 {
-	public:
-		CMotion();
-		~CMotion();
+public:
+	CMotion();
+	~CMotion();
 
-		bool			LoadFromFile(const char * c_pszFileName);
-		bool			LoadMobSkillFromFile(const char * c_pszFileName, CMob * pMob, int iSkillIndex);
+	bool			LoadFromFile(const char* c_pszFileName);
+	bool			LoadMobSkillFromFile(const char* c_pszFileName, CMob* pMob, int iSkillIndex);
 
-		float			GetDuration() const;
-		const D3DVECTOR &	GetAccumVector() const;
+	float			GetDuration() const;
+	const D3DVECTOR& GetAccumVector() const;
 
-		bool			IsEmpty();
+	bool			IsEmpty();
 
-	protected:
-		bool			m_isEmpty;
-		float			m_fDuration;
-		bool			m_isAccumulation;
-		D3DVECTOR		m_vec3Accumulation;
+protected:
+	bool			m_isEmpty;
+	float			m_fDuration;
+	bool			m_isAccumulation;
+	D3DVECTOR		m_vec3Accumulation;
 };
 
 typedef DWORD MOTION_KEY;
@@ -96,51 +96,51 @@ typedef DWORD MOTION_KEY;
 
 class CMotionSet
 {
-	public:
-		typedef std::map<DWORD, CMotion *>	TContainer;
-		typedef TContainer::iterator		iterator;
-		typedef TContainer::const_iterator	const_iterator;
+public:
+	typedef std::map<DWORD, CMotion*>	TContainer;
+	typedef TContainer::iterator		iterator;
+	typedef TContainer::const_iterator	const_iterator;
 
-	public:
-		CMotionSet();
-		~CMotionSet();
+public:
+	CMotionSet();
+	~CMotionSet();
 
-		void		Insert(DWORD dwKey, CMotion * pkMotion);
-		bool		Load(const char * szFileName, int mode, int motion);
+	void		Insert(DWORD dwKey, CMotion* pkMotion);
+	bool		Load(const char* szFileName, int mode, int motion);
 
-		const CMotion *	GetMotion(DWORD dwKey) const;
+	const CMotion* GetMotion(DWORD dwKey) const;
 
-	protected:
-		// DWORD = MOTION_KEY
-		TContainer			m_map_pkMotion;
+protected:
+	// DWORD = MOTION_KEY
+	TContainer			m_map_pkMotion;
 };
 
 class CMotionManager : public singleton<CMotionManager>
 {
-	public:
-		typedef std::map<DWORD, CMotionSet *> TContainer;
-		typedef TContainer::iterator iterator;
+public:
+	typedef std::map<DWORD, CMotionSet*> TContainer;
+	typedef TContainer::iterator iterator;
 
-		CMotionManager();
-		virtual ~CMotionManager();
+	CMotionManager();
+	virtual ~CMotionManager();
 
-		bool			Build();
+	bool			Build();
 
-		const CMotionSet *	GetMotionSet(DWORD dwVnum);
-		const CMotion *		GetMotion(DWORD dwVnum, DWORD dwKey);
-		float			    GetMotionDuration(DWORD dwVnum, DWORD dwKey);
+	const CMotionSet* GetMotionSet(DWORD dwVnum);
+	const CMotion* GetMotion(DWORD dwVnum, DWORD dwKey);
+	float			    GetMotionDuration(DWORD dwVnum, DWORD dwKey);
 
-		// POLYMORPH_BUG_FIX
-		float			    GetNormalAttackDuration(DWORD dwVnum);
-		// END_OF_POLYMORPH_BUG_FIX
+	// POLYMORPH_BUG_FIX
+	float			    GetNormalAttackDuration(DWORD dwVnum);
+	// END_OF_POLYMORPH_BUG_FIX
 
-	protected:
-		// DWORD = JOB or MONSTER VNUM
-		TContainer		m_map_pkMotionSet;
+protected:
+	// DWORD = JOB or MONSTER VNUM
+	TContainer		m_map_pkMotionSet;
 
-		// POLYMORPH_BUG_FIX
-		std::map<DWORD, float> m_map_normalAttackDuration;
-		// END_OF_POLYMORPH_BUG_FIX
+	// POLYMORPH_BUG_FIX
+	std::map<DWORD, float> m_map_normalAttackDuration;
+	// END_OF_POLYMORPH_BUG_FIX
 };
 
 #endif

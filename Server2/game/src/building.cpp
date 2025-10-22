@@ -24,15 +24,15 @@ enum
 	// END_OF_ADD_SUPPLY_BUILDING
 
 	FLAG_VNUM = 14200,
-	WALL_DOOR_VNUM	= 14201,
-	WALL_BACK_VNUM	= 14202,
-	WALL_LEFT_VNUM	= 14203,
-	WALL_RIGHT_VNUM	= 14204,
+	WALL_DOOR_VNUM = 14201,
+	WALL_BACK_VNUM = 14202,
+	WALL_LEFT_VNUM = 14203,
+	WALL_RIGHT_VNUM = 14204,
 };
 
 using namespace building;
 
-CObject::CObject(TObject * pData, TObjectProto * pProto)
+CObject::CObject(TObject* pData, TObjectProto* pProto)
 	: m_pProto(pProto), m_dwVID(0), m_chNPC(NULL)
 {
 	CEntity::Initialize(ENTITY_OBJECT);
@@ -50,13 +50,13 @@ void CObject::Destroy()
 	if (m_pProto && map_allow_find(GetMapIndex())) // @fixme315
 	{
 		SECTREE_MANAGER::instance().ForAttrRegion(GetMapIndex(),
-				GetX() + m_pProto->lRegion[0],
-				GetY() + m_pProto->lRegion[1],
-				GetX() + m_pProto->lRegion[2],
-				GetY() + m_pProto->lRegion[3],
-				(long)m_data.zRot, // ADD_BUILDING_ROTATION
-				ATTR_OBJECT,
-				ATTR_REGION_MODE_REMOVE);
+			GetX() + m_pProto->lRegion[0],
+			GetY() + m_pProto->lRegion[1],
+			GetX() + m_pProto->lRegion[2],
+			GetY() + m_pProto->lRegion[3],
+			(long)m_data.zRot, // ADD_BUILDING_ROTATION
+			ATTR_OBJECT,
+			ATTR_REGION_MODE_REMOVE);
 	}
 
 	CEntity::Destroy();
@@ -79,7 +79,7 @@ void CObject::Destroy()
 // BUILDING_NPC
 void CObject::Reconstruct(DWORD dwVnum)
 {
-	const TMapRegion * r = SECTREE_MANAGER::instance().GetMapRegion(m_data.lMapIndex);
+	const TMapRegion* r = SECTREE_MANAGER::instance().GetMapRegion(m_data.lMapIndex);
 	if (!r)
 		return;
 
@@ -97,20 +97,20 @@ void CObject::EncodeInsertPacket(LPENTITY entity)
 		return;
 
 	sys_log(0, "ObjectInsertPacket vid %u vnum %u rot %f %f %f",
-			m_dwVID, m_data.dwVnum, m_data.xRot, m_data.yRot, m_data.zRot);
+		m_dwVID, m_data.dwVnum, m_data.xRot, m_data.yRot, m_data.zRot);
 
 	TPacketGCCharacterAdd pack;
 
 	memset(&pack, 0, sizeof(TPacketGCCharacterAdd));
 
-	pack.header         = HEADER_GC_CHARACTER_ADD;
-	pack.dwVID          = m_dwVID;
-	pack.bType          = CHAR_TYPE_BUILDING;
-	pack.angle          = m_data.zRot;
-	pack.x              = GetX();
-	pack.y              = GetY();
-	pack.z              = GetZ();
-	pack.wRaceNum       = m_data.dwVnum;
+	pack.header = HEADER_GC_CHARACTER_ADD;
+	pack.dwVID = m_dwVID;
+	pack.bType = CHAR_TYPE_BUILDING;
+	pack.angle = m_data.zRot;
+	pack.x = GetX();
+	pack.y = GetY();
+	pack.z = GetZ();
+	pack.wRaceNum = m_data.dwVnum;
 
 	pack.dwAffectFlag[0] = unsigned(m_data.xRot);
 	pack.dwAffectFlag[1] = unsigned(m_data.yRot);
@@ -135,7 +135,7 @@ void CObject::EncodeRemovePacket(LPENTITY entity)
 	TPacketGCCharacterDelete pack;
 
 	pack.header = HEADER_GC_CHARACTER_DEL;
-	pack.id     = m_dwVID;
+	pack.id = m_dwVID;
 
 	d->Packet(&pack, sizeof(TPacketGCCharacterDelete));
 }
@@ -174,13 +174,13 @@ bool CObject::Show(long lMapIndex, long x, long y)
 	UpdateSectree();
 
 	SECTREE_MANAGER::instance().ForAttrRegion(lMapIndex,
-			x + m_pProto->lRegion[0],
-			y + m_pProto->lRegion[1],
-			x + m_pProto->lRegion[2],
-			y + m_pProto->lRegion[3],
-			(long)m_data.zRot,
-			ATTR_OBJECT,
-			ATTR_REGION_MODE_SET);
+		x + m_pProto->lRegion[0],
+		y + m_pProto->lRegion[1],
+		x + m_pProto->lRegion[2],
+		y + m_pProto->lRegion[3],
+		(long)m_data.zRot,
+		ATTR_OBJECT,
+		ATTR_REGION_MODE_SET);
 
 	return true;
 }
@@ -195,8 +195,8 @@ void CObject::ApplySpecialEffect()
 	{
 		// ADD_SUPPLY_BUILDING
 		if (m_pProto->dwVnum == BUILDING_INCREASE_GUILD_MEMBER_COUNT_SMALL ||
-				m_pProto->dwVnum == BUILDING_INCREASE_GUILD_MEMBER_COUNT_MEDIUM ||
-				m_pProto->dwVnum == BUILDING_INCREASE_GUILD_MEMBER_COUNT_LARGE)
+			m_pProto->dwVnum == BUILDING_INCREASE_GUILD_MEMBER_COUNT_MEDIUM ||
+			m_pProto->dwVnum == BUILDING_INCREASE_GUILD_MEMBER_COUNT_LARGE)
 		{
 			CLand* pLand = GetLand();
 			DWORD guild_id = 0;
@@ -207,15 +207,15 @@ void CObject::ApplySpecialEffect()
 			{
 				switch (m_pProto->dwVnum)
 				{
-					case BUILDING_INCREASE_GUILD_MEMBER_COUNT_SMALL:
-						pGuild->SetMemberCountBonus(6);
-						break;
-					case BUILDING_INCREASE_GUILD_MEMBER_COUNT_MEDIUM:
-						pGuild->SetMemberCountBonus(12);
-						break;
-					case BUILDING_INCREASE_GUILD_MEMBER_COUNT_LARGE:
-						pGuild->SetMemberCountBonus(18);
-						break;
+				case BUILDING_INCREASE_GUILD_MEMBER_COUNT_SMALL:
+					pGuild->SetMemberCountBonus(6);
+					break;
+				case BUILDING_INCREASE_GUILD_MEMBER_COUNT_MEDIUM:
+					pGuild->SetMemberCountBonus(12);
+					break;
+				case BUILDING_INCREASE_GUILD_MEMBER_COUNT_LARGE:
+					pGuild->SetMemberCountBonus(18);
+					break;
 				}
 				if (map_allow_find(pLand->GetMapIndex()))
 				{
@@ -233,8 +233,8 @@ void CObject::RemoveSpecialEffect()
 	{
 		// ADD_SUPPLY_BUILDING
 		if (m_pProto->dwVnum == BUILDING_INCREASE_GUILD_MEMBER_COUNT_SMALL ||
-				m_pProto->dwVnum == BUILDING_INCREASE_GUILD_MEMBER_COUNT_MEDIUM ||
-				m_pProto->dwVnum == BUILDING_INCREASE_GUILD_MEMBER_COUNT_LARGE)
+			m_pProto->dwVnum == BUILDING_INCREASE_GUILD_MEMBER_COUNT_MEDIUM ||
+			m_pProto->dwVnum == BUILDING_INCREASE_GUILD_MEMBER_COUNT_LARGE)
 		{
 			CLand* pLand = GetLand();
 			DWORD guild_id = 0;
@@ -276,16 +276,16 @@ void CObject::RegenNPC()
 
 	float rot = m_data.zRot * 2.0f * M_PI / 360.0f;
 
-	newX = (int)(( x * cosf(rot)) + ( y * sinf(rot)));
-	newY = (int)(( y * cosf(rot)) - ( x * sinf(rot)));
+	newX = (int)((x * cosf(rot)) + (y * sinf(rot)));
+	newY = (int)((y * cosf(rot)) - (x * sinf(rot)));
 
 	m_chNPC = CHARACTER_MANAGER::instance().SpawnMob(m_pProto->dwNPCVnum,
-			GetMapIndex(),
-			GetX() + newX,
-			GetY() + newY,
-			GetZ(),
-			false,
-			(int)m_data.zRot);
+		GetMapIndex(),
+		GetX() + newX,
+		GetY() + newY,
+		GetZ(),
+		false,
+		(int)m_data.zRot);
 
 	if (!m_chNPC)
 	{
@@ -295,11 +295,11 @@ void CObject::RegenNPC()
 
 	m_chNPC->SetGuild(pGuild);
 
-	if ( m_pProto->dwVnum == 14061 || m_pProto->dwVnum == 14062 || m_pProto->dwVnum == 14063 )
+	if (m_pProto->dwVnum == 14061 || m_pProto->dwVnum == 14062 || m_pProto->dwVnum == 14063)
 	{
 		quest::PC* pPC = quest::CQuestManager::instance().GetPC(pGuild->GetMasterPID());
 
-		if ( pPC != NULL )
+		if (pPC != NULL)
 		{
 			pPC->SetFlag("alter_of_power.build_level", pGuild->GetLevel());
 		}
@@ -309,7 +309,7 @@ void CObject::RegenNPC()
 
 ////////////////////////////////////////////////////////////////////////////////////
 
-CLand::CLand(TLand * pData)
+CLand::CLand(TLand* pData)
 {
 	thecore_memcpy(&m_data, pData, sizeof(TLand));
 }
@@ -334,18 +334,18 @@ void CLand::Destroy()
 	m_map_pkObjectByVID.clear();
 }
 
-const TLand & CLand::GetData()
+const TLand& CLand::GetData()
 {
 	return m_data;
 }
 
-void CLand::PutData(const TLand * data)
+void CLand::PutData(const TLand* data)
 {
 	memcpy(&m_data, data, sizeof(TLand));
 
 	if (m_data.dwGuildID)
 	{
-		const TMapRegion * r = SECTREE_MANAGER::instance().GetMapRegion(m_data.lMapIndex);
+		const TMapRegion* r = SECTREE_MANAGER::instance().GetMapRegion(m_data.lMapIndex);
 
 		if (r)
 		{
@@ -459,7 +459,7 @@ void CLand::DeleteObject(DWORD dwID)
 
 	sys_log(0, "Land::DeleteObject %u", dwID);
 	CManager::instance().UnregisterObject(pkObj);
-	M2_DESTROY_CHARACTER (pkObj->GetNPC());
+	M2_DESTROY_CHARACTER(pkObj->GetNPC());
 
 	m_map_pkObject.erase(dwID);
 	m_map_pkObjectByVID.erase(dwID);
@@ -473,15 +473,16 @@ struct FIsIn
 	long ex, ey;
 
 	bool bIn;
-	FIsIn (	long sx_, long sy_, long ex_, long ey_)
+	FIsIn(long sx_, long sy_, long ex_, long ey_)
 		: sx(sx_), sy(sy_), ex(ex_), ey(ey_), bIn(false)
-	{}
+	{
+	}
 
 	void operator () (LPENTITY ent)
 	{
 		if (ent->IsType(ENTITY_CHARACTER))
 		{
-			LPCHARACTER ch = (LPCHARACTER) ent;
+			LPCHARACTER ch = (LPCHARACTER)ent;
 			if (ch->IsMonster())
 			{
 				return;
@@ -498,19 +499,19 @@ struct FIsIn
 bool CLand::RequestCreateObject(DWORD dwVnum, long lMapIndex, long x, long y, float xRot, float yRot, float zRot, bool checkAnother)
 {
 	SECTREE_MANAGER& rkSecTreeMgr = SECTREE_MANAGER::instance();
-	TObjectProto * pkProto = CManager::instance().GetObjectProto(dwVnum);
+	TObjectProto* pkProto = CManager::instance().GetObjectProto(dwVnum);
 
 	if (!pkProto)
 	{
 		sys_err("Invalid Object vnum %u", dwVnum);
 		return false;
 	}
-	const TMapRegion * r = rkSecTreeMgr.GetMapRegion(lMapIndex);
+	const TMapRegion* r = rkSecTreeMgr.GetMapRegion(lMapIndex);
 	if (!r)
 		return false;
 
 	sys_log(0, "RequestCreateObject(vnum=%u, map=%d, pos=(%d,%d), rot=(%.1f,%.1f,%.1f) region(%d,%d ~ %d,%d)",
-			dwVnum, lMapIndex, x, y, xRot, yRot, zRot, r->sx, r->sy, r->ex, r->ey);
+		dwVnum, lMapIndex, x, y, xRot, yRot, zRot, r->sx, r->sy, r->ex, r->ey);
 
 	x += r->sx;
 	y += r->sy;
@@ -540,14 +541,14 @@ bool CLand::RequestCreateObject(DWORD dwVnum, long lMapIndex, long x, long y, fl
 	}
 
 	// ADD_BUILDING_ROTATION
-	if ( checkAnother )
+	if (checkAnother)
 	{
 		if (rkSecTreeMgr.ForAttrRegion(lMapIndex, osx, osy, oex, oey, (long)zRot, ATTR_OBJECT, ATTR_REGION_MODE_CHECK))
 		{
 			sys_err("another object already exist");
 			return false;
 		}
-		FIsIn f (osx, osy, oex, oey);
+		FIsIn f(osx, osy, oex, oey);
 		rkSecTreeMgr.GetMap(lMapIndex)->for_each(f);
 
 		if (f.bIn)
@@ -634,24 +635,24 @@ CManager::~CManager()
 void CManager::Destroy()
 {
 	itertype(m_map_pkLand) it = m_map_pkLand.begin();
-	for ( ; it != m_map_pkLand.end(); ++it) {
+	for (; it != m_map_pkLand.end(); ++it) {
 		M2_DELETE(it->second);
 	}
 	m_map_pkLand.clear();
 }
 
-bool CManager::LoadObjectProto(const TObjectProto * pProto, int size) // from DB
+bool CManager::LoadObjectProto(const TObjectProto* pProto, int size) // from DB
 {
 	m_vec_kObjectProto.resize(size);
 	thecore_memcpy(&m_vec_kObjectProto[0], pProto, sizeof(TObjectProto) * size);
 
 	for (int i = 0; i < size; ++i)
 	{
-		TObjectProto & r = m_vec_kObjectProto[i];
+		TObjectProto& r = m_vec_kObjectProto[i];
 
 		// BUILDING_NPC
 		sys_log(0, "ObjectProto %u price %u upgrade %u upg_limit %u life %d NPC %u",
-				r.dwVnum, r.dwPrice, r.dwUpgradeVnum, r.dwUpgradeLimitTime, r.lLife, r.dwNPCVnum);
+			r.dwVnum, r.dwPrice, r.dwUpgradeVnum, r.dwUpgradeLimitTime, r.lLife, r.dwNPCVnum);
 		// END_OF_BUILDING_NPC
 
 		for (int j = 0; j < OBJECT_MATERIAL_MAX_NUM; ++j)
@@ -674,7 +675,7 @@ bool CManager::LoadObjectProto(const TObjectProto * pProto, int size) // from DB
 	return true;
 }
 
-TObjectProto * CManager::GetObjectProto(DWORD dwVnum)
+TObjectProto* CManager::GetObjectProto(DWORD dwVnum)
 {
 	itertype(m_map_pkObjectProto) it = m_map_pkObjectProto.find(dwVnum);
 
@@ -684,20 +685,20 @@ TObjectProto * CManager::GetObjectProto(DWORD dwVnum)
 	return it->second;
 }
 
-bool CManager::LoadLand(TLand * pTable) // from DB
+bool CManager::LoadLand(TLand* pTable) // from DB
 {
-	CLand * pkLand = M2_NEW CLand(pTable);
+	CLand* pkLand = M2_NEW CLand(pTable);
 	m_map_pkLand.emplace(pkLand->GetID(), pkLand);
 
 	sys_log(0, "LAND: %u map %d %dx%d w %u h %u",
-			pTable->dwID, pTable->lMapIndex, pTable->x, pTable->y, pTable->width, pTable->height);
+		pTable->dwID, pTable->lMapIndex, pTable->x, pTable->y, pTable->width, pTable->height);
 
 	return true;
 }
 
-void CManager::UpdateLand(TLand * pTable)
+void CManager::UpdateLand(TLand* pTable)
 {
-	CLand * pkLand = FindLand(pTable->dwID);
+	CLand* pkLand = FindLand(pTable->dwID);
 
 	if (!pkLand)
 	{
@@ -707,7 +708,7 @@ void CManager::UpdateLand(TLand * pTable)
 
 	pkLand->PutData(pTable);
 
-	const DESC_MANAGER::DESC_SET & cont = DESC_MANAGER::instance().GetClientSet();
+	const DESC_MANAGER::DESC_SET& cont = DESC_MANAGER::instance().GetClientSet();
 
 	itertype(cont) it = cont.begin();
 
@@ -727,7 +728,7 @@ void CManager::UpdateLand(TLand * pTable)
 
 	sys_log(0, "BUILDING: UpdateLand %u pos %dx%d guild %u", e.dwID, e.x, e.y, e.dwGuildID);
 
-	CGuild *guild = CGuildManager::instance().FindGuild(pTable->dwGuildID);
+	CGuild* guild = CGuildManager::instance().FindGuild(pTable->dwGuildID);
 	while (it != cont.end())
 	{
 		LPDESC d = *(it++);
@@ -743,9 +744,9 @@ void CManager::UpdateLand(TLand * pTable)
 	}
 }
 
-CLand * CManager::FindLand(DWORD dwID)
+CLand* CManager::FindLand(DWORD dwID)
 {
-	std::map<DWORD, CLand *>::iterator it = m_map_pkLand.find(dwID);
+	std::map<DWORD, CLand*>::iterator it = m_map_pkLand.find(dwID);
 
 	if (it == m_map_pkLand.end())
 		return NULL;
@@ -753,11 +754,11 @@ CLand * CManager::FindLand(DWORD dwID)
 	return it->second;
 }
 
-CLand * CManager::FindLand(long lMapIndex, long x, long y)
+CLand* CManager::FindLand(long lMapIndex, long x, long y)
 {
 	sys_log(0, "BUILDING: FindLand %d %d %d", lMapIndex, x, y);
 
-	const TMapRegion * r = SECTREE_MANAGER::instance().GetMapRegion(lMapIndex);
+	const TMapRegion* r = SECTREE_MANAGER::instance().GetMapRegion(lMapIndex);
 
 	if (!r)
 		return NULL;
@@ -769,8 +770,8 @@ CLand * CManager::FindLand(long lMapIndex, long x, long y)
 
 	while (it != m_map_pkLand.end())
 	{
-		CLand * pkLand = (it++)->second;
-		const TLand & r = pkLand->GetData();
+		CLand* pkLand = (it++)->second;
+		const TLand& r = pkLand->GetData();
 
 		if (r.lMapIndex != lMapIndex)
 			continue;
@@ -787,13 +788,13 @@ CLand * CManager::FindLand(long lMapIndex, long x, long y)
 	return NULL;
 }
 
-CLand * CManager::FindLandByGuild(DWORD GID)
+CLand* CManager::FindLandByGuild(DWORD GID)
 {
 	itertype(m_map_pkLand) it = m_map_pkLand.begin();
 
 	while (it != m_map_pkLand.end())
 	{
-		CLand * pkLand = (it++)->second;
+		CLand* pkLand = (it++)->second;
 
 		if (pkLand->GetData().dwGuildID == GID)
 			return pkLand;
@@ -802,19 +803,19 @@ CLand * CManager::FindLandByGuild(DWORD GID)
 	return NULL;
 }
 
-bool CManager::LoadObject(TObject * pTable, bool isBoot) // from DB
+bool CManager::LoadObject(TObject* pTable, bool isBoot) // from DB
 {
 	if (!map_allow_find(pTable->lMapIndex)) // @fixme315
 		return false;
 
-	CLand * pkLand = FindLand(pTable->dwLandID);
+	CLand* pkLand = FindLand(pTable->dwLandID);
 	if (!pkLand)
 	{
 		sys_log(0, "Cannot find land by id %u", pTable->dwLandID);
 		return false;
 	}
 
-	TObjectProto * pkProto = GetObjectProto(pTable->dwVnum);
+	TObjectProto* pkProto = GetObjectProto(pTable->dwVnum);
 
 	if (!pkProto)
 	{
@@ -878,9 +879,9 @@ void CManager::FinalizeBoot()
 
 	while (it2 != m_map_pkLand.end())
 	{
-		CLand * pkLand = (it2++)->second;
+		CLand* pkLand = (it2++)->second;
 
-		const TLand & r = pkLand->GetData();
+		const TLand& r = pkLand->GetData();
 
 		// LAND_MASTER_LOG
 		sys_log(0, "LandMaster map_index=%d pos=(%d, %d)", r.lMapIndex, r.x, r.y);
@@ -892,7 +893,7 @@ void CManager::FinalizeBoot()
 		if (!map_allow_find(r.lMapIndex))
 			continue;
 
-		const TMapRegion * region = SECTREE_MANAGER::instance().GetMapRegion(r.lMapIndex);
+		const TMapRegion* region = SECTREE_MANAGER::instance().GetMapRegion(r.lMapIndex);
 		if (!region)
 			continue;
 
@@ -940,16 +941,16 @@ void CManager::SendLandList(LPDESC d, long lMapIndex)
 
 	while (it != m_map_pkLand.end())
 	{
-		CLand * pkLand = (it++)->second;
-		const TLand & r = pkLand->GetData();
+		CLand* pkLand = (it++)->second;
+		const TLand& r = pkLand->GetData();
 
 		if (r.lMapIndex != lMapIndex)
 			continue;
 
-		LPCHARACTER ch  = d->GetCharacter();
+		LPCHARACTER ch = d->GetCharacter();
 		if (ch)
 		{
-			CGuild *guild = CGuildManager::instance().FindGuild(r.dwGuildID);
+			CGuild* guild = CGuildManager::instance().FindGuild(r.dwGuildID);
 			ch->SendGuildName(guild);
 		}
 
@@ -983,7 +984,7 @@ void CManager::ClearLand(DWORD dwLandID)
 {
 	CLand* pLand = FindLand(dwLandID);
 
-	if ( pLand == NULL )
+	if (pLand == NULL)
 	{
 		sys_log(0, "LAND_CLEAR: there is no LAND id like %d", dwLandID);
 		return;
@@ -998,7 +999,7 @@ void CManager::ClearLandByGuildID(DWORD dwGuildID)
 {
 	CLand* pLand = FindLandByGuild(dwGuildID);
 
-	if ( pLand == NULL )
+	if (pLand == NULL)
 	{
 		sys_log(0, "LAND_CLEAR: there is no GUILD id like %d", dwGuildID);
 		return;
@@ -1013,7 +1014,7 @@ void CLand::ClearLand()
 {
 	itertype(m_map_pkObject) iter = m_map_pkObject.begin();
 
-	while ( iter != m_map_pkObject.end() )
+	while (iter != m_map_pkObject.end())
 	{
 		RequestDeleteObject(iter->second->GetID());
 		iter++;
@@ -1021,8 +1022,8 @@ void CLand::ClearLand()
 
 	SetOwner(0);
 
-	const TLand & r = GetData();
-	const TMapRegion * region = SECTREE_MANAGER::instance().GetMapRegion(r.lMapIndex);
+	const TLand& r = GetData();
+	const TMapRegion* region = SECTREE_MANAGER::instance().GetMapRegion(r.lMapIndex);
 
 	CHARACTER_MANAGER::instance().SpawnMob(20040, r.lMapIndex, region->sx + r.x + (r.width / 2), region->sy + r.y + (r.height / 2), 0);
 }
@@ -1032,34 +1033,34 @@ void CLand::ClearLand()
 void CLand::DrawWall(DWORD dwVnum, long nMapIndex, long& x, long& y, char length, float zRot)
 {
 	int rot = (int)zRot;
-	rot = ((rot%360) / 90) * 90;
+	rot = ((rot % 360) / 90) * 90;
 
-	int dx=0, dy=0;
+	int dx = 0, dy = 0;
 
-	switch ( rot )
+	switch (rot)
 	{
-		case 0 :
-			dx = -500;
-			dy = 0;
-			break;
+	case 0:
+		dx = -500;
+		dy = 0;
+		break;
 
-		case 90 :
-			dx = 0;
-			dy = 500;
-			break;
+	case 90:
+		dx = 0;
+		dy = 500;
+		break;
 
-		case 180 :
-			dx = 500;
-			dy = 0;
-			break;
+	case 180:
+		dx = 500;
+		dy = 0;
+		break;
 
-		case 270 :
-			dx = 0;
-			dy = -500;
-			break;
+	case 270:
+		dx = 0;
+		dy = -500;
+		break;
 	}
 
-	for ( int i=0; i < length; i++ )
+	for (int i = 0; i < length; i++)
 	{
 		this->RequestCreateObject(dwVnum, nMapIndex, x, y, 0, 0, rot, false);
 		x += dx;
@@ -1073,7 +1074,7 @@ bool CLand::RequestCreateWall(long nMapIndex, float rot)
 
 	const TLand& land = GetData();
 
-	int center_x = land.x + land.width  / 2;
+	int center_x = land.x + land.width / 2;
 	int center_y = land.y + land.height / 2;
 
 	int wall_x = center_x;
@@ -1085,45 +1086,45 @@ bool CLand::RequestCreateWall(long nMapIndex, float rot)
 	{
 		int door_x = wall_x;
 		int door_y = wall_y + wall_half_h;
-		RequestCreateObject(WALL_DOOR_VNUM,	nMapIndex, wall_x, wall_y + wall_half_h, door_x, door_y,   0.0f, WALL_ANOTHER_CHECKING_ENABLE);
-		RequestCreateObject(WALL_BACK_VNUM,	nMapIndex, wall_x, wall_y - wall_half_h, door_x, door_y,   0.0f, WALL_ANOTHER_CHECKING_ENABLE);
-		RequestCreateObject(WALL_LEFT_VNUM,	nMapIndex, wall_x - wall_half_w, wall_y, door_x, door_y,   0.0f, WALL_ANOTHER_CHECKING_ENABLE);
-		RequestCreateObject(WALL_RIGHT_VNUM,	nMapIndex, wall_x + wall_half_w, wall_y, door_x, door_y,   0.0f, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(WALL_DOOR_VNUM, nMapIndex, wall_x, wall_y + wall_half_h, door_x, door_y, 0.0f, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(WALL_BACK_VNUM, nMapIndex, wall_x, wall_y - wall_half_h, door_x, door_y, 0.0f, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(WALL_LEFT_VNUM, nMapIndex, wall_x - wall_half_w, wall_y, door_x, door_y, 0.0f, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(WALL_RIGHT_VNUM, nMapIndex, wall_x + wall_half_w, wall_y, door_x, door_y, 0.0f, WALL_ANOTHER_CHECKING_ENABLE);
 	}
 	else if (rot == 180.0f)
 	{
 		int door_x = wall_x;
 		int door_y = wall_y - wall_half_h;
-		RequestCreateObject(WALL_DOOR_VNUM,	nMapIndex, wall_x, wall_y - wall_half_h, door_x, door_y, 180.0f, WALL_ANOTHER_CHECKING_ENABLE);
-		RequestCreateObject(WALL_BACK_VNUM,	nMapIndex, wall_x, wall_y + wall_half_h, door_x, door_y,   0.0f, WALL_ANOTHER_CHECKING_ENABLE);
-		RequestCreateObject(WALL_LEFT_VNUM,	nMapIndex, wall_x - wall_half_w, wall_y, door_x, door_y,   0.0f, WALL_ANOTHER_CHECKING_ENABLE);
-		RequestCreateObject(WALL_RIGHT_VNUM,	nMapIndex, wall_x + wall_half_w, wall_y, door_x, door_y,   0.0f, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(WALL_DOOR_VNUM, nMapIndex, wall_x, wall_y - wall_half_h, door_x, door_y, 180.0f, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(WALL_BACK_VNUM, nMapIndex, wall_x, wall_y + wall_half_h, door_x, door_y, 0.0f, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(WALL_LEFT_VNUM, nMapIndex, wall_x - wall_half_w, wall_y, door_x, door_y, 0.0f, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(WALL_RIGHT_VNUM, nMapIndex, wall_x + wall_half_w, wall_y, door_x, door_y, 0.0f, WALL_ANOTHER_CHECKING_ENABLE);
 	}
 	else if (rot == 90.0f)
 	{
 		int door_x = wall_x + wall_half_h;
 		int door_y = wall_y;
-		RequestCreateObject(WALL_DOOR_VNUM,	nMapIndex, wall_x + wall_half_h, wall_y, door_x, door_y,  90.0f, WALL_ANOTHER_CHECKING_ENABLE);
-		RequestCreateObject(WALL_BACK_VNUM,	nMapIndex, wall_x - wall_half_h, wall_y, door_x, door_y,  90.0f, WALL_ANOTHER_CHECKING_ENABLE);
-		RequestCreateObject(WALL_LEFT_VNUM,	nMapIndex, wall_x, wall_y - wall_half_w, door_x, door_y,  90.0f, WALL_ANOTHER_CHECKING_ENABLE);
-		RequestCreateObject(WALL_RIGHT_VNUM,	nMapIndex, wall_x, wall_y + wall_half_w, door_x, door_y,  90.0f, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(WALL_DOOR_VNUM, nMapIndex, wall_x + wall_half_h, wall_y, door_x, door_y, 90.0f, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(WALL_BACK_VNUM, nMapIndex, wall_x - wall_half_h, wall_y, door_x, door_y, 90.0f, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(WALL_LEFT_VNUM, nMapIndex, wall_x, wall_y - wall_half_w, door_x, door_y, 90.0f, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(WALL_RIGHT_VNUM, nMapIndex, wall_x, wall_y + wall_half_w, door_x, door_y, 90.0f, WALL_ANOTHER_CHECKING_ENABLE);
 	}
 	else if (rot == 270.0f)
 	{
 		int door_x = wall_x - wall_half_h;
 		int door_y = wall_y;
-		RequestCreateObject(WALL_DOOR_VNUM,	nMapIndex, wall_x - wall_half_h, wall_y, door_x, door_y,  90.0f, WALL_ANOTHER_CHECKING_ENABLE);
-		RequestCreateObject(WALL_BACK_VNUM,	nMapIndex, wall_x + wall_half_h, wall_y, door_x, door_y,  90.0f, WALL_ANOTHER_CHECKING_ENABLE);
-		RequestCreateObject(WALL_LEFT_VNUM,	nMapIndex, wall_x, wall_y - wall_half_w, door_x, door_y,  90.0f, WALL_ANOTHER_CHECKING_ENABLE);
-		RequestCreateObject(WALL_RIGHT_VNUM,	nMapIndex, wall_x, wall_y + wall_half_w, door_x, door_y,  90.0f, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(WALL_DOOR_VNUM, nMapIndex, wall_x - wall_half_h, wall_y, door_x, door_y, 90.0f, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(WALL_BACK_VNUM, nMapIndex, wall_x + wall_half_h, wall_y, door_x, door_y, 90.0f, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(WALL_LEFT_VNUM, nMapIndex, wall_x, wall_y - wall_half_w, door_x, door_y, 90.0f, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(WALL_RIGHT_VNUM, nMapIndex, wall_x, wall_y + wall_half_w, door_x, door_y, 90.0f, WALL_ANOTHER_CHECKING_ENABLE);
 	}
 
 	if (test_server)
 	{
-		RequestCreateObject(FLAG_VNUM, nMapIndex, land.x + 50, 			land.y + 50, 0, 0, 0.0, WALL_ANOTHER_CHECKING_ENABLE);
-		RequestCreateObject(FLAG_VNUM, nMapIndex, land.x + land.width - 50,	land.y + 50, 0, 0, 90.0, WALL_ANOTHER_CHECKING_ENABLE);
-		RequestCreateObject(FLAG_VNUM, nMapIndex, land.x + land.width - 50,	land.y + land.height - 50, 0, 0, 180.0, WALL_ANOTHER_CHECKING_ENABLE);
-		RequestCreateObject(FLAG_VNUM, nMapIndex, land.x + 50, 			land.y + land.height - 50, 0, 0, 270.0, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(FLAG_VNUM, nMapIndex, land.x + 50, land.y + 50, 0, 0, 0.0, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(FLAG_VNUM, nMapIndex, land.x + land.width - 50, land.y + 50, 0, 0, 90.0, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(FLAG_VNUM, nMapIndex, land.x + land.width - 50, land.y + land.height - 50, 0, 0, 180.0, WALL_ANOTHER_CHECKING_ENABLE);
+		RequestCreateObject(FLAG_VNUM, nMapIndex, land.x + 50, land.y + land.height - 50, 0, 0, 270.0, WALL_ANOTHER_CHECKING_ENABLE);
 	}
 	return true;
 }
@@ -1134,24 +1135,23 @@ void CLand::RequestDeleteWall()
 
 	while (iter != m_map_pkObject.end())
 	{
-		unsigned id   = iter->second->GetID();
+		unsigned id = iter->second->GetID();
 		unsigned vnum = iter->second->GetVnum();
 
 		switch (vnum)
 		{
-			case WALL_DOOR_VNUM:
-			case WALL_BACK_VNUM:
-			case WALL_LEFT_VNUM:
-			case WALL_RIGHT_VNUM:
-				RequestDeleteObject(id);
-				break;
+		case WALL_DOOR_VNUM:
+		case WALL_BACK_VNUM:
+		case WALL_LEFT_VNUM:
+		case WALL_RIGHT_VNUM:
+			RequestDeleteObject(id);
+			break;
 		}
 
 		if (test_server)
 		{
 			if (FLAG_VNUM == vnum)
 				RequestDeleteObject(id);
-
 		}
 
 		iter++;
@@ -1160,14 +1160,14 @@ void CLand::RequestDeleteWall()
 
 bool CLand::RequestCreateWallBlocks(DWORD dwVnum, long nMapIndex, char wallSize, bool doorEast, bool doorWest, bool doorSouth, bool doorNorth)
 {
-	const TLand & r = GetData();
+	const TLand& r = GetData();
 
-	long startX = r.x + (r.width  / 2) - (1300 + wallSize*500);
-	long startY = r.y + (r.height / 2) + (1300 + wallSize*500);
+	long startX = r.x + (r.width / 2) - (1300 + wallSize * 500);
+	long startY = r.y + (r.height / 2) + (1300 + wallSize * 500);
 
 	DWORD corner = dwVnum - 4;
-	DWORD wall   = dwVnum - 3;
-	DWORD door   = dwVnum - 1;
+	DWORD wall = dwVnum - 3;
+	DWORD door = dwVnum - 1;
 
 	bool checkAnother = false;
 	long* ptr = NULL;
@@ -1180,53 +1180,53 @@ bool CLand::RequestCreateWallBlocks(DWORD dwVnum, long nMapIndex, char wallSize,
 	doorOpen[2] = doorEast;
 	doorOpen[3] = doorSouth;
 
-	if ( wallSize > 3 ) wallSize = 3;
-	else if ( wallSize < 0 ) wallSize = 0;
+	if (wallSize > 3) wallSize = 3;
+	else if (wallSize < 0) wallSize = 0;
 
-	for ( int i=0; i < 4; i++, rot -= 90 )
+	for (int i = 0; i < 4; i++, rot -= 90)
 	{
-		switch ( i )
+		switch (i)
 		{
-			case 0 :
-				delta = -1;
-				ptr = &startY;
-				break;
-			case 1 :
-				delta = 1;
-				ptr = &startX;
-				break;
-			case 2 :
-				ptr = &startY;
-				delta = 1;
-				break;
-			case 3 :
-				ptr = &startX;
-				delta = -1;
-				break;
+		case 0:
+			delta = -1;
+			ptr = &startY;
+			break;
+		case 1:
+			delta = 1;
+			ptr = &startX;
+			break;
+		case 2:
+			ptr = &startY;
+			delta = 1;
+			break;
+		case 3:
+			ptr = &startX;
+			delta = -1;
+			break;
 		}
 
 		this->RequestCreateObject(corner, nMapIndex, startX, startY, 0, 0, rot, checkAnother);
 
-		*ptr = *ptr + ( 700 * delta );
+		*ptr = *ptr + (700 * delta);
 
-		if ( doorOpen[i] )
+		if (doorOpen[i])
 		{
 			this->DrawWall(wall, nMapIndex, startX, startY, wallSize, rot);
 
-			*ptr = *ptr + ( 700 * delta );
+			*ptr = *ptr + (700 * delta);
 
 			this->RequestCreateObject(door, nMapIndex, startX, startY, 0, 0, rot, checkAnother);
 
-			*ptr = *ptr + ( 1300 * delta );
+			*ptr = *ptr + (1300 * delta);
 
 			this->DrawWall(wall, nMapIndex, startX, startY, wallSize, rot);
 		}
 		else
 		{
-			this->DrawWall(wall, nMapIndex, startX, startY, wallSize*2 + 4, rot);
+			this->DrawWall(wall, nMapIndex, startX, startY, wallSize * 2 + 4, rot);
 		}
 
-		*ptr = *ptr + ( 100 * delta );
+		*ptr = *ptr + (100 * delta);
 	}
 
 	return true;
@@ -1241,11 +1241,11 @@ void CLand::RequestDeleteWallBlocks(DWORD dwID)
 	DWORD door = dwID - 1;
 	DWORD dwVnum = 0;
 
-	while ( iter != m_map_pkObject.end() )
+	while (iter != m_map_pkObject.end())
 	{
 		dwVnum = iter->second->GetVnum();
 
-		if ( dwVnum == corner || dwVnum == wall || dwVnum == door )
+		if (dwVnum == corner || dwVnum == wall || dwVnum == door)
 		{
 			RequestDeleteObject(iter->second->GetID());
 		}

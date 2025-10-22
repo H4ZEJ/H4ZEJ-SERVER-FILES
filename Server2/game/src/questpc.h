@@ -31,165 +31,165 @@ namespace quest
 
 	class PC
 	{
-		public:
-			enum
+	public:
+		enum
+		{
+			QUEST_SEND_ISBEGIN = (1 << 0),
+			QUEST_SEND_TITLE = (1 << 1),
+			QUEST_SEND_CLOCK_NAME = (1 << 2),
+			QUEST_SEND_CLOCK_VALUE = (1 << 3),
+			QUEST_SEND_COUNTER_NAME = (1 << 4),
+			QUEST_SEND_COUNTER_VALUE = (1 << 5),
+			QUEST_SEND_ICON_FILE = (1 << 6),
+		};
+
+		typedef map<unsigned int, QuestState>	QuestInfo;
+		typedef QuestInfo::iterator				QuestInfoIterator;
+
+		PC();
+		~PC();
+
+		void		Destroy();
+		void		SetID(DWORD dwID);
+		DWORD		GetID() { return m_dwID; }
+
+		bool		HasQuest(const string& quest_name);
+		QuestState& GetQuest(const string& quest_name);
+
+		inline QuestInfoIterator quest_begin();
+		inline QuestInfoIterator quest_end();
+		inline QuestInfoIterator quest_find(DWORD quest_index);
+
+		inline bool IsRunning();
+
+		void		EndRunning();
+		void		CancelRunning();
+
+		inline QuestState* GetRunningQuestState();
+
+		void		SetQuest(const string& quest_name, QuestState& qs);
+		void		SetCurrentQuestStateName(const string& state_name);
+		void		SetQuestState(const string& quest_name, const string& state_name);
+		void		SetQuestState(const string& quest_name, int new_state_index);
+
+		void		ClearQuest(const string& quest_name);
+
+	private:
+		void		AddQuestStateChange(const string& quest_name, int prev_state, int next_state);
+		void		DoQuestStateChange();
+
+		struct TQuestStateChangeInfo
+		{
+			DWORD quest_idx;
+			int prev_state;
+			int next_state;
+
+			TQuestStateChangeInfo(DWORD _quest_idx, int _prev_state, int _next_state) :
+				quest_idx(_quest_idx),
+				prev_state(_prev_state),
+				next_state(_next_state)
 			{
-				QUEST_SEND_ISBEGIN		= (1 << 0),
-				QUEST_SEND_TITLE		= (1 << 1),
-				QUEST_SEND_CLOCK_NAME		= (1 << 2),
-				QUEST_SEND_CLOCK_VALUE		= (1 << 3),
-				QUEST_SEND_COUNTER_NAME		= (1 << 4),
-				QUEST_SEND_COUNTER_VALUE	= (1 << 5),
-				QUEST_SEND_ICON_FILE		= (1 << 6),
-			};
+			}
+		};
 
-			typedef map<unsigned int, QuestState>	QuestInfo;
-			typedef QuestInfo::iterator				QuestInfoIterator;
+		vector<TQuestStateChangeInfo> m_QuestStateChange;
 
-			PC();
-			~PC();
+	public:
+		void		SetFlag(const string& name, int value, bool bSkipSave = false);
+		int			GetFlag(const string& name);
+		bool		DeleteFlag(const string& name);
 
-			void		Destroy();
-			void		SetID(DWORD dwID);
-			DWORD		GetID() { return m_dwID; }
+		const string& GetCurrentQuestName() const;
+		int			GetCurrentQuestIndex();
 
-			bool		HasQuest(const string & quest_name);
-			QuestState & GetQuest(const string& quest_name);
+		void		RemoveTimer(const string& name);
+		void		RemoveTimerNotCancel(const string& name);
+		void		AddTimer(const string& name, LPEVENT pEvent);
+		void		ClearTimer();
 
-			inline QuestInfoIterator quest_begin();
-			inline QuestInfoIterator quest_end();
-			inline QuestInfoIterator quest_find(DWORD quest_index);
+		void		SetCurrentQuestStartFlag();
+		void		SetCurrentQuestDoneFlag();
 
-			inline bool IsRunning();
+		void		SetQuestTitle(const string& quest, const string& title);
 
-			void		EndRunning();
-			void		CancelRunning();
+		void		SetCurrentQuestTitle(const string& title);
+		void		SetCurrentQuestClockName(const string& name);
+		void		SetCurrentQuestClockValue(int value);
+		void		SetCurrentQuestCounterName(const string& name);
+		void		SetCurrentQuestCounterValue(int value);
+		void		SetCurrentQuestIconFile(const string& icon_file);
 
-			inline QuestState *	GetRunningQuestState();
+		bool		IsLoaded() const { return m_bLoaded; }
+		void		SetLoaded() { m_bLoaded = true; }
+		void		Build();
 
-			void		SetQuest(const string& quest_name, QuestState& qs);
-			void		SetCurrentQuestStateName(const string& state_name);
-			void		SetQuestState(const string& quest_name, const string& state_name);
-			void		SetQuestState(const string& quest_name, int new_state_index);
+		void		Save();
 
-			void		ClearQuest(const string& quest_name);
+		bool		HasReward() { return !m_vRewardData.empty() || m_bIsGivenReward; }
+		void		Reward(LPCHARACTER ch);
 
-		private:
-			void		AddQuestStateChange(const string& quest_name, int prev_state, int next_state);
-			void		DoQuestStateChange();
+		void		GiveItem(const string& label, DWORD dwVnum, int count);
+		void		GiveExp(const string& label, DWORD exp);
 
-			struct TQuestStateChangeInfo
-			{
-				DWORD quest_idx;
-				int prev_state;
-				int next_state;
+		void 		SetSendDoneFlag() { m_bShouldSendDone = true; }
+		bool		GetAndResetDoneFlag() { bool temp = m_bShouldSendDone; m_bShouldSendDone = false; return temp; }
 
-				TQuestStateChangeInfo(DWORD _quest_idx, int _prev_state, int _next_state) :
-					quest_idx(_quest_idx),
-					prev_state(_prev_state),
-					next_state(_next_state)
-				{
-				}
-			};
+		void		SendFlagList(LPCHARACTER ch);
 
-			vector<TQuestStateChangeInfo> m_QuestStateChange;
+		void		SetQuestState(const char* szQuestName, const char* szStateName);
 
-		public:
-			void		SetFlag(const string & name, int value, bool bSkipSave = false);
-			int			GetFlag(const string & name);
-			bool		DeleteFlag(const string & name);
+		void		SetConfirmWait(DWORD dwPID) { m_bConfirmWait = true; m_dwWaitConfirmFromPID = dwPID; }
+		void		ClearConfirmWait() { m_bConfirmWait = false; }
+		bool		IsConfirmWait() const { return m_bConfirmWait; }
+		bool		IsConfirmWait(DWORD dwPID) const { return m_bConfirmWait && dwPID == m_dwWaitConfirmFromPID; }
 
-			const string &	GetCurrentQuestName() const;
-			int			GetCurrentQuestIndex();
+	private:
+		void		SetSendFlag(int idx);
+		void		ClearSendFlag() { m_iSendToClient = 0; }
+		void		SaveFlag(const string& name, int value);
 
-			void		RemoveTimer(const string& name);
-			void		RemoveTimerNotCancel(const string& name);
-			void		AddTimer(const string& name, LPEVENT pEvent);
-			void		ClearTimer();
+		void		ClearCurrentQuestBeginFlag();
+		void		SetCurrentQuestBeginFlag();
+		int			GetCurrentQuestBeginFlag();
 
-			void		SetCurrentQuestStartFlag();
-			void		SetCurrentQuestDoneFlag();
+		void		SendQuestInfoPakcet();
 
-			void		SetQuestTitle(const string& quest,const string & title);
+	private:
+		vector<RewardData>	m_vRewardData;
+		bool		m_bIsGivenReward;
 
-			void		SetCurrentQuestTitle(const string & title);
-			void		SetCurrentQuestClockName(const string & name);
-			void		SetCurrentQuestClockValue(int value);
-			void		SetCurrentQuestCounterName(const string & name);
-			void		SetCurrentQuestCounterValue(int value);
-			void		SetCurrentQuestIconFile(const string& icon_file);
+		bool		m_bShouldSendDone;
 
-			bool		IsLoaded() const	{ return m_bLoaded; }
-			void		SetLoaded()	{ m_bLoaded = true; }
-			void		Build();
+		DWORD		m_dwID;
 
-			void		Save();
+		QuestInfo		m_QuestInfo;
 
-			bool		HasReward() { return !m_vRewardData.empty() || m_bIsGivenReward; }
-			void		Reward(LPCHARACTER ch);
+		QuestState* m_RunningQuestState;
+		string		m_stCurQuest;
 
-			void		GiveItem(const string& label, DWORD dwVnum, int count);
-			void		GiveExp(const string& label, DWORD exp);
+		typedef map<string, int> TFlagMap;
+		TFlagMap		m_FlagMap;
 
-			void 		SetSendDoneFlag() { m_bShouldSendDone = true; }
-			bool		GetAndResetDoneFlag() { bool temp = m_bShouldSendDone; m_bShouldSendDone = false; return temp; }
+		TFlagMap		m_FlagSaveMap;
 
-			void		SendFlagList(LPCHARACTER ch);
+		typedef map<string, LPEVENT> TTimerMap;
+		TTimerMap		m_TimerMap;
 
-			void		SetQuestState(const char* szQuestName, const char* szStateName);
+		int			m_iSendToClient;
+		bool		m_bLoaded;
 
-			void		SetConfirmWait(DWORD dwPID) { m_bConfirmWait = true; m_dwWaitConfirmFromPID = dwPID; }
-			void		ClearConfirmWait() { m_bConfirmWait = false; }
-			bool		IsConfirmWait() const	{ return m_bConfirmWait; }
-			bool		IsConfirmWait(DWORD dwPID) const	{ return m_bConfirmWait && dwPID == m_dwWaitConfirmFromPID; }
+		int			m_iLastState;
 
-		private:
-			void		SetSendFlag(int idx);
-			void		ClearSendFlag() { m_iSendToClient = 0; }
-			void		SaveFlag(const string & name, int value);
+		DWORD		m_dwWaitConfirmFromPID;
+		bool		m_bConfirmWait;
 
-			void		ClearCurrentQuestBeginFlag();
-			void		SetCurrentQuestBeginFlag();
-			int			GetCurrentQuestBeginFlag();
-
-			void		SendQuestInfoPakcet();
-
-		private:
-			vector<RewardData>	m_vRewardData;
-			bool		m_bIsGivenReward;
-
-			bool		m_bShouldSendDone;
-
-			DWORD		m_dwID;
-
-			QuestInfo		m_QuestInfo;
-
-			QuestState *	m_RunningQuestState;
-			string		m_stCurQuest;
-
-			typedef map<string, int> TFlagMap;
-			TFlagMap		m_FlagMap;
-
-			TFlagMap		m_FlagSaveMap;
-
-			typedef map<string, LPEVENT> TTimerMap;
-			TTimerMap		m_TimerMap;
-
-			int			m_iSendToClient;
-			bool		m_bLoaded;
-
-			int			m_iLastState;
-
-			DWORD		m_dwWaitConfirmFromPID;
-			bool		m_bConfirmWait;
-
-		public:
-			int GetSendToClient() { return m_iSendToClient; }
-			std::string GetCurQuest() { return m_stCurQuest; }
-			QuestState* GetRunningQuestStateRef() { return m_RunningQuestState; }
-			void SetSendToClient(int v) { m_iSendToClient = v; }
-			void SetCurQuest(std::string v) { m_stCurQuest = v; }
-			void SetRunningQuestStateRef(QuestState* v) { m_RunningQuestState = v; }
+	public:
+		int GetSendToClient() { return m_iSendToClient; }
+		std::string GetCurQuest() { return m_stCurQuest; }
+		QuestState* GetRunningQuestStateRef() { return m_RunningQuestState; }
+		void SetSendToClient(int v) { m_iSendToClient = v; }
+		void SetCurQuest(std::string v) { m_stCurQuest = v; }
+		void SetRunningQuestStateRef(QuestState* v) { m_RunningQuestState = v; }
 	};
 
 	inline PC::QuestInfoIterator PC::quest_begin()

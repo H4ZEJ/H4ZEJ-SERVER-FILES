@@ -13,7 +13,7 @@ class DSManager : public singleton<DSManager>
 public:
 	DSManager();
 	~DSManager();
-	bool	ReadDragonSoulTableFile(const char * c_pszFileName);
+	bool	ReadDragonSoulTableFile(const char* c_pszFileName);
 
 	void	GetDragonSoulInfo(DWORD dwVnum, OUT BYTE& bType, OUT BYTE& bGrade, OUT BYTE& bStep, OUT BYTE& bRefine) const;
 	WORD	GetBasePosition(const LPITEM pItem) const;
@@ -24,9 +24,9 @@ public:
 
 	bool	PullOut(LPCHARACTER ch, TItemPos DestCell, IN OUT LPITEM& pItem, LPITEM pExtractor = NULL);
 
-	bool	DoRefineGrade(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_SOUL_REFINE_GRID_SIZE]);
-	bool	DoRefineStep(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_SOUL_REFINE_GRID_SIZE]);
-	bool	DoRefineStrength(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_SOUL_REFINE_GRID_SIZE]);
+	bool	DoRefineGrade(LPCHARACTER ch, TItemPos(&aItemPoses)[DRAGON_SOUL_REFINE_GRID_SIZE]);
+	bool	DoRefineStep(LPCHARACTER ch, TItemPos(&aItemPoses)[DRAGON_SOUL_REFINE_GRID_SIZE]);
+	bool	DoRefineStrength(LPCHARACTER ch, TItemPos(&aItemPoses)[DRAGON_SOUL_REFINE_GRID_SIZE]);
 
 	bool	DragonSoulItemInitialize(LPITEM pItem);
 
@@ -44,7 +44,7 @@ private:
 	bool	PutAttributes(LPITEM pDS);
 	bool	RefreshItemAttributes(LPITEM pItem);
 
-	DragonSoulTable*	m_pTable;
+	DragonSoulTable* m_pTable;
 };
 
 #endif

@@ -62,12 +62,12 @@ namespace quest
 
 	ALUA(dungeon_set_quest_flag)
 	{
-		CQuestManager & q = CQuestManager::instance();
+		CQuestManager& q = CQuestManager::instance();
 
 		FSetQuestFlag f;
 
 		f.flagname = q.GetCurrentPC()->GetCurrentQuestName() + "." + lua_tostring(L, 1);
-		f.value = (int) rint(lua_tonumber(L, 2));
+		f.value = (int)rint(lua_tonumber(L, 2));
 
 		LPDUNGEON pDungeon = q.GetCurrentDungeon();
 
@@ -79,7 +79,7 @@ namespace quest
 
 	ALUA(dungeon_set_flag)
 	{
-		if (!lua_isstring(L,1) || !lua_isnumber(L,2))
+		if (!lua_isstring(L, 1) || !lua_isnumber(L, 2))
 		{
 			sys_err("wrong set flag");
 		}
@@ -90,7 +90,7 @@ namespace quest
 
 			if (pDungeon)
 			{
-				const char* sz = lua_tostring(L,1);
+				const char* sz = lua_tostring(L, 1);
 				int value = int(lua_tonumber(L, 2));
 				pDungeon->SetFlag(sz, value);
 			}
@@ -104,7 +104,7 @@ namespace quest
 
 	ALUA(dungeon_get_flag)
 	{
-		if (!lua_isstring(L,1))
+		if (!lua_isstring(L, 1))
 		{
 			sys_err("wrong get flag");
 		}
@@ -114,7 +114,7 @@ namespace quest
 
 		if (pDungeon)
 		{
-			const char* sz = lua_tostring(L,1);
+			const char* sz = lua_tostring(L, 1);
 			lua_pushnumber(L, pDungeon->GetFlag(sz));
 		}
 		else
@@ -128,18 +128,18 @@ namespace quest
 
 	ALUA(dungeon_get_flag_from_map_index)
 	{
-		if (!lua_isstring(L,1) || !lua_isnumber(L,2))
+		if (!lua_isstring(L, 1) || !lua_isnumber(L, 2))
 		{
 			sys_err("wrong get flag");
 		}
 
-		DWORD dwMapIndex = (DWORD) lua_tonumber(L, 2);
+		DWORD dwMapIndex = (DWORD)lua_tonumber(L, 2);
 		if (dwMapIndex)
 		{
 			LPDUNGEON pDungeon = CDungeonManager::instance().FindByMapIndex(dwMapIndex);
 			if (pDungeon)
 			{
-				const char* sz = lua_tostring(L,1);
+				const char* sz = lua_tostring(L, 1);
 				lua_pushnumber(L, pDungeon->GetFlag(sz));
 			}
 			else
@@ -162,7 +162,7 @@ namespace quest
 
 		if (pDungeon)
 		{
-			sys_log(0, "Dungeon GetMapIndex %d",pDungeon->GetMapIndex());
+			sys_log(0, "Dungeon GetMapIndex %d", pDungeon->GetMapIndex());
 			lua_pushnumber(L, pDungeon->GetMapIndex());
 		}
 		else
@@ -176,7 +176,7 @@ namespace quest
 
 	ALUA(dungeon_regen_file)
 	{
-		if (!lua_isstring(L,1))
+		if (!lua_isstring(L, 1))
 		{
 			sys_err("wrong filename");
 			return 0;
@@ -186,14 +186,14 @@ namespace quest
 		LPDUNGEON pDungeon = q.GetCurrentDungeon();
 
 		if (pDungeon)
-			pDungeon->SpawnRegen(lua_tostring(L,1));
+			pDungeon->SpawnRegen(lua_tostring(L, 1));
 
 		return 0;
 	}
 
 	ALUA(dungeon_set_regen_file)
 	{
-		if (!lua_isstring(L,1))
+		if (!lua_isstring(L, 1))
 		{
 			sys_err("wrong filename");
 			return 0;
@@ -202,7 +202,7 @@ namespace quest
 		LPDUNGEON pDungeon = q.GetCurrentDungeon();
 
 		if (pDungeon)
-			pDungeon->SpawnRegen(lua_tostring(L,1), false);
+			pDungeon->SpawnRegen(lua_tostring(L, 1), false);
 		return 0;
 	}
 
@@ -226,7 +226,7 @@ namespace quest
 
 	ALUA(dungeon_set_exit_all_at_eliminate)
 	{
-		if (!lua_isnumber(L,1))
+		if (!lua_isnumber(L, 1))
 		{
 			sys_err("wrong time");
 			return 0;
@@ -267,21 +267,21 @@ namespace quest
 			return 0;
 		}
 
-		const char * c_pszRegenFile = NULL;
+		const char* c_pszRegenFile = NULL;
 
 		if (lua_gettop(L) >= 5)
-			c_pszRegenFile = lua_tostring(L,5);
+			c_pszRegenFile = lua_tostring(L, 5);
 
 		CQuestManager& q = CQuestManager::instance();
 		LPDUNGEON pDungeon = q.GetCurrentDungeon();
 
 		if (pDungeon)
 		{
-			pDungeon->SetWarpAtEliminate((long)lua_tonumber(L,1),
-										 (long)lua_tonumber(L,2),
-										 (long)lua_tonumber(L,3),
-										 (long)lua_tonumber(L,4),
-										 c_pszRegenFile);
+			pDungeon->SetWarpAtEliminate((long)lua_tonumber(L, 1),
+				(long)lua_tonumber(L, 2),
+				(long)lua_tonumber(L, 3),
+				(long)lua_tonumber(L, 4),
+				c_pszRegenFile);
 		}
 		else
 			sys_err("cannot find dungeon");
@@ -303,7 +303,7 @@ namespace quest
 			return 0;
 		}
 
-		long lMapIndex = (long)lua_tonumber(L,1);
+		long lMapIndex = (long)lua_tonumber(L, 1);
 
 		LPDUNGEON pDungeon = CDungeonManager::instance().Create(lMapIndex);
 
@@ -316,20 +316,20 @@ namespace quest
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
 		//ch->WarpSet(pDungeon->GetMapIndex(), (int) lua_tonumber(L, 2), (int)lua_tonumber(L, 3));
-		ch->WarpSet((int) lua_tonumber(L, 2), (int)lua_tonumber(L, 3), pDungeon->GetMapIndex());
+		ch->WarpSet((int)lua_tonumber(L, 2), (int)lua_tonumber(L, 3), pDungeon->GetMapIndex());
 		return 0;
 	}
 
 #ifdef ENABLE_D_NJGUILD
 	ALUA(dungeon_new_jump_guild)
 	{
-		if (lua_gettop(L)<3 || !lua_isnumber(L,1) || !lua_isnumber(L, 2) || !lua_isnumber(L,3))
+		if (lua_gettop(L) < 3 || !lua_isnumber(L, 1) || !lua_isnumber(L, 2) || !lua_isnumber(L, 3))
 		{
 			sys_err("not enough argument");
 			return 0;
 		}
 
-		long lMapIndex = (long)lua_tonumber(L,1);
+		long lMapIndex = (long)lua_tonumber(L, 1);
 
 		LPDUNGEON pDungeon = CDungeonManager::instance().Create(lMapIndex);
 
@@ -343,7 +343,7 @@ namespace quest
 
 		if (ch->GetGuild() == NULL)
 		{
-			sys_err ("cannot go to dungeon alone.");
+			sys_err("cannot go to dungeon alone.");
 			return 0;
 		}
 
@@ -355,13 +355,13 @@ namespace quest
 #endif
 	ALUA(dungeon_new_jump_all)
 	{
-		if (lua_gettop(L)<3 || !lua_isnumber(L,1) || !lua_isnumber(L, 2) || !lua_isnumber(L,3))
+		if (lua_gettop(L) < 3 || !lua_isnumber(L, 1) || !lua_isnumber(L, 2) || !lua_isnumber(L, 3))
 		{
 			sys_err("not enough argument");
 			return 0;
 		}
 
-		long lMapIndex = (long)lua_tonumber(L,1);
+		long lMapIndex = (long)lua_tonumber(L, 1);
 
 		LPDUNGEON pDungeon = CDungeonManager::instance().Create(lMapIndex);
 
@@ -380,13 +380,13 @@ namespace quest
 
 	ALUA(dungeon_new_jump_party)
 	{
-		if (lua_gettop(L)<3 || !lua_isnumber(L,1) || !lua_isnumber(L, 2) || !lua_isnumber(L,3))
+		if (lua_gettop(L) < 3 || !lua_isnumber(L, 1) || !lua_isnumber(L, 2) || !lua_isnumber(L, 3))
 		{
 			sys_err("not enough argument");
 			return 0;
 		}
 
-		long lMapIndex = (long)lua_tonumber(L,1);
+		long lMapIndex = (long)lua_tonumber(L, 1);
 
 		LPDUNGEON pDungeon = CDungeonManager::instance().Create(lMapIndex);
 
@@ -400,7 +400,7 @@ namespace quest
 
 		if (ch->GetParty() == NULL)
 		{
-			sys_err ("cannot go to dungeon alone.");
+			sys_err("cannot go to dungeon alone.");
 			return 0;
 		}
 		pDungeon->JumpParty(ch->GetParty(), ch->GetMapIndex(), (int)lua_tonumber(L, 2), (int)lua_tonumber(L, 3));
@@ -410,7 +410,7 @@ namespace quest
 
 	ALUA(dungeon_jump_all)
 	{
-		if (lua_gettop(L)<2 || !lua_isnumber(L, 1) || !lua_isnumber(L,2))
+		if (lua_gettop(L) < 2 || !lua_isnumber(L, 1) || !lua_isnumber(L, 2))
 			return 0;
 
 		LPDUNGEON pDungeon = CQuestManager::instance().GetCurrentDungeon();
@@ -424,7 +424,7 @@ namespace quest
 
 	ALUA(dungeon_warp_all)
 	{
-		if (lua_gettop(L)<2 || !lua_isnumber(L, 1) || !lua_isnumber(L,2))
+		if (lua_gettop(L) < 2 || !lua_isnumber(L, 1) || !lua_isnumber(L, 2))
 			return 0;
 
 		LPDUNGEON pDungeon = CQuestManager::instance().GetCurrentDungeon();
@@ -438,7 +438,7 @@ namespace quest
 
 	ALUA(dungeon_get_kill_stone_count)
 	{
-		if (!lua_isnumber(L,1) || !lua_isnumber(L,2))
+		if (!lua_isnumber(L, 1) || !lua_isnumber(L, 2))
 		{
 			lua_pushnumber(L, 0);
 			return 1;
@@ -459,7 +459,7 @@ namespace quest
 
 	ALUA(dungeon_get_kill_mob_count)
 	{
-		if (!lua_isnumber(L,1) || !lua_isnumber(L,2))
+		if (!lua_isnumber(L, 1) || !lua_isnumber(L, 2))
 		{
 			lua_pushnumber(L, 0);
 			return 1;
@@ -501,7 +501,7 @@ namespace quest
 
 	ALUA(dungeon_revived)
 	{
-		if (!lua_isnumber(L,1) || !lua_isnumber(L,2))
+		if (!lua_isnumber(L, 1) || !lua_isnumber(L, 2))
 		{
 			lua_pushboolean(L, 1);
 			return 1;
@@ -522,7 +522,7 @@ namespace quest
 
 	ALUA(dungeon_set_dest)
 	{
-		if (!lua_isnumber(L,1) || !lua_isnumber(L,2))
+		if (!lua_isnumber(L, 1) || !lua_isnumber(L, 2))
 			return 0;
 
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
@@ -532,58 +532,58 @@ namespace quest
 		LPDUNGEON pDungeon = q.GetCurrentDungeon();
 
 		if (pDungeon && pParty)
-			pDungeon->SendDestPositionToParty(pParty, (int)lua_tonumber(L,1), (int)lua_tonumber(L,2));
+			pDungeon->SendDestPositionToParty(pParty, (int)lua_tonumber(L, 1), (int)lua_tonumber(L, 2));
 
 		return 0;
 	}
 
 	ALUA(dungeon_unique_set_maxhp)
 	{
-		if (!lua_isstring(L,1) || !lua_isnumber(L,2))
+		if (!lua_isstring(L, 1) || !lua_isnumber(L, 2))
 			return 0;
 
 		CQuestManager& q = CQuestManager::instance();
 		LPDUNGEON pDungeon = q.GetCurrentDungeon();
 
 		if (pDungeon)
-			pDungeon->UniqueSetMaxHP(lua_tostring(L,1), (int)lua_tonumber(L,2));
+			pDungeon->UniqueSetMaxHP(lua_tostring(L, 1), (int)lua_tonumber(L, 2));
 
 		return 0;
 	}
 
 	ALUA(dungeon_unique_set_hp)
 	{
-		if (!lua_isstring(L,1) || !lua_isnumber(L,2))
+		if (!lua_isstring(L, 1) || !lua_isnumber(L, 2))
 			return 0;
 
 		CQuestManager& q = CQuestManager::instance();
 		LPDUNGEON pDungeon = q.GetCurrentDungeon();
 
 		if (pDungeon)
-			pDungeon->UniqueSetHP(lua_tostring(L,1), (int)lua_tonumber(L,2));
+			pDungeon->UniqueSetHP(lua_tostring(L, 1), (int)lua_tonumber(L, 2));
 
 		return 0;
 	}
 
 	ALUA(dungeon_unique_set_def_grade)
 	{
-		if (!lua_isstring(L,1) || !lua_isnumber(L,2))
+		if (!lua_isstring(L, 1) || !lua_isnumber(L, 2))
 			return 0;
 
 		CQuestManager& q = CQuestManager::instance();
 		LPDUNGEON pDungeon = q.GetCurrentDungeon();
 
 		if (pDungeon)
-			pDungeon->UniqueSetDefGrade(lua_tostring(L,1), (int)lua_tonumber(L,2));
+			pDungeon->UniqueSetDefGrade(lua_tostring(L, 1), (int)lua_tonumber(L, 2));
 
 		return 0;
 	}
 
 	ALUA(dungeon_unique_get_hp_perc)
 	{
-		if (!lua_isstring(L,1))
+		if (!lua_isstring(L, 1))
 		{
-			lua_pushnumber(L,0);
+			lua_pushnumber(L, 0);
 			return 1;
 		}
 
@@ -592,17 +592,17 @@ namespace quest
 
 		if (pDungeon)
 		{
-			lua_pushnumber(L, pDungeon->GetUniqueHpPerc(lua_tostring(L,1)));
+			lua_pushnumber(L, pDungeon->GetUniqueHpPerc(lua_tostring(L, 1)));
 			return 1;
 		}
 
-		lua_pushnumber(L,0);
+		lua_pushnumber(L, 0);
 		return 1;
 	}
 
 	ALUA(dungeon_is_unique_dead)
 	{
-		if (!lua_isstring(L,1))
+		if (!lua_isstring(L, 1))
 		{
 			lua_pushboolean(L, 0);
 			return 1;
@@ -613,7 +613,7 @@ namespace quest
 
 		if (pDungeon)
 		{
-			lua_pushboolean(L, pDungeon->IsUniqueDead(lua_tostring(L,1))?1:0);
+			lua_pushboolean(L, pDungeon->IsUniqueDead(lua_tostring(L, 1)) ? 1 : 0);
 			return 1;
 		}
 
@@ -623,15 +623,15 @@ namespace quest
 
 	ALUA(dungeon_purge_unique)
 	{
-		if (!lua_isstring(L,1))
+		if (!lua_isstring(L, 1))
 			return 0;
-		sys_log(0,"QUEST_DUNGEON_PURGE_UNIQUE %s", lua_tostring(L,1));
+		sys_log(0, "QUEST_DUNGEON_PURGE_UNIQUE %s", lua_tostring(L, 1));
 
 		CQuestManager& q = CQuestManager::instance();
 		LPDUNGEON pDungeon = q.GetCurrentDungeon();
 
 		if (pDungeon)
-			pDungeon->PurgeUnique(lua_tostring(L,1));
+			pDungeon->PurgeUnique(lua_tostring(L, 1));
 
 		return 0;
 	}
@@ -644,7 +644,8 @@ namespace quest
 		FPurgeArea(int a, int b, int c, int d, LPCHARACTER p)
 			: x1(a), y1(b), x2(c), y2(d),
 			ExceptChar(p)
-		{}
+		{
+		}
 
 		void operator () (LPENTITY ent)
 		{
@@ -659,7 +660,7 @@ namespace quest
 #ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 					!pChar->IsMountSystem() &&
 #endif
-				(true == pChar->IsMonster() || true == pChar->IsStone()))
+					(true == pChar->IsMonster() || true == pChar->IsStone()))
 				{
 					if (x1 <= pChar->GetX() && pChar->GetX() <= x2 && y1 <= pChar->GetY() && pChar->GetY() <= y2)
 					{
@@ -672,9 +673,9 @@ namespace quest
 
 	ALUA(dungeon_purge_area)
 	{
-		if (!lua_isnumber(L,1) || !lua_isnumber(L,2) || !lua_isnumber(L,3) || !lua_isnumber(L,4))
+		if (!lua_isnumber(L, 1) || !lua_isnumber(L, 2) || !lua_isnumber(L, 3) || !lua_isnumber(L, 4))
 			return 0;
-		sys_log(0,"QUEST_DUNGEON_PURGE_AREA");
+		sys_log(0, "QUEST_DUNGEON_PURGE_AREA");
 
 		int x1 = lua_tonumber(L, 1);
 		int y1 = lua_tonumber(L, 2);
@@ -713,7 +714,8 @@ namespace quest
 		FKillArea(int a, int b, int c, int d, LPCHARACTER p)
 			: x1(a), y1(b), x2(c), y2(d),
 			ExceptChar(p)
-		{}
+		{
+		}
 
 		void operator () (LPENTITY ent)
 		{
@@ -738,9 +740,9 @@ namespace quest
 
 	ALUA(dungeon_kill_area)
 	{
-		if (!lua_isnumber(L,1) || !lua_isnumber(L,2) || !lua_isnumber(L,3) || !lua_isnumber(L,4))
+		if (!lua_isnumber(L, 1) || !lua_isnumber(L, 2) || !lua_isnumber(L, 3) || !lua_isnumber(L, 4))
 			return 0;
-		sys_log(0,"QUEST_DUNGEON_KILL_AREA");
+		sys_log(0, "QUEST_DUNGEON_KILL_AREA");
 
 		int x1 = lua_tonumber(L, 1);
 		int y1 = lua_tonumber(L, 2);
@@ -773,105 +775,105 @@ namespace quest
 
 	ALUA(dungeon_kill_unique)
 	{
-		if (!lua_isstring(L,1))
+		if (!lua_isstring(L, 1))
 			return 0;
-		sys_log(0,"QUEST_DUNGEON_KILL_UNIQUE %s", lua_tostring(L,1));
+		sys_log(0, "QUEST_DUNGEON_KILL_UNIQUE %s", lua_tostring(L, 1));
 
 		CQuestManager& q = CQuestManager::instance();
 		LPDUNGEON pDungeon = q.GetCurrentDungeon();
 
 		if (pDungeon)
-			pDungeon->KillUnique(lua_tostring(L,1));
+			pDungeon->KillUnique(lua_tostring(L, 1));
 
 		return 0;
 	}
 
 	ALUA(dungeon_spawn_stone_door)
 	{
-		if (!lua_isstring(L,1) || !lua_isstring(L,2))
+		if (!lua_isstring(L, 1) || !lua_isstring(L, 2))
 			return 0;
-		sys_log(0,"QUEST_DUNGEON_SPAWN_STONE_DOOR %s %s", lua_tostring(L,1), lua_tostring(L,2));
+		sys_log(0, "QUEST_DUNGEON_SPAWN_STONE_DOOR %s %s", lua_tostring(L, 1), lua_tostring(L, 2));
 
 		CQuestManager& q = CQuestManager::instance();
 		LPDUNGEON pDungeon = q.GetCurrentDungeon();
 
 		if (pDungeon)
-			pDungeon->SpawnStoneDoor(lua_tostring(L,1), lua_tostring(L,2));
+			pDungeon->SpawnStoneDoor(lua_tostring(L, 1), lua_tostring(L, 2));
 
 		return 0;
 	}
 
 	ALUA(dungeon_spawn_wooden_door)
 	{
-		if (!lua_isstring(L,1) || !lua_isstring(L,2))
+		if (!lua_isstring(L, 1) || !lua_isstring(L, 2))
 			return 0;
-		sys_log(0,"QUEST_DUNGEON_SPAWN_WOODEN_DOOR %s %s", lua_tostring(L,1), lua_tostring(L,2));
+		sys_log(0, "QUEST_DUNGEON_SPAWN_WOODEN_DOOR %s %s", lua_tostring(L, 1), lua_tostring(L, 2));
 
 		CQuestManager& q = CQuestManager::instance();
 		LPDUNGEON pDungeon = q.GetCurrentDungeon();
 
 		if (pDungeon)
-			pDungeon->SpawnWoodenDoor(lua_tostring(L,1), lua_tostring(L,2));
+			pDungeon->SpawnWoodenDoor(lua_tostring(L, 1), lua_tostring(L, 2));
 
 		return 0;
 	}
 
 	ALUA(dungeon_spawn_move_group)
 	{
-		if (!lua_isnumber(L,1) || !lua_isstring(L,2) || !lua_isstring(L,3))
+		if (!lua_isnumber(L, 1) || !lua_isstring(L, 2) || !lua_isstring(L, 3))
 			return 0;
-		sys_log(0,"QUEST_DUNGEON_SPAWN_MOVE_GROUP %d %s %s", (int)lua_tonumber(L,1), lua_tostring(L,2), lua_tostring(L,3));
+		sys_log(0, "QUEST_DUNGEON_SPAWN_MOVE_GROUP %d %s %s", (int)lua_tonumber(L, 1), lua_tostring(L, 2), lua_tostring(L, 3));
 
 		CQuestManager& q = CQuestManager::instance();
 		LPDUNGEON pDungeon = q.GetCurrentDungeon();
 
 		if (pDungeon)
-			pDungeon->SpawnMoveGroup((DWORD)lua_tonumber(L,1), lua_tostring(L,2), lua_tostring(L,3));
+			pDungeon->SpawnMoveGroup((DWORD)lua_tonumber(L, 1), lua_tostring(L, 2), lua_tostring(L, 3));
 
 		return 0;
 	}
 
 	ALUA(dungeon_spawn_move_unique)
 	{
-		if (!lua_isstring(L,1) || !lua_isnumber(L,2) || !lua_isstring(L,3) || !lua_isstring(L,4))
+		if (!lua_isstring(L, 1) || !lua_isnumber(L, 2) || !lua_isstring(L, 3) || !lua_isstring(L, 4))
 			return 0;
-		sys_log(0,"QUEST_DUNGEON_SPAWN_MOVE_UNIQUE %s %d %s %s", lua_tostring(L,1), (int)lua_tonumber(L,2), lua_tostring(L,3), lua_tostring(L,4));
+		sys_log(0, "QUEST_DUNGEON_SPAWN_MOVE_UNIQUE %s %d %s %s", lua_tostring(L, 1), (int)lua_tonumber(L, 2), lua_tostring(L, 3), lua_tostring(L, 4));
 
 		CQuestManager& q = CQuestManager::instance();
 		LPDUNGEON pDungeon = q.GetCurrentDungeon();
 
 		if (pDungeon)
-			pDungeon->SpawnMoveUnique(lua_tostring(L,1), (DWORD)lua_tonumber(L,2), lua_tostring(L,3), lua_tostring(L,4));
+			pDungeon->SpawnMoveUnique(lua_tostring(L, 1), (DWORD)lua_tonumber(L, 2), lua_tostring(L, 3), lua_tostring(L, 4));
 
 		return 0;
 	}
 
 	ALUA(dungeon_spawn_unique)
 	{
-		if (!lua_isstring(L,1) || !lua_isnumber(L,2) || !lua_isstring(L,3))
+		if (!lua_isstring(L, 1) || !lua_isnumber(L, 2) || !lua_isstring(L, 3))
 			return 0;
-		sys_log(0,"QUEST_DUNGEON_SPAWN_UNIQUE %s %d %s", lua_tostring(L,1), (int)lua_tonumber(L,2), lua_tostring(L,3));
+		sys_log(0, "QUEST_DUNGEON_SPAWN_UNIQUE %s %d %s", lua_tostring(L, 1), (int)lua_tonumber(L, 2), lua_tostring(L, 3));
 
 		CQuestManager& q = CQuestManager::instance();
 		LPDUNGEON pDungeon = q.GetCurrentDungeon();
 
 		if (pDungeon)
-			pDungeon->SpawnUnique(lua_tostring(L,1), (DWORD)lua_tonumber(L,2), lua_tostring(L,3));
+			pDungeon->SpawnUnique(lua_tostring(L, 1), (DWORD)lua_tonumber(L, 2), lua_tostring(L, 3));
 
 		return 0;
 	}
 
 	ALUA(dungeon_spawn)
 	{
-		if (!lua_isnumber(L,1) || !lua_isstring(L,2))
+		if (!lua_isnumber(L, 1) || !lua_isstring(L, 2))
 			return 0;
-		sys_log(0,"QUEST_DUNGEON_SPAWN %d %s", (int)lua_tonumber(L,1), lua_tostring(L,2));
+		sys_log(0, "QUEST_DUNGEON_SPAWN %d %s", (int)lua_tonumber(L, 1), lua_tostring(L, 2));
 
 		CQuestManager& q = CQuestManager::instance();
 		LPDUNGEON pDungeon = q.GetCurrentDungeon();
 
 		if (pDungeon)
-			pDungeon->Spawn((DWORD)lua_tonumber(L,1), lua_tostring(L,2));
+			pDungeon->Spawn((DWORD)lua_tonumber(L, 1), lua_tostring(L, 2));
 
 		return 0;
 	}
@@ -884,7 +886,7 @@ namespace quest
 		CQuestManager& q = CQuestManager::instance();
 		LPDUNGEON pDungeon = q.GetCurrentDungeon();
 
-		DWORD vid = (DWORD) lua_tonumber(L, 2);
+		DWORD vid = (DWORD)lua_tonumber(L, 2);
 
 		if (pDungeon)
 			pDungeon->SetUnique(lua_tostring(L, 1), vid);
@@ -897,7 +899,7 @@ namespace quest
 		CQuestManager& q = CQuestManager::instance();
 		LPDUNGEON pDungeon = q.GetCurrentDungeon();
 
-		lua_pushboolean(L, pDungeon!=NULL);
+		lua_pushboolean(L, pDungeon != NULL);
 		return 1;
 	}
 
@@ -913,9 +915,9 @@ namespace quest
 
 	ALUA(dungeon_get_unique_vid)
 	{
-		if (!lua_isstring(L,1))
+		if (!lua_isstring(L, 1))
 		{
-			lua_pushnumber(L,0);
+			lua_pushnumber(L, 0);
 			return 1;
 		}
 
@@ -924,11 +926,11 @@ namespace quest
 
 		if (pDungeon)
 		{
-			lua_pushnumber(L, pDungeon->GetUniqueVid(lua_tostring(L,1)));
+			lua_pushnumber(L, pDungeon->GetUniqueVid(lua_tostring(L, 1)));
 			return 1;
 		}
 
-		lua_pushnumber(L,0);
+		lua_pushnumber(L, 0);
 		return 1;
 	}
 
@@ -947,20 +949,20 @@ namespace quest
 
 		if (pDungeon)
 		{
-			DWORD dwVnum = (DWORD) lua_tonumber(L, 1);
-			long x = (long) lua_tonumber(L, 2);
-			long y = (long) lua_tonumber(L, 3);
-			float radius = lua_isnumber(L, 4) ? (float) lua_tonumber(L, 4) : 0;
-			DWORD count = (lua_isnumber(L, 5)) ? (DWORD) lua_tonumber(L, 5) : 1;
+			DWORD dwVnum = (DWORD)lua_tonumber(L, 1);
+			long x = (long)lua_tonumber(L, 2);
+			long y = (long)lua_tonumber(L, 3);
+			float radius = lua_isnumber(L, 4) ? (float)lua_tonumber(L, 4) : 0;
+			DWORD count = (lua_isnumber(L, 5)) ? (DWORD)lua_tonumber(L, 5) : 1;
 
 			sys_log(0, "dungeon_spawn_mob %u %d %d", dwVnum, x, y);
 
 			if (count == 0)
 				count = 1;
 
-			while (count --)
+			while (count--)
 			{
-				if (radius<1)
+				if (radius < 1)
 				{
 					LPCHARACTER ch = pDungeon->SpawnMob(dwVnum, x, y);
 					if (ch && !vid)
@@ -1000,10 +1002,10 @@ namespace quest
 
 		if (pDungeon)
 		{
-			DWORD dwVnum = (DWORD) lua_tonumber(L, 1);
-			long x = (long) lua_tonumber(L, 2);
-			long y = (long) lua_tonumber(L, 3);
-			BYTE dir = (int) lua_tonumber(L, 4);
+			DWORD dwVnum = (DWORD)lua_tonumber(L, 1);
+			long x = (long)lua_tonumber(L, 2);
+			long y = (long)lua_tonumber(L, 3);
+			BYTE dir = (int)lua_tonumber(L, 4);
 
 			LPCHARACTER ch = pDungeon->SpawnMob(dwVnum, x, y, dir);
 			if (ch && !vid)
@@ -1028,10 +1030,10 @@ namespace quest
 
 		if (pDungeon)
 		{
-			DWORD dwVnum = (DWORD) lua_tonumber(L, 1);
-			long x = (long) lua_tonumber(L, 2);
-			long y = (long) lua_tonumber(L, 3);
-			BYTE dir = (int) lua_tonumber(L, 4);
+			DWORD dwVnum = (DWORD)lua_tonumber(L, 1);
+			long x = (long)lua_tonumber(L, 2);
+			long y = (long)lua_tonumber(L, 3);
+			BYTE dir = (int)lua_tonumber(L, 4);
 
 			LPCHARACTER ch = pDungeon->SpawnMob_ac_dir(dwVnum, x, y, dir);
 			if (ch && !vid)
@@ -1048,8 +1050,8 @@ namespace quest
 
 		long lFromX = (long)lua_tonumber(L, 1);
 		long lFromY = (long)lua_tonumber(L, 2);
-		long lToX   = (long)lua_tonumber(L, 3);
-		long lToY   = (long)lua_tonumber(L, 4);
+		long lToX = (long)lua_tonumber(L, 3);
+		long lToY = (long)lua_tonumber(L, 4);
 
 		CQuestManager& q = CQuestManager::instance();
 		LPDUNGEON pDungeon = q.GetCurrentDungeon();
@@ -1070,7 +1072,7 @@ namespace quest
 
 		if (pDungeon)
 		{
-			DWORD dwVnum = (DWORD) lua_tonumber(L, 1);
+			DWORD dwVnum = (DWORD)lua_tonumber(L, 1);
 			long x = (long)lua_tonumber(L, 2);
 			long y = (long)lua_tonumber(L, 3);
 			pDungeon->SpawnNameMob(dwVnum, x, y, lua_tostring(L, 4));
@@ -1096,11 +1098,11 @@ namespace quest
 		if (pDungeon)
 		{
 			DWORD group_vnum = (DWORD)lua_tonumber(L, 1);
-			long local_x = (long) lua_tonumber(L, 2) * 100;
-			long local_y = (long) lua_tonumber(L, 3) * 100;
-			float radius = (float) lua_tonumber(L, 4) * 100;
+			long local_x = (long)lua_tonumber(L, 2) * 100;
+			long local_y = (long)lua_tonumber(L, 3) * 100;
+			float radius = (float)lua_tonumber(L, 4) * 100;
 			bool bAggressive = lua_toboolean(L, 5);
-			DWORD count = (DWORD) lua_tonumber(L, 6);
+			DWORD count = (DWORD)lua_tonumber(L, 6);
 
 			LPCHARACTER chRet = pDungeon->SpawnGroup(group_vnum, local_x, local_y, radius, bAggressive, count);
 			if (chRet)
@@ -1160,7 +1162,7 @@ namespace quest
 		{
 			if (ent->IsType(ENTITY_CHARACTER))
 			{
-				LPCHARACTER ch = (LPCHARACTER) ent;
+				LPCHARACTER ch = (LPCHARACTER)ent;
 
 				if (ch->IsPC())
 				{
@@ -1169,7 +1171,7 @@ namespace quest
 
 					for (CDungeon::ItemGroup::const_iterator it = item_group->begin(); it != item_group->end(); it++)
 					{
-						if(ch->CountSpecifyItem(it->first) >= it->second)
+						if (ch->CountSpecifyItem(it->first) >= it->second)
 						{
 							packet_script.header = HEADER_GC_SCRIPT;
 							packet_script.skin = quest::CQuestManager::QUEST_SKIN_NORMAL;
@@ -1205,15 +1207,15 @@ namespace quest
 		}
 
 		CQuestManager& q = CQuestManager::instance();
-		CDungeon * pDungeon = q.GetCurrentDungeon();
+		CDungeon* pDungeon = q.GetCurrentDungeon();
 
-		if(!pDungeon)
+		if (!pDungeon)
 		{
 			sys_err("QUEST : no dungeon");
 			return 0;
 		}
 
-		SECTREE_MAP * pMap = SECTREE_MANAGER::instance().GetMap(pDungeon->GetMapIndex());
+		SECTREE_MAP* pMap = SECTREE_MANAGER::instance().GetMap(pDungeon->GetMapIndex());
 
 		if (!pMap)
 		{
@@ -1221,23 +1223,23 @@ namespace quest
 			return 0;
 		}
 		FSayDungeonByItemGroup f;
-		sys_log (0,"diff_by_item");
+		sys_log(0, "diff_by_item");
 
-		std::string group_name (lua_tostring (L, 1));
-		f.item_group = pDungeon->GetItemGroup (group_name);
+		std::string group_name(lua_tostring(L, 1));
+		f.item_group = pDungeon->GetItemGroup(group_name);
 
 		if (f.item_group == NULL)
 		{
-			sys_err ("invalid item group");
+			sys_err("invalid item group");
 			return 0;
 		}
 
 		f.can_enter_ment = lua_tostring(L, 2);
-		f.can_enter_ment+= "[ENTER][ENTER][ENTER][ENTER][DONE]";
+		f.can_enter_ment += "[ENTER][ENTER][ENTER][ENTER][DONE]";
 		f.cant_enter_ment = lua_tostring(L, 3);
-		f.cant_enter_ment+= "[ENTER][ENTER][ENTER][ENTER][DONE]";
+		f.cant_enter_ment += "[ENTER][ENTER][ENTER][ENTER][DONE]";
 
-		pMap -> for_each( f );
+		pMap->for_each(f);
 
 		return 0;
 	}
@@ -1250,13 +1252,13 @@ namespace quest
 		{
 			if (ent->IsType(ENTITY_CHARACTER))
 			{
-				LPCHARACTER ch = (LPCHARACTER) ent;
+				LPCHARACTER ch = (LPCHARACTER)ent;
 
 				if (ch->IsPC())
 				{
 					for (CDungeon::ItemGroup::const_iterator it = item_group->begin(); it != item_group->end(); it++)
 					{
-						if(ch->CountSpecifyItem(it->first) >= it->second)
+						if (ch->CountSpecifyItem(it->first) >= it->second)
 						{
 							return;
 						}
@@ -1276,15 +1278,15 @@ namespace quest
 		}
 
 		CQuestManager& q = CQuestManager::instance();
-		CDungeon * pDungeon = q.GetCurrentDungeon();
+		CDungeon* pDungeon = q.GetCurrentDungeon();
 
-		if(!pDungeon)
+		if (!pDungeon)
 		{
 			sys_err("QUEST : no dungeon");
 			return 0;
 		}
 
-		SECTREE_MAP * pMap = SECTREE_MANAGER::instance().GetMap(pDungeon->GetMapIndex());
+		SECTREE_MAP* pMap = SECTREE_MANAGER::instance().GetMap(pDungeon->GetMapIndex());
 
 		if (!pMap)
 		{
@@ -1293,16 +1295,16 @@ namespace quest
 		}
 		FExitDungeonByItemGroup f;
 
-		std::string group_name (lua_tostring (L, 1));
-		f.item_group = pDungeon->GetItemGroup (group_name);
+		std::string group_name(lua_tostring(L, 1));
+		f.item_group = pDungeon->GetItemGroup(group_name);
 
 		if (f.item_group == NULL)
 		{
-			sys_err ("invalid item group");
+			sys_err("invalid item group");
 			return 0;
 		}
 
-		pMap -> for_each( f );
+		pMap->for_each(f);
 
 		return 0;
 	}
@@ -1315,15 +1317,15 @@ namespace quest
 		{
 			if (ent->IsType(ENTITY_CHARACTER))
 			{
-				LPCHARACTER ch = (LPCHARACTER) ent;
+				LPCHARACTER ch = (LPCHARACTER)ent;
 
 				if (ch->IsPC())
 				{
 					for (CDungeon::ItemGroup::const_iterator it = item_group->begin(); it != item_group->end(); it++)
 					{
-						if(ch->CountSpecifyItem(it->first) >= it->second)
+						if (ch->CountSpecifyItem(it->first) >= it->second)
 						{
-							ch->RemoveSpecifyItem (it->first, it->second);
+							ch->RemoveSpecifyItem(it->first, it->second);
 							return;
 						}
 					}
@@ -1341,15 +1343,15 @@ namespace quest
 		}
 
 		CQuestManager& q = CQuestManager::instance();
-		CDungeon * pDungeon = q.GetCurrentDungeon();
+		CDungeon* pDungeon = q.GetCurrentDungeon();
 
-		if(!pDungeon)
+		if (!pDungeon)
 		{
 			sys_err("QUEST : no dungeon");
 			return 0;
 		}
 
-		SECTREE_MAP * pMap = SECTREE_MANAGER::instance().GetMap(pDungeon->GetMapIndex());
+		SECTREE_MAP* pMap = SECTREE_MANAGER::instance().GetMap(pDungeon->GetMapIndex());
 
 		if (!pMap)
 		{
@@ -1358,16 +1360,16 @@ namespace quest
 		}
 		FDeleteItemInItemGroup f;
 
-		std::string group_name (lua_tostring (L, 1));
-		f.item_group = pDungeon->GetItemGroup (group_name);
+		std::string group_name(lua_tostring(L, 1));
+		f.item_group = pDungeon->GetItemGroup(group_name);
 
 		if (f.item_group == NULL)
 		{
-			sys_err ("invalid item group");
+			sys_err("invalid item group");
 			return 0;
 		}
 
-		pMap -> for_each( f );
+		pMap->for_each(f);
 
 		return 0;
 	}
@@ -1423,7 +1425,7 @@ namespace quest
 
 	ALUA(dungeon_select)
 	{
-		DWORD dwMapIndex = (DWORD) lua_tonumber(L, 1);
+		DWORD dwMapIndex = (DWORD)lua_tonumber(L, 1);
 		if (dwMapIndex)
 		{
 			LPDUNGEON pDungeon = CDungeonManager::instance().FindByMapIndex(dwMapIndex);
@@ -1448,7 +1450,7 @@ namespace quest
 
 	ALUA(dungeon_find)
 	{
-		DWORD dwMapIndex = (DWORD) lua_tonumber(L, 1);
+		DWORD dwMapIndex = (DWORD)lua_tonumber(L, 1);
 		if (dwMapIndex)
 		{
 			LPDUNGEON pDungeon = CDungeonManager::instance().FindByMapIndex(dwMapIndex);
@@ -1474,7 +1476,7 @@ namespace quest
 
 		if (pDungeon != NULL)
 		{
-			lua_pushboolean(L, pDungeon->IsAllPCNearTo( (int)lua_tonumber(L, 1), (int)lua_tonumber(L, 2), 30));
+			lua_pushboolean(L, pDungeon->IsAllPCNearTo((int)lua_tonumber(L, 1), (int)lua_tonumber(L, 2), 30));
 		}
 		else
 		{
@@ -1493,35 +1495,35 @@ namespace quest
 			return 0;
 		}
 
-		if (lua_gettop(L)<3 || !lua_isnumber(L, 1) || !lua_isnumber(L,2) || !lua_isnumber(L, 3))
+		if (lua_gettop(L) < 3 || !lua_isnumber(L, 1) || !lua_isnumber(L, 2) || !lua_isnumber(L, 3))
 		{
 			return 0;
 		}
 
-		FSetWarpLocation f ((int)lua_tonumber(L, 1), (int)lua_tonumber(L, 2), (int)lua_tonumber(L, 3));
-		pDungeon->ForEachMember (f);
+		FSetWarpLocation f((int)lua_tonumber(L, 1), (int)lua_tonumber(L, 2), (int)lua_tonumber(L, 3));
+		pDungeon->ForEachMember(f);
 
 		return 0;
 	}
 
 	ALUA(dungeon_set_item_group)
 	{
-		if (!lua_isstring (L, 1) || !lua_isnumber (L, 2))
+		if (!lua_isstring(L, 1) || !lua_isnumber(L, 2))
 		{
 			return 0;
 		}
-		std::string group_name (lua_tostring (L, 1));
-		int size = lua_tonumber (L, 2);
+		std::string group_name(lua_tostring(L, 1));
+		int size = lua_tonumber(L, 2);
 
 		CDungeon::ItemGroup item_group;
 
 		for (int i = 0; i < size; i++)
 		{
-			if (!lua_isnumber (L, i * 2 + 3) || !lua_isnumber (L, i * 2 + 4))
+			if (!lua_isnumber(L, i * 2 + 3) || !lua_isnumber(L, i * 2 + 4))
 			{
 				return 0;
 			}
-			item_group.emplace_back(lua_tonumber (L, i * 2 + 3), lua_tonumber (L, i * 2 + 4));
+			item_group.emplace_back(lua_tonumber(L, i * 2 + 3), lua_tonumber(L, i * 2 + 4));
 		}
 		LPDUNGEON pDungeon = CQuestManager::instance().GetCurrentDungeon();
 
@@ -1530,13 +1532,13 @@ namespace quest
 			return 0;
 		}
 
-		pDungeon->CreateItemGroup (group_name, item_group);
+		pDungeon->CreateItemGroup(group_name, item_group);
 		return 0;
 	}
 
 	ALUA(dungeon_set_quest_flag2)
 	{
-		CQuestManager & q = CQuestManager::instance();
+		CQuestManager& q = CQuestManager::instance();
 
 		FSetQuestFlag f;
 
@@ -1545,8 +1547,8 @@ namespace quest
 			sys_err("Invalid Argument");
 		}
 
-		f.flagname = string (lua_tostring(L, 1)) + "." + lua_tostring(L, 2);
-		f.value = (int) rint(lua_tonumber(L, 3));
+		f.flagname = string(lua_tostring(L, 1)) + "." + lua_tostring(L, 2);
+		f.value = (int)rint(lua_tonumber(L, 3));
 
 		LPDUNGEON pDungeon = q.GetCurrentDungeon();
 

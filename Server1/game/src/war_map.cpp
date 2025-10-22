@@ -17,41 +17,41 @@
 EVENTINFO(war_map_info)
 {
 	int iStep;
-	CWarMap * pWarMap;
+	CWarMap* pWarMap;
 
 	war_map_info()
-	: iStep( 0 )
-	, pWarMap( 0 )
+		: iStep(0)
+		, pWarMap(0)
 	{
 	}
 };
 
 EVENTFUNC(war_begin_event)
 {
-	war_map_info* info = dynamic_cast<war_map_info*>( event->info );
+	war_map_info* info = dynamic_cast<war_map_info*>(event->info);
 
-	if ( info == NULL )
+	if (info == NULL)
 	{
-		sys_err( "war_begin_event> <Factor> Null pointer" );
+		sys_err("war_begin_event> <Factor> Null pointer");
 		return 0;
 	}
 
-	CWarMap * pMap = info->pWarMap;
+	CWarMap* pMap = info->pWarMap;
 	pMap->CheckWarEnd();
 	return PASSES_PER_SEC(10);
 }
 
 EVENTFUNC(war_end_event)
 {
-	war_map_info* info = dynamic_cast<war_map_info*>( event->info );
+	war_map_info* info = dynamic_cast<war_map_info*>(event->info);
 
-	if ( info == NULL )
+	if (info == NULL)
 	{
-		sys_err( "war_end_event> <Factor> Null pointer" );
+		sys_err("war_end_event> <Factor> Null pointer");
 		return 0;
 	}
 
-	CWarMap * pMap = info->pWarMap;
+	CWarMap* pMap = info->pWarMap;
 
 	if (info->iStep == 0)
 	{
@@ -69,15 +69,15 @@ EVENTFUNC(war_end_event)
 
 EVENTFUNC(war_timeout_event)
 {
-	war_map_info* info = dynamic_cast<war_map_info*>( event->info );
+	war_map_info* info = dynamic_cast<war_map_info*>(event->info);
 
-	if ( info == NULL )
+	if (info == NULL)
 	{
-		sys_err( "war_timeout_event> <Factor> Null pointer" );
+		sys_err("war_timeout_event> <Factor> Null pointer");
 		return 0;
 	}
 
-	CWarMap * pMap = info->pWarMap;
+	CWarMap* pMap = info->pWarMap;
 	pMap->Timeout();
 	return 0;
 }
@@ -95,7 +95,7 @@ void CWarMap::STeamData::Initialize()
 	set_pidJoiner.clear();
 }
 
-CWarMap::CWarMap(long lMapIndex, const TGuildWarInfo & r_info, TWarMapInfo * pkWarMapInfo, DWORD dwGuildID1, DWORD dwGuildID2)
+CWarMap::CWarMap(long lMapIndex, const TGuildWarInfo& r_info, TWarMapInfo* pkWarMapInfo, DWORD dwGuildID1, DWORD dwGuildID2)
 {
 	m_kMapInfo = *pkWarMapInfo;
 	m_kMapInfo.lMapIndex = lMapIndex;
@@ -196,7 +196,7 @@ void CWarMap::SetResetFlagEvent(LPEVENT pkEv)
 	}
 }
 
-bool CWarMap::GetTeamIndex(DWORD dwGuildID, BYTE & bIdx)
+bool CWarMap::GetTeamIndex(DWORD dwGuildID, BYTE& bIdx)
 {
 	if (m_TeamData[0].dwID == dwGuildID)
 	{
@@ -218,7 +218,7 @@ DWORD CWarMap::GetGuildID(BYTE bIdx)
 	return m_TeamData[bIdx].dwID;
 }
 
-CGuild * CWarMap::GetGuild(BYTE bIdx)
+CGuild* CWarMap::GetGuild(BYTE bIdx)
 {
 	return m_TeamData[bIdx].pkGuild;
 }
@@ -328,11 +328,11 @@ struct FSendUserCount
 void CWarMap::UpdateUserCount()
 {
 	FSendUserCount f(
-			m_TeamData[0].dwID,
-			m_TeamData[0].GetAccumulatedJoinerCount(),
-			m_TeamData[1].dwID,
-			m_TeamData[1].GetAccumulatedJoinerCount(),
-			m_iObserverCount);
+		m_TeamData[0].dwID,
+		m_TeamData[0].GetAccumulatedJoinerCount(),
+		m_TeamData[1].dwID,
+		m_TeamData[1].GetAccumulatedJoinerCount(),
+		m_iObserverCount);
 
 	std::for_each(m_set_pkChr.begin(), m_set_pkChr.end(), f);
 }
@@ -361,19 +361,17 @@ void CWarMap::IncMember(LPCHARACTER ch)
 		if (gid == m_TeamData[0].dwID)
 		{
 			m_TeamData[0].AppendMember(ch);
-
 		}
 		else if (gid == m_TeamData[1].dwID)
 		{
 			m_TeamData[1].AppendMember(ch);
-
 		}
 
 		event_cancel(&m_pkTimeoutEvent);
 
 		sys_log(0, "WarMap +m %u(cur:%d, acc:%d) vs %u(cur:%d, acc:%d)",
-				m_TeamData[0].dwID, m_TeamData[0].GetCurJointerCount(), m_TeamData[0].GetAccumulatedJoinerCount(),
-				m_TeamData[1].dwID, m_TeamData[1].GetCurJointerCount(), m_TeamData[1].GetAccumulatedJoinerCount());
+			m_TeamData[0].dwID, m_TeamData[0].GetCurJointerCount(), m_TeamData[0].GetAccumulatedJoinerCount(),
+			m_TeamData[1].dwID, m_TeamData[1].GetCurJointerCount(), m_TeamData[1].GetAccumulatedJoinerCount());
 	}
 	else
 	{
@@ -415,7 +413,7 @@ void CWarMap::DecMember(LPCHARACTER ch)
 
 		if (m_kMapInfo.bType == WAR_MAP_TYPE_FLAG)
 		{
-			CAffect * pkAff = ch->FindAffect(AFFECT_WAR_FLAG);
+			CAffect* pkAff = ch->FindAffect(AFFECT_WAR_FLAG);
 
 			if (pkAff)
 			{
@@ -429,8 +427,8 @@ void CWarMap::DecMember(LPCHARACTER ch)
 		}
 
 		sys_log(0, "WarMap -m %u(cur:%d, acc:%d) vs %u(cur:%d, acc:%d)",
-				m_TeamData[0].dwID, m_TeamData[0].GetCurJointerCount(), m_TeamData[0].GetAccumulatedJoinerCount(),
-				m_TeamData[1].dwID, m_TeamData[1].GetCurJointerCount(), m_TeamData[1].GetAccumulatedJoinerCount());
+			m_TeamData[0].dwID, m_TeamData[0].GetCurJointerCount(), m_TeamData[0].GetAccumulatedJoinerCount(),
+			m_TeamData[1].dwID, m_TeamData[1].GetCurJointerCount(), m_TeamData[1].GetAccumulatedJoinerCount());
 
 		CheckWarEnd();
 		ch->SetQuestFlag("war.is_war_member", 0);
@@ -550,9 +548,9 @@ void CWarMap::Timeout()
 			}
 
 			sys_err("WarMap: member count is not zero, guild1 %u %d guild2 %u %d, winner %u",
-					m_TeamData[0].dwID, m_TeamData[0].iMemberCount,
-					m_TeamData[1].dwID, m_TeamData[1].iMemberCount,
-					dwWinner);
+				m_TeamData[0].dwID, m_TeamData[0].iMemberCount,
+				m_TeamData[1].dwID, m_TeamData[1].iMemberCount,
+				dwWinner);
 		}
 		else
 		{
@@ -564,7 +562,7 @@ void CWarMap::Timeout()
 	}
 
 	sys_log(0, "WarMap: Timeout %u %u winner %u loser %u reward %d map %d",
-			m_TeamData[0].dwID, m_TeamData[1].dwID, dwWinner, dwLoser, iRewardGold, m_kMapInfo.lMapIndex);
+		m_TeamData[0].dwID, m_TeamData[1].dwID, dwWinner, dwLoser, iRewardGold, m_kMapInfo.lMapIndex);
 
 	if (dwWinner)
 		CGuildManager::instance().RequestWarOver(dwWinner, dwLoser, dwWinner, iRewardGold);
@@ -578,7 +576,7 @@ namespace
 {
 	struct FPacket
 	{
-		FPacket(const void * p, int size) : m_pvData(p), m_iSize(size)
+		FPacket(const void* p, int size) : m_pvData(p), m_iSize(size)
 		{
 		}
 
@@ -587,13 +585,13 @@ namespace
 			ch->GetDesc()->Packet(m_pvData, m_iSize);
 		}
 
-		const void * m_pvData;
+		const void* m_pvData;
 		int m_iSize;
 	};
 
 	struct FNotice
 	{
-		FNotice(const char * psz) : m_psz(psz)
+		FNotice(const char* psz) : m_psz(psz)
 		{
 		}
 
@@ -602,17 +600,17 @@ namespace
 			ch->ChatPacket(CHAT_TYPE_NOTICE, "%s", m_psz);
 		}
 
-		const char * m_psz;
+		const char* m_psz;
 	};
 };
 
-void CWarMap::Notice(const char * psz)
+void CWarMap::Notice(const char* psz)
 {
 	FNotice f(psz);
 	std::for_each(m_set_pkChr.begin(), m_set_pkChr.end(), f);
 }
 
-void CWarMap::Packet(const void * p, int size)
+void CWarMap::Packet(const void* p, int size)
 {
 	FPacket f(p, size);
 	std::for_each(m_set_pkChr.begin(), m_set_pkChr.end(), f);
@@ -623,14 +621,14 @@ void CWarMap::SendWarPacket(LPDESC d)
 	TPacketGCGuild pack;
 	TPacketGCGuildWar pack2;
 
-	pack.header		= HEADER_GC_GUILD;
-	pack.subheader	= GUILD_SUBHEADER_GC_WAR;
-	pack.size		= sizeof(pack) + sizeof(pack2);
+	pack.header = HEADER_GC_GUILD;
+	pack.subheader = GUILD_SUBHEADER_GC_WAR;
+	pack.size = sizeof(pack) + sizeof(pack2);
 
-	pack2.dwGuildSelf	= m_TeamData[0].dwID;
-	pack2.dwGuildOpp	= m_TeamData[1].dwID;
-	pack2.bType		= CGuildManager::instance().TouchGuild(m_TeamData[0].dwID)->GetGuildWarType(m_TeamData[1].dwID);
-	pack2.bWarState	= CGuildManager::instance().TouchGuild(m_TeamData[0].dwID)->GetGuildWarState(m_TeamData[1].dwID);
+	pack2.dwGuildSelf = m_TeamData[0].dwID;
+	pack2.dwGuildOpp = m_TeamData[1].dwID;
+	pack2.bType = CGuildManager::instance().TouchGuild(m_TeamData[0].dwID)->GetGuildWarType(m_TeamData[1].dwID);
+	pack2.bWarState = CGuildManager::instance().TouchGuild(m_TeamData[0].dwID)->GetGuildWarState(m_TeamData[1].dwID);
 
 	d->BufferedPacket(&pack, sizeof(pack));
 	d->Packet(&pack2, sizeof(pack2));
@@ -720,13 +718,13 @@ bool CWarMap::CheckScore()
 		iRewardGold = GetRewardGold(1);
 
 	sys_log(0, "WarMap::CheckScore end score %d guild1 %u score guild2 %d %u score %d winner %u reward %d",
-			iEndScore,
-			m_TeamData[0].dwID,
-			m_TeamData[0].iScore,
-			m_TeamData[1].dwID,
-			m_TeamData[1].iScore,
-			dwWinner,
-			iRewardGold);
+		iEndScore,
+		m_TeamData[0].dwID,
+		m_TeamData[0].iScore,
+		m_TeamData[1].dwID,
+		m_TeamData[1].iScore,
+		dwWinner,
+		iRewardGold);
 
 	CGuildManager::instance().RequestWarOver(dwWinner, dwLoser, dwWinner, iRewardGold);
 	return true;
@@ -800,27 +798,27 @@ void CWarMap::OnKill(LPCHARACTER killer, LPCHARACTER ch)
 
 	switch (m_kMapInfo.bType)
 	{
-		case WAR_MAP_TYPE_NORMAL:
-			SendGuildWarScore(dwKillerGuild, dwDeadGuild, 1, ch->GetLevel());
-			break;
+	case WAR_MAP_TYPE_NORMAL:
+		SendGuildWarScore(dwKillerGuild, dwDeadGuild, 1, ch->GetLevel());
+		break;
 
-		case WAR_MAP_TYPE_FLAG:
-			{
-				CAffect * pkAff = ch->FindAffect(AFFECT_WAR_FLAG);
+	case WAR_MAP_TYPE_FLAG:
+	{
+		CAffect* pkAff = ch->FindAffect(AFFECT_WAR_FLAG);
 
-				if (pkAff)
-				{
-					if (GetTeamIndex(pkAff->lApplyValue, idx))
-						AddFlag(idx, ch->GetX(), ch->GetY());
+		if (pkAff)
+		{
+			if (GetTeamIndex(pkAff->lApplyValue, idx))
+				AddFlag(idx, ch->GetX(), ch->GetY());
 
-					ch->RemoveAffect(AFFECT_WAR_FLAG);
-				}
-			}
-			break;
+			ch->RemoveAffect(AFFECT_WAR_FLAG);
+		}
+	}
+	break;
 
-		default:
-			sys_err("unknown war map type %u index %d", m_kMapInfo.bType, m_kMapInfo.lMapIndex);
-			break;
+	default:
+		sys_err("unknown war map type %u index %d", m_kMapInfo.bType, m_kMapInfo.lMapIndex);
+		break;
 	}
 }
 
@@ -831,7 +829,7 @@ void CWarMap::AddFlagBase(BYTE bIdx, DWORD x, DWORD y)
 
 	assert(bIdx < 2);
 
-	TeamData & r = m_TeamData[bIdx];
+	TeamData& r = m_TeamData[bIdx];
 
 	if (r.pkChrFlagBase)
 		return;
@@ -856,7 +854,7 @@ void CWarMap::AddFlag(BYTE bIdx, DWORD x, DWORD y)
 
 	assert(bIdx < 2);
 
-	TeamData & r = m_TeamData[bIdx];
+	TeamData& r = m_TeamData[bIdx];
 
 	if (r.pkChrFlag)
 		return;
@@ -878,7 +876,7 @@ void CWarMap::RemoveFlag(BYTE bIdx)
 {
 	assert(bIdx < 2);
 
-	TeamData & r = m_TeamData[bIdx];
+	TeamData& r = m_TeamData[bIdx];
 
 	if (!r.pkChrFlag)
 		return;
@@ -893,12 +891,12 @@ bool CWarMap::IsFlagOnBase(BYTE bIdx)
 {
 	assert(bIdx < 2);
 
-	TeamData & r = m_TeamData[bIdx];
+	TeamData& r = m_TeamData[bIdx];
 
 	if (!r.pkChrFlag)
 		return false;
 
-	const PIXEL_POSITION & pos = r.pkChrFlag->GetXYZ();
+	const PIXEL_POSITION& pos = r.pkChrFlag->GetXYZ();
 
 	if (pos.x == m_kMapInfo.posStart[bIdx].x && pos.y == m_kMapInfo.posStart[bIdx].y)
 		return true;
@@ -908,15 +906,15 @@ bool CWarMap::IsFlagOnBase(BYTE bIdx)
 
 EVENTFUNC(war_reset_flag_event)
 {
-	war_map_info* info = dynamic_cast<war_map_info*>( event->info );
+	war_map_info* info = dynamic_cast<war_map_info*>(event->info);
 
-	if ( info == NULL )
+	if (info == NULL)
 	{
-		sys_err( "war_reset_flag_event> <Factor> Null pointer" );
+		sys_err("war_reset_flag_event> <Factor> Null pointer");
 		return 0;
 	}
 
-	CWarMap * pMap = info->pWarMap;
+	CWarMap* pMap = info->pWarMap;
 
 	pMap->AddFlag(0);
 	pMap->AddFlag(1);
@@ -967,7 +965,7 @@ CWarMapManager::CWarMapManager()
 
 CWarMapManager::~CWarMapManager()
 {
-	for( std::map<long, TWarMapInfo *>::const_iterator iter = m_map_kWarMapInfo.begin() ; iter != m_map_kWarMapInfo.end() ; ++iter )
+	for (std::map<long, TWarMapInfo*>::const_iterator iter = m_map_kWarMapInfo.begin(); iter != m_map_kWarMapInfo.end(); ++iter)
 	{
 		M2_DELETE(iter->second);
 	}
@@ -975,9 +973,9 @@ CWarMapManager::~CWarMapManager()
 	m_map_kWarMapInfo.clear();
 }
 
-bool CWarMapManager::LoadWarMapInfo(const char * c_pszFileName)
+bool CWarMapManager::LoadWarMapInfo(const char* c_pszFileName)
 {
-	TWarMapInfo * k;
+	TWarMapInfo* k;
 
 	k = M2_NEW TWarMapInfo;
 	k->bType = WAR_MAP_TYPE_NORMAL;
@@ -1012,20 +1010,20 @@ bool CWarMapManager::IsWarMap(long lMapIndex)
 	return GetWarMapInfo(lMapIndex) ? true : false;
 }
 
-bool CWarMapManager::GetStartPosition(long lMapIndex, BYTE bIdx, PIXEL_POSITION & pos)
+bool CWarMapManager::GetStartPosition(long lMapIndex, BYTE bIdx, PIXEL_POSITION& pos)
 {
 	assert(bIdx < 3);
 
-	TWarMapInfo * pi = GetWarMapInfo(lMapIndex);
+	TWarMapInfo* pi = GetWarMapInfo(lMapIndex);
 
 	if (!pi)
 	{
 		sys_log(0, "GetStartPosition FAILED [%d] WarMapInfoSize(%d)", lMapIndex, m_map_kWarMapInfo.size());
 
 		itertype(m_map_kWarMapInfo) it;
-		for (it	= m_map_kWarMapInfo.begin(); it != m_map_kWarMapInfo.end(); ++it)
+		for (it = m_map_kWarMapInfo.begin(); it != m_map_kWarMapInfo.end(); ++it)
 		{
-			PIXEL_POSITION& cur=it->second->posStart[bIdx];
+			PIXEL_POSITION& cur = it->second->posStart[bIdx];
 			sys_log(0, "WarMap[%d]=Pos(%d, %d)", it->first, cur.x, cur.y);
 		}
 		return false;
@@ -1037,7 +1035,7 @@ bool CWarMapManager::GetStartPosition(long lMapIndex, BYTE bIdx, PIXEL_POSITION 
 
 long CWarMapManager::CreateWarMap(const TGuildWarInfo& guildWarInfo, DWORD dwGuildID1, DWORD dwGuildID2)
 {
-	TWarMapInfo * pkInfo = GetWarMapInfo(guildWarInfo.lMapIndex);
+	TWarMapInfo* pkInfo = GetWarMapInfo(guildWarInfo.lMapIndex);
 	if (!pkInfo)
 	{
 		sys_err("GuildWar.CreateWarMap.NOT_FOUND_MAPINFO[%d]", guildWarInfo.lMapIndex);
@@ -1054,7 +1052,7 @@ long CWarMapManager::CreateWarMap(const TGuildWarInfo& guildWarInfo, DWORD dwGui
 	return lMapIndex;
 }
 
-TWarMapInfo * CWarMapManager::GetWarMapInfo(long lMapIndex)
+TWarMapInfo* CWarMapManager::GetWarMapInfo(long lMapIndex)
 {
 	if (lMapIndex >= 10000)
 		lMapIndex /= 10000;
@@ -1079,7 +1077,7 @@ void CWarMapManager::DestroyWarMap(CWarMap* pMap)
 	SECTREE_MANAGER::instance().DestroyPrivateMap(mapIdx);
 }
 
-CWarMap * CWarMapManager::Find(long lMapIndex)
+CWarMap* CWarMapManager::Find(long lMapIndex)
 {
 	itertype(m_mapWarMap) it = m_mapWarMap.find(lMapIndex);
 

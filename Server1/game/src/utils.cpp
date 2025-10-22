@@ -29,32 +29,32 @@ void set_global_time(time_t t)
 
 std::string mysql5_password(const std::string& input)
 {
-    CryptoPP::SHA1 sha1;
-    CryptoPP::byte digest1[CryptoPP::SHA1::DIGESTSIZE];
+	CryptoPP::SHA1 sha1;
+	CryptoPP::byte digest1[CryptoPP::SHA1::DIGESTSIZE];
 
-    // First SHA1 hash
-    sha1.Update(reinterpret_cast<const CryptoPP::byte*>(input.c_str()), input.length());
-    sha1.Final(digest1);
+	// First SHA1 hash
+	sha1.Update(reinterpret_cast<const CryptoPP::byte*>(input.c_str()), input.length());
+	sha1.Final(digest1);
 
-    // Second SHA1 hash on the hex-encoded digest1
-    std::string encoded1(reinterpret_cast<const char*>(digest1), CryptoPP::SHA1::DIGESTSIZE);
-    std::string encoded2;
+	// Second SHA1 hash on the hex-encoded digest1
+	std::string encoded1(reinterpret_cast<const char*>(digest1), CryptoPP::SHA1::DIGESTSIZE);
+	std::string encoded2;
 
-    CryptoPP::StringSource(encoded1, true,
-        new CryptoPP::HashFilter(sha1,
-            new CryptoPP::HexEncoder(
-                new CryptoPP::StringSink(encoded2)
-            )
-        )
-    );
+	CryptoPP::StringSource(encoded1, true,
+		new CryptoPP::HashFilter(sha1,
+			new CryptoPP::HexEncoder(
+				new CryptoPP::StringSink(encoded2)
+			)
+		)
+	);
 
-    // Uppercase and prepend '*'
-    std::string password = "*" + encoded2;
-    for (char& c : password) {
-        c = std::toupper(c);
-    }
+	// Uppercase and prepend '*'
+	std::string password = "*" + encoded2;
+	for (char& c : password) {
+		c = std::toupper(c);
+	}
 
-    return password;
+	return password;
 }
 
 std::string mysql_hash_password(const char* tmp_pwd)
@@ -79,7 +79,7 @@ int dice(int number, int size)
 	return (sum);
 }
 
-size_t str_lower(const char * src, char * dest, size_t dest_size)
+size_t str_lower(const char* src, char* dest, size_t dest_size)
 {
 	size_t len = 0;
 
@@ -107,12 +107,12 @@ size_t str_lower(const char * src, char * dest, size_t dest_size)
 	return len;
 }
 
-void skip_spaces(const char **string)
+void skip_spaces(const char** string)
 {
 	for (; **string != '\0' && isnhspace(**string); ++(*string));
 }
 
-const char *one_argument(const char *argument, char *first_arg, size_t first_size)
+const char* one_argument(const char* argument, char* first_arg, size_t first_size)
 {
 	char mark = FALSE;
 	size_t first_len = 0;
@@ -151,12 +151,12 @@ const char *one_argument(const char *argument, char *first_arg, size_t first_siz
 	return (argument);
 }
 
-const char *two_arguments(const char *argument, char *first_arg, size_t first_size, char *second_arg, size_t second_size)
+const char* two_arguments(const char* argument, char* first_arg, size_t first_size, char* second_arg, size_t second_size)
 {
 	return (one_argument(one_argument(argument, first_arg, first_size), second_arg, second_size));
 }
 
-void split_argument(std::string_view stArg, std::vector<std::string> & vecArgs)
+void split_argument(std::string_view stArg, std::vector<std::string>& vecArgs)
 {
 	vecArgs = split_arguments(stArg);
 }
@@ -166,20 +166,20 @@ std::vector<std::string> split_arguments(std::string_view stArg)
 	std::vector<std::string> vecArgs;
 	std::string_view argument = stArg;
 
-    std::string first_arg;
-    first_arg.resize(stArg.size()+1); //+1 cuz one_argument assigns to first_arg[0] \0 if argument is empty
+	std::string first_arg;
+	first_arg.resize(stArg.size() + 1); //+1 cuz one_argument assigns to first_arg[0] \0 if argument is empty
 
 	while (true)
 	{
-        argument = one_argument(argument.data(), first_arg.data(), first_arg.size());
-        vecArgs.emplace_back(first_arg);
+		argument = one_argument(argument.data(), first_arg.data(), first_arg.size());
+		vecArgs.emplace_back(first_arg);
 		if (argument.empty() || argument[0] == '\0')
 			break;
 	}
 	return vecArgs;
 }
 
-const char *first_cmd(const char *argument, char *first_arg, size_t first_arg_size, size_t *first_arg_len_result)
+const char* first_cmd(const char* argument, char* first_arg, size_t first_arg_size, size_t* first_arg_len_result)
 {
 	size_t cur_len = 0;
 	skip_spaces(&argument);
@@ -237,7 +237,7 @@ float gauss_random(float avg, float sigma)
 			v2 = uniform_random(-1.f, 1.f);
 			s = v1 * v1 + v2 * v2;
 		} while (s >= 1.f || fabs(s) < FLT_EPSILON);
-		double multiplier = sqrtf(-2 * logf(s)/s);
+		double multiplier = sqrtf(-2 * logf(s) / s);
 		nextGaussian = v2 * multiplier;
 		haveNextGaussian = true;
 		return v1 * multiplier * sigma + avg;
@@ -253,45 +253,45 @@ int parse_time_str(const char* str)
 	{
 		switch (*str)
 		{
-			case 'm':
-			case 'M':
-				secs += tmp * 60;
-				tmp = 0;
-				break;
+		case 'm':
+		case 'M':
+			secs += tmp * 60;
+			tmp = 0;
+			break;
 
-			case 'h':
-			case 'H':
-				secs += tmp * 3600;
-				tmp = 0;
-				break;
+		case 'h':
+		case 'H':
+			secs += tmp * 3600;
+			tmp = 0;
+			break;
 
-			case 'd':
-			case 'D':
-				secs += tmp * 86400;
-				tmp = 0;
-				break;
+		case 'd':
+		case 'D':
+			secs += tmp * 86400;
+			tmp = 0;
+			break;
 
-			case '0':
-			case '1':
-			case '2':
-			case '3':
-			case '4':
-			case '5':
-			case '6':
-			case '7':
-			case '8':
-			case '9':
-				tmp *= 10;
-				tmp += (*str) - '0';
-				break;
+		case '0':
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+		case '5':
+		case '6':
+		case '7':
+		case '8':
+		case '9':
+			tmp *= 10;
+			tmp += (*str) - '0';
+			break;
 
-			case 's':
-			case 'S':
-				secs += tmp;
-				tmp = 0;
-				break;
-			default:
-				return -1;
+		case 's':
+		case 'S':
+			secs += tmp;
+			tmp = 0;
+			break;
+		default:
+			return -1;
 		}
 		++str;
 	}
@@ -299,45 +299,45 @@ int parse_time_str(const char* str)
 	return secs + tmp;
 }
 
-bool WildCaseCmp(const char *w, const char *s)
+bool WildCaseCmp(const char* w, const char* s)
 {
 	for (;;)
 	{
-		switch(*w)
+		switch (*w)
 		{
-			case '*':
-				if ('\0' == w[1])
-					return true;
+		case '*':
+			if ('\0' == w[1])
+				return true;
+			{
+				for (size_t i = 0; i <= strlen(s); ++i)
 				{
-					for (size_t i = 0; i <= strlen(s); ++i)
-					{
-						if (true == WildCaseCmp(w + 1, s + i))
-							return true;
-					}
+					if (true == WildCaseCmp(w + 1, s + i))
+						return true;
 				}
+			}
+			return false;
+
+		case '?':
+			if ('\0' == *s)
 				return false;
 
-			case '?':
-				if ('\0' == *s)
+			++w;
+			++s;
+			break;
+
+		default:
+			if (*w != *s)
+			{
+				if (tolower(*w) != tolower(*s))
 					return false;
+			}
 
-				++w;
-				++s;
-				break;
+			if ('\0' == *w)
+				return true;
 
-			default:
-				if (*w != *s)
-				{
-					if (tolower(*w) != tolower(*s))
-						return false;
-				}
-
-				if ('\0' == *w)
-					return true;
-
-				++w;
-				++s;
-				break;
+			++w;
+			++s;
+			break;
 		}
 	}
 

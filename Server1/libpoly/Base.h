@@ -12,7 +12,7 @@
 
 class CBase
 {
-    public:
+public:
 	bool isSymbol();
 	bool isVar();
 	bool isNumber();

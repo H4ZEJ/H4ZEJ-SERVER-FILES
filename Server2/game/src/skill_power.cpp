@@ -10,7 +10,7 @@ bool CTableBySkill::Check() const
 	{
 		if (!m_aiSkillPowerByLevelFromType[job])
 		{
-			fprintf( stderr, "[NO SETTING SKILL] aiSkillPowerByLevelFromType[%d]", job);
+			fprintf(stderr, "[NO SETTING SKILL] aiSkillPowerByLevelFromType[%d]", job);
 			return false;
 		}
 	}
@@ -20,9 +20,9 @@ bool CTableBySkill::Check() const
 
 void CTableBySkill::DeleteAll()
 {
-	for ( int job = 0; job < JOB_MAX_NUM * 2; ++job )
+	for (int job = 0; job < JOB_MAX_NUM * 2; ++job)
 	{
-		DeleteSkillPowerByLevelFromType( job );
+		DeleteSkillPowerByLevelFromType(job);
 	}
 
 	DeleteSkillDamageByLevelTable();
@@ -47,9 +47,9 @@ void CTableBySkill::SetSkillPowerByLevelFromType(int idx, const int* aTable)
 {
 	DeleteSkillPowerByLevelFromType(idx);
 
-	int* aiSkillTable = M2_NEW int[SKILL_MAX_LEVEL+1];
+	int* aiSkillTable = M2_NEW int[SKILL_MAX_LEVEL + 1];
 
-	memcpy (aiSkillTable, aTable, sizeof(int) * (SKILL_MAX_LEVEL + 1));
+	memcpy(aiSkillTable, aTable, sizeof(int) * (SKILL_MAX_LEVEL + 1));
 	m_aiSkillPowerByLevelFromType[idx] = aiSkillTable;
 }
 
@@ -62,21 +62,21 @@ void CTableBySkill::DeleteSkillPowerByLevelFromType(int idx)
 	}
 }
 
-int CTableBySkill::GetSkillDamageByLevel( int Level ) const
+int CTableBySkill::GetSkillDamageByLevel(int Level) const
 {
-	if ( Level < 0 || Level >= PLAYER_MAX_LEVEL_CONST )
+	if (Level < 0 || Level >= PLAYER_MAX_LEVEL_CONST)
 		return 0;
 
 	return m_aiSkillDamageByLevel[Level];
 }
 
-void CTableBySkill::SetSkillDamageByLevelTable( const int* aTable )
+void CTableBySkill::SetSkillDamageByLevelTable(const int* aTable)
 {
 	DeleteSkillDamageByLevelTable();
 
 	int* aiSkillDamageTable = M2_NEW int[PLAYER_MAX_LEVEL_CONST];
 
-	memcpy ( aiSkillDamageTable, aTable, sizeof( int ) * ( PLAYER_MAX_LEVEL_CONST ) );
+	memcpy(aiSkillDamageTable, aTable, sizeof(int) * (PLAYER_MAX_LEVEL_CONST));
 
 	m_aiSkillDamageByLevel = aiSkillDamageTable;
 }

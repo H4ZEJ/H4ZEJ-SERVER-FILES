@@ -8,7 +8,7 @@
 
 CMonarch::CMonarch()
 {
-	memset( &m_MonarchInfo, 0, sizeof(m_MonarchInfo) );
+	memset(&m_MonarchInfo, 0, sizeof(m_MonarchInfo));
 
 	Initialize();
 }
@@ -34,7 +34,7 @@ struct FHealMyEmpire
 	{
 		if (ent->IsType(ENTITY_CHARACTER))
 		{
-			LPCHARACTER ch = (LPCHARACTER) ent;
+			LPCHARACTER ch = (LPCHARACTER)ent;
 
 			if (ch->IsPC() && m_bEmpire == ch->GetEmpire())
 			{
@@ -48,7 +48,7 @@ struct FHealMyEmpire
 	}
 };
 
-int CMonarch::HealMyEmpire(LPCHARACTER ch ,DWORD price)
+int CMonarch::HealMyEmpire(LPCHARACTER ch, DWORD price)
 {
 	BYTE Empire = ch->GetEmpire();
 	DWORD pid = ch->GetPlayerID();
@@ -59,7 +59,7 @@ int CMonarch::HealMyEmpire(LPCHARACTER ch ,DWORD price)
 	{
 		if (!ch->IsGM())
 		{
-			ch->ChatPacket(CHAT_TYPE_INFO ,LC_TEXT("군주의 자격을 가지고 있지 않습니다"));
+			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("군주의 자격을 가지고 있지 않습니다"));
 			sys_err("No Monarch pid %d ", pid);
 			return 0;
 		}
@@ -93,7 +93,7 @@ int CMonarch::HealMyEmpire(LPCHARACTER ch ,DWORD price)
 	return 1;
 }
 
-void CMonarch::SetMonarchInfo(TMonarchInfo * pInfo)
+void CMonarch::SetMonarchInfo(TMonarchInfo* pInfo)
 {
 	memcpy(&m_MonarchInfo, pInfo, sizeof(TMonarchInfo));
 }
@@ -244,7 +244,7 @@ void CMonarch::DefenseUp(BYTE Empire, bool On)
 	m_DefenseUpCT[Empire] = thecore_pulse() + PASSES_PER_SEC(60 * 10);
 }
 
-bool IsMonarchWarpZone (int map_idx)
+bool IsMonarchWarpZone(int map_idx)
 {
 	if (map_idx >= 10000)
 		map_idx /= 10000;

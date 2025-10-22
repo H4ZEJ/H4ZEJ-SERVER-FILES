@@ -14,20 +14,20 @@
 
 #if !defined(__WIN32__) && defined(ENABLE_ASAN)
 const char* kAsanDefaultOptions = "external_symbolizer_path=\"/usr/bin/llvm-symbolizer\""
-									":verbosity=1"
-									":help=false"
-									":symbolize=true"
-									":detect_stack_use_after_return=true"
-									":log_path=\"/var/log/asan/asan.log.db\""
-									":debug=true"
-									":alloc_dealloc_mismatch=true"
-									":new_delete_type_mismatch=true"
-									":detect_invalid_pointer_pairs=3"
-									":detect_container_overflow=true"
-									":allocator_may_return_null=false"
-									":halt_on_error=false";
+":verbosity=1"
+":help=false"
+":symbolize=true"
+":detect_stack_use_after_return=true"
+":log_path=\"/var/log/asan/asan.log.db\""
+":debug=true"
+":alloc_dealloc_mismatch=true"
+":new_delete_type_mismatch=true"
+":detect_invalid_pointer_pairs=3"
+":detect_container_overflow=true"
+":allocator_may_return_null=false"
+":halt_on_error=false";
 
-extern "C" __attribute__((no_sanitize_address)) const char *__asan_default_options()
+extern "C" __attribute__((no_sanitize_address)) const char* __asan_default_options()
 {
 	return kAsanDefaultOptions;
 }
@@ -44,10 +44,10 @@ std::string g_stPlayerDBName = "";
 
 BOOL g_test_server = false;
 
-int g_iPlayerCacheFlushSeconds = 60*7;
-int g_iItemCacheFlushSeconds = 60*5;
+int g_iPlayerCacheFlushSeconds = 60 * 7;
+int g_iItemCacheFlushSeconds = 60 * 5;
 
-int g_iLogoutSeconds = 60*10;
+int g_iLogoutSeconds = 60 * 10;
 
 int g_log = 1;
 
@@ -56,7 +56,7 @@ int g_iItemPriceListTableCacheFlushSeconds = 540;
 // END_OF_MYSHOP_PRICE_LIST
 
 #if defined(__FreeBSD__) && defined(__FreeBSD_version) && __FreeBSD_version<1000000
-extern const char * _malloc_options;
+extern const char* _malloc_options;
 #endif
 
 extern void WriteVersion();
@@ -151,7 +151,7 @@ int Start()
 	if (!CConfig::instance().GetValue("LOG", &g_log))
 	{
 		fprintf(stderr, "Log Off");
-		g_log= 0;
+		g_log = 0;
 	}
 	else
 	{
@@ -180,7 +180,7 @@ int Start()
 	thecore_init(heart_beat, emptybeat);
 	signal_timer_enable(60);
 
-	char szBuf[256+1];
+	char szBuf[256 + 1];
 
 	if (CConfig::instance().GetValue("LOCALE", szBuf, 256))
 	{
@@ -239,7 +239,7 @@ int Start()
 
 	char szAddr[64], szDB[64], szUser[64], szPassword[64];
 	int iPort;
-	char line[256+1];
+	char line[256 + 1];
 
 	if (CConfig::instance().GetValue("SQL_PLAYER", line, 256))
 	{
@@ -384,14 +384,14 @@ void SetTablePostfix(const char* c_pszTablePostfix)
 		g_stTablePostfix = c_pszTablePostfix;
 }
 
-const char * GetTablePostfix()
+const char* GetTablePostfix()
 {
 	return g_stTablePostfix.c_str();
 }
 
 void SetPlayerDBName(const char* c_pszPlayerDBName)
 {
-	if (! c_pszPlayerDBName || ! *c_pszPlayerDBName)
+	if (!c_pszPlayerDBName || !*c_pszPlayerDBName)
 		g_stPlayerDBName = "";
 	else
 	{
@@ -400,7 +400,7 @@ void SetPlayerDBName(const char* c_pszPlayerDBName)
 	}
 }
 
-const char * GetPlayerDBName()
+const char* GetPlayerDBName()
 {
 	return g_stPlayerDBName.c_str();
 }

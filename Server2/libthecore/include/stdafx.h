@@ -2,23 +2,23 @@
 #define __INC_LIBTHECORE_STDAFX_H__
 
 #if !defined(CXX11_ENABLED) && __cplusplus >= 201103L
-	#define CXX11_ENABLED
+#define CXX11_ENABLED
 #endif
 
 #if !defined(_HAS_CXX11) && __cplusplus >= 201103L
-	#define _HAS_CXX11
+#define _HAS_CXX11
 #endif
 
 #if !defined(_HAS_CXX14) && __cplusplus >= 201402L
-	#define _HAS_CXX14
+#define _HAS_CXX14
 #endif
 
 #if !defined(_HAS_CXX17) && __cplusplus > 201402L
-	#define _HAS_CXX17
+#define _HAS_CXX17
 #endif
 
 #if !defined(_HAS_CXX20) && __cplusplus > 201703L
-	#define _HAS_CXX20
+#define _HAS_CXX20
 #endif
 
 #if defined(__clang__) || defined(_HAS_CXX11)
@@ -71,8 +71,8 @@
 #ifndef WIN32
 struct timespec
 {
-    time_t  tv_sec;         /* seconds */
-    long    tv_nsec;        /* and nanoseconds */
+	time_t  tv_sec;         /* seconds */
+	long    tv_nsec;        /* and nanoseconds */
 };
 #define strtof(str, endptr) (float)strtod(str, endptr)
 #endif
@@ -107,7 +107,7 @@ inline unsigned sleep(unsigned sec) {
 }
 inline double rint(double x)
 {
-	return ::floor(x+.5);
+	return ::floor(x + .5);
 }
 
 #else

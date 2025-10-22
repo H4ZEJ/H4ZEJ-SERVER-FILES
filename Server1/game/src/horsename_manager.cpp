@@ -17,7 +17,7 @@ const char* CHorseNameManager::GetHorseName(DWORD dwPlayerID)
 
 	iter = m_mapHorseNames.find(dwPlayerID);
 
-	if ( iter != m_mapHorseNames.end() )
+	if (iter != m_mapHorseNames.end())
 	{
 		return iter->second.c_str();
 	}
@@ -29,7 +29,7 @@ const char* CHorseNameManager::GetHorseName(DWORD dwPlayerID)
 
 void CHorseNameManager::UpdateHorseName(DWORD dwPlayerID, const char* szHorseName, bool broadcast)
 {
-	if ( szHorseName == NULL )
+	if (szHorseName == NULL)
 	{
 		sys_err("HORSE_NAME: NULL NAME (%u)", dwPlayerID);
 		szHorseName = "";
@@ -39,7 +39,7 @@ void CHorseNameManager::UpdateHorseName(DWORD dwPlayerID, const char* szHorseNam
 
 	m_mapHorseNames[dwPlayerID] = szHorseName;
 
-	if ( broadcast == true )
+	if (broadcast == true)
 	{
 		BroadcastHorseName(dwPlayerID, szHorseName);
 	}
@@ -56,11 +56,11 @@ void CHorseNameManager::BroadcastHorseName(DWORD dwPlayerID, const char* szHorse
 
 void CHorseNameManager::Validate(LPCHARACTER pChar)
 {
-	CAffect *pkAff = pChar->FindAffect(AFFECT_HORSE_NAME);
+	CAffect* pkAff = pChar->FindAffect(AFFECT_HORSE_NAME);
 
-	if ( pkAff != NULL )
+	if (pkAff != NULL)
 	{
-		if ( pChar->GetQuestFlag("horse_name.valid_till") < get_global_time() )
+		if (pChar->GetQuestFlag("horse_name.valid_till") < get_global_time())
 		{
 			pChar->HorseSummon(false, true);
 			pChar->RemoveAffect(pkAff);

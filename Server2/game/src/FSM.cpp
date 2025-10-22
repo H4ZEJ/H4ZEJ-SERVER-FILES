@@ -12,7 +12,7 @@ CFSM::CFSM()
 	m_stateInitial.Set(this, &CFSM::BeginStateInitial, &CFSM::StateInitial, &CFSM::EndStateInitial);
 
 	// Initialize State Machine
-	m_pCurrentState = static_cast<CState *>(&m_stateInitial);
+	m_pCurrentState = static_cast<CState*>(&m_stateInitial);
 	m_pNewState = NULL;
 }
 
@@ -44,13 +44,13 @@ void CFSM::Update()
 // State Functions
 
 // Is State
-bool CFSM::IsState(CState & State) const
+bool CFSM::IsState(CState& State) const
 {
 	return (m_pCurrentState == &State);
 }
 
 // Goto State
-bool CFSM::GotoState(CState & NewState)
+bool CFSM::GotoState(CState& NewState)
 {
 	if (IsState(NewState) && m_pNewState == &NewState)
 		return true;

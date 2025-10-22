@@ -13,31 +13,31 @@ struct TQueueElement
 
 class CEventQueue
 {
-	public:
-		struct FuncQueueComp
+public:
+	struct FuncQueueComp
+	{
+		bool operator () (TQueueElement* left, TQueueElement* right) const
 		{
-			bool operator () (TQueueElement * left, TQueueElement * right) const
-			{
-				return (left->iKey > right->iKey);
-			}
-		};
+			return (left->iKey > right->iKey);
+		}
+	};
 
-	public:
-		CEventQueue();
-		~CEventQueue();
+public:
+	CEventQueue();
+	~CEventQueue();
 
-		TQueueElement *	Enqueue(LPEVENT data, int duration, int pulse);
-		TQueueElement *	Dequeue();
-		void		Delete(TQueueElement * pElem);
-		void		Requeue(TQueueElement *, int key);
-		int		GetTopKey();
-		int		Size();
+	TQueueElement* Enqueue(LPEVENT data, int duration, int pulse);
+	TQueueElement* Dequeue();
+	void		Delete(TQueueElement* pElem);
+	void		Requeue(TQueueElement*, int key);
+	int		GetTopKey();
+	int		Size();
 
-	protected:
-		void		Destroy();
+protected:
+	void		Destroy();
 
-	private:
-		stable_priority_queue<TQueueElement *, std::vector<TQueueElement *>, FuncQueueComp> m_pq_queue;
+private:
+	stable_priority_queue<TQueueElement*, std::vector<TQueueElement*>, FuncQueueComp> m_pq_queue;
 };
 
 #endif

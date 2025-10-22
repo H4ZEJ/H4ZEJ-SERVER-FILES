@@ -15,26 +15,26 @@
 #include "DragonSoul.h"
 #include "questmanager.h" // @fixme150
 
-void exchange_packet(LPCHARACTER ch, BYTE sub_header, bool is_me, DWORD arg1, TItemPos arg2, DWORD arg3, void * pvData = NULL);
+void exchange_packet(LPCHARACTER ch, BYTE sub_header, bool is_me, DWORD arg1, TItemPos arg2, DWORD arg3, void* pvData = NULL);
 
-void exchange_packet(LPCHARACTER ch, BYTE sub_header, bool is_me, DWORD arg1, TItemPos arg2, DWORD arg3, void * pvData)
+void exchange_packet(LPCHARACTER ch, BYTE sub_header, bool is_me, DWORD arg1, TItemPos arg2, DWORD arg3, void* pvData)
 {
 	if (!ch->GetDesc())
 		return;
 
 	struct packet_exchange pack_exchg;
 
-	pack_exchg.header 		= HEADER_GC_EXCHANGE;
-	pack_exchg.sub_header 	= sub_header;
-	pack_exchg.is_me		= is_me;
-	pack_exchg.arg1		= arg1;
-	pack_exchg.arg2		= arg2;
-	pack_exchg.arg3		= arg3;
+	pack_exchg.header = HEADER_GC_EXCHANGE;
+	pack_exchg.sub_header = sub_header;
+	pack_exchg.is_me = is_me;
+	pack_exchg.arg1 = arg1;
+	pack_exchg.arg2 = arg2;
+	pack_exchg.arg3 = arg3;
 
 	if (sub_header == EXCHANGE_SUBHEADER_GC_ITEM_ADD && pvData)
 	{
-		thecore_memcpy(&pack_exchg.alSockets, ((LPITEM) pvData)->GetSockets(), sizeof(pack_exchg.alSockets));
-		thecore_memcpy(&pack_exchg.aAttr, ((LPITEM) pvData)->GetAttributes(), sizeof(pack_exchg.aAttr));
+		thecore_memcpy(&pack_exchg.alSockets, ((LPITEM)pvData)->GetSockets(), sizeof(pack_exchg.alSockets));
+		thecore_memcpy(&pack_exchg.aAttr, ((LPITEM)pvData)->GetAttributes(), sizeof(pack_exchg.aAttr));
 	}
 	else
 	{
@@ -60,15 +60,15 @@ bool CHARACTER::ExchangeStart(LPCHARACTER victim)
 		return false;
 
 	//PREVENT_TRADE_WINDOW
-	if ( IsOpenSafebox() || GetShopOwner() || GetMyShop() || IsCubeOpen())
+	if (IsOpenSafebox() || GetShopOwner() || GetMyShop() || IsCubeOpen())
 	{
-		ChatPacket( CHAT_TYPE_INFO, LC_TEXT("다른 거래창이 열려있을경우 거래를 할수 없습니다." ) );
+		ChatPacket(CHAT_TYPE_INFO, LC_TEXT("다른 거래창이 열려있을경우 거래를 할수 없습니다."));
 		return false;
 	}
 
-	if ( victim->IsOpenSafebox() || victim->GetShopOwner() || victim->GetMyShop() || victim->IsCubeOpen() )
+	if (victim->IsOpenSafebox() || victim->GetShopOwner() || victim->GetMyShop() || victim->IsCubeOpen())
 	{
-		ChatPacket( CHAT_TYPE_INFO, LC_TEXT("상대방이 다른 거래중이라 거래를 할수 없습니다." ) );
+		ChatPacket(CHAT_TYPE_INFO, LC_TEXT("상대방이 다른 거래중이라 거래를 할수 없습니다."));
 		return false;
 	}
 	//END_PREVENT_TRADE_WINDOW
@@ -183,28 +183,28 @@ bool CExchange::AddItem(TItemPos item_pos, BYTE display_pos)
 		if (m_apItems[i])
 			continue;
 
-		m_apItems[i]		= item;
-		m_aItemPos[i]		= item_pos;
-		m_abItemDisplayPos[i]	= display_pos;
+		m_apItems[i] = item;
+		m_aItemPos[i] = item_pos;
+		m_abItemDisplayPos[i] = display_pos;
 		m_pGrid->Put(display_pos, 1, item->GetSize());
 
 		item->SetExchanging(true);
 
 		exchange_packet(m_pOwner,
-				EXCHANGE_SUBHEADER_GC_ITEM_ADD,
-				true,
-				item->GetVnum(),
-				TItemPos(RESERVED_WINDOW, display_pos),
-				item->GetCount(),
-				item);
+			EXCHANGE_SUBHEADER_GC_ITEM_ADD,
+			true,
+			item->GetVnum(),
+			TItemPos(RESERVED_WINDOW, display_pos),
+			item->GetCount(),
+			item);
 
 		exchange_packet(GetCompany()->GetOwner(),
-				EXCHANGE_SUBHEADER_GC_ITEM_ADD,
-				false,
-				item->GetVnum(),
-				TItemPos(RESERVED_WINDOW, display_pos),
-				item->GetCount(),
-				item);
+			EXCHANGE_SUBHEADER_GC_ITEM_ADD,
+			false,
+			item->GetVnum(),
+			TItemPos(RESERVED_WINDOW, display_pos),
+			item->GetCount(),
+			item);
 
 		sys_log(0, "EXCHANGE AddItem success %s pos(%d, %d) %d", item->GetName(), item_pos.window_type, item_pos.cell, display_pos);
 
@@ -227,14 +227,14 @@ bool CExchange::RemoveItem(BYTE pos)
 
 	m_pGrid->Get(m_abItemDisplayPos[pos], 1, m_apItems[pos]->GetSize());
 
-	exchange_packet(GetOwner(),	EXCHANGE_SUBHEADER_GC_ITEM_DEL, true, pos, NPOS, 0);
+	exchange_packet(GetOwner(), EXCHANGE_SUBHEADER_GC_ITEM_DEL, true, pos, NPOS, 0);
 	exchange_packet(GetCompany()->GetOwner(), EXCHANGE_SUBHEADER_GC_ITEM_DEL, false, pos, PosOfInventory, 0);
 
 	Accept(false);
 	GetCompany()->Accept(false);
 
-	m_apItems[pos]	    = NULL;
-	m_aItemPos[pos]	    = NPOS;
+	m_apItems[pos] = NULL;
+	m_aItemPos[pos] = NPOS;
 	m_abItemDisplayPos[pos] = 0;
 	return true;
 }
@@ -263,14 +263,10 @@ bool CExchange::AddGold(long gold)
 	return true;
 }
 
-
-
-bool CExchange::Check(int * piItemCount)
+bool CExchange::Check(int* piItemCount)
 {
 	if (GetOwner()->GetGold() < m_lGold)
 		return false;
-
-
 
 	int item_count = 0;
 
@@ -313,34 +309,34 @@ bool CExchange::CheckSpace()
 
 	int i;
 
-	for (i = 0; i < INVENTORY_PAGE_SIZE*1; ++i)
+	for (i = 0; i < INVENTORY_PAGE_SIZE * 1; ++i)
 	{
 		if (!(item = victim->GetInventoryItem(i)))
 			continue;
 
 		s_grid1.Put(i, 1, item->GetSize());
 	}
-	for (i = INVENTORY_PAGE_SIZE*1; i < INVENTORY_PAGE_SIZE*2; ++i)
+	for (i = INVENTORY_PAGE_SIZE * 1; i < INVENTORY_PAGE_SIZE * 2; ++i)
 	{
 		if (!(item = victim->GetInventoryItem(i)))
 			continue;
 
-		s_grid2.Put(i - INVENTORY_PAGE_SIZE*1, 1, item->GetSize());
+		s_grid2.Put(i - INVENTORY_PAGE_SIZE * 1, 1, item->GetSize());
 	}
 #ifdef ENABLE_EXTEND_INVEN_SYSTEM
-	for (i = INVENTORY_PAGE_SIZE*2; i < INVENTORY_PAGE_SIZE*3; ++i)
+	for (i = INVENTORY_PAGE_SIZE * 2; i < INVENTORY_PAGE_SIZE * 3; ++i)
 	{
 		if (!(item = victim->GetInventoryItem(i)))
 			continue;
 
-		s_grid3.Put(i - INVENTORY_PAGE_SIZE*2, 1, item->GetSize());
+		s_grid3.Put(i - INVENTORY_PAGE_SIZE * 2, 1, item->GetSize());
 	}
-	for (i = INVENTORY_PAGE_SIZE*3; i < INVENTORY_PAGE_SIZE*4; ++i)
+	for (i = INVENTORY_PAGE_SIZE * 3; i < INVENTORY_PAGE_SIZE * 4; ++i)
 	{
 		if (!(item = victim->GetInventoryItem(i)))
 			continue;
 
-		s_grid4.Put(i - INVENTORY_PAGE_SIZE*3, 1, item->GetSize());
+		s_grid4.Put(i - INVENTORY_PAGE_SIZE * 3, 1, item->GetSize());
 	}
 #endif
 
@@ -389,7 +385,7 @@ bool CExchange::CheckSpace()
 					{
 						for (int j = 0; j < item->GetSize(); j++)
 						{
-							s_vDSGrid[wPos + j * DRAGON_SOUL_BOX_COLUMN_NUM] =  wPos + 1;
+							s_vDSGrid[wPos + j * DRAGON_SOUL_BOX_COLUMN_NUM] = wPos + 1;
 						}
 						bExistEmptySpace = true;
 						break;
@@ -448,7 +444,7 @@ bool CExchange::Done()
 		if (empty_pos < 0)
 		{
 			sys_err("Exchange::Done : Cannot find blank position in inventory %s <-> %s item %s",
-					m_pOwner->GetName(), victim->GetName(), item->GetName());
+				m_pOwner->GetName(), victim->GetName(), item->GetName());
 			continue;
 		}
 
@@ -495,8 +491,6 @@ bool CExchange::Done()
 			LogManager::instance().CharLog(GetOwner(), m_lGold, "EXCHANGE_GOLD_GIVE", exchange_buf);
 		}
 	}
-
-
 
 	m_pGrid->Clear();
 	return true;
@@ -576,14 +570,10 @@ bool CExchange::Accept(bool bAccept)
 			if (m_lGold)
 				GetOwner()->Save();
 
-
-
 			if (GetCompany()->Done())
 			{
 				if (GetCompany()->m_lGold)
 					victim->Save();
-
-
 
 				// INTERNATIONAL_VERSION
 				GetOwner()->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("%s 님과의 교환이 성사 되었습니다."), victim->GetName());
@@ -592,7 +582,7 @@ bool CExchange::Accept(bool bAccept)
 			}
 		}
 
-EXCHANGE_END:
+	EXCHANGE_END:
 		Cancel();
 		return false;
 	}

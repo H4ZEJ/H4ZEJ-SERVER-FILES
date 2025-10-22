@@ -17,7 +17,7 @@
 
 time_t UseBlueDragonSkill(LPCHARACTER pChar, unsigned int idx)
 {
-	LPSECTREE_MAP pSecMap = SECTREE_MANAGER::instance().GetMap( pChar->GetMapIndex() );
+	LPSECTREE_MAP pSecMap = SECTREE_MANAGER::instance().GetMap(pChar->GetMapIndex());
 
 	if (NULL == pSecMap)
 		return 0;
@@ -26,50 +26,50 @@ time_t UseBlueDragonSkill(LPCHARACTER pChar, unsigned int idx)
 
 	switch (idx)
 	{
-		case 0:
-			{
-				sys_log(0, "BlueDragon: Using Skill Breath");
+	case 0:
+	{
+		sys_log(0, "BlueDragon: Using Skill Breath");
 
-				FSkillBreath f(pChar);
+		FSkillBreath f(pChar);
 
-				pSecMap->for_each( f );
+		pSecMap->for_each(f);
 
-				nextUsingTime = number(BlueDragon_GetSkillFactor(3, "Skill0", "period", "min"), BlueDragon_GetSkillFactor(3, "Skill0", "period", "max"));
-			}
-			break;
+		nextUsingTime = number(BlueDragon_GetSkillFactor(3, "Skill0", "period", "min"), BlueDragon_GetSkillFactor(3, "Skill0", "period", "max"));
+	}
+	break;
 
-		case 1:
-			{
-				sys_log(0, "BlueDragon: Using Skill Weak Breath");
+	case 1:
+	{
+		sys_log(0, "BlueDragon: Using Skill Weak Breath");
 
-				FSkillWeakBreath f(pChar);
+		FSkillWeakBreath f(pChar);
 
-				pSecMap->for_each( f );
+		pSecMap->for_each(f);
 
-				nextUsingTime = number(BlueDragon_GetSkillFactor(3, "Skill1", "period", "min"), BlueDragon_GetSkillFactor(3, "Skill1", "period", "max"));
-			}
-			break;
+		nextUsingTime = number(BlueDragon_GetSkillFactor(3, "Skill1", "period", "min"), BlueDragon_GetSkillFactor(3, "Skill1", "period", "max"));
+	}
+	break;
 
-		case 2:
-			{
-				sys_log(0, "BlueDragon: Using Skill EarthQuake");
+	case 2:
+	{
+		sys_log(0, "BlueDragon: Using Skill EarthQuake");
 
-				FSkillEarthQuake f(pChar);
+		FSkillEarthQuake f(pChar);
 
-				pSecMap->for_each( f );
+		pSecMap->for_each(f);
 
-				nextUsingTime = number(BlueDragon_GetSkillFactor(3, "Skill2", "period", "min"), BlueDragon_GetSkillFactor(3, "Skill2", "period", "max"));
+		nextUsingTime = number(BlueDragon_GetSkillFactor(3, "Skill2", "period", "min"), BlueDragon_GetSkillFactor(3, "Skill2", "period", "max"));
 
-				if (NULL != f.pFarthestChar)
-				{
-					pChar->BeginFight( f.pFarthestChar );
-				}
-			}
-			break;
+		if (NULL != f.pFarthestChar)
+		{
+			pChar->BeginFight(f.pFarthestChar);
+		}
+	}
+	break;
 
-		default:
-			sys_err("BlueDragon: Wrong Skill Index: %d", idx);
-			return 0;
+	default:
+		sys_err("BlueDragon: Wrong Skill Index: %d", idx);
+		return 0;
 	}
 
 	int addPct = BlueDragon_GetRangeFactor("hp_period", pChar->GetHPPct());
@@ -109,16 +109,16 @@ int BlueDragon_StateBattle(LPCHARACTER pChar)
 
 	time_t timeNow = static_cast<time_t>(get_dword_time());
 
-	for (int i=0 ; i < SkillCount ; ++i)
+	for (int i = 0; i < SkillCount; ++i)
 	{
 		const int SkillIndex = SkillPriority[i];
 
 		if (timeSkillCanUseTime[SkillIndex] < timeNow)
 		{
 			int SkillUsingDuration =
-				static_cast<int>(CMotionManager::instance().GetMotionDuration( pChar->GetRaceNum(), MAKE_MOTION_KEY(MOTION_MODE_GENERAL, MOTION_SPECIAL_1 + SkillIndex) ));
+				static_cast<int>(CMotionManager::instance().GetMotionDuration(pChar->GetRaceNum(), MAKE_MOTION_KEY(MOTION_MODE_GENERAL, MOTION_SPECIAL_1 + SkillIndex)));
 
-			timeSkillCanUseTime[SkillIndex] = timeNow + (UseBlueDragonSkill( pChar, SkillIndex ) * 1000) + SkillUsingDuration + 3000;
+			timeSkillCanUseTime[SkillIndex] = timeNow + (UseBlueDragonSkill(pChar, SkillIndex) * 1000) + SkillUsingDuration + 3000;
 
 			pChar->SendMovePacket(FUNC_MOB_SKILL, SkillIndex, pChar->GetX(), pChar->GetY(), 0, timeNow);
 
@@ -129,22 +129,22 @@ int BlueDragon_StateBattle(LPCHARACTER pChar)
 	return PASSES_PER_SEC(1);
 }
 
-int BlueDragon_Damage (LPCHARACTER me, LPCHARACTER pAttacker, int dam)
+int BlueDragon_Damage(LPCHARACTER me, LPCHARACTER pAttacker, int dam)
 {
 	if (NULL == me || NULL == pAttacker)
 		return dam;
 
 	if (true == pAttacker->IsMonster() && 2493 == pAttacker->GetMobTable().dwVnum)
 	{
-		for (int i=1 ; i <= 4 ; ++i)
+		for (int i = 1; i <= 4; ++i)
 		{
 			if (ATK_BONUS == BlueDragon_GetIndexFactor("DragonStone", i, "effect_type"))
 			{
 				DWORD dwDragonStoneID = BlueDragon_GetIndexFactor("DragonStone", i, "vnum");
 				size_t val = BlueDragon_GetIndexFactor("DragonStone", i, "val");
-				size_t cnt = SECTREE_MANAGER::instance().GetMonsterCountInMap( pAttacker->GetMapIndex(), dwDragonStoneID );
+				size_t cnt = SECTREE_MANAGER::instance().GetMonsterCountInMap(pAttacker->GetMapIndex(), dwDragonStoneID);
 
-				dam += (dam * (val*cnt))/100;
+				dam += (dam * (val * cnt)) / 100;
 
 				break;
 			}
@@ -153,15 +153,15 @@ int BlueDragon_Damage (LPCHARACTER me, LPCHARACTER pAttacker, int dam)
 
 	if (true == me->IsMonster() && 2493 == me->GetMobTable().dwVnum)
 	{
-		for (int i=1 ; i <= 4 ; ++i)
+		for (int i = 1; i <= 4; ++i)
 		{
 			if (DEF_BONUS == BlueDragon_GetIndexFactor("DragonStone", i, "effect_type"))
 			{
 				DWORD dwDragonStoneID = BlueDragon_GetIndexFactor("DragonStone", i, "vnum");
 				size_t val = BlueDragon_GetIndexFactor("DragonStone", i, "val");
-				size_t cnt = SECTREE_MANAGER::instance().GetMonsterCountInMap( me->GetMapIndex(), dwDragonStoneID );
+				size_t cnt = SECTREE_MANAGER::instance().GetMonsterCountInMap(me->GetMapIndex(), dwDragonStoneID);
 
-				dam -= (dam * (val*cnt))/100;
+				dam -= (dam * (val * cnt)) / 100;
 
 				if (dam <= 0)
 					dam = 1;
@@ -173,7 +173,7 @@ int BlueDragon_Damage (LPCHARACTER me, LPCHARACTER pAttacker, int dam)
 
 	if (true == me->IsStone() && 0 != pAttacker->GetMountVnum())
 	{
-		for (int i=1 ; i <= 4 ; ++i)
+		for (int i = 1; i <= 4; ++i)
 		{
 			if (me->GetMobTable().dwVnum == BlueDragon_GetIndexFactor("DragonStone", i, "vnum"))
 			{

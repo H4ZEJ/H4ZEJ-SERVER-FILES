@@ -27,7 +27,7 @@ CAsyncSQL::CAsyncSQL()
 #endif
 	m_iQueryFinished(0), m_ulThreadID(0), m_bConnected(false), m_iCopiedQuery(0)
 {
-	memset( &m_hDB, 0, sizeof(m_hDB) );
+	memset(&m_hDB, 0, sizeof(m_hDB));
 
 	m_aiPipe[0] = 0;
 	m_aiPipe[1] = 0;
@@ -70,12 +70,12 @@ void CAsyncSQL::Destroy()
 }
 
 #ifndef __WIN32__
-void * AsyncSQLThread(void * arg)
+void* AsyncSQLThread(void* arg)
 #else
 unsigned int __stdcall AsyncSQLThread(void* arg)
 #endif
 {
-	CAsyncSQL * pSQL = ((CAsyncSQL *) arg);
+	CAsyncSQL* pSQL = ((CAsyncSQL*)arg);
 
 	if (!pSQL->Connect())
 		return NULL;
@@ -100,7 +100,7 @@ bool CAsyncSQL::QueryLocaleSet()
 
 	if (mysql_set_character_set(&m_hDB, m_stLocale.c_str()))
 	{
-		sys_err("cannot set locale %s by 'mysql_set_character_set', errno %u %s", m_stLocale.c_str(), mysql_errno(&m_hDB) , mysql_error(&m_hDB));
+		sys_err("cannot set locale %s by 'mysql_set_character_set', errno %u %s", m_stLocale.c_str(), mysql_errno(&m_hDB), mysql_error(&m_hDB));
 		return false;
 	}
 
@@ -129,31 +129,31 @@ bool CAsyncSQL::Connect()
 		return false;
 	}
 
-	#ifdef MARIADB_BASE_VERSION
+#ifdef MARIADB_BASE_VERSION
 	int actual_reconnect_val{};
 	mysql_get_option(&m_hDB, MYSQL_OPT_RECONNECT, &actual_reconnect_val);
 	fprintf(stdout, "AsyncSQL: connected to %s (reconnect %d) [MARIADB]\n", m_stHost.c_str(), actual_reconnect_val);
-	#else
+#else
 	fprintf(stdout, "AsyncSQL: connected to %s (reconnect %d) [MYSQL]\n", m_stHost.c_str(), m_hDB.reconnect);
-	#endif
+#endif
 
 	m_ulThreadID = mysql_thread_id(&m_hDB);
 	m_bConnected = true;
 	return true;
 }
 
-bool CAsyncSQL::Setup(CAsyncSQL * sql, bool bNoThread)
+bool CAsyncSQL::Setup(CAsyncSQL* sql, bool bNoThread)
 {
 	return Setup(sql->m_stHost.c_str(),
-			sql->m_stUser.c_str(),
-			sql->m_stPassword.c_str(),
-			sql->m_stDB.c_str(),
-			sql->m_stLocale.c_str(),
-			bNoThread,
-			sql->m_iPort);
+		sql->m_stUser.c_str(),
+		sql->m_stPassword.c_str(),
+		sql->m_stDB.c_str(),
+		sql->m_stLocale.c_str(),
+		bNoThread,
+		sql->m_iPort);
 }
 
-bool CAsyncSQL::Setup(const char * c_pszHost, const char * c_pszUser, const char * c_pszPassword, const char * c_pszDB, const char * c_pszLocale, bool bNoThread, int iPort)
+bool CAsyncSQL::Setup(const char* c_pszHost, const char* c_pszUser, const char* c_pszPassword, const char* c_pszDB, const char* c_pszLocale, bool bNoThread, int iPort)
 {
 	m_stHost = c_pszHost;
 	m_stUser = c_pszUser;
@@ -225,7 +225,7 @@ void CAsyncSQL::Quit()
 #endif
 }
 
-std::unique_ptr<SQLMsg> CAsyncSQL::DirectQuery(const char * c_pszQuery)
+std::unique_ptr<SQLMsg> CAsyncSQL::DirectQuery(const char* c_pszQuery)
 {
 	if (m_ulThreadID != mysql_thread_id(&m_hDB))
 	{
@@ -245,8 +245,8 @@ std::unique_ptr<SQLMsg> CAsyncSQL::DirectQuery(const char * c_pszQuery)
 		char buf[1024];
 
 		snprintf(buf, sizeof(buf),
-				"AsyncSQL::DirectQuery : mysql_query error: %s\nquery: %s",
-				mysql_error(&m_hDB), p->stQuery.c_str());
+			"AsyncSQL::DirectQuery : mysql_query error: %s\nquery: %s",
+			mysql_error(&m_hDB), p->stQuery.c_str());
 
 		sys_err(buf);
 		p->uiSQLErrno = mysql_errno(&m_hDB);
@@ -256,9 +256,9 @@ std::unique_ptr<SQLMsg> CAsyncSQL::DirectQuery(const char * c_pszQuery)
 	return p;
 }
 
-void CAsyncSQL::AsyncQuery(const char * c_pszQuery)
+void CAsyncSQL::AsyncQuery(const char* c_pszQuery)
 {
-	SQLMsg * p = new SQLMsg;
+	SQLMsg* p = new SQLMsg;
 
 	p->m_pkSQL = &m_hDB;
 	p->iID = ++m_iMsgCount;
@@ -267,9 +267,9 @@ void CAsyncSQL::AsyncQuery(const char * c_pszQuery)
 	PushQuery(p);
 }
 
-void CAsyncSQL::ReturnQuery(const char * c_pszQuery, void * pvUserData)
+void CAsyncSQL::ReturnQuery(const char* c_pszQuery, void* pvUserData)
 {
-	SQLMsg * p = new SQLMsg;
+	SQLMsg* p = new SQLMsg;
 
 	p->m_pkSQL = &m_hDB;
 	p->iID = ++m_iMsgCount;
@@ -280,7 +280,7 @@ void CAsyncSQL::ReturnQuery(const char * c_pszQuery, void * pvUserData)
 	PushQuery(p);
 }
 
-void CAsyncSQL::PushResult(SQLMsg * p)
+void CAsyncSQL::PushResult(SQLMsg* p)
 {
 	MUTEX_LOCK(m_mtxResult.get());
 
@@ -289,7 +289,7 @@ void CAsyncSQL::PushResult(SQLMsg * p)
 	MUTEX_UNLOCK(m_mtxResult.get());
 }
 
-bool CAsyncSQL::PopResult(SQLMsg ** pp)
+bool CAsyncSQL::PopResult(SQLMsg** pp)
 {
 	MUTEX_LOCK(m_mtxResult.get());
 
@@ -305,7 +305,7 @@ bool CAsyncSQL::PopResult(SQLMsg ** pp)
 	return true;
 }
 
-void CAsyncSQL::PushQuery(SQLMsg * p)
+void CAsyncSQL::PushQuery(SQLMsg* p)
 {
 	MUTEX_LOCK(m_mtxQuery.get());
 
@@ -317,7 +317,7 @@ void CAsyncSQL::PushQuery(SQLMsg * p)
 	MUTEX_UNLOCK(m_mtxQuery.get());
 }
 
-bool CAsyncSQL::PeekQuery(SQLMsg ** pp)
+bool CAsyncSQL::PeekQuery(SQLMsg** pp)
 {
 	MUTEX_LOCK(m_mtxQuery.get());
 
@@ -349,7 +349,7 @@ bool CAsyncSQL::PopQuery(int iID)
 	return true;
 }
 
-bool CAsyncSQL::PeekQueryFromCopyQueue(SQLMsg ** pp)
+bool CAsyncSQL::PeekQueryFromCopyQueue(SQLMsg** pp)
 {
 	if (m_queue_query_copy.empty())
 		return false;
@@ -370,7 +370,7 @@ int CAsyncSQL::CopyQuery()
 
 	while (!m_queue_query.empty())
 	{
-		SQLMsg * p = m_queue_query.front();
+		SQLMsg* p = m_queue_query.front();
 		m_queue_query_copy.push(p);
 		m_queue_query.pop();
 	}
@@ -419,7 +419,7 @@ DWORD CAsyncSQL::CountResult()
 	return m_queue_result.size();
 }
 
-void __timediff(struct timeval *a, struct timeval *b, struct timeval *rslt)
+void __timediff(struct timeval* a, struct timeval* b, struct timeval* rslt)
 {
 	if (a->tv_sec < b->tv_sec)
 		rslt->tv_sec = rslt->tv_usec = 0;
@@ -441,67 +441,68 @@ void __timediff(struct timeval *a, struct timeval *b, struct timeval *rslt)
 		{
 			rslt->tv_usec = a->tv_usec + 1000000 - b->tv_usec;
 			rslt->tv_sec--;
-		} else
+		}
+		else
 			rslt->tv_usec = a->tv_usec - b->tv_usec;
 	}
 }
 
 class cProfiler
 {
-	public:
-		cProfiler()
-		{
-			m_nInterval = 0 ;
+public:
+	cProfiler()
+	{
+		m_nInterval = 0;
 
-			memset( &prev, 0, sizeof(prev) );
-			memset( &now, 0, sizeof(now) );
-			memset( &interval, 0, sizeof(interval) );
+		memset(&prev, 0, sizeof(prev));
+		memset(&now, 0, sizeof(now));
+		memset(&interval, 0, sizeof(interval));
 
-			Start();
-		}
+		Start();
+	}
 
-		cProfiler(int nInterval = 100000)
-		{
-			m_nInterval = nInterval;
+	cProfiler(int nInterval = 100000)
+	{
+		m_nInterval = nInterval;
 
-			memset( &prev, 0, sizeof(prev) );
-			memset( &now, 0, sizeof(now) );
-			memset( &interval, 0, sizeof(interval) );
+		memset(&prev, 0, sizeof(prev));
+		memset(&now, 0, sizeof(now));
+		memset(&interval, 0, sizeof(interval));
 
-			Start();
-		}
+		Start();
+	}
 
-		void Start()
-		{
-			gettimeofday (&prev , (struct timezone *) 0);
-		}
+	void Start()
+	{
+		gettimeofday(&prev, (struct timezone*)0);
+	}
 
-		void Stop()
-		{
-			gettimeofday(&now, (struct timezone*) 0);
-			__timediff(&now, &prev, &interval);
-		}
+	void Stop()
+	{
+		gettimeofday(&now, (struct timezone*)0);
+		__timediff(&now, &prev, &interval);
+	}
 
-		bool IsOk()
-		{
-			if (interval.tv_sec > (m_nInterval / 1000000))
-				return false;
+	bool IsOk()
+	{
+		if (interval.tv_sec > (m_nInterval / 1000000))
+			return false;
 
-			if (interval.tv_usec > m_nInterval)
-				return false;
+		if (interval.tv_usec > m_nInterval)
+			return false;
 
-			return true;
-		}
+		return true;
+	}
 
-		struct timeval * GetResult() { return &interval; }
-		long GetResultSec() { return interval.tv_sec; }
-		long GetResultUSec() { return interval.tv_usec; }
+	struct timeval* GetResult() { return &interval; }
+	long GetResultSec() { return interval.tv_sec; }
+	long GetResultUSec() { return interval.tv_usec; }
 
-	private:
-		int m_nInterval;
-		struct timeval  prev;
-		struct timeval  now;
-		struct timeval	interval;
+private:
+	int m_nInterval;
+	struct timeval  prev;
+	struct timeval  now;
+	struct timeval	interval;
 };
 
 void CAsyncSQL::ChildLoop()
@@ -519,7 +520,7 @@ void CAsyncSQL::ChildLoop()
 
 		AddCopiedQueryCount(count);
 
-		SQLMsg * p;
+		SQLMsg* p;
 
 		while (count--)
 		{
@@ -540,74 +541,10 @@ void CAsyncSQL::ChildLoop()
 				p->uiSQLErrno = mysql_errno(&m_hDB);
 
 				sys_err("AsyncSQL: query failed: %s (query: %s errno: %d)",
-						mysql_error(&m_hDB), p->stQuery.c_str(), p->uiSQLErrno);
+					mysql_error(&m_hDB), p->stQuery.c_str(), p->uiSQLErrno);
 
 				switch (p->uiSQLErrno)
 				{
-					case CR_SERVER_LOST: // @fixme329 (errno: 2013)
-						if (ResendQuery(p))
-							break;
-					case CR_SOCKET_CREATE_ERROR:
-					case CR_CONNECTION_ERROR:
-					case CR_IPSOCK_ERROR:
-					case CR_UNKNOWN_HOST:
-					case CR_SERVER_GONE_ERROR:
-					case CR_CONN_HOST_ERROR:
-					case ER_NOT_KEYFILE:
-					case ER_CRASHED_ON_USAGE:
-					case ER_CANT_OPEN_FILE:
-					case ER_HOST_NOT_PRIVILEGED:
-					case ER_HOST_IS_BLOCKED:
-					case ER_PASSWORD_NOT_ALLOWED:
-					case ER_PASSWORD_NO_MATCH:
-					case ER_CANT_CREATE_THREAD:
-					case ER_INVALID_USE_OF_NULL:
-						m_sem.Release();
-						sys_err("AsyncSQL: retrying");
-						continue;
-				}
-			}
-
-			profiler.Stop();
-
-			if (!profiler.IsOk())
-				sys_log(0, "[QUERY : LONG INTERVAL(OverSec %ld.%ld)] : %s",
-						profiler.GetResultSec(), profiler.GetResultUSec(), p->stQuery.c_str());
-
-			PopQueryFromCopyQueue();
-
-			if (p->bReturn)
-			{
-				p->Store();
-				PushResult(p);
-			}
-			else
-				delete p;
-
-			++m_iQueryFinished;
-		}
-	}
-
-	SQLMsg * p;
-
-	while (PeekQuery(&p))
-	{
-		if (m_ulThreadID != mysql_thread_id(&m_hDB))
-		{
-			sys_log(0, "MySQL connection was reconnected. querying locale set"); // @warme012
-			while (!QueryLocaleSet());
-			m_ulThreadID = mysql_thread_id(&m_hDB);
-		}
-
-		if (mysql_real_query(&m_hDB, p->stQuery.c_str(), p->stQuery.length()))
-		{
-			p->uiSQLErrno = mysql_errno(&m_hDB);
-
-			sys_err("AsyncSQL::ChildLoop : mysql_query error: %s:\nquery: %s",
-					mysql_error(&m_hDB), p->stQuery.c_str());
-
-			switch (p->uiSQLErrno)
-			{
 				case CR_SERVER_LOST: // @fixme329 (errno: 2013)
 					if (ResendQuery(p))
 						break;
@@ -626,7 +563,71 @@ void CAsyncSQL::ChildLoop()
 				case ER_PASSWORD_NO_MATCH:
 				case ER_CANT_CREATE_THREAD:
 				case ER_INVALID_USE_OF_NULL:
+					m_sem.Release();
+					sys_err("AsyncSQL: retrying");
 					continue;
+				}
+			}
+
+			profiler.Stop();
+
+			if (!profiler.IsOk())
+				sys_log(0, "[QUERY : LONG INTERVAL(OverSec %ld.%ld)] : %s",
+					profiler.GetResultSec(), profiler.GetResultUSec(), p->stQuery.c_str());
+
+			PopQueryFromCopyQueue();
+
+			if (p->bReturn)
+			{
+				p->Store();
+				PushResult(p);
+			}
+			else
+				delete p;
+
+			++m_iQueryFinished;
+		}
+	}
+
+	SQLMsg* p;
+
+	while (PeekQuery(&p))
+	{
+		if (m_ulThreadID != mysql_thread_id(&m_hDB))
+		{
+			sys_log(0, "MySQL connection was reconnected. querying locale set"); // @warme012
+			while (!QueryLocaleSet());
+			m_ulThreadID = mysql_thread_id(&m_hDB);
+		}
+
+		if (mysql_real_query(&m_hDB, p->stQuery.c_str(), p->stQuery.length()))
+		{
+			p->uiSQLErrno = mysql_errno(&m_hDB);
+
+			sys_err("AsyncSQL::ChildLoop : mysql_query error: %s:\nquery: %s",
+				mysql_error(&m_hDB), p->stQuery.c_str());
+
+			switch (p->uiSQLErrno)
+			{
+			case CR_SERVER_LOST: // @fixme329 (errno: 2013)
+				if (ResendQuery(p))
+					break;
+			case CR_SOCKET_CREATE_ERROR:
+			case CR_CONNECTION_ERROR:
+			case CR_IPSOCK_ERROR:
+			case CR_UNKNOWN_HOST:
+			case CR_SERVER_GONE_ERROR:
+			case CR_CONN_HOST_ERROR:
+			case ER_NOT_KEYFILE:
+			case ER_CRASHED_ON_USAGE:
+			case ER_CANT_OPEN_FILE:
+			case ER_HOST_NOT_PRIVILEGED:
+			case ER_HOST_IS_BLOCKED:
+			case ER_PASSWORD_NOT_ALLOWED:
+			case ER_PASSWORD_NO_MATCH:
+			case ER_CANT_CREATE_THREAD:
+			case ER_INVALID_USE_OF_NULL:
+				continue;
 			}
 		}
 
@@ -656,12 +657,12 @@ void CAsyncSQL::ResetQueryFinished()
 	m_iQueryFinished = 0;
 }
 
-MYSQL * CAsyncSQL::GetSQLHandle()
+MYSQL* CAsyncSQL::GetSQLHandle()
 {
 	return &m_hDB;
 }
 
-size_t CAsyncSQL::EscapeString(char* dst, size_t dstSize, const char *src, size_t srcSize)
+size_t CAsyncSQL::EscapeString(char* dst, size_t dstSize, const char* src, size_t srcSize)
 {
 	if (0 == srcSize)
 	{
@@ -679,7 +680,7 @@ size_t CAsyncSQL::EscapeString(char* dst, size_t dstSize, const char *src, size_
 		strlcpy(tmp, src, tmpLen);
 
 		sys_err("FATAL ERROR!! not enough buffer size (dstSize %u srcSize %u src%s: %s)",
-				dstSize, srcSize, tmpLen != srcSize ? "(trimmed to 255 characters)" : "", tmp);
+			dstSize, srcSize, tmpLen != srcSize ? "(trimmed to 255 characters)" : "", tmp);
 
 		dst[0] = '\0';
 		return 0;
@@ -688,13 +689,13 @@ size_t CAsyncSQL::EscapeString(char* dst, size_t dstSize, const char *src, size_
 	return mysql_real_escape_string(GetSQLHandle(), dst, src, srcSize);
 }
 
-void CAsyncSQL2::SetLocale(const std::string & stLocale)
+void CAsyncSQL2::SetLocale(const std::string& stLocale)
 {
 	m_stLocale = stLocale;
 	QueryLocaleSet();
 }
 
-bool CAsyncSQL::ResendQuery(SQLMsg * p)
+bool CAsyncSQL::ResendQuery(SQLMsg* p)
 {
 #ifdef MARIADB_BASE_VERSION
 	if (mariadb_reconnect(&m_hDB) != 0)
@@ -705,9 +706,9 @@ bool CAsyncSQL::ResendQuery(SQLMsg * p)
 	else
 		sys_err("MariaDB reconnection successful.");
 #else
-	#ifndef CR_ALREADY_CONNECTED
-	#define CR_ALREADY_CONNECTED 2058
-	#endif
+#ifndef CR_ALREADY_CONNECTED
+#define CR_ALREADY_CONNECTED 2058
+#endif
 	if (!mysql_real_connect(&m_hDB, m_stHost.c_str(), m_stUser.c_str(), m_stPassword.c_str(), m_stDB.c_str(), m_iPort, nullptr, CLIENT_MULTI_STATEMENTS))
 	{
 		if (p->uiSQLErrno != CR_ALREADY_CONNECTED)

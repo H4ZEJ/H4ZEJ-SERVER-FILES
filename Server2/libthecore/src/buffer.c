@@ -26,7 +26,7 @@ static int buffer_get_exac_pool_index(int size) {
 	}
 	return -1; // too big... not pooled
 }
-static void buffer_pool_free ()
+static void buffer_pool_free()
 {
 	for (int i = 31; i >= 0; i--)
 	{
@@ -43,7 +43,7 @@ static void buffer_pool_free ()
 		}
 	}
 }
-static bool buffer_larger_pool_free (int n)
+static bool buffer_larger_pool_free(int n)
 {
 	for (int i = 31; i > n; i--)
 	{
@@ -61,7 +61,7 @@ static bool buffer_larger_pool_free (int n)
 }
 bool safe_create(char** pdata, int number)
 {
-	if (!((*pdata) = (char *) calloc (number, sizeof(char))))
+	if (!((*pdata) = (char*)calloc(number, sizeof(char))))
 	{
 		sys_err("calloc failed [%d] %s", errno, strerror(errno));
 		return false;
@@ -99,7 +99,7 @@ LPBUFFER buffer_new(int size)
 			if (!buffer_larger_pool_free(pool_index))
 				buffer_pool_free();
 			CREATE(buffer->mem_data, char, size);
-			sys_err ("buffer pool free success.");
+			sys_err("buffer pool free success.");
 		}
 	}
 	assert(buffer != NULL);
@@ -147,7 +147,7 @@ void buffer_reset(LPBUFFER buffer)
 	buffer->flag = 0;
 }
 
-void buffer_write(LPBUFFER& buffer, const void *src, int length)
+void buffer_write(LPBUFFER& buffer, const void* src, int length)
 {
 	if (buffer->write_point_pos + length >= buffer->mem_size)
 		buffer_realloc(buffer, buffer->mem_size + length + MIN(10240, length));
@@ -156,7 +156,7 @@ void buffer_write(LPBUFFER& buffer, const void *src, int length)
 	buffer_write_proceed(buffer, length);
 }
 
-void buffer_read(LPBUFFER buffer, void * buf, int bytes)
+void buffer_read(LPBUFFER buffer, void* buf, int bytes)
 {
 	thecore_memcpy(buf, buffer->read_point, bytes);
 	buffer_read_proceed(buffer, bytes);
@@ -164,28 +164,28 @@ void buffer_read(LPBUFFER buffer, void * buf, int bytes)
 
 BYTE buffer_byte(LPBUFFER buffer)
 {
-	BYTE val = *(BYTE *) buffer->read_point;
+	BYTE val = *(BYTE*)buffer->read_point;
 	buffer_read_proceed(buffer, sizeof(BYTE));
 	return val;
 }
 
 WORD buffer_word(LPBUFFER buffer)
 {
-	WORD val = *(WORD *) buffer->read_point;
+	WORD val = *(WORD*)buffer->read_point;
 	buffer_read_proceed(buffer, sizeof(WORD));
 	return val;
 }
 
 DWORD buffer_dword(LPBUFFER buffer)
 {
-	DWORD val = *(DWORD *) buffer->read_point;
+	DWORD val = *(DWORD*)buffer->read_point;
 	buffer_read_proceed(buffer, sizeof(DWORD));
 	return val;
 }
 
-const void * buffer_read_peek(LPBUFFER buffer)
+const void* buffer_read_peek(LPBUFFER buffer)
 {
-	return (const void *) buffer->read_point;
+	return (const void*)buffer->read_point;
 }
 
 void buffer_read_proceed(LPBUFFER buffer, int length)
@@ -218,7 +218,7 @@ void buffer_read_proceed(LPBUFFER buffer, int length)
 	}
 }
 
-void * buffer_write_peek(LPBUFFER buffer)
+void* buffer_write_peek(LPBUFFER buffer)
 {
 	return (buffer->write_point);
 }
@@ -226,7 +226,7 @@ void * buffer_write_peek(LPBUFFER buffer)
 void buffer_write_proceed(LPBUFFER buffer, int length)
 {
 	buffer->length += length;
-	buffer->write_point	+= length;
+	buffer->write_point += length;
 	buffer->write_point_pos += length;
 }
 
@@ -259,7 +259,7 @@ void buffer_realloc(LPBUFFER& buffer, int length)
 	if (i <= 0)
 		return;
 
-	temp = buffer_new (length);
+	temp = buffer_new(length);
 	sys_log(0, "reallocating buffer to %d, current %d", temp->mem_size, buffer->mem_size);
 	thecore_memcpy(temp->mem_data, buffer->mem_data, buffer->mem_size);
 

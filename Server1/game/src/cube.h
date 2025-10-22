@@ -25,23 +25,23 @@ struct CUBE_DATA
 
 	CUBE_DATA();
 
-	bool		can_make_item (LPITEM *items, WORD npc_vnum);
-	CUBE_VALUE*	reward_value ();
-	void		remove_material (LPCHARACTER ch);
+	bool		can_make_item(LPITEM* items, WORD npc_vnum);
+	CUBE_VALUE* reward_value();
+	void		remove_material(LPCHARACTER ch);
 };
 
-void Cube_init ();
-bool Cube_load (const char *file);
+void Cube_init();
+bool Cube_load(const char* file);
 
-bool Cube_make (LPCHARACTER ch);
+bool Cube_make(LPCHARACTER ch);
 
-void Cube_clean_item (LPCHARACTER ch);
-void Cube_open (LPCHARACTER ch);
-void Cube_close (LPCHARACTER ch);
+void Cube_clean_item(LPCHARACTER ch);
+void Cube_open(LPCHARACTER ch);
+void Cube_close(LPCHARACTER ch);
 
-void Cube_show_list (LPCHARACTER ch);
-void Cube_add_item (LPCHARACTER ch, int cube_index, int inven_index);
-void Cube_delete_item (LPCHARACTER ch, int cube_index);
+void Cube_show_list(LPCHARACTER ch);
+void Cube_add_item(LPCHARACTER ch, int cube_index, int inven_index);
+void Cube_delete_item(LPCHARACTER ch, int cube_index);
 
 void Cube_request_result_list(LPCHARACTER ch);
 void Cube_request_material_info(LPCHARACTER ch, int request_start_index, int request_count = 1);

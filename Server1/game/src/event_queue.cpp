@@ -15,16 +15,16 @@ void CEventQueue::Destroy()
 {
 	while (!m_pq_queue.empty())
 	{
-		TQueueElement * pElem = m_pq_queue.top();
+		TQueueElement* pElem = m_pq_queue.top();
 		m_pq_queue.pop();
 
 		Delete(pElem);
 	}
 }
 
-TQueueElement * CEventQueue::Enqueue(LPEVENT pvData, int duration, int pulse)
+TQueueElement* CEventQueue::Enqueue(LPEVENT pvData, int duration, int pulse)
 {
-	TQueueElement * pElem = M2_NEW TQueueElement;
+	TQueueElement* pElem = M2_NEW TQueueElement;
 
 	pElem->pvData = pvData;
 	pElem->iStartTime = pulse;
@@ -35,17 +35,17 @@ TQueueElement * CEventQueue::Enqueue(LPEVENT pvData, int duration, int pulse)
 	return pElem;
 }
 
-TQueueElement * CEventQueue::Dequeue()
+TQueueElement* CEventQueue::Dequeue()
 {
 	if (m_pq_queue.empty())
 		return NULL;
 
-	TQueueElement * pElem = m_pq_queue.top();
+	TQueueElement* pElem = m_pq_queue.top();
 	m_pq_queue.pop();
 	return pElem;
 }
 
-void CEventQueue::Delete(TQueueElement * pElem)
+void CEventQueue::Delete(TQueueElement* pElem)
 {
 	M2_DELETE(pElem);
 }

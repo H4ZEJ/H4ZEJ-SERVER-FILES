@@ -57,7 +57,7 @@ namespace quest
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 		bool bHasMasterSkill = false;
-		for (int i=0; i< SKILL_MAX_NUM; i++)
+		for (int i = 0; i < SKILL_MAX_NUM; i++)
 			if (ch->GetSkillMasterType(i) >= SKILL_MASTER && ch->GetSkillLevel(i) >= 21)
 			{
 				bHasMasterSkill = true;
@@ -113,7 +113,7 @@ namespace quest
 			return 0;
 		}
 
-		ch->SetWarpLocation((long)lua_tonumber(L,1), (long)lua_tonumber(L,2), (long)lua_tonumber(L,3));
+		ch->SetWarpLocation((long)lua_tonumber(L, 1), (long)lua_tonumber(L, 2), (long)lua_tonumber(L, 3));
 		return 0;
 	}
 
@@ -133,8 +133,8 @@ namespace quest
 			return 0;
 		}
 
-		long lMapIndex = (long) lua_tonumber(L, 1);
-		const TMapRegion * region = SECTREE_MANAGER::instance().GetMapRegion(lMapIndex);
+		long lMapIndex = (long)lua_tonumber(L, 1);
+		const TMapRegion* region = SECTREE_MANAGER::instance().GetMapRegion(lMapIndex);
 
 		if (!region)
 		{
@@ -142,8 +142,8 @@ namespace quest
 			return 0;
 		}
 
-		int x = (int) lua_tonumber(L, 2);
-		int y = (int) lua_tonumber(L, 3);
+		int x = (int)lua_tonumber(L, 2);
+		int y = (int)lua_tonumber(L, 3);
 
 		if (x > region->ex - region->sx)
 		{
@@ -184,19 +184,19 @@ namespace quest
 		long map_index = 0;
 
 		if (lua_isnumber(L, 3))
-			map_index = (int) lua_tonumber(L,3);
+			map_index = (int)lua_tonumber(L, 3);
 
 		//PREVENT_HACK
-		if ( ch->IsHack() )
+		if (ch->IsHack())
 		{
 			lua_pushboolean(L, false);
 			return 1;
 		}
 		//END_PREVENT_HACK
 
-		if ( test_server )
-			ch->ChatPacket( CHAT_TYPE_INFO, "pc_warp %d %d %d",(int)lua_tonumber(L,1),
-					(int)lua_tonumber(L,2),map_index );
+		if (test_server)
+			ch->ChatPacket(CHAT_TYPE_INFO, "pc_warp %d %d %d", (int)lua_tonumber(L, 1),
+				(int)lua_tonumber(L, 2), map_index);
 		ch->WarpSet((int)lua_tonumber(L, 1), (int)lua_tonumber(L, 2), map_index);
 
 		lua_pushboolean(L, true);
@@ -218,8 +218,8 @@ namespace quest
 			return 0;
 		}
 
-		long lMapIndex = (long) lua_tonumber(L, 1);
-		const TMapRegion * region = SECTREE_MANAGER::instance().GetMapRegion(lMapIndex);
+		long lMapIndex = (long)lua_tonumber(L, 1);
+		const TMapRegion* region = SECTREE_MANAGER::instance().GetMapRegion(lMapIndex);
 
 		if (!region)
 		{
@@ -227,8 +227,8 @@ namespace quest
 			return 0;
 		}
 
-		int x = (int) lua_tonumber(L, 2);
-		int y = (int) lua_tonumber(L, 3);
+		int x = (int)lua_tonumber(L, 2);
+		int y = (int)lua_tonumber(L, 3);
 
 		if (x > region->ex - region->sx)
 		{
@@ -255,7 +255,7 @@ namespace quest
 	ALUA(pc_in_dungeon)
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
-		lua_pushboolean(L, ch->GetDungeon()?1:0);
+		lua_pushboolean(L, ch->GetDungeon() ? 1 : 0);
 		return 1;
 	}
 
@@ -276,7 +276,7 @@ namespace quest
 	ALUA(pc_isguildmaster)
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
-		CGuild * g = ch->GetGuild();
+		CGuild* g = ch->GetGuild();
 
 		if (g)
 			lua_pushboolean(L, (ch->GetPlayerID() == g->GetMasterPID()));
@@ -289,7 +289,7 @@ namespace quest
 	ALUA(pc_destroy_guild)
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
-		CGuild * g = ch->GetGuild();
+		CGuild* g = ch->GetGuild();
 
 		if (g)
 			g->RequestDisband(ch->GetPlayerID());
@@ -300,7 +300,7 @@ namespace quest
 	ALUA(pc_remove_from_guild)
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
-		CGuild * g = ch->GetGuild();
+		CGuild* g = ch->GetGuild();
 
 		if (g)
 			g->RequestRemoveMember(ch->GetPlayerID());
@@ -318,7 +318,7 @@ namespace quest
 			return 0;
 		}
 
-		int iAmount = (int) lua_tonumber(L, 1);
+		int iAmount = (int)lua_tonumber(L, 1);
 
 		if (iAmount <= 0)
 		{
@@ -360,7 +360,7 @@ namespace quest
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
 		//PREVENT_HACK
-		if ( ch->IsHack() )
+		if (ch->IsHack())
 			return 0;
 		//END_PREVENT_HACK
 
@@ -376,7 +376,7 @@ namespace quest
 
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
-		DWORD dwGroupVnum = (DWORD) lua_tonumber(L,1);
+		DWORD dwGroupVnum = (DWORD)lua_tonumber(L, 1);
 
 		std::vector <DWORD> dwVnums;
 		std::vector <DWORD> dwCounts;
@@ -413,7 +413,7 @@ namespace quest
 		}
 
 		DWORD item_vnum = (DWORD)lua_tonumber(L, 1);
-		TItemTable * pTable = ITEM_MANAGER::instance().GetTable(item_vnum);
+		TItemTable* pTable = ITEM_MANAGER::instance().GetTable(item_vnum);
 		if (!pTable)
 		{
 			lua_pushboolean(L, 0);
@@ -430,7 +430,7 @@ namespace quest
 		PC* pPC = CQuestManager::instance().GetCurrentPC();
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
-		if (!lua_isstring(L, 1) || !(lua_isstring(L, 2)||lua_isnumber(L, 2)))
+		if (!lua_isstring(L, 1) || !(lua_isstring(L, 2) || lua_isnumber(L, 2)))
 		{
 			sys_err("QUEST : wrong argument");
 			return 0;
@@ -438,11 +438,11 @@ namespace quest
 
 		DWORD dwVnum;
 
-		if (lua_isnumber(L,2))
-			dwVnum = (int) lua_tonumber(L, 2);
+		if (lua_isnumber(L, 2))
+			dwVnum = (int)lua_tonumber(L, 2);
 		else if (!ITEM_MANAGER::instance().GetVnum(lua_tostring(L, 2), dwVnum))
 		{
-			sys_err("QUEST Make item call error : wrong item name : %s", lua_tostring(L,1));
+			sys_err("QUEST Make item call error : wrong item name : %s", lua_tostring(L, 1));
 			return 0;
 		}
 
@@ -472,7 +472,7 @@ namespace quest
 		if (!lua_isstring(L, 1) && !lua_isnumber(L, 1))
 		{
 			sys_err("QUEST Make item call error : wrong argument");
-			lua_pushnumber (L, 0);
+			lua_pushnumber(L, 0);
 			return 1;
 		}
 
@@ -480,24 +480,24 @@ namespace quest
 
 		if (lua_isnumber(L, 1))
 		{
-			dwVnum = (int) lua_tonumber(L, 1);
+			dwVnum = (int)lua_tonumber(L, 1);
 		}
 		else if (!ITEM_MANAGER::instance().GetVnum(lua_tostring(L, 1), dwVnum))
 		{
-			sys_err("QUEST Make item call error : wrong item name : %s", lua_tostring(L,1));
-			lua_pushnumber (L, 0);
+			sys_err("QUEST Make item call error : wrong item name : %s", lua_tostring(L, 1));
+			lua_pushnumber(L, 0);
 
 			return 1;
 		}
 
 		int icount = 1;
-		if (lua_isnumber(L,2) && lua_tonumber(L,2)>0)
+		if (lua_isnumber(L, 2) && lua_tonumber(L, 2) > 0)
 		{
-			icount = (int)rint(lua_tonumber(L,2));
-			if (icount<=0)
+			icount = (int)rint(lua_tonumber(L, 2));
+			if (icount <= 0)
 			{
-				sys_err("QUEST Make item call error : wrong item count : %g", lua_tonumber(L,2));
-				lua_pushnumber (L, 0);
+				sys_err("QUEST Make item call error : wrong item count : %g", lua_tonumber(L, 2));
+				lua_pushnumber(L, 0);
 				return 1;
 			}
 		}
@@ -510,15 +510,15 @@ namespace quest
 
 		LPITEM item = ch->AutoGiveItem(dwVnum, icount);
 
-		if ( dwVnum >= 80003 && dwVnum <= 80007 )
+		if (dwVnum >= 80003 && dwVnum <= 80007)
 		{
 			LogManager::instance().GoldBarLog(ch->GetPlayerID(), item->GetID(), QUEST, "quest: give_item2");
 		}
 
 		if (NULL != item)
-			lua_pushnumber (L, item->GetID());
+			lua_pushnumber(L, item->GetID());
 		else
-			lua_pushnumber (L, 0);
+			lua_pushnumber(L, 0);
 		return 1;
 	}
 
@@ -528,7 +528,7 @@ namespace quest
 		if (!lua_isstring(L, 1) && !lua_isnumber(L, 1))
 		{
 			sys_err("QUEST Make item call error : wrong argument");
-			lua_pushnumber (L, 0);
+			lua_pushnumber(L, 0);
 			return 1;
 		}
 
@@ -536,23 +536,23 @@ namespace quest
 
 		if (lua_isnumber(L, 1))
 		{
-			dwVnum = (int) lua_tonumber(L, 1);
+			dwVnum = (int)lua_tonumber(L, 1);
 		}
 		else if (!ITEM_MANAGER::instance().GetVnum(lua_tostring(L, 1), dwVnum))
 		{
-			sys_err("QUEST Make item call error : wrong item name : %s", lua_tostring(L,1));
-			lua_pushnumber (L, 0);
+			sys_err("QUEST Make item call error : wrong item name : %s", lua_tostring(L, 1));
+			lua_pushnumber(L, 0);
 
 			return 1;
 		}
 
 		int icount = 1;
-		if (lua_isnumber(L,2) && lua_tonumber(L,2)>0)
+		if (lua_isnumber(L, 2) && lua_tonumber(L, 2) > 0)
 		{
-			icount = (int)rint(lua_tonumber(L,2));
-			if (icount<=0)
+			icount = (int)rint(lua_tonumber(L, 2));
+			if (icount <= 0)
 			{
-				sys_err("QUEST Make item call error : wrong item count : %g", lua_tonumber(L,2));
+				sys_err("QUEST Make item call error : wrong item count : %g", lua_tonumber(L, 2));
 				lua_pushnumber(L, 0);
 				return 1;
 			}
@@ -592,21 +592,21 @@ namespace quest
 
 		if (lua_isnumber(L, 1))
 		{
-			dwVnum = (int) lua_tonumber(L, 1);
+			dwVnum = (int)lua_tonumber(L, 1);
 		}
 		else if (!ITEM_MANAGER::instance().GetVnum(lua_tostring(L, 1), dwVnum))
 		{
-			sys_err("QUEST Make item call error : wrong item name : %s", lua_tostring(L,1));
+			sys_err("QUEST Make item call error : wrong item name : %s", lua_tostring(L, 1));
 			return 0;
 		}
 
 		int icount = 1;
-		if (lua_isnumber(L,2) && lua_tonumber(L,2)>0)
+		if (lua_isnumber(L, 2) && lua_tonumber(L, 2) > 0)
 		{
-			icount = (int)rint(lua_tonumber(L,2));
-			if (icount<=0)
+			icount = (int)rint(lua_tonumber(L, 2));
+			if (icount <= 0)
 			{
-				sys_err("QUEST Make item call error : wrong item count : %g", lua_tonumber(L,2));
+				sys_err("QUEST Make item call error : wrong item count : %g", lua_tonumber(L, 2));
 				return 0;
 			}
 		}
@@ -622,7 +622,7 @@ namespace quest
 		if (NULL != item)
 			CQuestManager::Instance().SetCurrentItem(item);
 
-		if ( dwVnum >= 80003 && dwVnum <= 80007 )
+		if (dwVnum >= 80003 && dwVnum <= 80007)
 		{
 			LogManager::instance().GoldBarLog(ch->GetPlayerID(), item->GetID(), QUEST, "quest: give_item2");
 		}
@@ -639,14 +639,14 @@ namespace quest
 	ALUA(pc_get_x)
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
-		lua_pushnumber(L, ch->GetX()/100);
+		lua_pushnumber(L, ch->GetX() / 100);
 		return 1;
 	}
 
 	ALUA(pc_get_y)
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
-		lua_pushnumber(L, ch->GetY()/100);
+		lua_pushnumber(L, ch->GetY() / 100);
 		return 1;
 	}
 
@@ -679,14 +679,14 @@ namespace quest
 	ALUA(pc_count_item)
 	{
 		if (lua_isnumber(L, -1))
-			lua_pushnumber(L,CQuestManager::instance().GetCurrentCharacterPtr()->CountSpecifyItem((DWORD)lua_tonumber(L, -1)));
+			lua_pushnumber(L, CQuestManager::instance().GetCurrentCharacterPtr()->CountSpecifyItem((DWORD)lua_tonumber(L, -1)));
 		else if (lua_isstring(L, -1))
 		{
 			DWORD item_vnum;
 
-			if (!ITEM_MANAGER::instance().GetVnum(lua_tostring(L,1), item_vnum))
+			if (!ITEM_MANAGER::instance().GetVnum(lua_tostring(L, 1), item_vnum))
 			{
-				sys_err("QUEST count_item call error : wrong item name : %s", lua_tostring(L,1));
+				sys_err("QUEST count_item call error : wrong item name : %s", lua_tostring(L, 1));
 				lua_pushnumber(L, 0);
 			}
 			else
@@ -706,15 +706,15 @@ namespace quest
 		{
 			DWORD item_vnum;
 
-			if (lua_isnumber(L,1))
+			if (lua_isnumber(L, 1))
 			{
 				item_vnum = (DWORD)lua_tonumber(L, 1);
 			}
-			else if (lua_isstring(L,1))
+			else if (lua_isstring(L, 1))
 			{
-				if (!ITEM_MANAGER::instance().GetVnum(lua_tostring(L,1), item_vnum))
+				if (!ITEM_MANAGER::instance().GetVnum(lua_tostring(L, 1), item_vnum))
 				{
-					sys_err("QUEST remove_item call error : wrong item name : %s", lua_tostring(L,1));
+					sys_err("QUEST remove_item call error : wrong item name : %s", lua_tostring(L, 1));
 					return 0;
 				}
 			}
@@ -724,7 +724,7 @@ namespace quest
 				return 0;
 			}
 
-			sys_log(0,"QUEST remove a item vnum %d of %s[%d]", item_vnum, CQuestManager::instance().GetCurrentCharacterPtr()->GetName(), CQuestManager::instance().GetCurrentCharacterPtr()->GetPlayerID());
+			sys_log(0, "QUEST remove a item vnum %d of %s[%d]", item_vnum, CQuestManager::instance().GetCurrentCharacterPtr()->GetName(), CQuestManager::instance().GetCurrentCharacterPtr()->GetPlayerID());
 			CQuestManager::instance().GetCurrentCharacterPtr()->RemoveSpecifyItem(item_vnum);
 		}
 		else if (lua_gettop(L) == 2)
@@ -737,9 +737,9 @@ namespace quest
 			}
 			else if (lua_isstring(L, 1))
 			{
-				if (!ITEM_MANAGER::instance().GetVnum(lua_tostring(L,1), item_vnum))
+				if (!ITEM_MANAGER::instance().GetVnum(lua_tostring(L, 1), item_vnum))
 				{
-					sys_err("QUEST remove_item call error : wrong item name : %s", lua_tostring(L,1));
+					sys_err("QUEST remove_item call error : wrong item name : %s", lua_tostring(L, 1));
 					return 0;
 				}
 			}
@@ -749,12 +749,12 @@ namespace quest
 				return 0;
 			}
 
-			DWORD item_count = (DWORD) lua_tonumber(L, 2);
+			DWORD item_count = (DWORD)lua_tonumber(L, 2);
 			sys_log(0, "QUEST remove items(vnum %d) count %d of %s[%d]",
-					item_vnum,
-					item_count,
-					CQuestManager::instance().GetCurrentCharacterPtr()->GetName(),
-					CQuestManager::instance().GetCurrentCharacterPtr()->GetPlayerID());
+				item_vnum,
+				item_count,
+				CQuestManager::instance().GetCurrentCharacterPtr()->GetName(),
+				CQuestManager::instance().GetCurrentCharacterPtr()->GetPlayerID());
 
 			CQuestManager::instance().GetCurrentCharacterPtr()->RemoveSpecifyItem(item_vnum, item_count);
 		}
@@ -851,7 +851,7 @@ namespace quest
 			return 1;
 		}
 
-		long val = (long) lua_tonumber(L, 1);
+		long val = (long)lua_tonumber(L, 1);
 
 		if (val == 0)
 		{
@@ -908,7 +908,7 @@ namespace quest
 			int newLevel = lua_tonumber(L, 1);
 			LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
-			sys_log(0,"QUEST [LEVEL] %s jumpint to level %d", ch->GetName(), (int)rint(lua_tonumber(L,1)));
+			sys_log(0, "QUEST [LEVEL] %s jumpint to level %d", ch->GetName(), (int)rint(lua_tonumber(L, 1)));
 
 			PC* pPC = CQuestManager::instance().GetCurrentPC();
 			LogManager::instance().QuestRewardLog(pPC->GetCurrentQuestName().c_str(), ch->GetPlayerID(), ch->GetLevel(), newLevel, 0);
@@ -983,23 +983,21 @@ namespace quest
 		return 1;
 	}
 
-
-
 	ALUA(pc_get_real_alignment)
 	{
-		lua_pushnumber(L, CQuestManager::instance().GetCurrentCharacterPtr()->GetRealAlignment()/10);
+		lua_pushnumber(L, CQuestManager::instance().GetCurrentCharacterPtr()->GetRealAlignment() / 10);
 		return 1;
 	}
 
 	ALUA(pc_get_alignment)
 	{
-		lua_pushnumber(L, CQuestManager::instance().GetCurrentCharacterPtr()->GetAlignment()/10);
+		lua_pushnumber(L, CQuestManager::instance().GetCurrentCharacterPtr()->GetAlignment() / 10);
 		return 1;
 	}
 
 	ALUA(pc_change_alignment)
 	{
-		int alignment = (int)(lua_tonumber(L, 1)*10);
+		int alignment = (int)(lua_tonumber(L, 1) * 10);
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
 		ch->UpdateAlignment(alignment);
@@ -1032,101 +1030,101 @@ namespace quest
 		}
 		else
 		{
-			const char * sz = lua_tostring(L, 1);
-			const char * sz2 = lua_tostring(L, 2);
-			CQuestManager & q = CQuestManager::Instance();
-			PC * pPC = q.GetCurrentPC();
-			pPC->SetFlag(string(sz)+"."+sz2, int(rint(lua_tonumber(L,3))));
+			const char* sz = lua_tostring(L, 1);
+			const char* sz2 = lua_tostring(L, 2);
+			CQuestManager& q = CQuestManager::Instance();
+			PC* pPC = q.GetCurrentPC();
+			pPC->SetFlag(string(sz) + "." + sz2, int(rint(lua_tonumber(L, 3))));
 			return 0;
 		}
 	}
 
 	ALUA(pc_get_another_quest_flag)
 	{
-		if (!lua_isstring(L,1) || !lua_isstring(L,2))
+		if (!lua_isstring(L, 1) || !lua_isstring(L, 2))
 		{
 			sys_err("QUEST wrong get flag");
 			return 0;
 		}
 		else
 		{
-			const char* sz = lua_tostring(L,1);
-			const char* sz2 = lua_tostring(L,2);
+			const char* sz = lua_tostring(L, 1);
+			const char* sz2 = lua_tostring(L, 2);
 			CQuestManager& q = CQuestManager::Instance();
 			PC* pPC = q.GetCurrentPC();
 			if (!pPC)
 			{
 				return 0;
 			}
-			lua_pushnumber(L,pPC->GetFlag(string(sz)+"."+sz2));
+			lua_pushnumber(L, pPC->GetFlag(string(sz) + "." + sz2));
 			return 1;
 		}
 	}
 
 	ALUA(pc_get_flag)
 	{
-		if (!lua_isstring(L,-1))
+		if (!lua_isstring(L, -1))
 		{
 			sys_err("QUEST wrong get flag");
 			return 0;
 		}
 		else
 		{
-			const char* sz = lua_tostring(L,-1);
+			const char* sz = lua_tostring(L, -1);
 			CQuestManager& q = CQuestManager::Instance();
 			PC* pPC = q.GetCurrentPC();
-			lua_pushnumber(L,pPC->GetFlag(sz));
+			lua_pushnumber(L, pPC->GetFlag(sz));
 			return 1;
 		}
 	}
 
 	ALUA(pc_get_quest_flag)
 	{
-		if (!lua_isstring(L,-1))
+		if (!lua_isstring(L, -1))
 		{
 			sys_err("QUEST wrong get flag");
 			return 0;
 		}
 		else
 		{
-			const char* sz = lua_tostring(L,-1);
+			const char* sz = lua_tostring(L, -1);
 			CQuestManager& q = CQuestManager::Instance();
 			PC* pPC = q.GetCurrentPC();
-			lua_pushnumber(L,pPC->GetFlag(pPC->GetCurrentQuestName() + "."+sz));
-			if ( test_server )
-				sys_log( 0 ,"GetQF ( %s . %s )", pPC->GetCurrentQuestName().c_str(), sz );
+			lua_pushnumber(L, pPC->GetFlag(pPC->GetCurrentQuestName() + "." + sz));
+			if (test_server)
+				sys_log(0, "GetQF ( %s . %s )", pPC->GetCurrentQuestName().c_str(), sz);
 		}
 		return 1;
 	}
 
 	ALUA(pc_set_flag)
 	{
-		if (!lua_isstring(L,1) || !lua_isnumber(L,2))
+		if (!lua_isstring(L, 1) || !lua_isnumber(L, 2))
 		{
 			sys_err("QUEST wrong set flag");
 		}
 		else
 		{
-			const char* sz = lua_tostring(L,1);
+			const char* sz = lua_tostring(L, 1);
 			CQuestManager& q = CQuestManager::Instance();
 			PC* pPC = q.GetCurrentPC();
-			pPC->SetFlag(sz, int(rint(lua_tonumber(L,2))));
+			pPC->SetFlag(sz, int(rint(lua_tonumber(L, 2))));
 		}
 		return 0;
 	}
 
 	ALUA(pc_set_quest_flag)
 	{
-		if (!lua_isstring(L,1) || !lua_isnumber(L,2))
+		if (!lua_isstring(L, 1) || !lua_isnumber(L, 2))
 		{
 			sys_err("QUEST wrong set flag");
 		}
 		else
 		{
-			const char* sz = lua_tostring(L,1);
+			const char* sz = lua_tostring(L, 1);
 			CQuestManager& q = CQuestManager::Instance();
 			PC* pPC = q.GetCurrentPC();
-			pPC->SetFlag(pPC->GetCurrentQuestName()+"."+sz, int(rint(lua_tonumber(L,2))));
+			pPC->SetFlag(pPC->GetCurrentQuestName() + "." + sz, int(rint(lua_tonumber(L, 2))));
 		}
 		return 0;
 	}
@@ -1139,9 +1137,9 @@ namespace quest
 			return 0;
 		}
 
-		const char * sz = lua_tostring(L, 1);
-		PC * pPC = CQuestManager::instance().GetCurrentPC();
-		pPC->DeleteFlag(pPC->GetCurrentQuestName()+"."+sz);
+		const char* sz = lua_tostring(L, 1);
+		PC* pPC = CQuestManager::instance().GetCurrentPC();
+		pPC->DeleteFlag(pPC->GetCurrentQuestName() + "." + sz);
 		return 0;
 	}
 
@@ -1149,12 +1147,12 @@ namespace quest
 	{
 		CQuestManager& q = CQuestManager::instance();
 		LPCHARACTER ch = q.GetCurrentCharacterPtr();
-		if (!lua_isnumber(L,1))
+		if (!lua_isnumber(L, 1))
 			return 0;
 
-		sys_log(0,"QUEST [REWARD] %s give exp2 %d", ch->GetName(), (int)rint(lua_tonumber(L,1)));
+		sys_log(0, "QUEST [REWARD] %s give exp2 %d", ch->GetName(), (int)rint(lua_tonumber(L, 1)));
 
-		DWORD exp = (DWORD)rint(lua_tonumber(L,1));
+		DWORD exp = (DWORD)rint(lua_tonumber(L, 1));
 
 		PC* pPC = CQuestManager::instance().GetCurrentPC();
 		LogManager::instance().QuestRewardLog(pPC->GetCurrentQuestName().c_str(), ch->GetPlayerID(), ch->GetLevel(), exp, 0);
@@ -1164,39 +1162,39 @@ namespace quest
 
 	ALUA(pc_give_exp)
 	{
-		if (!lua_isstring(L,1) || !lua_isnumber(L,2))
+		if (!lua_isstring(L, 1) || !lua_isnumber(L, 2))
 			return 0;
 
 		CQuestManager& q = CQuestManager::instance();
 		LPCHARACTER ch = q.GetCurrentCharacterPtr();
 
-		sys_log(0,"QUEST [REWARD] %s give exp %s %d", ch->GetName(), lua_tostring(L,1), (int)rint(lua_tonumber(L,2)));
+		sys_log(0, "QUEST [REWARD] %s give exp %s %d", ch->GetName(), lua_tostring(L, 1), (int)rint(lua_tonumber(L, 2)));
 
-		DWORD exp = (DWORD)rint(lua_tonumber(L,2));
+		DWORD exp = (DWORD)rint(lua_tonumber(L, 2));
 
 		PC* pPC = CQuestManager::instance().GetCurrentPC();
 
 		LogManager::instance().QuestRewardLog(pPC->GetCurrentQuestName().c_str(), ch->GetPlayerID(), ch->GetLevel(), exp, 0);
 
-		pPC->GiveExp(lua_tostring(L,1), exp);
+		pPC->GiveExp(lua_tostring(L, 1), exp);
 		return 0;
 	}
 
 	ALUA(pc_give_exp_perc)
 	{
-		CQuestManager & q = CQuestManager::instance();
+		CQuestManager& q = CQuestManager::instance();
 		LPCHARACTER ch = q.GetCurrentCharacterPtr();
 
 		if (!ch || !lua_isstring(L, 1) || !lua_isnumber(L, 2) || !lua_isnumber(L, 3))
 			return 0;
 
-		int lev = (int)rint(lua_tonumber(L,2));
-		double proc = (lua_tonumber(L,3));
+		int lev = (int)rint(lua_tonumber(L, 2));
+		double proc = (lua_tonumber(L, 3));
 
 		sys_log(0, "QUEST [REWARD] %s give exp %s lev %d percent %g%%", ch->GetName(), lua_tostring(L, 1), lev, proc);
 
 		DWORD exp = (DWORD)((exp_table[MINMAX(0, lev, PLAYER_MAX_LEVEL_CONST)] * proc) / 100);
-		PC * pPC = CQuestManager::instance().GetCurrentPC();
+		PC* pPC = CQuestManager::instance().GetCurrentPC();
 
 		LogManager::instance().QuestRewardLog(pPC->GetCurrentQuestName().c_str(), ch->GetPlayerID(), ch->GetLevel(), exp, 0);
 
@@ -1214,7 +1212,7 @@ namespace quest
 	{
 		CQuestManager& q = CQuestManager::instance();
 		LPCHARACTER ch = q.GetCurrentCharacterPtr();
-		if (!lua_isnumber(L,1))
+		if (!lua_isnumber(L, 1))
 		{
 			lua_pushnumber(L, 0);
 			return 1;
@@ -1228,7 +1226,7 @@ namespace quest
 	{
 		CQuestManager& q = CQuestManager::instance();
 		LPCHARACTER ch = q.GetCurrentCharacterPtr();
-		if (!lua_isnumber(L,1) || !lua_isnumber(L,2))
+		if (!lua_isnumber(L, 1) || !lua_isnumber(L, 2))
 		{
 			return 0;
 		}
@@ -1251,10 +1249,10 @@ namespace quest
 			sys_err("QUEST wrong skillgroup number");
 		else
 		{
-			CQuestManager & q = CQuestManager::Instance();
+			CQuestManager& q = CQuestManager::Instance();
 			LPCHARACTER ch = q.GetCurrentCharacterPtr();
 
-			ch->SetSkillGroup((BYTE) rint(lua_tonumber(L, 1)));
+			ch->SetSkillGroup((BYTE)rint(lua_tonumber(L, 1)));
 		}
 		return 0;
 	}
@@ -1277,8 +1275,8 @@ namespace quest
 	ALUA(pc_polymorph)
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
-		DWORD dwVnum = (DWORD) lua_tonumber(L, 1);
-		int iDuration = (int) lua_tonumber(L, 2);
+		DWORD dwVnum = (DWORD)lua_tonumber(L, 1);
+		int iDuration = (int)lua_tonumber(L, 2);
 		ch->AddAffect(AFFECT_POLYMORPH, POINT_POLYMORPH, dwVnum, AFF_POLYMORPH, iDuration, 0, true);
 		return 0;
 	}
@@ -1332,8 +1330,8 @@ namespace quest
 			case 20204:
 			case 20213:
 			case 20216:
-			ch->AddAffect(AFFECT_MOUNT, POINT_MOV_SPEED, 30, AFF_NONE, length, 0, true, true);
-			break;
+				ch->AddAffect(AFFECT_MOUNT, POINT_MOV_SPEED, 30, AFF_NONE, length, 0, true, true);
+				break;
 
 			case 20205:
 			case 20206:
@@ -1341,8 +1339,8 @@ namespace quest
 			case 20208:
 			case 20214:
 			case 20217:
-			ch->AddAffect(AFFECT_MOUNT, POINT_MOV_SPEED, 40, AFF_NONE, length, 0, true, true);
-			break;
+				ch->AddAffect(AFFECT_MOUNT, POINT_MOV_SPEED, 40, AFF_NONE, length, 0, true, true);
+				break;
 
 			case 20209:
 			case 20210:
@@ -1350,9 +1348,8 @@ namespace quest
 			case 20212:
 			case 20215:
 			case 20218:
-			ch->AddAffect(AFFECT_MOUNT, POINT_MOV_SPEED, 50, AFF_NONE, length, 0, true, true);
-			break;
-
+				ch->AddAffect(AFFECT_MOUNT, POINT_MOV_SPEED, 50, AFF_NONE, length, 0, true, true);
+				break;
 			}
 		}
 
@@ -1367,7 +1364,7 @@ namespace quest
 
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
-		if( NULL != ch )
+		if (NULL != ch)
 		{
 			// @fixme134
 			if (!ch->GetMountVnum())
@@ -1421,7 +1418,7 @@ namespace quest
 	ALUA(pc_is_horse_alive)
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
-		lua_pushboolean(L, ch->GetHorseLevel() > 0 && ch->GetHorseHealth()>0);
+		lua_pushboolean(L, ch->GetHorseLevel() > 0 && ch->GetHorseHealth() > 0);
 		return 1;
 	}
 
@@ -1440,8 +1437,8 @@ namespace quest
 			return 1;
 		}
 
-		const char * szMapName = lua_tostring(L, 1);
-		const TMapRegion * region = SECTREE_MANAGER::instance().FindRegionByPartialName(szMapName);
+		const char* szMapName = lua_tostring(L, 1);
+		const TMapRegion* region = SECTREE_MANAGER::instance().FindRegionByPartialName(szMapName);
 
 		if (!region)
 		{
@@ -1459,13 +1456,13 @@ namespace quest
 				continue;
 
 			if (item->GetType() == ITEM_USE &&
-					item->GetSubType() == USE_TALISMAN &&
-					(item->GetValue(0) == 1 || item->GetValue(0) == 2))
+				item->GetSubType() == USE_TALISMAN &&
+				(item->GetValue(0) == 1 || item->GetValue(0) == 2))
 			{
 				int x = item->GetSocket(0);
 				int y = item->GetSocket(1);
 				//if ((x-item_x)*(x-item_x)+(y-item_y)*(y-item_y)<r*r)
-				if (region->sx <=x && region->sy <= y && x <= region->ex && y <= region->ey)
+				if (region->sx <= x && region->sy <= y && x <= region->ex && y <= region->ey)
 				{
 					bFind = true;
 					break;
@@ -1488,14 +1485,14 @@ namespace quest
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
-		if (!lua_isnumber(L,1) || !lua_isnumber(L,2))
+		if (!lua_isnumber(L, 1) || !lua_isnumber(L, 2))
 		{
 			sys_err("invalid x y position");
 			lua_pushboolean(L, 0);
 			return 1;
 		}
 
-		if (!lua_isnumber(L,2))
+		if (!lua_isnumber(L, 2))
 		{
 			sys_err("invalid radius");
 			lua_pushboolean(L, 0);
@@ -1514,12 +1511,12 @@ namespace quest
 				continue;
 
 			if (item->GetType() == ITEM_USE &&
-					item->GetSubType() == USE_TALISMAN &&
-					(item->GetValue(0) == 1 || item->GetValue(0) == 2))
+				item->GetSubType() == USE_TALISMAN &&
+				(item->GetValue(0) == 1 || item->GetValue(0) == 2))
 			{
 				int item_x = item->GetSocket(0);
 				int item_y = item->GetSocket(1);
-				if ((x-item_x)*(x-item_x)+(y-item_y)*(y-item_y)<r*r)
+				if ((x - item_x) * (x - item_x) + (y - item_y) * (y - item_y) < r * r)
 				{
 					bFind = true;
 					break;
@@ -1534,7 +1531,7 @@ namespace quest
 	ALUA(pc_get_equip_refine_level)
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
-		int cell = (int) lua_tonumber(L, 1);
+		int cell = (int)lua_tonumber(L, 1);
 		if (cell < 0 || cell >= WEAR_MAX_NUM)
 		{
 			sys_err("invalid wear position %d", cell);
@@ -1563,8 +1560,8 @@ namespace quest
 			return 1;
 		}
 
-		int cell = (int) lua_tonumber(L, 1);
-		int level_limit = (int) lua_tonumber(L, 2);
+		int cell = (int)lua_tonumber(L, 1);
+		int level_limit = (int)lua_tonumber(L, 2);
 		int pct = lua_isnumber(L, 3) ? (int)lua_tonumber(L, 3) : 100;
 
 		LPITEM item = ch->GetWear(cell);
@@ -1580,7 +1577,7 @@ namespace quest
 			return 1;
 		}
 
-		if (item->GetRefineLevel()>level_limit)
+		if (item->GetRefineLevel() > level_limit)
 		{
 			lua_pushboolean(L, 0);
 			return 1;
@@ -1601,7 +1598,7 @@ namespace quest
 						pkNewItem->SetSocket(i, 1);
 
 				int set = 0;
-				for (int i=0; i<ITEM_SOCKET_MAX_NUM; i++)
+				for (int i = 0; i < ITEM_SOCKET_MAX_NUM; i++)
 				{
 					long socket = item->GetSocket(i);
 					if (socket > 2 && socket != 28960)
@@ -1641,7 +1638,7 @@ namespace quest
 
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
-		DWORD dwVnum = (DWORD) lua_tonumber(L, 1);
+		DWORD dwVnum = (DWORD)lua_tonumber(L, 1);
 		lua_pushnumber(L, ch->GetSkillLevel(dwVnum));
 
 		return 1;
@@ -1670,7 +1667,7 @@ namespace quest
 
 	ALUA(pc_select_pid)
 	{
-		DWORD pid = (DWORD) lua_tonumber(L, 1);
+		DWORD pid = (DWORD)lua_tonumber(L, 1);
 
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 		LPCHARACTER new_ch = CHARACTER_MANAGER::instance().FindByPID(pid);
@@ -1691,7 +1688,7 @@ namespace quest
 
 	ALUA(pc_select_vid)
 	{
-		DWORD vid = (DWORD) lua_tonumber(L, 1);
+		DWORD vid = (DWORD)lua_tonumber(L, 1);
 
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 		LPCHARACTER new_ch = CHARACTER_MANAGER::instance().Find(vid);
@@ -1768,7 +1765,7 @@ namespace quest
 			return 1;
 		}
 
-		int cost = (int) lua_tonumber(L, 1);
+		int cost = (int)lua_tonumber(L, 1);
 		int pct = (int)lua_tonumber(L, 2);
 
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
@@ -1791,7 +1788,7 @@ namespace quest
 			return 1;
 		}
 
-		int cost = (int) lua_tonumber(L, 1);
+		int cost = (int)lua_tonumber(L, 1);
 		int pct = (int)lua_tonumber(L, 2);
 		int metinstone_cell = (int)lua_tonumber(L, 3);
 
@@ -1812,7 +1809,7 @@ namespace quest
 	ALUA(pc_clear_skill)
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
-		if ( ch == NULL ) return 0;
+		if (ch == NULL) return 0;
 
 		ch->ClearSkill();
 
@@ -1822,7 +1819,7 @@ namespace quest
 	ALUA(pc_clear_sub_skill)
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
-		if ( ch == NULL ) return 0;
+		if (ch == NULL) return 0;
 
 		ch->ClearSubSkill();
 
@@ -1837,7 +1834,7 @@ namespace quest
 		}
 
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
-		int newPoint = (int) lua_tonumber(L, 1);
+		int newPoint = (int)lua_tonumber(L, 1);
 
 		ch->SetRealPoint(POINT_SKILL, newPoint);
 		ch->SetPoint(POINT_SKILL, ch->GetRealPoint(POINT_SKILL));
@@ -1855,7 +1852,7 @@ namespace quest
 		sys_log(0, "%d skill clear", vnum);
 
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
-		if ( ch == NULL )
+		if (ch == NULL)
 		{
 			sys_log(0, "skill clear fail");
 			lua_pushnumber(L, 0);
@@ -1891,8 +1888,8 @@ namespace quest
 	ALUA(pc_teleport)
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
-		int x=0,y=0;
-		if ( lua_isnumber(L, 1) )
+		int x = 0, y = 0;
+		if (lua_isnumber(L, 1))
 		{
 			const int TOWN_NUM = 10;
 			struct warp_by_town_name
@@ -1913,7 +1910,7 @@ namespace quest
 				{"박라현",		8639,	2460},
 				{"서한산",		4350,	2143},
 			};
-			int idx  = (int)lua_tonumber(L, 1);
+			int idx = (int)lua_tonumber(L, 1);
 
 			x = ws[idx].x;
 			y = ws[idx].y;
@@ -1922,7 +1919,7 @@ namespace quest
 
 		else
 		{
-			const char * arg1 = lua_tostring(L, 1);
+			const char* arg1 = lua_tostring(L, 1);
 
 			LPCHARACTER tch = CHARACTER_MANAGER::instance().FindPC(arg1);
 
@@ -1948,7 +1945,7 @@ namespace quest
 						{
 							ch->ChatPacket(CHAT_TYPE_INFO, "You warp to ( %d, %d )", pos.x, pos.y);
 							ch->WarpSet(pos.x, pos.y);
-							lua_pushnumber(L, 1 );
+							lua_pushnumber(L, 1);
 						}
 					}
 				}
@@ -1957,7 +1954,7 @@ namespace quest
 					ch->ChatPacket(CHAT_TYPE_INFO, "There is no one by that name");
 				}
 
-				lua_pushnumber(L, 0 );
+				lua_pushnumber(L, 0);
 
 				return 1;
 			}
@@ -1968,15 +1965,15 @@ namespace quest
 			}
 		}
 
-teleport_area:
+	teleport_area:
 
 		x *= 100;
 		y *= 100;
 
 		ch->ChatPacket(CHAT_TYPE_INFO, "You warp to ( %d, %d )", x, y);
-		ch->WarpSet(x,y);
+		ch->WarpSet(x, y);
 		ch->Stop();
-		lua_pushnumber(L, 1 );
+		lua_pushnumber(L, 1);
 		return 1;
 	}
 
@@ -1995,7 +1992,7 @@ teleport_area:
 
 	ALUA(pc_give_polymorph_book)
 	{
-		if ( lua_isnumber(L, 1) != true && lua_isnumber(L, 2) != true && lua_isnumber(L, 3) != true && lua_isnumber(L, 4) != true )
+		if (lua_isnumber(L, 1) != true && lua_isnumber(L, 2) != true && lua_isnumber(L, 3) != true && lua_isnumber(L, 4) != true)
 		{
 			sys_err("Wrong Quest Function Arguments: pc_give_polymorph_book");
 			return 0;
@@ -2022,8 +2019,8 @@ teleport_area:
 
 	ALUA(pc_get_premium_remain_sec)
 	{
-		int	remain_seconds	= 0;
-		int	premium_type	= 0;
+		int	remain_seconds = 0;
+		int	premium_type = 0;
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
 		if (!lua_isnumber(L, 1))
@@ -2032,21 +2029,21 @@ teleport_area:
 			return 0;
 		}
 
-		premium_type = (int)lua_tonumber(L,1);
+		premium_type = (int)lua_tonumber(L, 1);
 		switch (premium_type)
 		{
-			case PREMIUM_EXP:
-			case PREMIUM_ITEM:
-			case PREMIUM_SAFEBOX:
-			case PREMIUM_AUTOLOOT:
-			case PREMIUM_FISH_MIND:
-			case PREMIUM_MARRIAGE_FAST:
-			case PREMIUM_GOLD:
-				break;
+		case PREMIUM_EXP:
+		case PREMIUM_ITEM:
+		case PREMIUM_SAFEBOX:
+		case PREMIUM_AUTOLOOT:
+		case PREMIUM_FISH_MIND:
+		case PREMIUM_MARRIAGE_FAST:
+		case PREMIUM_GOLD:
+			break;
 
-			default:
-				sys_err("wrong premium index %d", premium_type);
-				return 0;
+		default:
+			sys_err("wrong premium index %d", premium_type);
+			return 0;
 		}
 
 		remain_seconds = ch->GetPremiumRemainSeconds(premium_type);
@@ -2100,21 +2097,21 @@ teleport_area:
 
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
-		if ( ch->GetNewName().size() != 0 )
+		if (ch->GetNewName().size() != 0)
 		{
 			lua_pushnumber(L, 0);
 			return 1;
 		}
 
-		if ( lua_isstring(L, 1) != true )
+		if (lua_isstring(L, 1) != true)
 		{
 			lua_pushnumber(L, 1);
 			return 1;
 		}
 
-		const char * szName = lua_tostring(L, 1);
+		const char* szName = lua_tostring(L, 1);
 
-		if ( check_name(szName) == false )
+		if (check_name(szName) == false)
 		{
 			lua_pushnumber(L, 2);
 			return 1;
@@ -2124,14 +2121,14 @@ teleport_area:
 		snprintf(szQuery, sizeof(szQuery), "SELECT COUNT(*) FROM player%s WHERE name='%s'", get_table_postfix(), szName);
 
 		auto pmsg(DBManager::instance().DirectQuery(szQuery));
-		if ( pmsg->Get()->uiNumRows > 0 )
+		if (pmsg->Get()->uiNumRows > 0)
 		{
 			MYSQL_ROW row = mysql_fetch_row(pmsg->Get()->pSQLResult);
 
 			int	count = 0;
 			str_to_number(count, row[0]);
 
-			if ( count != 0 )
+			if (count != 0)
 			{
 				lua_pushnumber(L, 3);
 				return 1;
@@ -2165,7 +2162,7 @@ teleport_area:
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
-		if ( ch != NULL )
+		if (ch != NULL)
 		{
 			lua_pushboolean(L, ch->IsDead());
 			return 1;
@@ -2178,23 +2175,23 @@ teleport_area:
 
 	ALUA(pc_reset_status)
 	{
-		if ( lua_isnumber(L, 1) == true )
+		if (lua_isnumber(L, 1) == true)
 		{
 			int idx = (int)lua_tonumber(L, 1);
 
-			if ( idx >= 0 && idx < 4 )
+			if (idx >= 0 && idx < 4)
 			{
 				LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 				int point = POINT_NONE;
 				char buf[128];
 
-				switch ( idx )
+				switch (idx)
 				{
-					case 0 : point = POINT_HT; break;
-					case 1 : point = POINT_IQ; break;
-					case 2 : point = POINT_ST; break;
-					case 3 : point = POINT_DX; break;
-					default : lua_pushboolean(L, false); return 1;
+				case 0: point = POINT_HT; break;
+				case 1: point = POINT_IQ; break;
+				case 2: point = POINT_ST; break;
+				case 3: point = POINT_DX; break;
+				default: lua_pushboolean(L, false); return 1;
 				}
 
 				int old_val = ch->GetRealPoint(point);
@@ -2203,45 +2200,45 @@ teleport_area:
 				ch->SetRealPoint(point, 1);
 				ch->SetPoint(point, ch->GetRealPoint(point));
 
-				ch->PointChange(POINT_STAT, old_val-1);
+				ch->PointChange(POINT_STAT, old_val - 1);
 
-				if ( point == POINT_HT )
+				if (point == POINT_HT)
 				{
 					BYTE job = ch->GetJob();
-					ch->SetRandomHP((ch->GetLevel()-1) * number(JobInitialPoints[job].hp_per_lv_begin, JobInitialPoints[job].hp_per_lv_end));
+					ch->SetRandomHP((ch->GetLevel() - 1) * number(JobInitialPoints[job].hp_per_lv_begin, JobInitialPoints[job].hp_per_lv_end));
 				}
-				else if ( point == POINT_IQ )
+				else if (point == POINT_IQ)
 				{
 					BYTE job = ch->GetJob();
-					ch->SetRandomSP((ch->GetLevel()-1) * number(JobInitialPoints[job].sp_per_lv_begin, JobInitialPoints[job].sp_per_lv_end));
+					ch->SetRandomSP((ch->GetLevel() - 1) * number(JobInitialPoints[job].sp_per_lv_begin, JobInitialPoints[job].sp_per_lv_end));
 				}
 
 				ch->ComputePoints();
 				ch->PointsPacket();
 
-				if ( point == POINT_HT )
+				if (point == POINT_HT)
 				{
 					ch->PointChange(POINT_HP, ch->GetMaxHP() - ch->GetHP());
 				}
-				else if ( point == POINT_IQ )
+				else if (point == POINT_IQ)
 				{
 					ch->PointChange(POINT_SP, ch->GetMaxSP() - ch->GetSP());
 				}
 
-				switch ( idx )
+				switch (idx)
 				{
-					case 0 :
-						snprintf(buf, sizeof(buf), "reset ht(%d)->1 stat_point(%d)->(%d)", old_val, old_stat, ch->GetRealPoint(POINT_STAT));
-						break;
-					case 1 :
-						snprintf(buf, sizeof(buf), "reset iq(%d)->1 stat_point(%d)->(%d)", old_val, old_stat, ch->GetRealPoint(POINT_STAT));
-						break;
-					case 2 :
-						snprintf(buf, sizeof(buf), "reset st(%d)->1 stat_point(%d)->(%d)", old_val, old_stat, ch->GetRealPoint(POINT_STAT));
-						break;
-					case 3 :
-						snprintf(buf, sizeof(buf), "reset dx(%d)->1 stat_point(%d)->(%d)", old_val, old_stat, ch->GetRealPoint(POINT_STAT));
-						break;
+				case 0:
+					snprintf(buf, sizeof(buf), "reset ht(%d)->1 stat_point(%d)->(%d)", old_val, old_stat, ch->GetRealPoint(POINT_STAT));
+					break;
+				case 1:
+					snprintf(buf, sizeof(buf), "reset iq(%d)->1 stat_point(%d)->(%d)", old_val, old_stat, ch->GetRealPoint(POINT_STAT));
+					break;
+				case 2:
+					snprintf(buf, sizeof(buf), "reset st(%d)->1 stat_point(%d)->(%d)", old_val, old_stat, ch->GetRealPoint(POINT_STAT));
+					break;
+				case 3:
+					snprintf(buf, sizeof(buf), "reset dx(%d)->1 stat_point(%d)->(%d)", old_val, old_stat, ch->GetRealPoint(POINT_STAT));
+					break;
 				}
 
 				LogManager::instance().CharLog(ch, 0, "RESET_ONE_STATUS", buf);
@@ -2264,7 +2261,7 @@ teleport_area:
 
 	ALUA(pc_set_ht)
 	{
-		if ( lua_isnumber(L, 1) == false )
+		if (lua_isnumber(L, 1) == false)
 			return 1;
 
 		int newPoint = (int)lua_tonumber(L, 1);
@@ -2288,7 +2285,7 @@ teleport_area:
 
 	ALUA(pc_set_iq)
 	{
-		if ( lua_isnumber(L, 1) == false )
+		if (lua_isnumber(L, 1) == false)
 			return 1;
 
 		int newPoint = (int)lua_tonumber(L, 1);
@@ -2312,7 +2309,7 @@ teleport_area:
 
 	ALUA(pc_set_st)
 	{
-		if ( lua_isnumber(L, 1) == false )
+		if (lua_isnumber(L, 1) == false)
 			return 1;
 
 		int newPoint = (int)lua_tonumber(L, 1);
@@ -2336,7 +2333,7 @@ teleport_area:
 
 	ALUA(pc_set_dx)
 	{
-		if ( lua_isnumber(L, 1) == false )
+		if (lua_isnumber(L, 1) == false)
 			return 1;
 
 		int newPoint = (int)lua_tonumber(L, 1);
@@ -2353,18 +2350,18 @@ teleport_area:
 
 	ALUA(pc_is_near_vid)
 	{
-		if ( lua_isnumber(L, 1) != true || lua_isnumber(L, 2) != true )
+		if (lua_isnumber(L, 1) != true || lua_isnumber(L, 2) != true)
 		{
 			lua_pushboolean(L, false);
 		}
 		else
 		{
 			LPCHARACTER pMe = CQuestManager::instance().GetCurrentCharacterPtr();
-			LPCHARACTER pOther = CHARACTER_MANAGER::instance().Find( (DWORD)lua_tonumber(L, 1) );
+			LPCHARACTER pOther = CHARACTER_MANAGER::instance().Find((DWORD)lua_tonumber(L, 1));
 
-			if ( pMe != NULL && pOther != NULL )
+			if (pMe != NULL && pOther != NULL)
 			{
-				lua_pushboolean(L, (DISTANCE_APPROX(pMe->GetX() - pOther->GetX(), pMe->GetY() - pOther->GetY()) < (int)lua_tonumber(L, 2)*100));
+				lua_pushboolean(L, (DISTANCE_APPROX(pMe->GetX() - pOther->GetX(), pMe->GetY() - pOther->GetY()) < (int)lua_tonumber(L, 2) * 100));
 			}
 			else
 			{
@@ -2379,48 +2376,48 @@ teleport_area:
 	{
 		LPCHARACTER pChar = CQuestManager::instance().GetCurrentCharacterPtr();
 
-		lua_newtable( L );
+		lua_newtable(L);
 
-		if ( pChar == NULL ) return 1;
+		if (pChar == NULL) return 1;
 
 		int idx = 1;
 
-		for ( int i=0; i < INVENTORY_MAX_NUM + WEAR_MAX_NUM; i++ )
+		for (int i = 0; i < INVENTORY_MAX_NUM + WEAR_MAX_NUM; i++)
 		{
 			LPITEM pItem = pChar->GetInventoryItem(i);
 
-			if ( pItem != NULL )
+			if (pItem != NULL)
 			{
-				if ( pItem->IsEquipped() == false )
+				if (pItem->IsEquipped() == false)
 				{
 					int j = 0;
-					for (; j < ITEM_SOCKET_MAX_NUM; j++ )
+					for (; j < ITEM_SOCKET_MAX_NUM; j++)
 					{
 						long socket = pItem->GetSocket(j);
 
-						if ( socket > 2 && socket != ITEM_BROKEN_METIN_VNUM )
+						if (socket > 2 && socket != ITEM_BROKEN_METIN_VNUM)
 						{
-							TItemTable* pItemInfo = ITEM_MANAGER::instance().GetTable( socket );
-							if ( pItemInfo != NULL )
+							TItemTable* pItemInfo = ITEM_MANAGER::instance().GetTable(socket);
+							if (pItemInfo != NULL)
 							{
-								if ( pItemInfo->bType == ITEM_METIN ) break;
+								if (pItemInfo->bType == ITEM_METIN) break;
 							}
 						}
 					}
 
-					if ( j >= ITEM_SOCKET_MAX_NUM ) continue;
+					if (j >= ITEM_SOCKET_MAX_NUM) continue;
 
-					lua_newtable( L );
+					lua_newtable(L);
 
 					{
-						lua_pushstring( L, pItem->GetName() );
-						lua_rawseti( L, -2, 1 );
+						lua_pushstring(L, pItem->GetName());
+						lua_rawseti(L, -2, 1);
 
-						lua_pushnumber( L, i );
-						lua_rawseti( L, -2, 2 );
+						lua_pushnumber(L, i);
+						lua_rawseti(L, -2, 2);
 					}
 
-					lua_rawseti( L, -2, idx++ );
+					lua_rawseti(L, -2, idx++);
 				}
 			}
 		}
@@ -2432,7 +2429,7 @@ teleport_area:
 	{
 		LPCHARACTER pChar = CQuestManager::instance().GetCurrentCharacterPtr();
 
-		if ( pChar != NULL )
+		if (pChar != NULL)
 		{
 			lua_pushnumber(L, pChar->CountEmptyInventory());
 		}
@@ -2448,7 +2445,7 @@ teleport_area:
 	{
 		LPCHARACTER pChar = CQuestManager::instance().GetCurrentCharacterPtr();
 
-		if ( pChar != NULL )
+		if (pChar != NULL)
 		{
 			lua_pushnumber(L, pChar->GetLogOffInterval());
 		}
@@ -2464,13 +2461,13 @@ teleport_area:
 	{
 		LPCHARACTER pChar = CQuestManager::instance().GetCurrentCharacterPtr();
 
-		if ( pChar != NULL )
+		if (pChar != NULL)
 		{
-			lua_pushnumber( L, pChar->GetPlayerID() );
+			lua_pushnumber(L, pChar->GetPlayerID());
 		}
 		else
 		{
-			lua_pushnumber( L, 0 );
+			lua_pushnumber(L, 0);
 		}
 
 		return 1;
@@ -2487,16 +2484,16 @@ teleport_area:
 	{
 		LPCHARACTER pChar = CQuestManager::instance().GetCurrentCharacterPtr();
 
-		if( NULL != pChar )
+		if (NULL != pChar)
 		{
-			if( NULL != pChar->GetDesc() )
+			if (NULL != pChar->GetDesc())
 			{
-				lua_pushstring( L, pChar->GetDesc()->GetAccountTable().login );
+				lua_pushstring(L, pChar->GetDesc()->GetAccountTable().login);
 				return 1;
 			}
 		}
 
-		lua_pushstring( L, "" );
+		lua_pushstring(L, "");
 		return 1;
 	}
 
@@ -2504,7 +2501,7 @@ teleport_area:
 	{
 		LPCHARACTER pChar = CQuestManager::instance().GetCurrentCharacterPtr();
 
-		if( NULL != pChar )
+		if (NULL != pChar)
 		{
 			bool is_riding = pChar->IsRiding();
 
@@ -2617,7 +2614,7 @@ teleport_area:
 			return 1;
 		}
 
-		LPITEM item = ITEM_MANAGER::instance().CreateItem( MobInfo->m_table.dwPolymorphItemVnum );
+		LPITEM item = ITEM_MANAGER::instance().CreateItem(MobInfo->m_table.dwPolymorphItemVnum);
 
 		if (NULL == item)
 		{
@@ -2651,7 +2648,7 @@ teleport_area:
 
 	ALUA(pc_get_sig_items)
 	{
-		DWORD group_vnum = (DWORD)lua_tonumber (L, 1);
+		DWORD group_vnum = (DWORD)lua_tonumber(L, 1);
 		const LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 		int count = 0;
 		for (int i = 0; i < INVENTORY_MAX_NUM; ++i)
@@ -2702,16 +2699,16 @@ teleport_area:
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
-		if (!lua_isnumber(L, 1) || !lua_isnumber(L, 2) || !lua_isstring(L, 3) )
+		if (!lua_isnumber(L, 1) || !lua_isnumber(L, 2) || !lua_isstring(L, 3))
 		{
 			sys_err("QUEST give award call error : wrong argument");
-			lua_pushnumber (L, 0);
+			lua_pushnumber(L, 0);
 			return 1;
 		}
 
-		DWORD dwVnum = (int) lua_tonumber(L, 1);
+		DWORD dwVnum = (int)lua_tonumber(L, 1);
 
-		int icount = (int) lua_tonumber(L, 2);
+		int icount = (int)lua_tonumber(L, 2);
 
 		sys_log(0, "QUEST [award] item %d to login %s", dwVnum, ch->GetDesc()->GetAccountTable().login);
 
@@ -2719,27 +2716,27 @@ teleport_area:
 			ch->GetDesc()->GetAccountTable().login,
 			dwVnum,
 			icount,
-			lua_tostring(L,3),
+			lua_tostring(L, 3),
 			ch->GetDesc()->GetAccountTable().login,
-			lua_tostring(L,3));
+			lua_tostring(L, 3));
 
-		lua_pushnumber (L, 0);
+		lua_pushnumber(L, 0);
 		return 1;
 	}
 	ALUA(pc_give_award_socket)
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
-		if (!lua_isnumber(L, 1) || !lua_isnumber(L, 2) || !lua_isstring(L, 3) || !lua_isstring(L, 4) || !lua_isstring(L, 5) || !lua_isstring(L, 6) )
+		if (!lua_isnumber(L, 1) || !lua_isnumber(L, 2) || !lua_isstring(L, 3) || !lua_isstring(L, 4) || !lua_isstring(L, 5) || !lua_isstring(L, 6))
 		{
 			sys_err("QUEST give award call error : wrong argument");
-			lua_pushnumber (L, 0);
+			lua_pushnumber(L, 0);
 			return 1;
 		}
 
-		DWORD dwVnum = (int) lua_tonumber(L, 1);
+		DWORD dwVnum = (int)lua_tonumber(L, 1);
 
-		int icount = (int) lua_tonumber(L, 2);
+		int icount = (int)lua_tonumber(L, 2);
 
 		sys_log(0, "QUEST [award] item %d to login %s", dwVnum, ch->GetDesc()->GetAccountTable().login);
 
@@ -2747,14 +2744,14 @@ teleport_area:
 			ch->GetDesc()->GetAccountTable().login,
 			dwVnum,
 			icount,
-			lua_tostring(L,3),
-			lua_tostring(L,4),
-			lua_tostring(L,5),
-			lua_tostring(L,6),
+			lua_tostring(L, 3),
+			lua_tostring(L, 4),
+			lua_tostring(L, 5),
+			lua_tostring(L, 6),
 			ch->GetDesc()->GetAccountTable().login,
-			lua_tostring(L,3));
+			lua_tostring(L, 3));
 
-		lua_pushnumber (L, 0);
+		lua_pushnumber(L, 0);
 		return 1;
 	}
 
@@ -2762,13 +2759,13 @@ teleport_area:
 	{
 		LPCHARACTER pChar = CQuestManager::instance().GetCurrentCharacterPtr();
 
-		if( pChar != NULL )
+		if (pChar != NULL)
 		{
 			//sys_err("quest cmd test %s", pChar->GetItemAward_cmd() );
-			lua_pushstring(L, pChar->GetItemAward_cmd() );
+			lua_pushstring(L, pChar->GetItemAward_cmd());
 		}
 		else
-			lua_pushstring(L, "" );
+			lua_pushstring(L, "");
 
 		return 1;
 	}
@@ -2777,12 +2774,12 @@ teleport_area:
 	{
 		LPCHARACTER pChar = CQuestManager::instance().GetCurrentCharacterPtr();
 
-		if( pChar != NULL )
+		if (pChar != NULL)
 		{
-			lua_pushnumber(L, pChar->GetItemAward_vnum() );
+			lua_pushnumber(L, pChar->GetItemAward_vnum());
 		}
 		else
-			lua_pushnumber(L,0);
+			lua_pushnumber(L, 0);
 
 		return 1;
 	}
@@ -2810,10 +2807,10 @@ teleport_area:
 
 #ifdef ENABLE_NEWSTUFF
 
-	#define PC_MI0L_ARG1	2		// 1: vnum or locale_name, 2: count
-	#define PC_MI0L_ARG2	3		// socket 1-2-3
-	#define PC_MI0L_ARG3	7*2		// (type, value)*7
-	enum eMakeItemType{PCMI0_GIVE, PCMI0_DROP, PCMI0_DROPWP, PCMI0_MAX};
+#define PC_MI0L_ARG1	2		// 1: vnum or locale_name, 2: count
+#define PC_MI0L_ARG2	3		// socket 1-2-3
+#define PC_MI0L_ARG3	7*2		// (type, value)*7
+	enum eMakeItemType { PCMI0_GIVE, PCMI0_DROP, PCMI0_DROPWP, PCMI0_MAX };
 	ALUA(pc_make_item0)
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
@@ -2829,50 +2826,50 @@ teleport_area:
 		lua_pushnil(L);
 		while (lua_next(L, 1))
 		{
-			switch(m_idx)
+			switch (m_idx)
 			{
-				case 0:
-					if (lua_isnumber(L, -1))
+			case 0:
+				if (lua_isnumber(L, -1))
+				{
+					if ((m_vnum = lua_tonumber(L, -1)) <= 0)
 					{
-						if ((m_vnum = lua_tonumber(L, -1))<=0)
-						{
-							ch->ChatPacket(CHAT_TYPE_INFO, "#%u item not valid by that vnum.", m_vnum);
-							return 0;
-						}
-					}
-					else if (lua_isstring(L, -1))
-					{
-						if (!ITEM_MANAGER::instance().GetVnum(lua_tostring(L, -1), m_vnum))
-						{
-							ch->ChatPacket(CHAT_TYPE_INFO, "#%u item not exist by that vnum.", m_vnum);
-							return 0;
-						}
-					}
-					else
-					{
-						ch->ChatPacket(CHAT_TYPE_INFO, "#%u item not exist by that unknown vnum.");
+						ch->ChatPacket(CHAT_TYPE_INFO, "#%u item not valid by that vnum.", m_vnum);
 						return 0;
 					}
-					break;
-				case 1:
-					if (lua_isnumber(L, -1))
+				}
+				else if (lua_isstring(L, -1))
+				{
+					if (!ITEM_MANAGER::instance().GetVnum(lua_tostring(L, -1), m_vnum))
 					{
-						// if ((m_count = MINMAX(1, lua_tonumber(L, -1), ITEM_MAX_COUNT))<=0)
-						if ((m_count = lua_tonumber(L, -1))<=0)
-						{
-							ch->ChatPacket(CHAT_TYPE_INFO, "#%u item not valid by that count.", m_count);
-							return 0;
-						}
-					}
-					else
-					{
-						ch->ChatPacket(CHAT_TYPE_INFO, "#%u item not exist by that unknown count.");
+						ch->ChatPacket(CHAT_TYPE_INFO, "#%u item not exist by that vnum.", m_vnum);
 						return 0;
 					}
-					break;
-				default:
-					ch->ChatPacket(CHAT_TYPE_INFO, "arg1(%d) index found", m_idx);
-					break;
+				}
+				else
+				{
+					ch->ChatPacket(CHAT_TYPE_INFO, "#%u item not exist by that unknown vnum.");
+					return 0;
+				}
+				break;
+			case 1:
+				if (lua_isnumber(L, -1))
+				{
+					// if ((m_count = MINMAX(1, lua_tonumber(L, -1), ITEM_MAX_COUNT))<=0)
+					if ((m_count = lua_tonumber(L, -1)) <= 0)
+					{
+						ch->ChatPacket(CHAT_TYPE_INFO, "#%u item not valid by that count.", m_count);
+						return 0;
+					}
+				}
+				else
+				{
+					ch->ChatPacket(CHAT_TYPE_INFO, "#%u item not exist by that unknown count.");
+					return 0;
+				}
+				break;
+			default:
+				ch->ChatPacket(CHAT_TYPE_INFO, "arg1(%d) index found", m_idx);
+				break;
 			}
 			m_idx++;
 			lua_pop(L, 1);
@@ -2880,12 +2877,12 @@ teleport_area:
 		// ch->ChatPacket(CHAT_TYPE_INFO, "arg1 is %u %d", m_vnum, m_count);
 		// end arg1
 		// config arg2
-		int m_socket[ITEM_SOCKET_MAX_NUM] = {0};
+		int m_socket[ITEM_SOCKET_MAX_NUM] = { 0 };
 		// start arg2
 		// ch->ChatPacket(CHAT_TYPE_INFO, "%d: %s", lua_type(L, 1), lua_typename(L, lua_type(L, 1)));
 		m_idx = 0;
 		lua_pushnil(L);
-		while (lua_next(L, 2) && m_idx<ITEM_SOCKET_MAX_NUM)
+		while (lua_next(L, 2) && m_idx < ITEM_SOCKET_MAX_NUM)
 		{
 			if (!lua_isnumber(L, -1))
 				return 0;
@@ -2895,11 +2892,11 @@ teleport_area:
 		// ch->ChatPacket(CHAT_TYPE_INFO, "arg2 is %d %d %d", m_socket[0], m_socket[1], m_socket[2]);
 		// end arg2
 		// config arg3
-		int m_attr[ITEM_ATTRIBUTE_MAX_NUM*2] = {0};
+		int m_attr[ITEM_ATTRIBUTE_MAX_NUM * 2] = { 0 };
 		// start arg3
 		m_idx = 0;
 		lua_pushnil(L);
-		while (lua_next(L, 3) && m_idx<(ITEM_ATTRIBUTE_MAX_NUM*2))
+		while (lua_next(L, 3) && m_idx < (ITEM_ATTRIBUTE_MAX_NUM * 2))
 		{
 			if (!lua_isnumber(L, -1))
 				return 0;
@@ -2915,7 +2912,7 @@ teleport_area:
 		// config arg4
 		DWORD m_state = 0;
 		// start arg4
-		if ((m_state = lua_tonumber(L, 4))>=PCMI0_MAX)
+		if ((m_state = lua_tonumber(L, 4)) >= PCMI0_MAX)
 			return 0;
 		// ch->ChatPacket(CHAT_TYPE_INFO, "arg4 is %d", m_state);
 		// end arg4
@@ -2925,42 +2922,42 @@ teleport_area:
 		if (pkNewItem)
 		{
 			// socket
-			for (int i=0; i<ITEM_SOCKET_MAX_NUM; i++)
+			for (int i = 0; i < ITEM_SOCKET_MAX_NUM; i++)
 				pkNewItem->SetSocket(i, m_socket[i]);
 			// attr
-			for (int i=0; i<ITEM_ATTRIBUTE_MAX_NUM; i++)
-				pkNewItem->SetForceAttribute(i, m_attr[(i*2)+0], m_attr[(i*2)+1]);
+			for (int i = 0; i < ITEM_ATTRIBUTE_MAX_NUM; i++)
+				pkNewItem->SetForceAttribute(i, m_attr[(i * 2) + 0], m_attr[(i * 2) + 1]);
 			// state
 			int iEmptyCell = -1;
 			int m_sec = 0;
 			PIXEL_POSITION pos;
-			switch(m_state)
+			switch (m_state)
 			{
-				case PCMI0_GIVE:
-					iEmptyCell = ch->GetEmptyInventory(pkNewItem->GetSize());
-					if (-1 == iEmptyCell)
-					{
-						M2_DESTROY_ITEM(pkNewItem);
-						lua_pushboolean(L, false);
-						return 1;
-					}
-					pkNewItem->AddToCharacter(ch, TItemPos(INVENTORY, iEmptyCell));
-					break;
-				case PCMI0_DROPWP:
-					if (lua_isnumber(L, 5) && (m_sec = lua_tonumber(L, 5)))
-						pkNewItem->SetOwnership(ch, m_sec<=0?1:m_sec); //, ch->ChatPacket(CHAT_TYPE_INFO, "arg5 is %d", m_sec<=0?1:m_sec);
-					else
-						pkNewItem->SetOwnership(ch);
-				case PCMI0_DROP:
-					pos.x = ch->GetX() + number(-200, 200);
-					pos.y = ch->GetY() + number(-200, 200);
-
-					pkNewItem->AddToGround(ch->GetMapIndex(), pos);
-					pkNewItem->StartDestroyEvent();
-					break;
-				default:
+			case PCMI0_GIVE:
+				iEmptyCell = ch->GetEmptyInventory(pkNewItem->GetSize());
+				if (-1 == iEmptyCell)
+				{
+					M2_DESTROY_ITEM(pkNewItem);
 					lua_pushboolean(L, false);
 					return 1;
+				}
+				pkNewItem->AddToCharacter(ch, TItemPos(INVENTORY, iEmptyCell));
+				break;
+			case PCMI0_DROPWP:
+				if (lua_isnumber(L, 5) && (m_sec = lua_tonumber(L, 5)))
+					pkNewItem->SetOwnership(ch, m_sec <= 0 ? 1 : m_sec); //, ch->ChatPacket(CHAT_TYPE_INFO, "arg5 is %d", m_sec<=0?1:m_sec);
+				else
+					pkNewItem->SetOwnership(ch);
+			case PCMI0_DROP:
+				pos.x = ch->GetX() + number(-200, 200);
+				pos.y = ch->GetY() + number(-200, 200);
+
+				pkNewItem->AddToGround(ch->GetMapIndex(), pos);
+				pkNewItem->StartDestroyEvent();
+				break;
+			default:
+				lua_pushboolean(L, false);
+				return 1;
 			}
 			lua_pushboolean(L, true);
 		}
@@ -2978,21 +2975,20 @@ teleport_area:
 		DWORD dwRace = MAIN_RACE_WARRIOR_M;
 		switch (amount)
 		{
-			case JOB_WARRIOR:
-				dwRace = (mySex==SEX_MALE)?MAIN_RACE_WARRIOR_M:MAIN_RACE_WARRIOR_W;
-				break;
-			case JOB_ASSASSIN:
-				dwRace = (mySex==SEX_MALE)?MAIN_RACE_ASSASSIN_M:MAIN_RACE_ASSASSIN_W;
-				break;
-			case JOB_SURA:
-				dwRace = (mySex==SEX_MALE)?MAIN_RACE_SURA_M:MAIN_RACE_SURA_W;
-				break;
-			case JOB_SHAMAN:
-				dwRace = (mySex==SEX_MALE)?MAIN_RACE_SHAMAN_M:MAIN_RACE_SHAMAN_W;
-				break;
-
+		case JOB_WARRIOR:
+			dwRace = (mySex == SEX_MALE) ? MAIN_RACE_WARRIOR_M : MAIN_RACE_WARRIOR_W;
+			break;
+		case JOB_ASSASSIN:
+			dwRace = (mySex == SEX_MALE) ? MAIN_RACE_ASSASSIN_M : MAIN_RACE_ASSASSIN_W;
+			break;
+		case JOB_SURA:
+			dwRace = (mySex == SEX_MALE) ? MAIN_RACE_SURA_M : MAIN_RACE_SURA_W;
+			break;
+		case JOB_SHAMAN:
+			dwRace = (mySex == SEX_MALE) ? MAIN_RACE_SHAMAN_M : MAIN_RACE_SHAMAN_W;
+			break;
 		}
-		if (dwRace!=ch->GetRaceNum())
+		if (dwRace != ch->GetRaceNum())
 		{
 			ch->SetRace(dwRace);
 			ch->ClearSkill();
@@ -3014,11 +3010,11 @@ teleport_area:
 		}
 		else
 		{
-			const char * sz = lua_tostring(L, 1);
-			const char * sz2 = lua_tostring(L, 2);
-			CQuestManager & q = CQuestManager::Instance();
-			PC * pPC = q.GetCurrentPC();
-			lua_pushboolean(L, pPC->DeleteFlag(string(sz)+"."+sz2));
+			const char* sz = lua_tostring(L, 1);
+			const char* sz2 = lua_tostring(L, 2);
+			CQuestManager& q = CQuestManager::Instance();
+			PC* pPC = q.GetCurrentPC();
+			lua_pushboolean(L, pPC->DeleteFlag(string(sz) + "." + sz2));
 			return 1;
 		}
 	}
@@ -3089,7 +3085,7 @@ teleport_area:
 	ALUA(pc_sf_fire)
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
-		if(lua_toboolean(L, 1))
+		if (lua_toboolean(L, 1))
 			ch->AddAffect(AFFECT_FIRE, 0, 0, AFF_FIRE, 3 * 5 + 1, 0, 1, 0);
 		else
 			ch->RemoveAffect(AFFECT_FIRE);
@@ -3098,8 +3094,8 @@ teleport_area:
 	ALUA(pc_sf_invisible)
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
-		if(lua_toboolean(L, 1))
-			ch->AddAffect(AFFECT_INVISIBILITY, 0, 0, AFF_INVISIBILITY, 60*60*24*365*60+1, 0, 1, 0);
+		if (lua_toboolean(L, 1))
+			ch->AddAffect(AFFECT_INVISIBILITY, 0, 0, AFF_INVISIBILITY, 60 * 60 * 24 * 365 * 60 + 1, 0, 1, 0);
 		else
 			ch->RemoveAffect(AFFECT_INVISIBILITY);
 		return 0;
@@ -3107,8 +3103,8 @@ teleport_area:
 	ALUA(pc_sf_poison)
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
-		if(lua_toboolean(L, 1))
-			ch->AddAffect(AFFECT_POISON, 0, 0, AFF_POISON, 30+1, 0, 1, 0);
+		if (lua_toboolean(L, 1))
+			ch->AddAffect(AFFECT_POISON, 0, 0, AFF_POISON, 30 + 1, 0, 1, 0);
 		else
 			ch->RemoveAffect(AFFECT_POISON);
 		return 0;
@@ -3117,7 +3113,7 @@ teleport_area:
 	ALUA(pc_sf_slow)
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
-		if(lua_toboolean(L, 1))
+		if (lua_toboolean(L, 1))
 			ch->AddAffect(AFFECT_SLOW, 19, -30, AFF_SLOW, 30, 0, 1, 0);
 		else
 			ch->RemoveAffect(AFFECT_SLOW);
@@ -3126,7 +3122,7 @@ teleport_area:
 	ALUA(pc_sf_stun)
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
-		if(lua_toboolean(L, 1))
+		if (lua_toboolean(L, 1))
 			ch->AddAffect(AFFECT_STUN, 0, 0, AFF_STUN, 30, 0, 1, 0);
 		else
 			ch->RemoveAffect(AFFECT_STUN);
@@ -3195,7 +3191,7 @@ teleport_area:
 	ALUA(pc_dc_delayed0)
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
-		bool bRet = ch->GetDesc()->DelayedDisconnect(MINMAX(0, lua_tonumber(L, 1), 60*5));
+		bool bRet = ch->GetDesc()->DelayedDisconnect(MINMAX(0, lua_tonumber(L, 1), 60 * 5));
 		lua_pushboolean(L, bRet);
 		return 1;
 	}
@@ -3210,7 +3206,7 @@ teleport_area:
 	ALUA(pc_is_trade0)
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
-		lua_pushboolean(L, ch->GetExchange()!=NULL);
+		lua_pushboolean(L, ch->GetExchange() != NULL);
 		return 1;
 	}
 
@@ -3219,14 +3215,14 @@ teleport_area:
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 		lua_pushboolean(L, (ch->GetExchange() || ch->GetMyShop() || ch->GetShopOwner() || ch->IsOpenSafebox() || ch->IsCubeOpen()
 
-		));
+			));
 		return 1;
 	}
 
 	ALUA(pc_is_arena0)
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
-		lua_pushboolean(L, ch->GetArena()!=NULL);
+		lua_pushboolean(L, ch->GetArena() != NULL);
 		return 1;
 	}
 
@@ -3242,7 +3238,7 @@ teleport_area:
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
 		LPITEM item = ch->GetInventoryItem(lua_tonumber(L, 1));
-		lua_pushboolean(L, (item)?ch->EquipItem(item):false);
+		lua_pushboolean(L, (item) ? ch->EquipItem(item) : false);
 		return 1;
 	}
 
@@ -3251,7 +3247,7 @@ teleport_area:
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
 		LPITEM item = ch->GetWear(lua_tonumber(L, 1));
-		lua_pushboolean(L, (item)?ch->UnequipItem(item):false);
+		lua_pushboolean(L, (item) ? ch->UnequipItem(item) : false);
 		return 1;
 	}
 
@@ -3259,7 +3255,7 @@ teleport_area:
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
-		lua_pushboolean(L, ch!=NULL);
+		lua_pushboolean(L, ch != NULL);
 		return 1;
 	}
 
@@ -3274,7 +3270,7 @@ teleport_area:
 			else
 				item->SetSocket(0, ::GetRandomSkillVnum());
 		}
-		lua_pushboolean(L, item!=NULL);
+		lua_pushboolean(L, item != NULL);
 		return 1;
 	}
 
@@ -3286,7 +3282,7 @@ teleport_area:
 		return 1;
 	}
 
-	bool SendWhisper(LPCHARACTER ch, const char * msg, const char * who, bool isgm)
+	bool SendWhisper(LPCHARACTER ch, const char* msg, const char* who, bool isgm)
 	{
 		if (!ch)
 			return false;
@@ -3359,7 +3355,7 @@ teleport_area:
 #endif
 
 #ifdef ENABLE_NEWGUILDMAKE
-	enum MKGLD {MKGLD_INVALID_NAME_LENGTH=-2, MKGLD_INVALID_NAME_INPUT=-1, MKGLD_GUILD_NOT_CREATED=0, MKGLD_GUILD_CREATED=1, MKGLD_ALREADY_GUILDED=2, MKGLD_ALREADY_MASTER_GUILD=3};
+	enum MKGLD { MKGLD_INVALID_NAME_LENGTH = -2, MKGLD_INVALID_NAME_INPUT = -1, MKGLD_GUILD_NOT_CREATED = 0, MKGLD_GUILD_CREATED = 1, MKGLD_ALREADY_GUILDED = 2, MKGLD_ALREADY_MASTER_GUILD = 3 };
 	ALUA(pc_make_guild0)
 	{
 		// -2 guild name is invalid (strlen <2 or >11!)
@@ -3371,12 +3367,12 @@ teleport_area:
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 		if (ch->GetGuild())
 		{
-			lua_pushnumber(L, (ch->GetPlayerID() == ch->GetGuild()->GetMasterPID())?MKGLD_ALREADY_MASTER_GUILD:MKGLD_ALREADY_GUILDED);
+			lua_pushnumber(L, (ch->GetPlayerID() == ch->GetGuild()->GetMasterPID()) ? MKGLD_ALREADY_MASTER_GUILD : MKGLD_ALREADY_GUILDED);
 			return 1;
 		}
 		const char* guild_name = lua_tostring(L, 1);
 		size_t guild_lname = strlen(guild_name);
-		if (guild_lname<2 || 11<guild_lname)
+		if (guild_lname < 2 || 11 < guild_lname)
 		{
 			lua_pushnumber(L, MKGLD_INVALID_NAME_LENGTH);
 			return 1;
@@ -3393,10 +3389,10 @@ teleport_area:
 			if (guildID)
 			{
 				ret_type = MKGLD_GUILD_CREATED;
-				#ifdef ENABLE_GUILD_TOKEN_AUTH
+#ifdef ENABLE_GUILD_TOKEN_AUTH
 				CGuildManager::instance().GuildRelink(guildID, ch);
 				ch->SendGuildToken();
-				#endif
+#endif
 			}
 		}
 		else
@@ -3405,8 +3401,6 @@ teleport_area:
 		return 1;
 	}
 #endif
-
-
 
 	void RegisterPCFunctionTable()
 	{
@@ -3564,9 +3558,9 @@ teleport_area:
 
 			{ "set_skill_level",        pc_set_skill_level      },
 
-            { "give_polymorph_book",    pc_give_polymorph_book  },
-            { "upgrade_polymorph_book", pc_upgrade_polymorph_book },
-            { "get_premium_remain_sec", pc_get_premium_remain_sec },
+			{ "give_polymorph_book",    pc_give_polymorph_book  },
+			{ "upgrade_polymorph_book", pc_upgrade_polymorph_book },
+			{ "get_premium_remain_sec", pc_get_premium_remain_sec },
 
 			{ "send_block_mode",		pc_send_block_mode	},
 
@@ -3708,7 +3702,6 @@ teleport_area:
 			{ "make_guild0",			pc_make_guild0	},	// it returns few state values which you can manage via lua [return lua number]
 			{ "make_guild",				pc_make_guild0	},	// alias
 #endif
-
 
 			{ NULL,			NULL			}
 		};

@@ -25,7 +25,7 @@ namespace quest
 
 		if (NULL != ch)
 		{
-			CThreeWayWar::instance().SetReviveTokenForPlayer( ch->GetPlayerID(), q.GetEventFlag("threeway_war_dead_count") );
+			CThreeWayWar::instance().SetReviveTokenForPlayer(ch->GetPlayerID(), q.GetEventFlag("threeway_war_dead_count"));
 		}
 
 		return 0;
@@ -37,11 +37,11 @@ namespace quest
 
 		if (NULL != ch)
 		{
-			lua_pushnumber( L, CThreeWayWar::instance().GetReviveTokenForPlayer(ch->GetPlayerID()) );
+			lua_pushnumber(L, CThreeWayWar::instance().GetReviveTokenForPlayer(ch->GetPlayerID()));
 		}
 		else
 		{
-			lua_pushnumber( L, 0 );
+			lua_pushnumber(L, 0);
 		}
 
 		return 1;
@@ -51,7 +51,7 @@ namespace quest
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
-		CThreeWayWar::instance().SetKillScore( ch->GetEmpire(), 0 );
+		CThreeWayWar::instance().SetKillScore(ch->GetEmpire(), 0);
 
 		return 0;
 	}
@@ -70,8 +70,8 @@ namespace quest
 
 		const ForkedSungziMapInfo& info = CThreeWayWar::instance().GetEventSungZiMapInfo();
 
-		lua_pushnumber( L, info.m_iForkedSungziStartPosition[ch->GetEmpire()-1][0] );
-		lua_pushnumber( L, info.m_iForkedSungziStartPosition[ch->GetEmpire()-1][1] );
+		lua_pushnumber(L, info.m_iForkedSungziStartPosition[ch->GetEmpire() - 1][0]);
+		lua_pushnumber(L, info.m_iForkedSungziStartPosition[ch->GetEmpire() - 1][1]);
 
 		return 2;
 	}
@@ -82,24 +82,24 @@ namespace quest
 
 		const ForkedPassMapInfo& info = CThreeWayWar::instance().GetEventPassMapInfo();
 
-		lua_pushnumber( L, info.m_iForkedPassStartPosition[ch->GetEmpire()-1][0] );
-		lua_pushnumber( L, info.m_iForkedPassStartPosition[ch->GetEmpire()-1][1] );
+		lua_pushnumber(L, info.m_iForkedPassStartPosition[ch->GetEmpire() - 1][0]);
+		lua_pushnumber(L, info.m_iForkedPassStartPosition[ch->GetEmpire() - 1][1]);
 
 		return 2;
 	}
 
 	ALUA(forked_sungzi_mapindex)
 	{
-		lua_pushnumber( L, GetSungziMapIndex() );
+		lua_pushnumber(L, GetSungziMapIndex());
 
-		if ( test_server )
-			sys_log ( 0, "forked_sungzi_map_index_by_empire %d", GetSungziMapIndex() );
+		if (test_server)
+			sys_log(0, "forked_sungzi_map_index_by_empire %d", GetSungziMapIndex());
 		return 1;
 	}
 
 	ALUA(forked_pass_mapindex_by_empire)
 	{
-		lua_pushnumber( L, GetPassMapIndex(lua_tonumber(L,1)) );
+		lua_pushnumber(L, GetPassMapIndex(lua_tonumber(L, 1)));
 
 		return 1;
 	}
@@ -108,31 +108,31 @@ namespace quest
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
-		lua_pushstring( L, GetPassMapPath( ch->GetEmpire() ) );
+		lua_pushstring(L, GetPassMapPath(ch->GetEmpire()));
 
-		sys_log (0, "[PASS_PATH] Empire %d Path  %s", ch->GetEmpire(), GetPassMapPath( ch->GetEmpire() ) );
+		sys_log(0, "[PASS_PATH] Empire %d Path  %s", ch->GetEmpire(), GetPassMapPath(ch->GetEmpire()));
 		return 1;
 	}
 
 	ALUA(forked_get_pass_path_by_empire)
 	{
-		int iEmpire 	= (int)lua_tonumber(L, 1);
+		int iEmpire = (int)lua_tonumber(L, 1);
 
-		lua_pushstring( L, GetPassMapPath(iEmpire) );
-		sys_log (0, "[PASS_PATH] Empire %d Path  %s", iEmpire, GetPassMapPath( iEmpire ) );
+		lua_pushstring(L, GetPassMapPath(iEmpire));
+		sys_log(0, "[PASS_PATH] Empire %d Path  %s", iEmpire, GetPassMapPath(iEmpire));
 		return 1;
 	}
 
 	ALUA(forked_is_forked_mapindex)
 	{
-		lua_pushboolean( L, CThreeWayWar::instance().IsThreeWayWarMapIndex(lua_tonumber(L,1)) );
+		lua_pushboolean(L, CThreeWayWar::instance().IsThreeWayWarMapIndex(lua_tonumber(L, 1)));
 
 		return 1;
 	}
 
 	ALUA(forked_is_sungzi_mapindex)
 	{
-		lua_pushboolean( L, CThreeWayWar::instance().IsSungZiMapIndex(lua_tonumber(L,1)) );
+		lua_pushboolean(L, CThreeWayWar::instance().IsSungZiMapIndex(lua_tonumber(L, 1)));
 
 		return 1;
 	}
@@ -147,10 +147,10 @@ namespace quest
 		{
 			if (ent->IsType(ENTITY_CHARACTER))
 			{
-				LPCHARACTER ch = (LPCHARACTER) ent;
+				LPCHARACTER ch = (LPCHARACTER)ent;
 				if (ch->IsPC())
 				{
-					ch->WarpSet( m_x+(number(0,5)*100), m_y+(number(0,5)*100), m_iMapIndexTo);
+					ch->WarpSet(m_x + (number(0, 5) * 100), m_y + (number(0, 5) * 100), m_iMapIndexTo);
 				}
 			}
 		}
@@ -164,32 +164,32 @@ namespace quest
 		int		m_y;
 
 		warp_all_to_map_event_info()
-		: m_iMapIndexFrom( 0 )
-		, m_iMapIndexTo( 0 )
-		, m_x( 0 )
-		, m_y( 0 )
+			: m_iMapIndexFrom(0)
+			, m_iMapIndexTo(0)
+			, m_x(0)
+			, m_y(0)
 		{
 		}
 	};
 
 	EVENTFUNC(warp_all_to_map_event)
 	{
-		warp_all_to_map_event_info * info = dynamic_cast<warp_all_to_map_event_info *>(event->info);
+		warp_all_to_map_event_info* info = dynamic_cast<warp_all_to_map_event_info*>(event->info);
 
-		if ( info == NULL )
+		if (info == NULL)
 		{
-			sys_err( "warp_all_to_map_event> <Factor> Null pointer" );
+			sys_err("warp_all_to_map_event> <Factor> Null pointer");
 			return 0;
 		}
 
-		LPSECTREE_MAP pSecMap = SECTREE_MANAGER::instance().GetMap( info->m_iMapIndexFrom );
-		if ( pSecMap )
+		LPSECTREE_MAP pSecMap = SECTREE_MANAGER::instance().GetMap(info->m_iMapIndexFrom);
+		if (pSecMap)
 		{
 			FWarpInMap f;
 			f.m_iMapIndexTo = info->m_iMapIndexTo;
-			f.m_x			= info->m_x;
-			f.m_y			= info->m_y;
-			pSecMap->for_each( f );
+			f.m_x = info->m_x;
+			f.m_y = info->m_y;
+			pSecMap->for_each(f);
 		}
 
 		return 0;
@@ -197,18 +197,18 @@ namespace quest
 
 	ALUA(forked_warp_all_in_map)
 	{
-		int iMapIndexFrom	= (int)lua_tonumber(L, 1 );
-		int iMapIndexTo		= (int)lua_tonumber(L, 2 );
-		int ix				= (int)lua_tonumber(L, 3 );
-		int iy				= (int)lua_tonumber(L, 4 );
-		int iTime			= (int)lua_tonumber(L, 5 );
+		int iMapIndexFrom = (int)lua_tonumber(L, 1);
+		int iMapIndexTo = (int)lua_tonumber(L, 2);
+		int ix = (int)lua_tonumber(L, 3);
+		int iy = (int)lua_tonumber(L, 4);
+		int iTime = (int)lua_tonumber(L, 5);
 
 		warp_all_to_map_event_info* info = AllocEventInfo<warp_all_to_map_event_info>();
 
-		info->m_iMapIndexFrom	= iMapIndexFrom;
-		info->m_iMapIndexTo		= iMapIndexTo;
-		info->m_x				= ix;
-		info->m_y				= iy;
+		info->m_iMapIndexFrom = iMapIndexFrom;
+		info->m_iMapIndexTo = iMapIndexTo;
+		info->m_x = ix;
+		info->m_y = iy;
 
 		event_create(warp_all_to_map_event, info, PASSES_PER_SEC(iTime));
 
@@ -221,11 +221,11 @@ namespace quest
 
 		if (NULL != ch)
 		{
-			lua_pushboolean( L, CThreeWayWar::instance().IsRegisteredUser(ch->GetPlayerID()) );
+			lua_pushboolean(L, CThreeWayWar::instance().IsRegisteredUser(ch->GetPlayerID()));
 		}
 		else
 		{
-			lua_pushboolean( L, false );
+			lua_pushboolean(L, false);
 		}
 
 		return 1;
@@ -237,7 +237,7 @@ namespace quest
 
 		if (NULL != ch)
 		{
-			CThreeWayWar::instance().RegisterUser( ch->GetPlayerID() );
+			CThreeWayWar::instance().RegisterUser(ch->GetPlayerID());
 		}
 
 		return 0;

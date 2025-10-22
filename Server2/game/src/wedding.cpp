@@ -15,23 +15,23 @@ namespace marriage
 
 	EVENTINFO(wedding_map_info)
 	{
-		WeddingMap * pWeddingMap;
+		WeddingMap* pWeddingMap;
 		int iStep;
 
 		wedding_map_info()
-		: pWeddingMap( 0 )
-		, iStep( 0 )
+			: pWeddingMap(0)
+			, iStep(0)
 		{
 		}
 	};
 
 	EVENTFUNC(wedding_end_event)
 	{
-		wedding_map_info* info = dynamic_cast<wedding_map_info*>( event->info );
+		wedding_map_info* info = dynamic_cast<wedding_map_info*>(event->info);
 
-		if ( info == NULL )
+		if (info == NULL)
 		{
-			sys_err( "wedding_end_event> <Factor> Null pointer" );
+			sys_err("wedding_end_event> <Factor> Null pointer");
 			return 0;
 		}
 
@@ -97,7 +97,7 @@ namespace marriage
 
 	struct FNotice
 	{
-		FNotice(const char * psz) :
+		FNotice(const char* psz) :
 			m_psz(psz)
 		{
 		}
@@ -107,10 +107,10 @@ namespace marriage
 			ch->ChatPacket(CHAT_TYPE_NOTICE, "%s", m_psz);
 		}
 
-		const char * m_psz;
+		const char* m_psz;
 	};
 
-	void WeddingMap::Notice(const char * psz)
+	void WeddingMap::Notice(const char* psz)
 	{
 		FNotice f(psz);
 		for_each(m_set_pkChr.begin(), m_set_pkChr.end(), f);
@@ -322,7 +322,7 @@ namespace marriage
 		}
 		string st_weddingMapRegenFileName;
 		st_weddingMapRegenFileName.reserve(64);
-		st_weddingMapRegenFileName  = LocaleService_GetMapPath();
+		st_weddingMapRegenFileName = LocaleService_GetMapPath();
 		st_weddingMapRegenFileName += "/metin2_map_wedding_01/npc.txt";
 
 		if (!regen_do(st_weddingMapRegenFileName.c_str(), dwMapIndex, pkSectreeMap->m_setting.iBaseX, pkSectreeMap->m_setting.iBaseY, NULL, true))

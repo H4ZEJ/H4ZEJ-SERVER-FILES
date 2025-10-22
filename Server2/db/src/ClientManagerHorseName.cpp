@@ -25,7 +25,7 @@ void CClientManager::AckHorseName(DWORD dwPID, CPeer* peer)
 
 	if (pmsg->Get()->uiNumRows == 0)
 	{
-		memset(packet.szHorseName, 0, sizeof (packet.szHorseName));
+		memset(packet.szHorseName, 0, sizeof(packet.szHorseName));
 	}
 	else
 	{

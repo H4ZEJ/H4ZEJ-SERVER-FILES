@@ -38,7 +38,7 @@ namespace quest
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
 		if (ch->GetParty())
-			lua_pushnumber(L,ch->GetParty()->GetMemberMaxLevel());
+			lua_pushnumber(L, ch->GetParty()->GetMemberMaxLevel());
 		else
 			lua_pushnumber(L, 1);
 
@@ -51,7 +51,7 @@ namespace quest
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
 		if (ch->GetParty())
-			lua_pushnumber(L,ch->GetParty()->GetMemberMinLevel());
+			lua_pushnumber(L, ch->GetParty()->GetMemberMinLevel());
 		else
 			lua_pushnumber(L, 1);
 
@@ -74,7 +74,7 @@ namespace quest
 				pParty->Quit(ch->GetPlayerID());
 		}
 
-		lua_pushboolean(L, ch->GetParty()==NULL);
+		lua_pushboolean(L, ch->GetParty() == NULL);
 		return 1;
 	}
 
@@ -88,41 +88,41 @@ namespace quest
 		if (ch->GetParty() && ch->GetParty()->GetLeaderPID() == ch->GetPlayerID())
 			CPartyManager::instance().DeleteParty(ch->GetParty());
 
-		lua_pushboolean(L, ch->GetParty()==NULL);
+		lua_pushboolean(L, ch->GetParty() == NULL);
 		return 1;
 	}
 #endif
 
-    struct FRunCinematicSender
-    {
-        std::string data;
-        struct packet_script pack;
+	struct FRunCinematicSender
+	{
+		std::string data;
+		struct packet_script pack;
 
-        FRunCinematicSender(const char* str)
-        {
-            data = "[RUN_CINEMA value;";
-            data += str;
-            data += "]";
+		FRunCinematicSender(const char* str)
+		{
+			data = "[RUN_CINEMA value;";
+			data += str;
+			data += "]";
 
-            pack.header = HEADER_GC_SCRIPT;
-            pack.skin = CQuestManager::QUEST_SKIN_CINEMATIC;
-            //pack.skin = CQuestManager::QUEST_SKIN_NOWINDOW;
-            pack.src_size = data.size();
-            pack.size = pack.src_size + sizeof(struct packet_script);
-        }
+			pack.header = HEADER_GC_SCRIPT;
+			pack.skin = CQuestManager::QUEST_SKIN_CINEMATIC;
+			//pack.skin = CQuestManager::QUEST_SKIN_NOWINDOW;
+			pack.src_size = data.size();
+			pack.size = pack.src_size + sizeof(struct packet_script);
+		}
 
-        void operator()(LPCHARACTER ch)
-        {
-            sys_log(0, "CINEMASEND_TRY %s", ch->GetName());
+		void operator()(LPCHARACTER ch)
+		{
+			sys_log(0, "CINEMASEND_TRY %s", ch->GetName());
 
-            if (ch->GetDesc())
-            {
-                sys_log(0, "CINEMASEND %s", ch->GetName());
-                ch->GetDesc()->BufferedPacket(&pack, sizeof(struct packet_script));
-                ch->GetDesc()->Packet(data.c_str(),data.size());
-            }
-        }
-    };
+			if (ch->GetDesc())
+			{
+				sys_log(0, "CINEMASEND %s", ch->GetName());
+				ch->GetDesc()->BufferedPacket(&pack, sizeof(struct packet_script));
+				ch->GetDesc()->Packet(data.c_str(), data.size());
+			}
+		}
+	};
 
 	ALUA(party_run_cinematic)
 	{
@@ -168,7 +168,7 @@ namespace quest
 			{
 				sys_log(0, "CINEMASEND %s", ch->GetName());
 				ch->GetDesc()->BufferedPacket(&packet_script, sizeof(struct packet_script));
-				ch->GetDesc()->Packet(str,len);
+				ch->GetDesc()->Packet(str, len);
 			}
 		}
 	};
@@ -283,13 +283,13 @@ namespace quest
 		LPCHARACTER ch = q.GetCurrentCharacterPtr();
 		PC* pPC = q.GetCurrentPC();
 
-		const char* sz = lua_tostring(L,1);
+		const char* sz = lua_tostring(L, 1);
 
 		if (pParty)
 		{
 			FPartyCheckFlagLt f;
-			f.flagname = pPC->GetCurrentQuestName() + "."+sz;
-			f.value = (int) rint(lua_tonumber(L, 2));
+			f.flagname = pPC->GetCurrentQuestName() + "." + sz;
+			f.value = (int)rint(lua_tonumber(L, 2));
 
 			bool returnBool = pParty->ForEachOnMapMemberBool(f, ch->GetMapIndex());
 			lua_pushboolean(L, returnBool);
@@ -322,12 +322,12 @@ namespace quest
 
 	ALUA(party_set_quest_flag)
 	{
-		CQuestManager & q = CQuestManager::instance();
+		CQuestManager& q = CQuestManager::instance();
 
 		FSetQuestFlag f;
 
 		f.flagname = q.GetCurrentPC()->GetCurrentQuestName() + "." + lua_tostring(L, 1);
-		f.value = (int) rint(lua_tonumber(L, 2));
+		f.value = (int)rint(lua_tonumber(L, 2));
 
 		LPCHARACTER ch = q.GetCurrentCharacterPtr();
 
@@ -341,14 +341,14 @@ namespace quest
 
 	ALUA(party_is_in_dungeon)
 	{
-		CQuestManager & q = CQuestManager::instance();
+		CQuestManager& q = CQuestManager::instance();
 		LPCHARACTER ch = q.GetCurrentCharacterPtr();
 		LPPARTY pParty = ch->GetParty();
-		if (pParty != NULL){
-			lua_pushboolean (L, pParty->GetDungeon() ? true : false);
+		if (pParty != NULL) {
+			lua_pushboolean(L, pParty->GetDungeon() ? true : false);
 			return 1;
 		}
-		lua_pushboolean (L, false);
+		lua_pushboolean(L, false);
 		return 1;
 	}
 
@@ -363,11 +363,12 @@ namespace quest
 		bool bOverride;
 		bool IsCube;
 
-		FGiveBuff (DWORD _dwType, BYTE _bApplyOn, long _lApplyValue, DWORD _dwFlag, long _lDuration,
-					long _lSPCost, bool _bOverride, bool _IsCube = false)
-			: dwType (_dwType), bApplyOn (_bApplyOn), lApplyValue (_lApplyValue), dwFlag(_dwFlag), lDuration(_lDuration),
-				lSPCost(_lSPCost), bOverride(_bOverride), IsCube(_IsCube)
-		{}
+		FGiveBuff(DWORD _dwType, BYTE _bApplyOn, long _lApplyValue, DWORD _dwFlag, long _lDuration,
+			long _lSPCost, bool _bOverride, bool _IsCube = false)
+			: dwType(_dwType), bApplyOn(_bApplyOn), lApplyValue(_lApplyValue), dwFlag(_dwFlag), lDuration(_lDuration),
+			lSPCost(_lSPCost), bOverride(_bOverride), IsCube(_IsCube)
+		{
+		}
 		void operator () (LPCHARACTER ch)
 		{
 			ch->AddAffect(dwType, bApplyOn, lApplyValue, dwFlag, lDuration, lSPCost, bOverride, IsCube);
@@ -376,13 +377,13 @@ namespace quest
 
 	ALUA(party_give_buff)
 	{
-		CQuestManager & q = CQuestManager::instance();
+		CQuestManager& q = CQuestManager::instance();
 		LPCHARACTER ch = q.GetCurrentCharacterPtr();
 
 		if (!lua_isnumber(L, 1) || !lua_isnumber(L, 2) || !lua_isnumber(L, 3) || !lua_isnumber(L, 4) ||
 			!lua_isnumber(L, 5) || !lua_isnumber(L, 6) || !lua_isboolean(L, 7) || !lua_isboolean(L, 8))
 		{
-			lua_pushboolean (L, false);
+			lua_pushboolean(L, false);
 			return 1;
 		}
 		DWORD dwType = lua_tonumber(L, 1);
@@ -394,13 +395,13 @@ namespace quest
 		bool bOverride = lua_toboolean(L, 7);
 		bool IsCube = lua_toboolean(L, 8);
 
-		FGiveBuff f (dwType, bApplyOn, lApplyValue, dwFlag, lDuration, lSPCost, bOverride, IsCube);
+		FGiveBuff f(dwType, bApplyOn, lApplyValue, dwFlag, lDuration, lSPCost, bOverride, IsCube);
 		if (ch->GetParty())
 			ch->GetParty()->ForEachOnMapMember(f, ch->GetMapIndex());
 		else
 			f(ch);
 
-		lua_pushboolean (L, true);
+		lua_pushboolean(L, true);
 		return 1;
 	}
 
@@ -417,7 +418,7 @@ namespace quest
 	};
 	ALUA(party_get_member_pids)
 	{
-		CQuestManager & q = CQuestManager::instance();
+		CQuestManager& q = CQuestManager::instance();
 		LPCHARACTER ch = q.GetCurrentCharacterPtr();
 		LPPARTY pParty = ch->GetParty();
 		if (NULL == pParty)

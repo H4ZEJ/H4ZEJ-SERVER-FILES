@@ -125,11 +125,11 @@ EVENTINFO(TimedEventInfo)
 	char		szReason[MAX_REASON_LEN];
 
 	TimedEventInfo()
-	: ch()
-	, subcmd( 0 )
-	, left_second( 0 )
+		: ch()
+		, subcmd(0)
+		, left_second(0)
 	{
-		::memset( szReason, 0, MAX_REASON_LEN );
+		::memset(szReason, 0, MAX_REASON_LEN);
 	}
 };
 
@@ -167,22 +167,22 @@ EVENTINFO(shutdown_event_data)
 	int seconds;
 
 	shutdown_event_data()
-	: seconds( 0 )
+		: seconds(0)
 	{
 	}
 };
 
 EVENTFUNC(shutdown_event)
 {
-	shutdown_event_data* info = dynamic_cast<shutdown_event_data*>( event->info );
+	shutdown_event_data* info = dynamic_cast<shutdown_event_data*>(event->info);
 
-	if ( info == NULL )
+	if (info == NULL)
 	{
-		sys_err( "shutdown_event> <Factor> Null pointer" );
+		sys_err("shutdown_event> <Factor> Null pointer");
 		return 0;
 	}
 
-	int * pSec = & (info->seconds);
+	int* pSec = &(info->seconds);
 
 	if (*pSec < 0)
 	{
@@ -190,7 +190,7 @@ EVENTFUNC(shutdown_event)
 
 		if (--*pSec == -10)
 		{
-			const DESC_MANAGER::DESC_SET & c_set_desc = DESC_MANAGER::instance().GetClientSet();
+			const DESC_MANAGER::DESC_SET& c_set_desc = DESC_MANAGER::instance().GetClientSet();
 			std::for_each(c_set_desc.begin(), c_set_desc.end(), DisconnectFunc());
 			return passes_per_sec;
 		}
@@ -201,7 +201,7 @@ EVENTFUNC(shutdown_event)
 	}
 	else if (*pSec == 0)
 	{
-		const DESC_MANAGER::DESC_SET & c_set_desc = DESC_MANAGER::instance().GetClientSet();
+		const DESC_MANAGER::DESC_SET& c_set_desc = DESC_MANAGER::instance().GetClientSet();
 		std::for_each(c_set_desc.begin(), c_set_desc.end(), SendDisconnectFunc());
 		g_bNoMoreClient = true;
 		--*pSec;
@@ -252,11 +252,11 @@ ACMD(do_shutdown)
 
 EVENTFUNC(timed_event)
 {
-	TimedEventInfo * info = dynamic_cast<TimedEventInfo *>( event->info );
+	TimedEventInfo* info = dynamic_cast<TimedEventInfo*>(event->info);
 
-	if ( info == NULL )
+	if (info == NULL)
 	{
-		sys_err( "timed_event> <Factor> Null pointer" );
+		sys_err("timed_event> <Factor> Null pointer");
 		return 0;
 	}
 
@@ -272,38 +272,38 @@ EVENTFUNC(timed_event)
 
 		switch (info->subcmd)
 		{
-			case SCMD_LOGOUT:
-			case SCMD_QUIT:
-			case SCMD_PHASE_SELECT:
-				{
-					TPacketNeedLoginLogInfo acc_info;
-					acc_info.dwPlayerID = ch->GetDesc()->GetAccountTable().id;
+		case SCMD_LOGOUT:
+		case SCMD_QUIT:
+		case SCMD_PHASE_SELECT:
+		{
+			TPacketNeedLoginLogInfo acc_info;
+			acc_info.dwPlayerID = ch->GetDesc()->GetAccountTable().id;
 
-					db_clientdesc->DBPacket( HEADER_GD_VALID_LOGOUT, 0, &acc_info, sizeof(acc_info) );
+			db_clientdesc->DBPacket(HEADER_GD_VALID_LOGOUT, 0, &acc_info, sizeof(acc_info));
 
-					LogManager::instance().DetailLoginLog( false, ch );
-				}
-				break;
+			LogManager::instance().DetailLoginLog(false, ch);
+		}
+		break;
 		}
 
 		switch (info->subcmd)
 		{
-			case SCMD_LOGOUT:
-				if (d)
-					d->SetPhase(PHASE_CLOSE);
-				break;
+		case SCMD_LOGOUT:
+			if (d)
+				d->SetPhase(PHASE_CLOSE);
+			break;
 
-			case SCMD_QUIT:
-				ch->ChatPacket(CHAT_TYPE_COMMAND, "quit");
-				if (d) // @fixme197
-					d->DelayedDisconnect(1);
-				break;
+		case SCMD_QUIT:
+			ch->ChatPacket(CHAT_TYPE_COMMAND, "quit");
+			if (d) // @fixme197
+				d->DelayedDisconnect(1);
+			break;
 
-			case SCMD_PHASE_SELECT:
-				ch->Disconnect("timed_event - SCMD_PHASE_SELECT");
-				if (d)
-					d->SetPhase(PHASE_SELECT);
-				break;
+		case SCMD_PHASE_SELECT:
+			ch->Disconnect("timed_event - SCMD_PHASE_SELECT");
+			if (d)
+				d->SetPhase(PHASE_SELECT);
+			break;
 		}
 
 		return 0;
@@ -328,50 +328,50 @@ ACMD(do_cmd)
 
 	switch (subcmd)
 	{
-		case SCMD_LOGOUT:
-			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("로그인 화면으로 돌아 갑니다. 잠시만 기다리세요."));
-			break;
+	case SCMD_LOGOUT:
+		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("로그인 화면으로 돌아 갑니다. 잠시만 기다리세요."));
+		break;
 
-		case SCMD_QUIT:
-			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("게임을 종료 합니다. 잠시만 기다리세요."));
-			break;
+	case SCMD_QUIT:
+		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("게임을 종료 합니다. 잠시만 기다리세요."));
+		break;
 
-		case SCMD_PHASE_SELECT:
-			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("캐릭터를 전환 합니다. 잠시만 기다리세요."));
-			break;
+	case SCMD_PHASE_SELECT:
+		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("캐릭터를 전환 합니다. 잠시만 기다리세요."));
+		break;
 	}
 
 	int nExitLimitTime = 10;
 
 	if (ch->IsHack(false, true, nExitLimitTime) &&
 		false == CThreeWayWar::instance().IsSungZiMapIndex(ch->GetMapIndex()) &&
-	   	(!ch->GetWarMap() || ch->GetWarMap()->GetType() == GUILD_WAR_TYPE_FLAG))
+		(!ch->GetWarMap() || ch->GetWarMap()->GetType() == GUILD_WAR_TYPE_FLAG))
 	{
 		return;
 	}
 
 	switch (subcmd)
 	{
-		case SCMD_LOGOUT:
-		case SCMD_QUIT:
-		case SCMD_PHASE_SELECT:
-			{
-				TimedEventInfo* info = AllocEventInfo<TimedEventInfo>();
+	case SCMD_LOGOUT:
+	case SCMD_QUIT:
+	case SCMD_PHASE_SELECT:
+	{
+		TimedEventInfo* info = AllocEventInfo<TimedEventInfo>();
 
-				{
-					if (ch->IsPosition(POS_FIGHTING))
-						info->left_second = 10;
-					else
-						info->left_second = 3;
-				}
+		{
+			if (ch->IsPosition(POS_FIGHTING))
+				info->left_second = 10;
+			else
+				info->left_second = 3;
+		}
 
-				info->ch		= ch;
-				info->subcmd		= subcmd;
-				strlcpy(info->szReason, argument, sizeof(info->szReason));
+		info->ch = ch;
+		info->subcmd = subcmd;
+		strlcpy(info->szReason, argument, sizeof(info->szReason));
 
-				ch->m_pkTimedEvent	= event_create(timed_event, info, 1);
-			}
-			break;
+		ch->m_pkTimedEvent = event_create(timed_event, info, 1);
+	}
+	break;
 	}
 }
 
@@ -438,7 +438,7 @@ ACMD(do_restart)
 		if (ch->IsHack())
 		{
 			if ((!ch->GetWarMap() || ch->GetWarMap()->GetType() == GUILD_WAR_TYPE_FLAG) ||
-			   	false == CThreeWayWar::instance().IsSungZiMapIndex(ch->GetMapIndex()))
+				false == CThreeWayWar::instance().IsSungZiMapIndex(ch->GetMapIndex()))
 			{
 				ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("아직 재시작 할 수 없습니다. (%d초 남음)"), iTimeToDead - (180 - g_nPortalLimitTime));
 				return;
@@ -467,7 +467,7 @@ ACMD(do_restart)
 		if (subcmd == SCMD_RESTART_TOWN || subcmd == SCMD_RESTART_HERE)
 		{
 			if (true == CThreeWayWar::instance().IsThreeWayWarMapIndex(ch->GetMapIndex()) &&
-					false == CThreeWayWar::instance().IsSungZiMapIndex(ch->GetMapIndex()))
+				false == CThreeWayWar::instance().IsSungZiMapIndex(ch->GetMapIndex()))
 			{
 				ch->WarpSet(EMPIRE_START_X(ch->GetEmpire()), EMPIRE_START_Y(ch->GetEmpire()));
 
@@ -511,41 +511,41 @@ ACMD(do_restart)
 
 	if (ch->GetWarMap() && !ch->IsObserverMode())
 	{
-		CWarMap * pMap = ch->GetWarMap();
+		CWarMap* pMap = ch->GetWarMap();
 		DWORD dwGuildOpponent = pMap ? pMap->GetGuildOpponent(ch) : 0;
 
 		if (dwGuildOpponent)
 		{
 			switch (subcmd)
 			{
-				case SCMD_RESTART_TOWN:
-					sys_log(0, "do_restart: restart town");
-					PIXEL_POSITION pos;
+			case SCMD_RESTART_TOWN:
+				sys_log(0, "do_restart: restart town");
+				PIXEL_POSITION pos;
 
-					if (CWarMapManager::instance().GetStartPosition(ch->GetMapIndex(), ch->GetGuild()->GetID() < dwGuildOpponent ? 0 : 1, pos))
-						ch->Show(ch->GetMapIndex(), pos.x, pos.y);
-					else
-						ch->ExitToSavedLocation();
+				if (CWarMapManager::instance().GetStartPosition(ch->GetMapIndex(), ch->GetGuild()->GetID() < dwGuildOpponent ? 0 : 1, pos))
+					ch->Show(ch->GetMapIndex(), pos.x, pos.y);
+				else
+					ch->ExitToSavedLocation();
 
-					ch->PointChange(POINT_HP, ch->GetMaxHP() - ch->GetHP());
-					ch->PointChange(POINT_SP, ch->GetMaxSP() - ch->GetSP());
+				ch->PointChange(POINT_HP, ch->GetMaxHP() - ch->GetHP());
+				ch->PointChange(POINT_SP, ch->GetMaxSP() - ch->GetSP());
 #ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 				ch->CheckMount();
 #endif
-					ch->ReviveInvisible(5);
-					break;
+				ch->ReviveInvisible(5);
+				break;
 
-				case SCMD_RESTART_HERE:
-					sys_log(0, "do_restart: restart here");
-					ch->RestartAtSamePos();
-					//ch->Show(ch->GetMapIndex(), ch->GetX(), ch->GetY());
-					ch->PointChange(POINT_HP, ch->GetMaxHP() - ch->GetHP());
-					ch->PointChange(POINT_SP, ch->GetMaxSP() - ch->GetSP());
+			case SCMD_RESTART_HERE:
+				sys_log(0, "do_restart: restart here");
+				ch->RestartAtSamePos();
+				//ch->Show(ch->GetMapIndex(), ch->GetX(), ch->GetY());
+				ch->PointChange(POINT_HP, ch->GetMaxHP() - ch->GetHP());
+				ch->PointChange(POINT_SP, ch->GetMaxSP() - ch->GetSP());
 #ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 				ch->CheckMount();
 #endif
-					ch->ReviveInvisible(5);
-					break;
+				ch->ReviveInvisible(5);
+				break;
 			}
 
 			return;
@@ -553,29 +553,29 @@ ACMD(do_restart)
 	}
 	switch (subcmd)
 	{
-		case SCMD_RESTART_TOWN:
-			sys_log(0, "do_restart: restart town");
-			PIXEL_POSITION pos;
+	case SCMD_RESTART_TOWN:
+		sys_log(0, "do_restart: restart town");
+		PIXEL_POSITION pos;
 
-			if (SECTREE_MANAGER::instance().GetRecallPositionByEmpire(ch->GetMapIndex(), ch->GetEmpire(), pos))
-				ch->WarpSet(pos.x, pos.y);
-			else
-				ch->WarpSet(EMPIRE_START_X(ch->GetEmpire()), EMPIRE_START_Y(ch->GetEmpire()));
-			ch->PointChange(POINT_HP, 50 - ch->GetHP());
-			ch->DeathPenalty(1);
-			break;
+		if (SECTREE_MANAGER::instance().GetRecallPositionByEmpire(ch->GetMapIndex(), ch->GetEmpire(), pos))
+			ch->WarpSet(pos.x, pos.y);
+		else
+			ch->WarpSet(EMPIRE_START_X(ch->GetEmpire()), EMPIRE_START_Y(ch->GetEmpire()));
+		ch->PointChange(POINT_HP, 50 - ch->GetHP());
+		ch->DeathPenalty(1);
+		break;
 
-		case SCMD_RESTART_HERE:
-			sys_log(0, "do_restart: restart here");
-			ch->RestartAtSamePos();
-			//ch->Show(ch->GetMapIndex(), ch->GetX(), ch->GetY());
-			ch->PointChange(POINT_HP, 50 - ch->GetHP());
-			ch->DeathPenalty(0);
+	case SCMD_RESTART_HERE:
+		sys_log(0, "do_restart: restart here");
+		ch->RestartAtSamePos();
+		//ch->Show(ch->GetMapIndex(), ch->GetX(), ch->GetY());
+		ch->PointChange(POINT_HP, 50 - ch->GetHP());
+		ch->DeathPenalty(0);
 #ifdef ENABLE_MOUNT_COSTUME_SYSTEM
-				ch->CheckMount();
+		ch->CheckMount();
 #endif
-			ch->ReviveInvisible(5);
-			break;
+		ch->ReviveInvisible(5);
+		break;
 	}
 }
 
@@ -780,27 +780,27 @@ ACMD(do_skillup)
 	}
 	else
 	{
-		switch(vnum)
+		switch (vnum)
 		{
-			case SKILL_HORSE_WILDATTACK:
-			case SKILL_HORSE_CHARGE:
-			case SKILL_HORSE_ESCAPE:
-			case SKILL_HORSE_WILDATTACK_RANGE:
+		case SKILL_HORSE_WILDATTACK:
+		case SKILL_HORSE_CHARGE:
+		case SKILL_HORSE_ESCAPE:
+		case SKILL_HORSE_WILDATTACK_RANGE:
 
-			case SKILL_7_A_ANTI_TANHWAN:
-			case SKILL_7_B_ANTI_AMSEOP:
-			case SKILL_7_C_ANTI_SWAERYUNG:
-			case SKILL_7_D_ANTI_YONGBI:
+		case SKILL_7_A_ANTI_TANHWAN:
+		case SKILL_7_B_ANTI_AMSEOP:
+		case SKILL_7_C_ANTI_SWAERYUNG:
+		case SKILL_7_D_ANTI_YONGBI:
 
-			case SKILL_8_A_ANTI_GIGONGCHAM:
-			case SKILL_8_B_ANTI_YEONSA:
-			case SKILL_8_C_ANTI_MAHWAN:
-			case SKILL_8_D_ANTI_BYEURAK:
+		case SKILL_8_A_ANTI_GIGONGCHAM:
+		case SKILL_8_B_ANTI_YEONSA:
+		case SKILL_8_C_ANTI_MAHWAN:
+		case SKILL_8_D_ANTI_BYEURAK:
 
-			case SKILL_ADD_HP:
-			case SKILL_RESIST_PENETRATE:
-				ch->SkillLevelUp(vnum);
-				break;
+		case SKILL_ADD_HP:
+		case SKILL_RESIST_PENETRATE:
+			ch->SkillLevelUp(vnum);
+			break;
 		}
 	}
 }
@@ -828,13 +828,13 @@ ACMD(do_safebox_change_password)
 
 	two_arguments(argument, arg1, sizeof(arg1), arg2, sizeof(arg2));
 
-	if (!*arg1 || strlen(arg1)>6)
+	if (!*arg1 || strlen(arg1) > 6)
 	{
 		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("<창고> 잘못된 암호를 입력하셨습니다."));
 		return;
 	}
 
-	if (!*arg2 || strlen(arg2)>6)
+	if (!*arg2 || strlen(arg2) > 6)
 	{
 		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("<창고> 잘못된 암호를 입력하셨습니다."));
 		return;
@@ -950,7 +950,7 @@ ACMD(do_set_run_mode)
 
 ACMD(do_war)
 {
-	CGuild * g = ch->GetGuild();
+	CGuild* g = ch->GetGuild();
 
 	if (!g)
 		return;
@@ -984,7 +984,7 @@ ACMD(do_war)
 		return;
 	}
 
-	CGuild * opp_g = CGuildManager::instance().FindGuildByName(arg1);
+	CGuild* opp_g = CGuildManager::instance().FindGuildByName(arg1);
 
 	if (!opp_g)
 	{
@@ -994,62 +994,62 @@ ACMD(do_war)
 
 	switch (g->GetGuildWarState(opp_g->GetID()))
 	{
-		case GUILD_WAR_NONE:
-			{
-				if (opp_g->UnderAnyWar())
-				{
-					ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("<길드> 상대방 길드가 이미 전쟁 중 입니다."));
-					return;
-				}
-
-				int iWarPrice = KOR_aGuildWarInfo[type].iWarPrice;
-
-				if (g->GetGuildMoney() < iWarPrice)
-				{
-					ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("<길드> 전비가 부족하여 길드전을 할 수 없습니다."));
-					return;
-				}
-
-				if (opp_g->GetGuildMoney() < iWarPrice)
-				{
-					ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("<길드> 상대방 길드의 전비가 부족하여 길드전을 할 수 없습니다."));
-					return;
-				}
-			}
-			break;
-
-		case GUILD_WAR_SEND_DECLARE:
-			{
-				ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("이미 선전포고 중인 길드입니다."));
-				return;
-			}
-			break;
-
-		case GUILD_WAR_RECV_DECLARE:
-			{
-				if (opp_g->UnderAnyWar())
-				{
-					ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("<길드> 상대방 길드가 이미 전쟁 중 입니다."));
-					g->RequestRefuseWar(opp_g->GetID());
-					return;
-				}
-			}
-			break;
-
-		case GUILD_WAR_RESERVE:
-			{
-				ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("<길드> 이미 전쟁이 예약된 길드 입니다."));
-				return;
-			}
-			break;
-
-		case GUILD_WAR_END:
+	case GUILD_WAR_NONE:
+	{
+		if (opp_g->UnderAnyWar())
+		{
+			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("<길드> 상대방 길드가 이미 전쟁 중 입니다."));
 			return;
+		}
 
-		default:
-			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("<길드> 이미 전쟁 중인 길드입니다."));
+		int iWarPrice = KOR_aGuildWarInfo[type].iWarPrice;
+
+		if (g->GetGuildMoney() < iWarPrice)
+		{
+			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("<길드> 전비가 부족하여 길드전을 할 수 없습니다."));
+			return;
+		}
+
+		if (opp_g->GetGuildMoney() < iWarPrice)
+		{
+			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("<길드> 상대방 길드의 전비가 부족하여 길드전을 할 수 없습니다."));
+			return;
+		}
+	}
+	break;
+
+	case GUILD_WAR_SEND_DECLARE:
+	{
+		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("이미 선전포고 중인 길드입니다."));
+		return;
+	}
+	break;
+
+	case GUILD_WAR_RECV_DECLARE:
+	{
+		if (opp_g->UnderAnyWar())
+		{
+			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("<길드> 상대방 길드가 이미 전쟁 중 입니다."));
 			g->RequestRefuseWar(opp_g->GetID());
 			return;
+		}
+	}
+	break;
+
+	case GUILD_WAR_RESERVE:
+	{
+		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("<길드> 이미 전쟁이 예약된 길드 입니다."));
+		return;
+	}
+	break;
+
+	case GUILD_WAR_END:
+		return;
+
+	default:
+		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("<길드> 이미 전쟁 중인 길드입니다."));
+		g->RequestRefuseWar(opp_g->GetID());
+		return;
 	}
 
 	if (!g->CanStartWar(type))
@@ -1085,7 +1085,7 @@ ACMD(do_war)
 		if (g->GetMasterCharacter() != NULL)
 			break;
 
-		CCI *pCCI = P2P_MANAGER::instance().FindByPID(g->GetMasterPID());
+		CCI* pCCI = P2P_MANAGER::instance().FindByPID(g->GetMasterPID());
 
 		if (pCCI != NULL)
 			break;
@@ -1093,7 +1093,6 @@ ACMD(do_war)
 		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("<길드> 상대방 길드의 길드장이 접속중이 아닙니다."));
 		g->RequestRefuseWar(opp_g->GetID());
 		return;
-
 	} while (false);
 
 	do
@@ -1101,7 +1100,7 @@ ACMD(do_war)
 		if (opp_g->GetMasterCharacter() != NULL)
 			break;
 
-		CCI *pCCI = P2P_MANAGER::instance().FindByPID(opp_g->GetMasterPID());
+		CCI* pCCI = P2P_MANAGER::instance().FindByPID(opp_g->GetMasterPID());
 
 		if (pCCI != NULL)
 			break;
@@ -1109,7 +1108,6 @@ ACMD(do_war)
 		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("<길드> 상대방 길드의 길드장이 접속중이 아닙니다."));
 		g->RequestRefuseWar(opp_g->GetID());
 		return;
-
 	} while (false);
 
 	g->RequestDeclareWar(opp_g->GetID(), type);
@@ -1218,34 +1216,31 @@ ACMD(do_setblockmode)
 
 ACMD(do_unmount)
 {
-#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
+// #ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 	// balik tutarken ata binmicek.
-	LPITEM rod = ch->GetWear(WEAR_WEAPON);
-	if (rod && rod->GetType() == ITEM_ROD)
-		return;
+	// LPITEM rod = ch->GetWear(WEAR_WEAPON);
+	// if (rod && rod->GetType() == ITEM_ROD)
+		// return;
 
-	if (ch->GetWear(WEAR_COSTUME_MOUNT))
-	{
-		CMountSystem* mountSystem = ch->GetMountSystem();
-		LPITEM mount = ch->GetWear(WEAR_COSTUME_MOUNT);
-		DWORD mobVnum = 0;
+	// if (ch->GetWear(WEAR_COSTUME_MOUNT))
+	// {
+		// CMountSystem* mountSystem = ch->GetMountSystem();
+		// LPITEM mount = ch->GetWear(WEAR_COSTUME_MOUNT);
+		// DWORD mobVnum = 0;
 
-		if (!mountSystem || !mount)
-			return;
+		// if (!mountSystem || !mount)
+			// return;
 
-		if (mount->FindApplyValue(APPLY_MOUNT) != 0)
-			mobVnum = mount->FindApplyValue(APPLY_MOUNT);
+		// if (mount->FindApplyValue(APPLY_MOUNT) != 0)
+			// mobVnum = mount->FindApplyValue(APPLY_MOUNT);
 
-		if (ch->GetMountVnum())
-		{
-			if (mountSystem->CountSummoned() == 0)
-			{
-				mountSystem->Unmount(mobVnum);
-			}
-		}
-		return;
-	}
-#endif
+		// if (ch->GetMountVnumM())
+		// {
+			// mountSystem->Unmount(mobVnum);
+		// }
+		// return;
+	// }
+// #endif
 	if (true == ch->UnEquipSpecialRideUniqueItem())
 	{
 		ch->RemoveAffect(AFFECT_MOUNT);
@@ -1258,7 +1253,7 @@ ACMD(do_unmount)
 	}
 	else
 	{
-		ch->ChatPacket( CHAT_TYPE_INFO, LC_TEXT("인벤토리가 꽉 차서 내릴 수 없습니다."));
+		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("인벤토리가 꽉 차서 내릴 수 없습니다."));
 	}
 }
 
@@ -1410,13 +1405,13 @@ ACMD(do_monarch_warpto)
 
 	if (!tch)
 	{
-		CCI * pkCCI = P2P_MANAGER::instance().Find(arg1);
+		CCI* pkCCI = P2P_MANAGER::instance().Find(arg1);
 
 		if (pkCCI)
 		{
 			if (pkCCI->bEmpire != ch->GetEmpire())
 			{
-				ch->ChatPacket (CHAT_TYPE_INFO, LC_TEXT("타제국 유저에게는 이동할수 없습니다"));
+				ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("타제국 유저에게는 이동할수 없습니다"));
 				return;
 			}
 
@@ -1427,7 +1422,7 @@ ACMD(do_monarch_warpto)
 			}
 			if (!IsMonarchWarpZone(pkCCI->lMapIndex))
 			{
-				ch->ChatPacket (CHAT_TYPE_INFO, LC_TEXT("해당 지역으로 이동할 수 없습니다."));
+				ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("해당 지역으로 이동할 수 없습니다."));
 				return;
 			}
 
@@ -1462,7 +1457,7 @@ ACMD(do_monarch_warpto)
 		}
 		if (!IsMonarchWarpZone(tch->GetMapIndex()))
 		{
-			ch->ChatPacket (CHAT_TYPE_INFO, LC_TEXT("해당 지역으로 이동할 수 없습니다."));
+			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("해당 지역으로 이동할 수 없습니다."));
 			return;
 		}
 		x = tch->GetX();
@@ -1514,7 +1509,7 @@ ACMD(do_monarch_transfer)
 
 	if (!tch)
 	{
-		CCI * pkCCI = P2P_MANAGER::instance().Find(arg1);
+		CCI* pkCCI = P2P_MANAGER::instance().Find(arg1);
 
 		if (pkCCI)
 		{
@@ -1530,12 +1525,12 @@ ACMD(do_monarch_transfer)
 			}
 			if (!IsMonarchWarpZone(pkCCI->lMapIndex))
 			{
-				ch->ChatPacket (CHAT_TYPE_INFO, LC_TEXT("해당 지역으로 이동할 수 없습니다."));
+				ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("해당 지역으로 이동할 수 없습니다."));
 				return;
 			}
 			if (!IsMonarchWarpZone(ch->GetMapIndex()))
 			{
-				ch->ChatPacket (CHAT_TYPE_INFO, LC_TEXT("해당 지역으로 소환할 수 없습니다."));
+				ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("해당 지역으로 소환할 수 없습니다."));
 				return;
 			}
 
@@ -1574,12 +1569,12 @@ ACMD(do_monarch_transfer)
 	}
 	if (!IsMonarchWarpZone(tch->GetMapIndex()))
 	{
-		ch->ChatPacket (CHAT_TYPE_INFO, LC_TEXT("해당 지역으로 이동할 수 없습니다."));
+		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("해당 지역으로 이동할 수 없습니다."));
 		return;
 	}
 	if (!IsMonarchWarpZone(ch->GetMapIndex()))
 	{
-		ch->ChatPacket (CHAT_TYPE_INFO, LC_TEXT("해당 지역으로 소환할 수 없습니다."));
+		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("해당 지역으로 소환할 수 없습니다."));
 		return;
 	}
 
@@ -1596,24 +1591,22 @@ ACMD(do_monarch_info)
 	if (CMonarch::instance().IsMonarch(ch->GetPlayerID(), ch->GetEmpire()))
 	{
 		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("나의 군주 정보"));
-		TMonarchInfo * p = CMonarch::instance().GetMonarch();
+		TMonarchInfo* p = CMonarch::instance().GetMonarch();
 		for (int n = 1; n < 4; ++n)
 		{
 			if (n == ch->GetEmpire())
 				ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("[%s군주] : %s  보유금액 %lld "), EMPIRE_NAME(n), p->name[n], p->money[n]);
 			else
 				ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("[%s군주] : %s  "), EMPIRE_NAME(n), p->name[n]);
-
 		}
 	}
 	else
 	{
 		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("군주 정보"));
-		TMonarchInfo * p = CMonarch::instance().GetMonarch();
+		TMonarchInfo* p = CMonarch::instance().GetMonarch();
 		for (int n = 1; n < 4; ++n)
 		{
 			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("[%s군주] : %s  "), EMPIRE_NAME(n), p->name[n]);
-
 		}
 	}
 }
@@ -1634,9 +1627,9 @@ struct GotoInfo
 
 	GotoInfo()
 	{
-		st_name 	= "";
-		empire 		= 0;
-		mapIndex 	= 0;
+		st_name = "";
+		empire = 0;
+		mapIndex = 0;
 
 		x = 0;
 		y = 0;
@@ -1654,9 +1647,9 @@ struct GotoInfo
 
 	void __copy__(const GotoInfo& c_src)
 	{
-		st_name 	= c_src.st_name;
-		empire 		= c_src.empire;
-		mapIndex 	= c_src.mapIndex;
+		st_name = c_src.st_name;
+		empire = c_src.empire;
+		mapIndex = c_src.mapIndex;
 
 		x = c_src.x;
 		y = c_src.y;
@@ -1681,7 +1674,7 @@ ACMD(do_monarch_tax)
 	}
 
 	int tax = 0;
-	str_to_number(tax,  arg1);
+	str_to_number(tax, arg1);
 
 	if (tax < 1 || tax > 50)
 		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("1-50 사이의 수치를 선택해주세요"));
@@ -1770,7 +1763,7 @@ ACMD(do_monarch_mob)
 		return;
 	}
 
-	const CMob * pkMob;
+	const CMob* pkMob;
 	DWORD vnum = 0;
 
 	if (isdigit(*arg1))
@@ -1801,14 +1794,14 @@ ACMD(do_monarch_mob)
 	}
 
 	tch = CHARACTER_MANAGER::instance().SpawnMobRange(vnum,
-			ch->GetMapIndex(),
-			ch->GetX() - number(200, 750),
-			ch->GetY() - number(200, 750),
-			ch->GetX() + number(200, 750),
-			ch->GetY() + number(200, 750),
-			true,
-			pkMob->m_table.bType == CHAR_TYPE_STONE,
-			true);
+		ch->GetMapIndex(),
+		ch->GetX() - number(200, 750),
+		ch->GetY() - number(200, 750),
+		ch->GetX() + number(200, 750),
+		ch->GetY() + number(200, 750),
+		true,
+		pkMob->m_table.bType == CHAR_TYPE_STONE,
+		true);
 
 	if (tch)
 	{
@@ -1822,94 +1815,94 @@ static const char* FN_point_string(int apply_number)
 {
 	switch (apply_number)
 	{
-		case POINT_MAX_HP:	return LC_TEXT("최대 생명력 +%d");
-		case POINT_MAX_SP:	return LC_TEXT("최대 정신력 +%d");
-		case POINT_HT:		return LC_TEXT("체력 +%d");
-		case POINT_IQ:		return LC_TEXT("지능 +%d");
-		case POINT_ST:		return LC_TEXT("근력 +%d");
-		case POINT_DX:		return LC_TEXT("민첩 +%d");
-		case POINT_ATT_SPEED:	return LC_TEXT("공격속도 +%d");
-		case POINT_MOV_SPEED:	return LC_TEXT("이동속도 %d");
-		case POINT_CASTING_SPEED:	return LC_TEXT("쿨타임 -%d");
-		case POINT_HP_REGEN:	return LC_TEXT("생명력 회복 +%d");
-		case POINT_SP_REGEN:	return LC_TEXT("정신력 회복 +%d");
-		case POINT_POISON_PCT:	return LC_TEXT("독공격 %d");
+	case POINT_MAX_HP:	return LC_TEXT("최대 생명력 +%d");
+	case POINT_MAX_SP:	return LC_TEXT("최대 정신력 +%d");
+	case POINT_HT:		return LC_TEXT("체력 +%d");
+	case POINT_IQ:		return LC_TEXT("지능 +%d");
+	case POINT_ST:		return LC_TEXT("근력 +%d");
+	case POINT_DX:		return LC_TEXT("민첩 +%d");
+	case POINT_ATT_SPEED:	return LC_TEXT("공격속도 +%d");
+	case POINT_MOV_SPEED:	return LC_TEXT("이동속도 %d");
+	case POINT_CASTING_SPEED:	return LC_TEXT("쿨타임 -%d");
+	case POINT_HP_REGEN:	return LC_TEXT("생명력 회복 +%d");
+	case POINT_SP_REGEN:	return LC_TEXT("정신력 회복 +%d");
+	case POINT_POISON_PCT:	return LC_TEXT("독공격 %d");
 
-		case POINT_STUN_PCT:	return LC_TEXT("스턴 +%d");
-		case POINT_SLOW_PCT:	return LC_TEXT("슬로우 +%d");
-		case POINT_CRITICAL_PCT:	return LC_TEXT("%d%% 확률로 치명타 공격");
-		case POINT_RESIST_CRITICAL:	return LC_TEXT("상대의 치명타 확률 %d%% 감소");
-		case POINT_PENETRATE_PCT:	return LC_TEXT("%d%% 확률로 관통 공격");
-		case POINT_RESIST_PENETRATE: return LC_TEXT("상대의 관통 공격 확률 %d%% 감소");
-		case POINT_ATTBONUS_HUMAN:	return LC_TEXT("인간류 몬스터 타격치 +%d%%");
-		case POINT_ATTBONUS_ANIMAL:	return LC_TEXT("동물류 몬스터 타격치 +%d%%");
-		case POINT_ATTBONUS_ORC:	return LC_TEXT("웅귀족 타격치 +%d%%");
-		case POINT_ATTBONUS_MILGYO:	return LC_TEXT("밀교류 타격치 +%d%%");
-		case POINT_ATTBONUS_UNDEAD:	return LC_TEXT("시체류 타격치 +%d%%");
-		case POINT_ATTBONUS_DEVIL:	return LC_TEXT("악마류 타격치 +%d%%");
-		case POINT_STEAL_HP:		return LC_TEXT("타격치 %d%% 를 생명력으로 흡수");
-		case POINT_STEAL_SP:		return LC_TEXT("타력치 %d%% 를 정신력으로 흡수");
-		case POINT_MANA_BURN_PCT:	return LC_TEXT("%d%% 확률로 타격시 상대 전신력 소모");
-		case POINT_DAMAGE_SP_RECOVER:	return LC_TEXT("%d%% 확률로 피해시 정신력 회복");
-		case POINT_BLOCK:			return LC_TEXT("물리타격시 블럭 확률 %d%%");
-		case POINT_DODGE:			return LC_TEXT("활 공격 회피 확률 %d%%");
-		case POINT_RESIST_SWORD:	return LC_TEXT("한손검 방어 %d%%");
-		case POINT_RESIST_TWOHAND:	return LC_TEXT("양손검 방어 %d%%");
-		case POINT_RESIST_DAGGER:	return LC_TEXT("두손검 방어 %d%%");
-		case POINT_RESIST_BELL:		return LC_TEXT("방울 방어 %d%%");
-		case POINT_RESIST_FAN:		return LC_TEXT("부채 방어 %d%%");
-		case POINT_RESIST_BOW:		return LC_TEXT("활공격 저항 %d%%");
+	case POINT_STUN_PCT:	return LC_TEXT("스턴 +%d");
+	case POINT_SLOW_PCT:	return LC_TEXT("슬로우 +%d");
+	case POINT_CRITICAL_PCT:	return LC_TEXT("%d%% 확률로 치명타 공격");
+	case POINT_RESIST_CRITICAL:	return LC_TEXT("상대의 치명타 확률 %d%% 감소");
+	case POINT_PENETRATE_PCT:	return LC_TEXT("%d%% 확률로 관통 공격");
+	case POINT_RESIST_PENETRATE: return LC_TEXT("상대의 관통 공격 확률 %d%% 감소");
+	case POINT_ATTBONUS_HUMAN:	return LC_TEXT("인간류 몬스터 타격치 +%d%%");
+	case POINT_ATTBONUS_ANIMAL:	return LC_TEXT("동물류 몬스터 타격치 +%d%%");
+	case POINT_ATTBONUS_ORC:	return LC_TEXT("웅귀족 타격치 +%d%%");
+	case POINT_ATTBONUS_MILGYO:	return LC_TEXT("밀교류 타격치 +%d%%");
+	case POINT_ATTBONUS_UNDEAD:	return LC_TEXT("시체류 타격치 +%d%%");
+	case POINT_ATTBONUS_DEVIL:	return LC_TEXT("악마류 타격치 +%d%%");
+	case POINT_STEAL_HP:		return LC_TEXT("타격치 %d%% 를 생명력으로 흡수");
+	case POINT_STEAL_SP:		return LC_TEXT("타력치 %d%% 를 정신력으로 흡수");
+	case POINT_MANA_BURN_PCT:	return LC_TEXT("%d%% 확률로 타격시 상대 전신력 소모");
+	case POINT_DAMAGE_SP_RECOVER:	return LC_TEXT("%d%% 확률로 피해시 정신력 회복");
+	case POINT_BLOCK:			return LC_TEXT("물리타격시 블럭 확률 %d%%");
+	case POINT_DODGE:			return LC_TEXT("활 공격 회피 확률 %d%%");
+	case POINT_RESIST_SWORD:	return LC_TEXT("한손검 방어 %d%%");
+	case POINT_RESIST_TWOHAND:	return LC_TEXT("양손검 방어 %d%%");
+	case POINT_RESIST_DAGGER:	return LC_TEXT("두손검 방어 %d%%");
+	case POINT_RESIST_BELL:		return LC_TEXT("방울 방어 %d%%");
+	case POINT_RESIST_FAN:		return LC_TEXT("부채 방어 %d%%");
+	case POINT_RESIST_BOW:		return LC_TEXT("활공격 저항 %d%%");
 
-		case POINT_RESIST_FIRE:		return LC_TEXT("화염 저항 %d%%");
-		case POINT_RESIST_ELEC:		return LC_TEXT("전기 저항 %d%%");
-		case POINT_RESIST_MAGIC:	return LC_TEXT("마법 저항 %d%%");
+	case POINT_RESIST_FIRE:		return LC_TEXT("화염 저항 %d%%");
+	case POINT_RESIST_ELEC:		return LC_TEXT("전기 저항 %d%%");
+	case POINT_RESIST_MAGIC:	return LC_TEXT("마법 저항 %d%%");
 
-		case POINT_RESIST_WIND:		return LC_TEXT("바람 저항 %d%%");
-		case POINT_RESIST_ICE:		return LC_TEXT("냉기 저항 %d%%");
-		case POINT_RESIST_EARTH:	return LC_TEXT("대지 저항 %d%%");
-		case POINT_RESIST_DARK:		return LC_TEXT("어둠 저항 %d%%");
-		case POINT_REFLECT_MELEE:	return LC_TEXT("직접 타격치 반사 확률 : %d%%");
-		case POINT_REFLECT_CURSE:	return LC_TEXT("저주 되돌리기 확률 %d%%");
-		case POINT_POISON_REDUCE:	return LC_TEXT("독 저항 %d%%");
+	case POINT_RESIST_WIND:		return LC_TEXT("바람 저항 %d%%");
+	case POINT_RESIST_ICE:		return LC_TEXT("냉기 저항 %d%%");
+	case POINT_RESIST_EARTH:	return LC_TEXT("대지 저항 %d%%");
+	case POINT_RESIST_DARK:		return LC_TEXT("어둠 저항 %d%%");
+	case POINT_REFLECT_MELEE:	return LC_TEXT("직접 타격치 반사 확률 : %d%%");
+	case POINT_REFLECT_CURSE:	return LC_TEXT("저주 되돌리기 확률 %d%%");
+	case POINT_POISON_REDUCE:	return LC_TEXT("독 저항 %d%%");
 
-		case POINT_KILL_SP_RECOVER:	return LC_TEXT("%d%% 확률로 적퇴치시 정신력 회복");
-		case POINT_EXP_DOUBLE_BONUS:	return LC_TEXT("%d%% 확률로 적퇴치시 경험치 추가 상승");
-		case POINT_GOLD_DOUBLE_BONUS:	return LC_TEXT("%d%% 확률로 적퇴치시 돈 2배 드롭");
-		case POINT_ITEM_DROP_BONUS:	return LC_TEXT("%d%% 확률로 적퇴치시 아이템 2배 드롭");
-		case POINT_POTION_BONUS:	return LC_TEXT("물약 사용시 %d%% 성능 증가");
-		case POINT_KILL_HP_RECOVERY:	return LC_TEXT("%d%% 확률로 적퇴치시 생명력 회복");
-		case POINT_ATT_GRADE_BONUS:	return LC_TEXT("공격력 +%d");
-		case POINT_DEF_GRADE_BONUS:	return LC_TEXT("방어력 +%d");
-		case POINT_MAGIC_ATT_GRADE:	return LC_TEXT("마법 공격력 +%d");
-		case POINT_MAGIC_DEF_GRADE:	return LC_TEXT("마법 방어력 +%d");
-		case POINT_MAX_STAMINA:	return LC_TEXT("최대 지구력 +%d");
-		case POINT_ATTBONUS_WARRIOR:	return LC_TEXT("무사에게 강함 +%d%%");
-		case POINT_ATTBONUS_ASSASSIN:	return LC_TEXT("자객에게 강함 +%d%%");
-		case POINT_ATTBONUS_SURA:		return LC_TEXT("수라에게 강함 +%d%%");
-		case POINT_ATTBONUS_SHAMAN:		return LC_TEXT("무당에게 강함 +%d%%");
+	case POINT_KILL_SP_RECOVER:	return LC_TEXT("%d%% 확률로 적퇴치시 정신력 회복");
+	case POINT_EXP_DOUBLE_BONUS:	return LC_TEXT("%d%% 확률로 적퇴치시 경험치 추가 상승");
+	case POINT_GOLD_DOUBLE_BONUS:	return LC_TEXT("%d%% 확률로 적퇴치시 돈 2배 드롭");
+	case POINT_ITEM_DROP_BONUS:	return LC_TEXT("%d%% 확률로 적퇴치시 아이템 2배 드롭");
+	case POINT_POTION_BONUS:	return LC_TEXT("물약 사용시 %d%% 성능 증가");
+	case POINT_KILL_HP_RECOVERY:	return LC_TEXT("%d%% 확률로 적퇴치시 생명력 회복");
+	case POINT_ATT_GRADE_BONUS:	return LC_TEXT("공격력 +%d");
+	case POINT_DEF_GRADE_BONUS:	return LC_TEXT("방어력 +%d");
+	case POINT_MAGIC_ATT_GRADE:	return LC_TEXT("마법 공격력 +%d");
+	case POINT_MAGIC_DEF_GRADE:	return LC_TEXT("마법 방어력 +%d");
+	case POINT_MAX_STAMINA:	return LC_TEXT("최대 지구력 +%d");
+	case POINT_ATTBONUS_WARRIOR:	return LC_TEXT("무사에게 강함 +%d%%");
+	case POINT_ATTBONUS_ASSASSIN:	return LC_TEXT("자객에게 강함 +%d%%");
+	case POINT_ATTBONUS_SURA:		return LC_TEXT("수라에게 강함 +%d%%");
+	case POINT_ATTBONUS_SHAMAN:		return LC_TEXT("무당에게 강함 +%d%%");
 
-		case POINT_ATTBONUS_MONSTER:	return LC_TEXT("몬스터에게 강함 +%d%%");
-		case POINT_MALL_ATTBONUS:		return LC_TEXT("공격력 +%d%%");
-		case POINT_MALL_DEFBONUS:		return LC_TEXT("방어력 +%d%%");
-		case POINT_MALL_EXPBONUS:		return LC_TEXT("경험치 %d%%");
-		case POINT_MALL_ITEMBONUS:		return LC_TEXT("아이템 드롭율 %d배"); // @fixme180 float to int
-		case POINT_MALL_GOLDBONUS:		return LC_TEXT("돈 드롭율 %d배"); // @fixme180 float to int
-		case POINT_MAX_HP_PCT:			return LC_TEXT("최대 생명력 +%d%%");
-		case POINT_MAX_SP_PCT:			return LC_TEXT("최대 정신력 +%d%%");
-		case POINT_SKILL_DAMAGE_BONUS:	return LC_TEXT("스킬 데미지 %d%%");
-		case POINT_NORMAL_HIT_DAMAGE_BONUS:	return LC_TEXT("평타 데미지 %d%%");
-		case POINT_SKILL_DEFEND_BONUS:		return LC_TEXT("스킬 데미지 저항 %d%%");
-		case POINT_NORMAL_HIT_DEFEND_BONUS:	return LC_TEXT("평타 데미지 저항 %d%%");
-		case POINT_RESIST_WARRIOR:	return LC_TEXT("무사공격에 %d%% 저항");
-		case POINT_RESIST_ASSASSIN:	return LC_TEXT("자객공격에 %d%% 저항");
-		case POINT_RESIST_SURA:		return LC_TEXT("수라공격에 %d%% 저항");
-		case POINT_RESIST_SHAMAN:	return LC_TEXT("무당공격에 %d%% 저항");
+	case POINT_ATTBONUS_MONSTER:	return LC_TEXT("몬스터에게 강함 +%d%%");
+	case POINT_MALL_ATTBONUS:		return LC_TEXT("공격력 +%d%%");
+	case POINT_MALL_DEFBONUS:		return LC_TEXT("방어력 +%d%%");
+	case POINT_MALL_EXPBONUS:		return LC_TEXT("경험치 %d%%");
+	case POINT_MALL_ITEMBONUS:		return LC_TEXT("아이템 드롭율 %d배"); // @fixme180 float to int
+	case POINT_MALL_GOLDBONUS:		return LC_TEXT("돈 드롭율 %d배"); // @fixme180 float to int
+	case POINT_MAX_HP_PCT:			return LC_TEXT("최대 생명력 +%d%%");
+	case POINT_MAX_SP_PCT:			return LC_TEXT("최대 정신력 +%d%%");
+	case POINT_SKILL_DAMAGE_BONUS:	return LC_TEXT("스킬 데미지 %d%%");
+	case POINT_NORMAL_HIT_DAMAGE_BONUS:	return LC_TEXT("평타 데미지 %d%%");
+	case POINT_SKILL_DEFEND_BONUS:		return LC_TEXT("스킬 데미지 저항 %d%%");
+	case POINT_NORMAL_HIT_DEFEND_BONUS:	return LC_TEXT("평타 데미지 저항 %d%%");
+	case POINT_RESIST_WARRIOR:	return LC_TEXT("무사공격에 %d%% 저항");
+	case POINT_RESIST_ASSASSIN:	return LC_TEXT("자객공격에 %d%% 저항");
+	case POINT_RESIST_SURA:		return LC_TEXT("수라공격에 %d%% 저항");
+	case POINT_RESIST_SHAMAN:	return LC_TEXT("무당공격에 %d%% 저항");
 
-		default:					return "UNK_ID %d%%"; // @fixme180
+	default:					return "UNK_ID %d%%"; // @fixme180
 	}
 }
 
-static bool FN_hair_affect_string(LPCHARACTER ch, char *buf, size_t bufsiz)
+static bool FN_hair_affect_string(LPCHARACTER ch, char* buf, size_t bufsiz)
 {
 	if (NULL == ch || NULL == buf)
 		return false;
@@ -1933,14 +1926,14 @@ static bool FN_hair_affect_string(LPCHARACTER ch, char *buf, size_t bufsiz)
 	// set apply string
 	offset = snprintf(buf, bufsiz, FN_point_string(aff->bApplyOn), aff->lApplyValue);
 
-	if (offset < 0 || offset >= (int) bufsiz)
+	if (offset < 0 || offset >= (int)bufsiz)
 		offset = bufsiz - 1;
 
 	localtime_r(&expire, &ltm);
 
-	year	= ltm.tm_year + 1900;
-	mon		= ltm.tm_mon + 1;
-	day		= ltm.tm_mday;
+	year = ltm.tm_year + 1900;
+	mon = ltm.tm_mon + 1;
+	day = ltm.tm_mday;
 
 	snprintf(buf + offset, bufsiz - offset, LC_TEXT(" (만료일 : %d년 %d월 %d일)"), year, mon, day);
 
@@ -2029,7 +2022,7 @@ ACMD(do_hair)
 ACMD(do_inventory)
 {
 	int	index = 0;
-	int	count		= 1;
+	int	count = 1;
 
 	char arg1[256];
 	char arg2[256];
@@ -2063,7 +2056,7 @@ ACMD(do_inventory)
 		item = ch->GetInventoryItem(index);
 
 		ch->ChatPacket(CHAT_TYPE_INFO, "inventory [%d] = %s",
-						index, item ? item->GetName() : "<NONE>");
+			index, item ? item->GetName() : "<NONE>");
 		++index;
 	}
 }
@@ -2081,7 +2074,7 @@ ACMD(do_cube)
 
 	sys_log(1, "CUBE COMMAND <%s>: %s", ch->GetName(), argument);
 	int cube_index = 0, inven_index = 0;
-	const char *line;
+	const char* line;
 
 	char arg1[256], arg2[256], arg3[256];
 
@@ -2132,52 +2125,52 @@ ACMD(do_cube)
 
 	switch (LOWER(arg1[0]))
 	{
-		case 'o':	// open
-			Cube_open(ch);
-			break;
+	case 'o':	// open
+		Cube_open(ch);
+		break;
 
-		case 'c':	// close
-			Cube_close(ch);
-			break;
+	case 'c':	// close
+		Cube_close(ch);
+		break;
 
-		case 'l':	// list
-			Cube_show_list(ch);
-			break;
+	case 'l':	// list
+		Cube_show_list(ch);
+		break;
 
-		case 'a':	// add cue_index inven_index
-			{
-				if (0 == arg2[0] || !isdigit(*arg2) ||
-					0 == arg3[0] || !isdigit(*arg3))
-					return;
-
-				str_to_number(cube_index, arg2);
-				str_to_number(inven_index, arg3);
-				Cube_add_item (ch, cube_index, inven_index);
-			}
-			break;
-
-		case 'd':	// delete
-			{
-				if (0 == arg2[0] || !isdigit(*arg2))
-					return;
-
-				str_to_number(cube_index, arg2);
-				Cube_delete_item (ch, cube_index);
-			}
-			break;
-
-		case 'm':	// make
-			if (0 != arg2[0])
-			{
-				while (true == Cube_make(ch))
-					sys_log(1, "cube make success");
-			}
-			else
-				Cube_make(ch);
-			break;
-
-		default:
+	case 'a':	// add cue_index inven_index
+	{
+		if (0 == arg2[0] || !isdigit(*arg2) ||
+			0 == arg3[0] || !isdigit(*arg3))
 			return;
+
+		str_to_number(cube_index, arg2);
+		str_to_number(inven_index, arg3);
+		Cube_add_item(ch, cube_index, inven_index);
+	}
+	break;
+
+	case 'd':	// delete
+	{
+		if (0 == arg2[0] || !isdigit(*arg2))
+			return;
+
+		str_to_number(cube_index, arg2);
+		Cube_delete_item(ch, cube_index);
+	}
+	break;
+
+	case 'm':	// make
+		if (0 != arg2[0])
+		{
+			while (true == Cube_make(ch))
+				sys_log(1, "cube make success");
+		}
+		else
+			Cube_make(ch);
+		break;
+
+	default:
+		return;
 	}
 }
 
@@ -2189,36 +2182,36 @@ ACMD(do_in_game_mall)
 
 		switch (LC_GetLocalType())
 		{
-			case LC_GERMANY:	country_code[0] = 'd'; country_code[1] = 'e'; country_code[2] = '\0'; break;
-			case LC_FRANCE:		country_code[0] = 'f'; country_code[1] = 'r'; country_code[2] = '\0'; break;
-			case LC_ITALY:		country_code[0] = 'i'; country_code[1] = 't'; country_code[2] = '\0'; break;
-			case LC_SPAIN:		country_code[0] = 'e'; country_code[1] = 's'; country_code[2] = '\0'; break;
-			case LC_UK:			country_code[0] = 'e'; country_code[1] = 'n'; country_code[2] = '\0'; break;
-			case LC_TURKEY:		country_code[0] = 't'; country_code[1] = 'r'; country_code[2] = '\0'; break;
-			case LC_POLAND:		country_code[0] = 'p'; country_code[1] = 'l'; country_code[2] = '\0'; break;
-			case LC_PORTUGAL:	country_code[0] = 'p'; country_code[1] = 't'; country_code[2] = '\0'; break;
-			case LC_GREEK:		country_code[0] = 'g'; country_code[1] = 'r'; country_code[2] = '\0'; break;
-			case LC_RUSSIA:		country_code[0] = 'r'; country_code[1] = 'u'; country_code[2] = '\0'; break;
-			case LC_DENMARK:	country_code[0] = 'd'; country_code[1] = 'k'; country_code[2] = '\0'; break;
-			case LC_BULGARIA:	country_code[0] = 'b'; country_code[1] = 'g'; country_code[2] = '\0'; break;
-			case LC_CROATIA:	country_code[0] = 'h'; country_code[1] = 'r'; country_code[2] = '\0'; break;
-			case LC_MEXICO:		country_code[0] = 'm'; country_code[1] = 'x'; country_code[2] = '\0'; break;
-			case LC_ARABIA:		country_code[0] = 'a'; country_code[1] = 'e'; country_code[2] = '\0'; break;
-			case LC_CZECH:		country_code[0] = 'c'; country_code[1] = 'z'; country_code[2] = '\0'; break;
-			case LC_ROMANIA:	country_code[0] = 'r'; country_code[1] = 'o'; country_code[2] = '\0'; break;
-			case LC_HUNGARY:	country_code[0] = 'h'; country_code[1] = 'u'; country_code[2] = '\0'; break;
-			case LC_NETHERLANDS: country_code[0] = 'n'; country_code[1] = 'l'; country_code[2] = '\0'; break;
-			case LC_USA:		country_code[0] = 'u'; country_code[1] = 's'; country_code[2] = '\0'; break;
-			case LC_CANADA:	country_code[0] = 'c'; country_code[1] = 'a'; country_code[2] = '\0'; break;
-			default:
-				if (test_server == true)
-				{
-					country_code[0] = 'd'; country_code[1] = 'e'; country_code[2] = '\0';
-				}
-				break;
+		case LC_GERMANY:	country_code[0] = 'd'; country_code[1] = 'e'; country_code[2] = '\0'; break;
+		case LC_FRANCE:		country_code[0] = 'f'; country_code[1] = 'r'; country_code[2] = '\0'; break;
+		case LC_ITALY:		country_code[0] = 'i'; country_code[1] = 't'; country_code[2] = '\0'; break;
+		case LC_SPAIN:		country_code[0] = 'e'; country_code[1] = 's'; country_code[2] = '\0'; break;
+		case LC_UK:			country_code[0] = 'e'; country_code[1] = 'n'; country_code[2] = '\0'; break;
+		case LC_TURKEY:		country_code[0] = 't'; country_code[1] = 'r'; country_code[2] = '\0'; break;
+		case LC_POLAND:		country_code[0] = 'p'; country_code[1] = 'l'; country_code[2] = '\0'; break;
+		case LC_PORTUGAL:	country_code[0] = 'p'; country_code[1] = 't'; country_code[2] = '\0'; break;
+		case LC_GREEK:		country_code[0] = 'g'; country_code[1] = 'r'; country_code[2] = '\0'; break;
+		case LC_RUSSIA:		country_code[0] = 'r'; country_code[1] = 'u'; country_code[2] = '\0'; break;
+		case LC_DENMARK:	country_code[0] = 'd'; country_code[1] = 'k'; country_code[2] = '\0'; break;
+		case LC_BULGARIA:	country_code[0] = 'b'; country_code[1] = 'g'; country_code[2] = '\0'; break;
+		case LC_CROATIA:	country_code[0] = 'h'; country_code[1] = 'r'; country_code[2] = '\0'; break;
+		case LC_MEXICO:		country_code[0] = 'm'; country_code[1] = 'x'; country_code[2] = '\0'; break;
+		case LC_ARABIA:		country_code[0] = 'a'; country_code[1] = 'e'; country_code[2] = '\0'; break;
+		case LC_CZECH:		country_code[0] = 'c'; country_code[1] = 'z'; country_code[2] = '\0'; break;
+		case LC_ROMANIA:	country_code[0] = 'r'; country_code[1] = 'o'; country_code[2] = '\0'; break;
+		case LC_HUNGARY:	country_code[0] = 'h'; country_code[1] = 'u'; country_code[2] = '\0'; break;
+		case LC_NETHERLANDS: country_code[0] = 'n'; country_code[1] = 'l'; country_code[2] = '\0'; break;
+		case LC_USA:		country_code[0] = 'u'; country_code[1] = 's'; country_code[2] = '\0'; break;
+		case LC_CANADA:	country_code[0] = 'c'; country_code[1] = 'a'; country_code[2] = '\0'; break;
+		default:
+			if (test_server == true)
+			{
+				country_code[0] = 'd'; country_code[1] = 'e'; country_code[2] = '\0';
+			}
+			break;
 		}
 
-		char buf[512+1];
+		char buf[512 + 1];
 		char sas[33];
 		MD5_CTX ctx;
 		const char sas_key[] = "GF9001";
@@ -2226,7 +2219,7 @@ ACMD(do_in_game_mall)
 		snprintf(buf, sizeof(buf), "%u%u%s", ch->GetPlayerID(), ch->GetAID(), sas_key);
 
 		MD5Init(&ctx);
-		MD5Update(&ctx, (const unsigned char *) buf, strlen(buf));
+		MD5Update(&ctx, (const unsigned char*)buf, strlen(buf));
 #ifdef __FreeBSD__
 		MD5End(&ctx, sas);
 #else
@@ -2235,14 +2228,14 @@ ACMD(do_in_game_mall)
 		MD5Final(digest, &ctx);
 		int i;
 		for (i = 0; i < 16; ++i) {
-			sas[i+i] = hex[digest[i] >> 4];
-			sas[i+i+1] = hex[digest[i] & 0x0f];
+			sas[i + i] = hex[digest[i] >> 4];
+			sas[i + i + 1] = hex[digest[i] & 0x0f];
 		}
-		sas[i+i] = '\0';
+		sas[i + i] = '\0';
 #endif
 
 		snprintf(buf, sizeof(buf), "mall http://%s/ishop?pid=%u&c=%s&sid=%d&sas=%s",
-				g_strWebMallURL.c_str(), ch->GetPlayerID(), country_code, g_server_id, sas);
+			g_strWebMallURL.c_str(), ch->GetPlayerID(), country_code, g_server_id, sas);
 
 		ch->ChatPacket(CHAT_TYPE_COMMAND, buf);
 	}
@@ -2298,7 +2291,7 @@ ACMD(do_click_safebox)
 }
 ACMD(do_force_logout)
 {
-	LPDESC pDesc=DESC_MANAGER::instance().FindByCharacterName(ch->GetName());
+	LPDESC pDesc = DESC_MANAGER::instance().FindByCharacterName(ch->GetName());
 	if (!pDesc)
 		return;
 	pDesc->DelayedDisconnect(0);
@@ -2310,143 +2303,118 @@ ACMD(do_click_mall)
 	ch->ChatPacket(CHAT_TYPE_COMMAND, "ShowMeMallPassword");
 }
 
-#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 ACMD(do_ride)
 {
+	sys_log(1, "[DO_RIDE] start");
 	if (ch->IsDead() || ch->IsStun())
 		return;
 
-	// balik tutarken ata binmicek.
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
 	LPITEM rod = ch->GetWear(WEAR_WEAPON);
 	if (rod && rod->GetType() == ITEM_ROD)
 		return;
 
-	if (ch->GetWear(WEAR_COSTUME_MOUNT))
+	if (ch->GetMountingVnumM() && ch->GetWear(WEAR_COSTUME_MOUNT))
 	{
 		CMountSystem* mountSystem = ch->GetMountSystem();
 		LPITEM mount = ch->GetWear(WEAR_COSTUME_MOUNT);
-		DWORD mobVnum = 0;
+
 		if (!mountSystem || !mount)
 			return;
 
-		if (mount->FindApplyValue(APPLY_MOUNT) != 0)
-			mobVnum = mount->FindApplyValue(APPLY_MOUNT);
-
-		if (ch->GetMountVnum())
+		bool MState = mountSystem->IsMounting(ch->GetMountingVnumM());
+		if (MState)
 		{
-			if (mountSystem->CountSummoned() == 0)
-				mountSystem->Unmount(mobVnum);
+			mountSystem->Unmount(ch->GetMountingVnumM());
+			return;
 		}
 		else
 		{
-			if (mountSystem->CountSummoned() == 1)
-				mountSystem->Mount(mobVnum, mount);
+			do_unmount(ch, NULL, 0, 0);
+			if (ch->IsHorseRiding())
+			{
+				ch->StopRiding();
+			}
+			mountSystem->Mount(ch->GetMountingVnumM(), mount);
+			return;
+		}
+	}
+
+	if (ch->GetMountVnum())
+	{
+		do_unmount(ch, NULL, 0, 0);
+		return;
+	}
+#endif
+
+	{
+		if (ch->IsHorseRiding())
+		{
+			sys_log(1, "[DO_RIDE] stop riding");
+			ch->StopRiding();
+			return;
 		}
 
-		return;
-	}
-	if (ch->IsHorseRiding())
-	{
-		ch->StopRiding();
-		return;
-	}
-
-	if (ch->GetHorse() != NULL)
-	{
-		ch->StartRiding();
-		return;
-	}
-
-	for (BYTE i = 0; i < INVENTORY_MAX_NUM; ++i)
-	{
-		LPITEM item = ch->GetInventoryItem(i);
-		if (NULL == item)
-			continue;
-
-		if (item->GetType() == ITEM_COSTUME && item->GetSubType() == COSTUME_MOUNT) {
-			ch->UseItem(TItemPos(INVENTORY, i));
+		if (ch->GetMountVnum())
+		{
+			sys_log(1, "[DO_RIDE] unmount");
+			do_unmount(ch, NULL, 0, 0);
 			return;
+		}
+	}
+
+	{
+		if (ch->GetHorse() != NULL)
+		{
+			sys_log(1, "[DO_RIDE] start riding");
+			ch->StartRiding();
+			return;
+		}
+
+		for (BYTE i = 0; i < INVENTORY_MAX_NUM; ++i)
+		{
+			LPITEM item = ch->GetInventoryItem(i);
+			if (NULL == item)
+				continue;
+
+			if (item->IsRideItem())
+			{
+				if (
+					NULL == ch->GetWear(WEAR_UNIQUE1)
+					|| NULL == ch->GetWear(WEAR_UNIQUE2)
+#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
+					|| NULL == ch->GetWear(WEAR_COSTUME_MOUNT)
+#endif
+					)
+				{
+					sys_log(1, "[DO_RIDE] USE UNIQUE ITEM");
+					//ch->EquipItem(item);
+					ch->UseItem(TItemPos(INVENTORY, i));
+					return;
+				}
+			}
+
+			switch (item->GetVnum())
+			{
+			case 71114:
+			case 71116:
+			case 71118:
+			case 71120:
+				sys_log(1, "[DO_RIDE] USE QUEST ITEM");
+				ch->UseItem(TItemPos(INVENTORY, i));
+				return;
+			}
+
+			if ((item->GetVnum() > 52000) && (item->GetVnum() < 52091)) {
+				sys_log(1, "[DO_RIDE] USE QUEST ITEM");
+				ch->UseItem(TItemPos(INVENTORY, i));
+				return;
+			}
 		}
 	}
 
 	ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("말을 먼저 소환해주세요."));
 }
-#else
-ACMD(do_ride)
-{
-    sys_log(1, "[DO_RIDE] start");
-    if (ch->IsDead() || ch->IsStun())
-	return;
-
-    {
-	if (ch->IsHorseRiding())
-	{
-	    sys_log(1, "[DO_RIDE] stop riding");
-	    ch->StopRiding();
-	    return;
-	}
-
-	if (ch->GetMountVnum())
-	{
-	    sys_log(1, "[DO_RIDE] unmount");
-	    do_unmount(ch, NULL, 0, 0);
-	    return;
-	}
-    }
-
-    {
-	if (ch->GetHorse() != NULL)
-	{
-	    sys_log(1, "[DO_RIDE] start riding");
-	    ch->StartRiding();
-	    return;
-	}
-
-	for (BYTE i=0; i<INVENTORY_MAX_NUM; ++i)
-	{
-	    LPITEM item = ch->GetInventoryItem(i);
-	    if (NULL == item)
-			continue;
-
-		if (item->IsRideItem())
-		{
-			if (
-				NULL==ch->GetWear(WEAR_UNIQUE1)
-				|| NULL==ch->GetWear(WEAR_UNIQUE2)
-#ifdef ENABLE_MOUNT_COSTUME_SYSTEM
-				|| NULL == ch->GetWear(WEAR_COSTUME_MOUNT)
-#endif
-			)
-			{
-				sys_log(1, "[DO_RIDE] USE UNIQUE ITEM");
-				//ch->EquipItem(item);
-				ch->UseItem(TItemPos (INVENTORY, i));
-				return;
-			}
-		}
-
-	    switch (item->GetVnum())
-	    {
-		case 71114:
-		case 71116:
-		case 71118:
-		case 71120:
-		    sys_log(1, "[DO_RIDE] USE QUEST ITEM");
-		    ch->UseItem(TItemPos (INVENTORY, i));
-		    return;
-	    }
-
-		if( (item->GetVnum() > 52000) && (item->GetVnum() < 52091) )	{
-			sys_log(1, "[DO_RIDE] USE QUEST ITEM");
-			ch->UseItem(TItemPos (INVENTORY, i));
-		    return;
-		}
-	}
-    }
-
-    ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("말을 먼저 소환해주세요."));
-}
-#endif
 
 #ifdef ENABLE_MOVE_CHANNEL
 ACMD(DoChangeChannel)

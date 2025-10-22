@@ -9,12 +9,12 @@
 #ifdef ENABLE_NEWSTUFF
 static std::string stOxQuizFileName("");
 
-void __SetOxQuizFileName(const char* szOxQuizFN=NULL, bool bAddLocale=true);
-std::string & __GetOxQuizFileName();
+void __SetOxQuizFileName(const char* szOxQuizFN = NULL, bool bAddLocale = true);
+std::string& __GetOxQuizFileName();
 
 void __SetOxQuizFileName(const char* szOxQuizFN, bool bAddLocale)
 {
-	if (szOxQuizFN==NULL)
+	if (szOxQuizFN == NULL)
 		szOxQuizFN = "oxquiz.lua";
 	char script[256];
 	if (bAddLocale)
@@ -24,7 +24,7 @@ void __SetOxQuizFileName(const char* szOxQuizFN, bool bAddLocale)
 	stOxQuizFileName = script;
 }
 
-std::string & __GetOxQuizFileName()
+std::string& __GetOxQuizFileName()
 {
 	if (stOxQuizFileName.empty())
 		__SetOxQuizFileName();
@@ -125,7 +125,7 @@ namespace quest
 		int empty;
 
 		end_oxevent_info()
-		: empty( 0 )
+			: empty(0)
 		{
 		}
 	};

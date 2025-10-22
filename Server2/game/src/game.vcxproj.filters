@@ -448,6 +448,9 @@
     <ClCompile Include="xmas_event.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MountSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="affect.h">
@@ -792,6 +795,7 @@
     <ClInclude Include="any_function.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="MountSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="any_function.inc">

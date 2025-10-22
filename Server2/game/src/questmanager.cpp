@@ -28,14 +28,14 @@ bool g_NoMountAtGuildWar = false;
 bool g_NoPotionsOnPVP = false;
 #endif
 extern bool DropEvent_CharStone_SetValue(const std::string& name, int value);
-extern bool DropEvent_RefineBox_SetValue (const std::string& name, int value);
+extern bool DropEvent_RefineBox_SetValue(const std::string& name, int value);
 
 namespace quest
 {
 	using namespace std;
 
 	CQuestManager::CQuestManager()
-		: m_pSelectedDungeon(NULL), m_dwServerTimerArg(0), m_iRunningEventIndex(0), L(NULL), m_bNoSend (false),
+		: m_pSelectedDungeon(NULL), m_dwServerTimerArg(0), m_iRunningEventIndex(0), L(NULL), m_bNoSend(false),
 		m_CurrentRunningState(NULL), m_pCurrentCharacter(NULL), m_pCurrentNPCCharacter(NULL), m_pCurrentPartyMember(NULL),
 		m_pCurrentPC(NULL), m_iCurrentSkin(0), m_bError(false), m_pOtherPCBlockRootPC(NULL)
 	{
@@ -106,9 +106,9 @@ namespace quest
 			int line = 0;
 
 			if (!inf.is_open())
-				sys_err( "QUEST Cannot open 'questnpc.txt'");
+				sys_err("QUEST Cannot open 'questnpc.txt'");
 			else
-				sys_log(0, "QUEST can open 'questnpc.txt' (%s)", g_stQuestDir.c_str() );
+				sys_log(0, "QUEST can open 'questnpc.txt' (%s)", g_stQuestDir.c_str());
 
 			while (1)
 			{
@@ -123,17 +123,17 @@ namespace quest
 
 				string s;
 				getline(inf, s);
-				unsigned int li = 0, ri = s.size()-1;
+				unsigned int li = 0, ri = s.size() - 1;
 				while (li < s.size() && isspace(s[li])) li++;
 				while (ri > 0 && isspace(s[ri])) ri--;
 
 				if (ri < li)
 				{
-					sys_err("QUEST questnpc.txt:%d:npc name error",line);
+					sys_err("QUEST questnpc.txt:%d:npc name error", line);
 					continue;
 				}
 
-				s = s.substr(li, ri-li+1);
+				s = s.substr(li, ri - li + 1);
 
 				int	n = 0;
 				str_to_number(n, s.c_str());
@@ -141,7 +141,7 @@ namespace quest
 					continue;
 
 				//cout << '-' << s << '-' << endl;
-				if ( test_server )
+				if (test_server)
 					sys_log(0, "QUEST reading script of %s(%d)", s.c_str(), vnum);
 				m_mapNPC[vnum].Set(vnum, s);
 				m_mapNPCNameID[s] = vnum;
@@ -168,8 +168,8 @@ namespace quest
 		if (pPC && pPC->IsRunning() && pPC->GetRunningQuestState()->suspend_state == SUSPEND_STATE_SELECT_ITEM)
 		{
 			pPC->SetSendDoneFlag();
-			pPC->GetRunningQuestState()->args=1;
-			lua_pushnumber(pPC->GetRunningQuestState()->co,selection);
+			pPC->GetRunningQuestState()->args = 1;
+			lua_pushnumber(pPC->GetRunningQuestState()->co, selection);
 
 			if (!RunState(*pPC->GetRunningQuestState()))
 			{
@@ -205,7 +205,7 @@ namespace quest
 
 		pPC->SetSendDoneFlag();
 
-		pPC->GetRunningQuestState()->args=1;
+		pPC->GetRunningQuestState()->args = 1;
 		lua_pushnumber(pPC->GetRunningQuestState()->co, confirm);
 
 		AddScript("[END_CONFIRM_WAIT]");
@@ -217,7 +217,6 @@ namespace quest
 			CloseState(*pPC->GetRunningQuestState());
 			pPC->EndRunning();
 		}
-
 	}
 
 	int CQuestManager::ReadQuestCategoryFile(WORD q_index)
@@ -227,9 +226,9 @@ namespace quest
 		int c_qi = 99;
 
 		if (!inf.is_open())
-			sys_err( "QUEST Cannot open 'questcategory.txt'");
+			sys_err("QUEST Cannot open 'questcategory.txt'");
 		else
-			sys_log(0, "QUEST can open 'questcategory.txt' (%s)", g_stQuestDir.c_str() );
+			sys_log(0, "QUEST can open 'questcategory.txt' (%s)", g_stQuestDir.c_str());
 
 		while (1)
 		{
@@ -256,17 +255,17 @@ namespace quest
 
 			string s;
 			getline(inf, s);
-			unsigned int li = 0, ri = s.size()-1;
+			unsigned int li = 0, ri = s.size() - 1;
 			while (li < s.size() && isspace(s[li])) li++;
 			while (ri > 0 && isspace(s[ri])) ri--;
 
 			if (ri < li)
 			{
-				sys_err("QUEST questcategory.txt:%d:npc name error",line);
+				sys_err("QUEST questcategory.txt:%d:npc name error", line);
 				continue;
 			}
 
-			s = s.substr(li, ri-li+1);
+			s = s.substr(li, ri - li + 1);
 
 			int	n = 0;
 			str_to_number(n, s.c_str());
@@ -274,7 +273,7 @@ namespace quest
 				continue;
 
 			//cout << '-' << s << '-' << endl;
-			if ( test_server )
+			if (test_server)
 				sys_log(0, "QUEST reading script of %s(%d)", s.c_str(), category_num);
 
 			if (qn == s)
@@ -295,7 +294,7 @@ namespace quest
 		PC* pPC = GetPC(pc);
 		if (!pPC)
 		{
-			sys_err("no pc! : %u",pc);
+			sys_err("no pc! : %u", pc);
 			return;
 		}
 
@@ -313,8 +312,8 @@ namespace quest
 
 		pPC->SetSendDoneFlag();
 
-		pPC->GetRunningQuestState()->args=1;
-		lua_pushstring(pPC->GetRunningQuestState()->co,msg);
+		pPC->GetRunningQuestState()->args = 1;
+		lua_pushstring(pPC->GetRunningQuestState()->co, msg);
 
 		if (!RunState(*pPC->GetRunningQuestState()))
 		{
@@ -327,7 +326,7 @@ namespace quest
 	{
 		PC* pPC;
 
-		if ((pPC = GetPC(pc)) && pPC->IsRunning() && pPC->GetRunningQuestState()->suspend_state==SUSPEND_STATE_SELECT)
+		if ((pPC = GetPC(pc)) && pPC->IsRunning() && pPC->GetRunningQuestState()->suspend_state == SUSPEND_STATE_SELECT)
 		{
 			pPC->SetSendDoneFlag();
 
@@ -351,8 +350,8 @@ namespace quest
 			else
 			{
 				// on default
-				pPC->GetRunningQuestState()->args=1;
-				lua_pushnumber(pPC->GetRunningQuestState()->co,selection+1);
+				pPC->GetRunningQuestState()->args = 1;
+				lua_pushnumber(pPC->GetRunningQuestState()->co, selection + 1);
 
 				if (!RunState(*pPC->GetRunningQuestState()))
 				{
@@ -363,13 +362,13 @@ namespace quest
 		}
 		else
 		{
-			sys_err("wrong QUEST_SELECT request! : %d",pc);
+			sys_err("wrong QUEST_SELECT request! : %d", pc);
 		}
 	}
 
 	void CQuestManager::Resume(unsigned int pc)
 	{
-		PC * pPC;
+		PC* pPC;
 
 		if ((pPC = GetPC(pc)) && pPC->IsRunning() && pPC->GetRunningQuestState()->suspend_state == SUSPEND_STATE_PAUSE)
 		{
@@ -389,7 +388,7 @@ namespace quest
 			//cerr << pPC->GetRunningQuestState()->suspend_state;
 			//cerr << SUSPEND_STATE_WAIT << endl;
 			//cerr << "wrong QUEST_WAIT request! : " << pc << endl;
-			sys_err("wrong QUEST_WAIT request! : %d",pc);
+			sys_err("wrong QUEST_WAIT request! : %d", pc);
 		}
 	}
 
@@ -437,7 +436,7 @@ namespace quest
 
 	void CQuestManager::LogoutPC(LPCHARACTER ch)
 	{
-		PC * pPC = GetPC(ch->GetPlayerID());
+		PC* pPC = GetPC(ch->GetPlayerID());
 
 		if (pPC && pPC->IsRunning())
 		{
@@ -457,9 +456,9 @@ namespace quest
 	///////////////////////////////////////////////////////////////////////////////////////////
 
 	///////////////////////////////////////////////////////////////////////////////////////////
-	void CQuestManager::Login(unsigned int pc, const char * c_pszQuest)
+	void CQuestManager::Login(unsigned int pc, const char* c_pszQuest)
 	{
-		PC * pPC;
+		PC* pPC;
 
 		if ((pPC = GetPC(pc)))
 		{
@@ -476,7 +475,7 @@ namespace quest
 
 	void CQuestManager::Logout(unsigned int pc)
 	{
-		PC * pPC;
+		PC* pPC;
 
 		if ((pPC = GetPC(pc)))
 		{
@@ -493,7 +492,7 @@ namespace quest
 	void CQuestManager::Kill(unsigned int pc, unsigned int npc)
 	{
 		//m_CurrentNPCRace = npc;
-		PC * pPC;
+		PC* pPC;
 
 		sys_log(0, "CQuestManager::Kill QUEST_KILL_EVENT (pc=%d, npc=%d)", pc, npc);
 
@@ -530,7 +529,7 @@ namespace quest
 #ifdef ENABLE_QUEST_DIE_EVENT
 	void CQuestManager::Die(unsigned int pc, unsigned int npc)
 	{
-		PC * pPC;
+		PC* pPC;
 
 		sys_log(0, "CQuestManager::Kill QUEST_DIE_EVENT (pc=%d, npc=%d)", pc, npc);
 
@@ -540,7 +539,6 @@ namespace quest
 				return;
 
 			m_mapNPC[QUEST_NO_NPC].OnDie(*pPC);
-
 		}
 		else
 			sys_err("QUEST: no such pc id : %d", pc);
@@ -562,8 +560,8 @@ namespace quest
 	bool CQuestManager::DND(uint32_t pc, LPITEM item_dnd, LPITEM item_victim, bool bReceiveAll)
 	{
 		if (test_server)
-			sys_log( 0, "CQuestManager::DND_EVENT Start: item_dnd(%d), item_victim(%d), PC(%d)", item_dnd->GetOriginalVnum(), item_victim->GetOriginalVnum(), pc);
-		PC * pPC;
+			sys_log(0, "CQuestManager::DND_EVENT Start: item_dnd(%d), item_victim(%d), PC(%d)", item_dnd->GetOriginalVnum(), item_victim->GetOriginalVnum(), pc);
+		PC* pPC;
 		if ((pPC = GetPC(pc)))
 		{
 			if (!CheckQuestLoaded(pPC))
@@ -584,7 +582,6 @@ namespace quest
 			sys_err("QUEST DND_EVENT no such pc id : %d", pc);
 			return false;
 		}
-
 	}
 #endif
 
@@ -622,7 +619,7 @@ namespace quest
 
 	void CQuestManager::LevelUp(unsigned int pc)
 	{
-		PC * pPC;
+		PC* pPC;
 
 		if ((pPC = GetPC(pc)))
 		{
@@ -647,7 +644,7 @@ namespace quest
 				return;
 
 			// call script
-			m_mapNPC[attr+QUEST_ATTR_NPC_START].OnAttrIn(*pPC);
+			m_mapNPC[attr + QUEST_ATTR_NPC_START].OnAttrIn(*pPC);
 		}
 		else
 		{
@@ -667,7 +664,7 @@ namespace quest
 				return;
 
 			// call script
-			m_mapNPC[attr+QUEST_ATTR_NPC_START].OnAttrOut(*pPC);
+			m_mapNPC[attr + QUEST_ATTR_NPC_START].OnAttrOut(*pPC);
 		}
 		else
 		{
@@ -676,9 +673,9 @@ namespace quest
 		}
 	}
 
-	bool CQuestManager::Target(unsigned int pc, DWORD dwQuestIndex, const char * c_pszTargetName, const char * c_pszVerb)
+	bool CQuestManager::Target(unsigned int pc, DWORD dwQuestIndex, const char* c_pszTargetName, const char* c_pszVerb)
 	{
-		PC * pPC;
+		PC* pPC;
 
 		if ((pPC = GetPC(pc)))
 		{
@@ -774,7 +771,7 @@ namespace quest
 	bool CQuestManager::UseItem(unsigned int pc, LPITEM item, bool bReceiveAll)
 	{
 		if (test_server)
-			sys_log( 0, "questmanager::UseItem Start : itemVnum : %d PC : %d", item->GetOriginalVnum(), pc);
+			sys_log(0, "questmanager::UseItem Start : itemVnum : %d PC : %d", item->GetOriginalVnum(), pc);
 		PC* pPC;
 		if ((pPC = GetPC(pc)))
 		{
@@ -817,7 +814,7 @@ namespace quest
 	bool CQuestManager::SIGUse(unsigned int pc, DWORD sig_vnum, LPITEM item, bool bReceiveAll)
 	{
 		if (test_server)
-			sys_log( 0, "questmanager::SIGUse Start : itemVnum : %d PC : %d", item->GetOriginalVnum(), pc);
+			sys_log(0, "questmanager::SIGUse Start : itemVnum : %d PC : %d", item->GetOriginalVnum(), pc);
 		PC* pPC;
 		if ((pPC = GetPC(pc)))
 		{
@@ -848,14 +845,14 @@ namespace quest
 		if (!pkChr->IsPC())
 			return false;
 
-		PC * pPC = GetPC(pc);
+		PC* pPC = GetPC(pc);
 
 		if (pPC)
 		{
 			if (!CheckQuestLoaded(pPC))
 				return false;
 
-			TargetInfo * pInfo = CTargetManager::instance().GetTargetInfo(pc, TARGET_TYPE_VID, pkChr->GetVID());
+			TargetInfo* pInfo = CTargetManager::instance().GetTargetInfo(pc, TARGET_TYPE_VID, pkChr->GetVID());
 
 			if (pInfo)
 			{
@@ -871,7 +868,7 @@ namespace quest
 
 	bool CQuestManager::Click(unsigned int pc, LPCHARACTER pkChrTarget)
 	{
-		PC * pPC = GetPC(pc);
+		PC* pPC = GetPC(pc);
 
 		if (pPC)
 		{
@@ -885,7 +882,7 @@ namespace quest
 				return false;
 			}
 
-			TargetInfo * pInfo = CTargetManager::instance().GetTargetInfo(pc, TARGET_TYPE_VID, pkChrTarget->GetVID());
+			TargetInfo* pInfo = CTargetManager::instance().GetTargetInfo(pc, TARGET_TYPE_VID, pkChrTarget->GetVID());
 			if (test_server)
 			{
 				sys_log(0, "CQuestManager::Click(pid=%d, npc_name=%s) - target_info(%x)", pc, pkChrTarget->GetName(), pInfo);
@@ -907,9 +904,9 @@ namespace quest
 				if (it == m_mapNPC.end())
 				{
 					sys_log(0, "CQuestManager::Click(pid=%d, target_npc_name=%s) - NOT EXIST NPC RACE VNUM[%d]",
-							pc,
-							pkChrTarget->GetName(),
-							dwCurrentNPCRace); // @warme012
+						pc,
+						pkChrTarget->GetName(),
+						dwCurrentNPCRace); // @warme012
 					return false;
 				}
 
@@ -949,7 +946,7 @@ namespace quest
 
 	void CQuestManager::Unmount(unsigned int pc)
 	{
-		PC * pPC;
+		PC* pPC;
 
 		if ((pPC = GetPC(pc)))
 		{
@@ -962,12 +959,12 @@ namespace quest
 			sys_err("QUEST no such pc id : %d", pc);
 	}
 
-	void CQuestManager::ItemInformer(unsigned int pc,unsigned int vnum)
+	void CQuestManager::ItemInformer(unsigned int pc, unsigned int vnum)
 	{
 		PC* pPC;
 		pPC = GetPC(pc);
 
-		m_mapNPC[QUEST_NO_NPC].OnItemInformer(*pPC,vnum);
+		m_mapNPC[QUEST_NO_NPC].OnItemInformer(*pPC, vnum);
 	}
 	///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1031,13 +1028,13 @@ namespace quest
 		return it->second.IsRunning();
 	}
 
-	PC * CQuestManager::GetPCForce(unsigned int pc)
+	PC* CQuestManager::GetPCForce(unsigned int pc)
 	{
 		PCMap::iterator it;
 
 		if ((it = m_mapPC.find(pc)) == m_mapPC.end())
 		{
-			PC * pPC = &m_mapPC[pc];
+			PC* pPC = &m_mapPC[pc];
 			pPC->SetID(pc);
 			return pPC;
 		}
@@ -1045,7 +1042,7 @@ namespace quest
 		return &it->second;
 	}
 
-	PC * CQuestManager::GetPC(unsigned int pc)
+	PC* CQuestManager::GetPC(unsigned int pc)
 	{
 		PCMap::iterator it;
 
@@ -1068,7 +1065,7 @@ namespace quest
 
 	void CQuestManager::AddScript(const string& str)
 	{
-		m_strScript+=str;
+		m_strScript += str;
 	}
 
 	void CQuestManager::SendScript()
@@ -1080,9 +1077,9 @@ namespace quest
 			return;
 		}
 
-		if (m_strScript=="[DONE]" || m_strScript == "[NEXT]")
+		if (m_strScript == "[DONE]" || m_strScript == "[NEXT]")
 		{
-			if (m_pCurrentPC && !m_pCurrentPC->GetAndResetDoneFlag() && m_strScript=="[DONE]" && m_iCurrentSkin == QUEST_SKIN_NORMAL && !IsError())
+			if (m_pCurrentPC && !m_pCurrentPC->GetAndResetDoneFlag() && m_strScript == "[DONE]" && m_iCurrentSkin == QUEST_SKIN_NORMAL && !IsError())
 			{
 				ClearScript();
 				return;
@@ -1117,10 +1114,10 @@ namespace quest
 	{
 		int x = lua_gettop(L);
 		lua_getglobal(L, quest_name.c_str());
-		if (lua_isnil(L,-1))
+		if (lua_isnil(L, -1))
 		{
 			sys_err("QUEST wrong quest state file %s.%d", quest_name.c_str(), state_index);
-			lua_settop(L,x);
+			lua_settop(L, x);
 			return "";
 		}
 		lua_pushnumber(L, state_index);
@@ -1135,25 +1132,25 @@ namespace quest
 	{
 		int x = lua_gettop(L);
 		lua_getglobal(L, quest_name.c_str());
-		if (lua_isnil(L,-1))
+		if (lua_isnil(L, -1))
 		{
-			sys_err("QUEST wrong quest state file %s.%s",quest_name.c_str(),state_name.c_str());
-			lua_settop(L,x);
+			sys_err("QUEST wrong quest state file %s.%s", quest_name.c_str(), state_name.c_str());
+			lua_settop(L, x);
 			return 0;
 		}
 		lua_pushstring(L, state_name.c_str());
 		lua_gettable(L, -2);
 
-		int v = (int)rint(lua_tonumber(L,-1));
+		int v = (int)rint(lua_tonumber(L, -1));
 		lua_settop(L, x);
-		if ( test_server )
-			sys_log( 0,"[QUESTMANAGER] GetQuestStateIndex x(%d) v(%d) %s %s", v,x, quest_name.c_str(), state_name.c_str() );
+		if (test_server)
+			sys_log(0, "[QUESTMANAGER] GetQuestStateIndex x(%d) v(%d) %s %s", v, x, quest_name.c_str(), state_name.c_str());
 		return v;
 	}
 
 	void CQuestManager::SetSkinStyle(int iStyle)
 	{
-		if (iStyle<0 || iStyle >= QUEST_SKIN_COUNT)
+		if (iStyle < 0 || iStyle >= QUEST_SKIN_COUNT)
 		{
 			m_iCurrentSkin = QUEST_SKIN_NORMAL;
 		}
@@ -1225,7 +1222,7 @@ namespace quest
 		return GetCurrentCharacterPtr() ? GetCurrentCharacterPtr()->GetQuestNPC() : NULL;
 	}
 
-	const string & CQuestManager::GetCurrentQuestName()
+	const string& CQuestManager::GetCurrentQuestName()
 	{
 		return GetCurrentPC()->GetCurrentQuestName();
 	}
@@ -1244,7 +1241,7 @@ namespace quest
 		return ch->GetDungeonForce();
 	}
 
-	void CQuestManager::RegisterQuest(const string & stQuestName, unsigned int idx)
+	void CQuestManager::RegisterQuest(const string& stQuestName, unsigned int idx)
 	{
 		assert(idx > 0);
 
@@ -1270,7 +1267,7 @@ namespace quest
 		return it->second;
 	}
 
-	const string & CQuestManager::GetQuestNameByIndex(unsigned int idx)
+	const string& CQuestManager::GetQuestNameByIndex(unsigned int idx)
 	{
 		itertype(m_mapQuestNameByIndex) it;
 
@@ -1315,7 +1312,7 @@ namespace quest
 
 	void CQuestManager::SetEventFlag(const string& name, int value)
 	{
-		static const char*	DROPEVENT_CHARTONE_NAME		= "drop_char_stone";
+		static const char* DROPEVENT_CHARTONE_NAME = "drop_char_stone";
 		static const int	DROPEVENT_CHARTONE_NAME_LEN = strlen(DROPEVENT_CHARTONE_NAME);
 
 		int prev_value = m_mapEventFlag[name];
@@ -1371,13 +1368,13 @@ namespace quest
 		{
 			DESC_MANAGER::instance().SetDisconnectInvalidCRCMode(value != 0);
 		}
-		else if (!name.compare(0,5,"xmas_"))
+		else if (!name.compare(0, 5, "xmas_"))
 		{
 			xmas::ProcessEventFlag(name, prev_value, value);
 		}
 		else if (name == "newyear_boom")
 		{
-			const DESC_MANAGER::DESC_SET & c_ref_set = DESC_MANAGER::instance().GetClientSet();
+			const DESC_MANAGER::DESC_SET& c_ref_set = DESC_MANAGER::instance().GetClientSet();
 
 			for (itertype(c_ref_set) it = c_ref_set.begin(); it != c_ref_set.end(); ++it)
 			{
@@ -1389,11 +1386,11 @@ namespace quest
 				ch->ChatPacket(CHAT_TYPE_COMMAND, "newyear_boom %d", value);
 			}
 		}
-		else if ( name == "eclipse" )
+		else if (name == "eclipse")
 		{
 			std::string mode("");
 
-			if ( value == 1 )
+			if (value == 1)
 			{
 				mode = "dark";
 			}
@@ -1402,7 +1399,7 @@ namespace quest
 				mode = "light";
 			}
 
-			const DESC_MANAGER::DESC_SET & c_ref_set = DESC_MANAGER::instance().GetClientSet();
+			const DESC_MANAGER::DESC_SET& c_ref_set = DESC_MANAGER::instance().GetClientSet();
 
 			for (itertype(c_ref_set) it = c_ref_set.begin(); it != c_ref_set.end(); ++it)
 			{
@@ -1415,7 +1412,7 @@ namespace quest
 		}
 		else if (name == "day")
 		{
-			const DESC_MANAGER::DESC_SET & c_ref_set = DESC_MANAGER::instance().GetClientSet();
+			const DESC_MANAGER::DESC_SET& c_ref_set = DESC_MANAGER::instance().GetClientSet();
 
 			for (itertype(c_ref_set) it = c_ref_set.begin(); it != c_ref_set.end(); ++it)
 			{
@@ -1514,7 +1511,7 @@ namespace quest
 							continue;
 						}
 
-						CHARACTER_MANAGER::instance().SpawnMob(EventNPC, pPosition->lMapIndex, pos.x+pPosition->x*100, pos.y+pPosition->y*100, 0, false, -1);
+						CHARACTER_MANAGER::instance().SpawnMob(EventNPC, pPosition->lMapIndex, pos.x + pPosition->x * 100, pos.y + pPosition->y * 100, 0, false, -1);
 					}
 					pPosition++;
 				}
@@ -1533,21 +1530,21 @@ namespace quest
 
 						switch (ch->GetMapIndex())
 						{
-							case 3:
-							case 23:
-							case 43:
-								M2_DESTROY_CHARACTER(ch);
-								break;
+						case 3:
+						case 23:
+						case 43:
+							M2_DESTROY_CHARACTER(ch);
+							break;
 						}
 					}
 				}
 			}
 		}
-		else if (name.compare(0, DROPEVENT_CHARTONE_NAME_LEN, DROPEVENT_CHARTONE_NAME)== 0)
+		else if (name.compare(0, DROPEVENT_CHARTONE_NAME_LEN, DROPEVENT_CHARTONE_NAME) == 0)
 		{
 			DropEvent_CharStone_SetValue(name, value);
 		}
-		else if (name.compare(0, strlen("refine_box"), "refine_box")== 0)
+		else if (name.compare(0, strlen("refine_box"), "refine_box") == 0)
 		{
 			DropEvent_RefineBox_SetValue(name, value);
 		}
@@ -1645,7 +1642,7 @@ namespace quest
 
 	int	CQuestManager::GetEventFlag(const string& name)
 	{
-		map<string,int>::iterator it = m_mapEventFlag.find(name);
+		map<string, int>::iterator it = m_mapEventFlag.find(name);
 
 		if (it == m_mapEventFlag.end())
 			return 0;
@@ -1682,11 +1679,11 @@ namespace quest
 			ch->ChatPacket(CHAT_TYPE_COMMAND, "newyear_boom %d", iEventFlagValue);
 		}
 
-		if ( (iEventFlagValue = quest::CQuestManager::instance().GetEventFlag("eclipse")) )
+		if ((iEventFlagValue = quest::CQuestManager::instance().GetEventFlag("eclipse")))
 		{
 			std::string mode;
 
-			if ( iEventFlagValue == 1 ) mode = "dark";
+			if (iEventFlagValue == 1) mode = "dark";
 			else mode = "light";
 
 			ch->ChatPacket(CHAT_TYPE_COMMAND, "DayMode %s", mode.c_str());
@@ -1804,7 +1801,7 @@ namespace quest
 
 	void CQuestManager::WriteRunningStateToSyserr()
 	{
-		const char * state_name = GetQuestStateName(GetCurrentQuestName(), GetCurrentState()->st);
+		const char* state_name = GetQuestStateName(GetCurrentQuestName(), GetCurrentState()->st);
 
 		string event_index_name = "";
 		for (itertype(m_mapEventName) it = m_mapEventName.begin(); it != m_mapEventName.end(); ++it)
@@ -1816,9 +1813,9 @@ namespace quest
 			}
 		}
 
-		sys_err("LUA_ERROR: quest %s.%s %s", GetCurrentQuestName().c_str(), state_name, event_index_name.c_str() );
+		sys_err("LUA_ERROR: quest %s.%s %s", GetCurrentQuestName().c_str(), state_name, event_index_name.c_str());
 		if (GetCurrentCharacterPtr() && test_server)
-			GetCurrentCharacterPtr()->ChatPacket(CHAT_TYPE_PARTY, "LUA_ERROR: quest %s.%s %s", GetCurrentQuestName().c_str(), state_name, event_index_name.c_str() );
+			GetCurrentCharacterPtr()->ChatPacket(CHAT_TYPE_PARTY, "LUA_ERROR: quest %s.%s %s", GetCurrentQuestName().c_str(), state_name, event_index_name.c_str());
 	}
 
 #ifndef __WIN32__
@@ -1837,7 +1834,7 @@ namespace quest
 			LPCHARACTER ch = GetCurrentCharacterPtr();
 			if (ch)
 			{
-				ch->ChatPacket(CHAT_TYPE_PARTY, "error occurred on [%s:%d]", func,line);
+				ch->ChatPacket(CHAT_TYPE_PARTY, "error occurred on [%s:%d]", func, line);
 				ch->ChatPacket(CHAT_TYPE_PARTY, "%s", szMsg);
 			}
 		}
@@ -1858,7 +1855,7 @@ namespace quest
 			LPCHARACTER ch = GetCurrentCharacterPtr();
 			if (ch)
 			{
-				ch->ChatPacket(CHAT_TYPE_PARTY, "error occurred on [%s:%d]", func,line);
+				ch->ChatPacket(CHAT_TYPE_PARTY, "error occurred on [%s:%d]", func, line);
 				ch->ChatPacket(CHAT_TYPE_PARTY, "%s", szMsg);
 			}
 		}
@@ -1900,7 +1897,7 @@ namespace quest
 				event_cancel(&event);
 			}
 			return it.first.second == arg;
-		};
+			};
 		std::erase_if(m_mapServerTimer, erase_check); // @fixme311
 	}
 
@@ -1922,7 +1919,7 @@ namespace quest
 	bool CQuestManager::PickupItem(unsigned int pc, LPITEM item)
 	{
 		if (test_server)
-			sys_log( 0, "questmanager::PickupItem Start : itemVnum : %d PC : %d", item->GetOriginalVnum(), pc);
+			sys_log(0, "questmanager::PickupItem Start : itemVnum : %d PC : %d", item->GetOriginalVnum(), pc);
 		PC* pPC;
 		if ((pPC = GetPC(pc)))
 		{
@@ -1986,7 +1983,7 @@ namespace quest
 		return !m_vecPCStack.empty();
 	}
 
-	PC*	CQuestManager::GetOtherPCBlockRootPC()
+	PC* CQuestManager::GetOtherPCBlockRootPC()
 	{
 		return m_pOtherPCBlockRootPC;
 	}

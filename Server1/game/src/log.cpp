@@ -17,7 +17,7 @@ LogManager::~LogManager()
 {
 }
 
-bool LogManager::Connect(const char * host, const int port, const char * user, const char * pwd, const char * db)
+bool LogManager::Connect(const char* host, const int port, const char* user, const char* pwd, const char* db)
 {
 	if (m_sql.Setup(host, user, pwd, db, g_stLocale.c_str(), false, port))
 		m_bIsConnect = true;
@@ -25,7 +25,7 @@ bool LogManager::Connect(const char * host, const int port, const char * user, c
 	return m_bIsConnect;
 }
 
-void LogManager::Query(const char * c_pszFormat, ...)
+void LogManager::Query(const char* c_pszFormat, ...)
 {
 	LOG_LEVEL_CHECK_N_RET(LOG_LEVEL_MIN);
 
@@ -47,21 +47,21 @@ bool LogManager::IsConnected()
 	return m_bIsConnect;
 }
 
-size_t LogManager::EscapeString(char* dst, size_t dstSize, const char *src, size_t srcSize)
+size_t LogManager::EscapeString(char* dst, size_t dstSize, const char* src, size_t srcSize)
 {
 	return m_sql.EscapeString(dst, dstSize, src, srcSize);
 }
 
-void LogManager::ItemLog(DWORD dwPID, DWORD x, DWORD y, DWORD dwItemID, const char * c_pszText, const char * c_pszHint, const char * c_pszIP, DWORD dwVnum)
+void LogManager::ItemLog(DWORD dwPID, DWORD x, DWORD y, DWORD dwItemID, const char* c_pszText, const char* c_pszHint, const char* c_pszIP, DWORD dwVnum)
 {
 	LOG_LEVEL_CHECK_N_RET(LOG_LEVEL_MIN);
 	m_sql.EscapeString(__escape_hint, sizeof(__escape_hint), c_pszHint, strlen(c_pszHint));
 
 	Query("INSERT INTO log%s (type, time, who, x, y, what, how, hint, ip, vnum) VALUES('ITEM', NOW(), %u, %u, %u, %u, '%s', '%s', '%s', %u)",
-			get_table_postfix(), dwPID, x, y, dwItemID, c_pszText, __escape_hint, c_pszIP, dwVnum);
+		get_table_postfix(), dwPID, x, y, dwItemID, c_pszText, __escape_hint, c_pszIP, dwVnum);
 }
 
-void LogManager::ItemLog(LPCHARACTER ch, LPITEM item, const char * c_pszText, const char * c_pszHint)
+void LogManager::ItemLog(LPCHARACTER ch, LPITEM item, const char* c_pszText, const char* c_pszHint)
 {
 	LOG_LEVEL_CHECK_N_RET(LOG_LEVEL_MIN);
 	if (NULL == ch || NULL == item)
@@ -71,27 +71,27 @@ void LogManager::ItemLog(LPCHARACTER ch, LPITEM item, const char * c_pszText, co
 	}
 
 	ItemLog(ch->GetPlayerID(), ch->GetX(), ch->GetY(), item->GetID(),
-			NULL == c_pszText ? "" : c_pszText,
-		   	c_pszHint, ch->GetDesc() ? ch->GetDesc()->GetHostName() : "",
-		   	item->GetOriginalVnum());
+		NULL == c_pszText ? "" : c_pszText,
+		c_pszHint, ch->GetDesc() ? ch->GetDesc()->GetHostName() : "",
+		item->GetOriginalVnum());
 }
 
-void LogManager::ItemLog(LPCHARACTER ch, int itemID, int itemVnum, const char * c_pszText, const char * c_pszHint)
+void LogManager::ItemLog(LPCHARACTER ch, int itemID, int itemVnum, const char* c_pszText, const char* c_pszHint)
 {
 	LOG_LEVEL_CHECK_N_RET(LOG_LEVEL_MIN);
 	ItemLog(ch->GetPlayerID(), ch->GetX(), ch->GetY(), itemID, c_pszText, c_pszHint, ch->GetDesc() ? ch->GetDesc()->GetHostName() : "", itemVnum);
 }
 
-void LogManager::CharLog(DWORD dwPID, DWORD x, DWORD y, DWORD dwValue, const char * c_pszText, const char * c_pszHint, const char * c_pszIP)
+void LogManager::CharLog(DWORD dwPID, DWORD x, DWORD y, DWORD dwValue, const char* c_pszText, const char* c_pszHint, const char* c_pszIP)
 {
 	LOG_LEVEL_CHECK_N_RET(LOG_LEVEL_MIN);
 	m_sql.EscapeString(__escape_hint, sizeof(__escape_hint), c_pszHint, strlen(c_pszHint));
 
 	Query("INSERT INTO log%s (type, time, who, x, y, what, how, hint, ip) VALUES('CHARACTER', NOW(), %u, %u, %u, %u, '%s', '%s', '%s')",
-			get_table_postfix(), dwPID, x, y, dwValue, c_pszText, __escape_hint, c_pszIP);
+		get_table_postfix(), dwPID, x, y, dwValue, c_pszText, __escape_hint, c_pszIP);
 }
 
-void LogManager::CharLog(LPCHARACTER ch, DWORD dw, const char * c_pszText, const char * c_pszHint)
+void LogManager::CharLog(LPCHARACTER ch, DWORD dw, const char* c_pszText, const char* c_pszHint)
 {
 	LOG_LEVEL_CHECK_N_RET(LOG_LEVEL_MIN);
 	if (ch)
@@ -104,7 +104,7 @@ void LogManager::LoginLog(bool isLogin, DWORD dwAccountID, DWORD dwPID, BYTE bLe
 {
 	LOG_LEVEL_CHECK_N_RET(LOG_LEVEL_MIN);
 	Query("INSERT INTO loginlog%s (type, time, channel, account_id, pid, level, job, playtime) VALUES (%s, NOW(), %d, %u, %u, %d, %d, %u)",
-			get_table_postfix(), isLogin ? "'LOGIN'" : "'LOGOUT'", g_bChannel, dwAccountID, dwPID, bLevel, bJob, dwPlayTime);
+		get_table_postfix(), isLogin ? "'LOGIN'" : "'LOGOUT'", g_bChannel, dwAccountID, dwPID, bLevel, bJob, dwPlayTime);
 }
 
 void LogManager::MoneyLog(BYTE type, DWORD vnum, int gold)
@@ -119,7 +119,7 @@ void LogManager::MoneyLog(BYTE type, DWORD vnum, int gold)
 	Query("INSERT INTO money_log%s VALUES (NOW(), %d, %d, %d)", get_table_postfix(), type, vnum, gold);
 }
 
-void LogManager::HackLog(const char * c_pszHackName, const char * c_pszLogin, const char * c_pszName, const char * c_pszIP)
+void LogManager::HackLog(const char* c_pszHackName, const char* c_pszLogin, const char* c_pszName, const char* c_pszIP)
 {
 	LOG_LEVEL_CHECK_N_RET(LOG_LEVEL_MID);
 	m_sql.EscapeString(__escape_hint, sizeof(__escape_hint), c_pszHackName, strlen(c_pszHackName));
@@ -127,19 +127,19 @@ void LogManager::HackLog(const char * c_pszHackName, const char * c_pszLogin, co
 	Query("INSERT INTO hack_log (time, login, name, ip, server, why) VALUES(NOW(), '%s', '%s', '%s', '%s', '%s')", c_pszLogin, c_pszName, c_pszIP, g_stHostname.c_str(), __escape_hint);
 }
 
-void LogManager::HackLog(const char * c_pszHackName, LPCHARACTER ch)
+void LogManager::HackLog(const char* c_pszHackName, LPCHARACTER ch)
 {
 	LOG_LEVEL_CHECK_N_RET(LOG_LEVEL_MID);
 	if (ch->GetDesc())
 	{
 		HackLog(c_pszHackName,
-				ch->GetDesc()->GetAccountTable().login,
-				ch->GetName(),
-				ch->GetDesc()->GetHostName());
+			ch->GetDesc()->GetAccountTable().login,
+			ch->GetName(),
+			ch->GetDesc()->GetHostName());
 	}
 }
 
-void LogManager::HackCRCLog(const char * c_pszHackName, const char * c_pszLogin, const char * c_pszName, const char * c_pszIP, DWORD dwCRC)
+void LogManager::HackCRCLog(const char* c_pszHackName, const char* c_pszLogin, const char* c_pszName, const char* c_pszIP, DWORD dwCRC)
 {
 	LOG_LEVEL_CHECK_N_RET(LOG_LEVEL_MID);
 	Query("INSERT INTO hack_crc_log (time, login, name, ip, server, why, crc) VALUES(NOW(), '%s', '%s', '%s', '%s', '%s', %u)", c_pszLogin, c_pszName, c_pszIP, g_stHostname.c_str(), c_pszHackName, dwCRC);
@@ -148,69 +148,69 @@ void LogManager::HackCRCLog(const char * c_pszHackName, const char * c_pszLogin,
 void LogManager::GoldBarLog(DWORD dwPID, DWORD dwItemID, GOLDBAR_HOW eHow, const char* c_pszHint)
 {
 	LOG_LEVEL_CHECK_N_RET(LOG_LEVEL_MIN);
-	char szHow[32+1];
+	char szHow[32 + 1];
 
 	switch (eHow)
 	{
-		case PERSONAL_SHOP_BUY:
-			snprintf(szHow, sizeof(szHow), "'BUY'");
-			break;
+	case PERSONAL_SHOP_BUY:
+		snprintf(szHow, sizeof(szHow), "'BUY'");
+		break;
 
-		case PERSONAL_SHOP_SELL:
-			snprintf(szHow, sizeof(szHow), "'SELL'");
-			break;
+	case PERSONAL_SHOP_SELL:
+		snprintf(szHow, sizeof(szHow), "'SELL'");
+		break;
 
-		case SHOP_BUY:
-			snprintf(szHow, sizeof(szHow), "'SHOP_BUY'");
-			break;
+	case SHOP_BUY:
+		snprintf(szHow, sizeof(szHow), "'SHOP_BUY'");
+		break;
 
-		case SHOP_SELL:
-			snprintf(szHow, sizeof(szHow), "'SHOP_SELL'");
-			break;
+	case SHOP_SELL:
+		snprintf(szHow, sizeof(szHow), "'SHOP_SELL'");
+		break;
 
-		case EXCHANGE_TAKE:
-			snprintf(szHow, sizeof(szHow), "'EXCHANGE_TAKE'");
-			break;
+	case EXCHANGE_TAKE:
+		snprintf(szHow, sizeof(szHow), "'EXCHANGE_TAKE'");
+		break;
 
-		case EXCHANGE_GIVE:
-			snprintf(szHow, sizeof(szHow), "'EXCHANGE_GIVE'");
-			break;
+	case EXCHANGE_GIVE:
+		snprintf(szHow, sizeof(szHow), "'EXCHANGE_GIVE'");
+		break;
 
-		case QUEST:
-			snprintf(szHow, sizeof(szHow), "'QUEST'");
-			break;
+	case QUEST:
+		snprintf(szHow, sizeof(szHow), "'QUEST'");
+		break;
 
-		default:
-			snprintf(szHow, sizeof(szHow), "''");
-			break;
+	default:
+		snprintf(szHow, sizeof(szHow), "''");
+		break;
 	}
 
 	Query("INSERT INTO goldlog%s (date, time, pid, what, how, hint) VALUES(CURDATE(), CURTIME(), %u, %u, %s, '%s')",
-			get_table_postfix(), dwPID, dwItemID, szHow, c_pszHint);
+		get_table_postfix(), dwPID, dwItemID, szHow, c_pszHint);
 }
 
 void LogManager::CubeLog(DWORD dwPID, DWORD x, DWORD y, DWORD item_vnum, DWORD item_uid, int item_count, bool success)
 {
 	LOG_LEVEL_CHECK_N_RET(LOG_LEVEL_MID);
 	Query("INSERT INTO cube%s (pid, time, x, y, item_vnum, item_uid, item_count, success) "
-			"VALUES(%u, NOW(), %u, %u, %u, %u, %d, %d)",
-			get_table_postfix(), dwPID, x, y, item_vnum, item_uid, item_count, success?1:0);
+		"VALUES(%u, NOW(), %u, %u, %u, %u, %d, %d)",
+		get_table_postfix(), dwPID, x, y, item_vnum, item_uid, item_count, success ? 1 : 0);
 }
 
 void LogManager::SpeedHackLog(DWORD pid, DWORD x, DWORD y, int hack_count)
 {
 	LOG_LEVEL_CHECK_N_RET(LOG_LEVEL_MID);
 	Query("INSERT INTO speed_hack%s (pid, time, x, y, hack_count) "
-			"VALUES(%u, NOW(), %u, %u, %d)",
-			get_table_postfix(), pid, x, y, hack_count);
+		"VALUES(%u, NOW(), %u, %u, %d)",
+		get_table_postfix(), pid, x, y, hack_count);
 }
 
-void LogManager::ChangeNameLog(DWORD pid, const char *old_name, const char *new_name, const char *ip)
+void LogManager::ChangeNameLog(DWORD pid, const char* old_name, const char* new_name, const char* ip)
 {
 	LOG_LEVEL_CHECK_N_RET(LOG_LEVEL_MIN);
 	Query("INSERT INTO change_name%s (pid, old_name, new_name, time, ip) "
-			"VALUES(%u, '%s', '%s', NOW(), '%s') ",
-			get_table_postfix(), pid, old_name, new_name, ip);
+		"VALUES(%u, '%s', '%s', NOW(), '%s') ",
+		get_table_postfix(), pid, old_name, new_name, ip);
 }
 
 void LogManager::GMCommandLog(DWORD dwPID, const char* szName, const char* szIP, BYTE byChannel, const char* szCommand)
@@ -219,8 +219,8 @@ void LogManager::GMCommandLog(DWORD dwPID, const char* szName, const char* szIP,
 	m_sql.EscapeString(__escape_hint, sizeof(__escape_hint), szCommand, strlen(szCommand));
 
 	Query("INSERT INTO command_log%s (userid, server, ip, port, username, command, date ) "
-			"VALUES(%u, 999, '%s', %u, '%s', '%s', NOW()) ",
-			get_table_postfix(), dwPID, szIP, byChannel, szName, __escape_hint);
+		"VALUES(%u, 999, '%s', %u, '%s', '%s', NOW()) ",
+		get_table_postfix(), dwPID, szIP, byChannel, szName, __escape_hint);
 }
 
 void LogManager::RefineLog(DWORD pid, const char* item_name, DWORD item_id, int item_refine_level, int is_success, const char* how)
@@ -229,10 +229,10 @@ void LogManager::RefineLog(DWORD pid, const char* item_name, DWORD item_id, int 
 	m_sql.EscapeString(__escape_hint, sizeof(__escape_hint), item_name, strlen(item_name));
 
 	Query("INSERT INTO refinelog%s (pid, item_name, item_id, step, time, is_success, setType) VALUES(%u, '%s', %u, %d, NOW(), %d, '%s')",
-			get_table_postfix(), pid, __escape_hint, item_id, item_refine_level, is_success, how);
+		get_table_postfix(), pid, __escape_hint, item_id, item_refine_level, is_success, how);
 }
 
-void LogManager::ShoutLog(BYTE bChannel, BYTE bEmpire, const char * pszText)
+void LogManager::ShoutLog(BYTE bChannel, BYTE bEmpire, const char* pszText)
 {
 	LOG_LEVEL_CHECK_N_RET(LOG_LEVEL_MIN);
 	m_sql.EscapeString(__escape_hint, sizeof(__escape_hint), pszText, strlen(pszText));
@@ -251,40 +251,40 @@ void LogManager::LevelLog(LPCHARACTER pChar, unsigned int level, unsigned int pl
 	}
 
 	Query("REPLACE INTO levellog%s (name, level, time, account_id, pid, playtime) VALUES('%s', %u, NOW(), %u, %u, %d)",
-			get_table_postfix(), pChar->GetName(), level, aid, pChar->GetPlayerID(), playhour);
+		get_table_postfix(), pChar->GetName(), level, aid, pChar->GetPlayerID(), playhour);
 }
 
-void LogManager::BootLog(const char * c_pszHostName, BYTE bChannel)
+void LogManager::BootLog(const char* c_pszHostName, BYTE bChannel)
 {
 	LOG_LEVEL_CHECK_N_RET(LOG_LEVEL_MIN);
 	Query("INSERT INTO bootlog (time, hostname, channel) VALUES(NOW(), '%s', %d)",
-			c_pszHostName, bChannel);
+		c_pszHostName, bChannel);
 }
 
 void LogManager::FishLog(DWORD dwPID, int prob_idx, int fish_id, int fish_level, DWORD dwMiliseconds, DWORD dwVnum, DWORD dwValue)
 {
 	LOG_LEVEL_CHECK_N_RET(LOG_LEVEL_MAX);
 	Query("INSERT INTO fish_log%s VALUES(NOW(), %u, %d, %u, %d, %u, %u, %u)",
-			get_table_postfix(),
-			dwPID,
-			prob_idx,
-			fish_id,
-			fish_level,
-			dwMiliseconds,
-			dwVnum,
-			dwValue);
+		get_table_postfix(),
+		dwPID,
+		prob_idx,
+		fish_id,
+		fish_level,
+		dwMiliseconds,
+		dwVnum,
+		dwValue);
 }
 
-void LogManager::QuestRewardLog(const char * c_pszQuestName, DWORD dwPID, DWORD dwLevel, int iValue1, int iValue2)
+void LogManager::QuestRewardLog(const char* c_pszQuestName, DWORD dwPID, DWORD dwLevel, int iValue1, int iValue2)
 {
 	LOG_LEVEL_CHECK_N_RET(LOG_LEVEL_MAX);
 	Query("INSERT INTO quest_reward_log%s VALUES('%s',%u,%u,2,%u,%u,NOW())",
-			get_table_postfix(),
-			c_pszQuestName,
-			dwPID,
-			dwLevel,
-			iValue1,
-			iValue2);
+		get_table_postfix(),
+		c_pszQuestName,
+		dwPID,
+		dwLevel,
+		iValue1,
+		iValue2);
 }
 
 void LogManager::DetailLoginLog(bool isLogin, LPCHARACTER ch)
@@ -296,19 +296,19 @@ void LogManager::DetailLoginLog(bool isLogin, LPCHARACTER ch)
 	if (true == isLogin)
 	{
 		Query("INSERT INTO loginlog2(type, is_gm, login_time, channel, account_id, pid, ip, client_version) "
-				"VALUES('INVALID', %s, NOW(), %d, %u, %u, inet_aton('%s'), '%s')",
-				ch->IsGM() == true ? "'Y'" : "'N'",
-				g_bChannel,
-				ch->GetDesc()->GetAccountTable().id,
-				ch->GetPlayerID(),
-				ch->GetDesc()->GetHostName(),
-				ch->GetDesc()->GetClientVersion());
+			"VALUES('INVALID', %s, NOW(), %d, %u, %u, inet_aton('%s'), '%s')",
+			ch->IsGM() == true ? "'Y'" : "'N'",
+			g_bChannel,
+			ch->GetDesc()->GetAccountTable().id,
+			ch->GetPlayerID(),
+			ch->GetDesc()->GetHostName(),
+			ch->GetDesc()->GetClientVersion());
 	}
 	else
 	{
 		Query("SET @i = (SELECT MAX(id) FROM loginlog2 WHERE account_id=%u AND pid=%u)",
-				ch->GetDesc()->GetAccountTable().id,
-				ch->GetPlayerID());
+			ch->GetDesc()->GetAccountTable().id,
+			ch->GetPlayerID());
 
 		Query("UPDATE loginlog2 SET type='VALID', logout_time=NOW(), playtime=TIMEDIFF(logout_time,login_time) WHERE id=@i");
 	}
@@ -317,9 +317,9 @@ void LogManager::DetailLoginLog(bool isLogin, LPCHARACTER ch)
 void LogManager::DragonSlayLog(DWORD dwGuildID, DWORD dwDragonVnum, DWORD dwStartTime, DWORD dwEndTime)
 {
 	LOG_LEVEL_CHECK_N_RET(LOG_LEVEL_MAX);
-	Query( "INSERT INTO dragon_slay_log%s VALUES( %d, %d, FROM_UNIXTIME(%d), FROM_UNIXTIME(%d) )",
-			get_table_postfix(),
-			dwGuildID, dwDragonVnum, dwStartTime, dwEndTime);
+	Query("INSERT INTO dragon_slay_log%s VALUES( %d, %d, FROM_UNIXTIME(%d), FROM_UNIXTIME(%d) )",
+		get_table_postfix(),
+		dwGuildID, dwDragonVnum, dwStartTime, dwEndTime);
 }
 
 void LogManager::ChatLog(DWORD where, DWORD who_id, const char* who_name, DWORD whom_id, const char* whom_name, const char* type, const char* msg, const char* ip)
@@ -338,6 +338,5 @@ void LogManager::InvalidServerLog(enum eLocalization eLocaleType, const char* pc
 	// @fixme101 last %s to '%s'
 	Query("INSERT INTO invalid_server_log(locale_type, log_date, ip, revision) VALUES(%d, NOW(), '%s', '%s')", eLocaleType, pcszIP, __escape_hint);
 }
-
 
 //martysama0134's 8e0aa8057d3f54320e391131a48866b4

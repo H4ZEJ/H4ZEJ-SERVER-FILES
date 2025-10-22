@@ -52,7 +52,7 @@ enum eLocalization
 
 eLocalization LC_GetLocalType();
 
-bool LC_IsLocale( const eLocalization t );
+bool LC_IsLocale(const eLocalization t);
 bool LC_IsYMIR();
 bool LC_IsJapan();
 bool LC_IsEnglish();

@@ -8,14 +8,14 @@ namespace quest
 {
 	ALUA(mgmt_monarch_state)
 	{
-		if ( lua_isnumber(L, 1) == false )
+		if (lua_isnumber(L, 1) == false)
 		{
 			return 0;
 		}
 
 		int idx = (int)lua_tonumber(L, 1);
 
-		if ( idx < 1 || idx > 3 )
+		if (idx < 1 || idx > 3)
 		{
 			return 0;
 		}
@@ -32,7 +32,7 @@ namespace quest
 
 	ALUA(mgmt_monarch_change_lord)
 	{
-		if ( lua_isnumber(L, 1) == false || lua_isnumber(L, 2) == false )
+		if (lua_isnumber(L, 1) == false || lua_isnumber(L, 2) == false)
 		{
 			return 0;
 		}

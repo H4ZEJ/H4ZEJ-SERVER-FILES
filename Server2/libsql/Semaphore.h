@@ -9,22 +9,22 @@
 
 class CSemaphore
 {
-	private:
+private:
 #ifndef __WIN32__
-		sem_t *	m_hSem;
+	sem_t* m_hSem;
 #else
-		HANDLE m_hSem;
+	HANDLE m_hSem;
 #endif
 
-	public:
-		CSemaphore();
-		~CSemaphore();
+public:
+	CSemaphore();
+	~CSemaphore();
 
-		int	Initialize();
-		void	Clear();
-		void	Destroy();
-		int	Wait();
-		int	Release(int count = 1);
+	int	Initialize();
+	void	Clear();
+	void	Destroy();
+	int	Wait();
+	int	Release(int count = 1);
 };
 #endif
 //martysama0134's 8e0aa8057d3f54320e391131a48866b4

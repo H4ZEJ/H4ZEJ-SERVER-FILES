@@ -17,7 +17,7 @@ ACMD(do_oxevent_show_quiz)
 
 ACMD(do_oxevent_log)
 {
-	if ( COXEventManager::instance().LogWinner() == false )
+	if (COXEventManager::instance().LogWinner() == false)
 	{
 		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("OX이벤트의 나머지 인원을 기록하였습니다."));
 	}

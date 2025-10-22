@@ -7,18 +7,18 @@
 
 namespace quest
 {
-	void CancelTimerEvent(LPEVENT * ppEvent)
+	void CancelTimerEvent(LPEVENT* ppEvent)
 	{
 		event_cancel(ppEvent);
 	}
 
 	EVENTFUNC(quest_server_timer_event)
 	{
-		quest_server_event_info * info = dynamic_cast<quest_server_event_info *>( event->info );
+		quest_server_event_info* info = dynamic_cast<quest_server_event_info*>(event->info);
 
-		if ( info == NULL )
+		if (info == NULL)
 		{
-			sys_err( "quest_server_timer_event> <Factor> Null pointer" );
+			sys_err("quest_server_timer_event> <Factor> Null pointer");
 			return 0;
 		}
 
@@ -35,15 +35,15 @@ namespace quest
 
 	EVENTFUNC(quest_timer_event)
 	{
-		quest_event_info * info = dynamic_cast<quest_event_info *>( event->info );
+		quest_event_info* info = dynamic_cast<quest_event_info*>(event->info);
 
-		if ( info == NULL )
+		if (info == NULL)
 		{
-			sys_err( "quest_timer_event> <Factor> Null pointer" );
+			sys_err("quest_timer_event> <Factor> Null pointer");
 			return 0;
 		}
 
-		CQuestManager & q = CQuestManager::instance();
+		CQuestManager& q = CQuestManager::instance();
 
 		if (CHARACTER_MANAGER::instance().FindByPID(info->player_id))
 		{
@@ -54,7 +54,7 @@ namespace quest
 				return info->time_cycle;
 		}
 
-		PC * pPC = q.GetPC(info->player_id);
+		PC* pPC = q.GetPC(info->player_id);
 		if (pPC)
 			pPC->RemoveTimerNotCancel(info->name);
 		else
@@ -63,9 +63,9 @@ namespace quest
 		return 0;
 	}
 
-	LPEVENT quest_create_server_timer_event(const char * name, double when, unsigned int timernpc, bool loop, unsigned int arg)
+	LPEVENT quest_create_server_timer_event(const char* name, double when, unsigned int timernpc, bool loop, unsigned int arg)
 	{
-		long ltime_cycle = (long) (rint(PASSES_PER_SEC(when)));
+		long ltime_cycle = (long)(rint(PASSES_PER_SEC(when)));
 
 		quest_server_event_info* info = AllocEventInfo<quest_server_event_info>();
 
@@ -77,19 +77,19 @@ namespace quest
 		return event_create(quest_server_timer_event, info, ltime_cycle);
 	}
 
-	LPEVENT quest_create_timer_event(const char * name, unsigned int player_id, double when, unsigned int npc_id, bool loop)
+	LPEVENT quest_create_timer_event(const char* name, unsigned int player_id, double when, unsigned int npc_id, bool loop)
 	{
-		long ltime_cycle = (int) (rint(PASSES_PER_SEC(when)));
+		long ltime_cycle = (int)(rint(PASSES_PER_SEC(when)));
 
 		quest_event_info* info = AllocEventInfo<quest_event_info>();
 
-		info->player_id		= player_id;
-		info->npc_id		= npc_id;
-		info->name			= name;
+		info->player_id = player_id;
+		info->npc_id = npc_id;
+		info->name = name;
 
 		sys_log(0, "QUEST timer name %s cycle %d pc %u npc %u loop? %d", name ? name : "<noname>", ltime_cycle, player_id, npc_id, loop ? 1 : 0);
 
-		info->time_cycle	= loop ? ltime_cycle : 0;
+		info->time_cycle = loop ? ltime_cycle : 0;
 		return event_create(quest_timer_event, info, ltime_cycle);
 	}
 }

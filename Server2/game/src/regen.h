@@ -46,7 +46,8 @@ typedef struct regen
 		is_aggressive(0),
 		event(NULL),
 		id(0)
-	{}
+	{
+	}
 } REGEN;
 
 EVENTINFO(regen_event_info)
@@ -54,7 +55,7 @@ EVENTINFO(regen_event_info)
 	LPREGEN 	regen;
 
 	regen_event_info()
-	: regen( 0 )
+		: regen(0)
 	{
 	}
 };
@@ -77,15 +78,15 @@ EVENTINFO(dungeon_regen_event_info)
 	CDungeon::IdType dungeon_id;
 
 	dungeon_regen_event_info()
-	: regen( 0 )
-	, dungeon_id( 0 )
+		: regen(0)
+		, dungeon_id(0)
 	{
 	}
 };
 
-extern bool	regen_load(const char *filename, long lMapIndex, int base_x, int base_y);
-extern bool	regen_do(const char* filename, long lMapIndex, int base_x, int base_y, LPDUNGEON pDungeon, bool bOnce = true );
-extern bool	regen_load_in_file(const char* filename, long lMapIndex, int base_x, int base_y );
+extern bool	regen_load(const char* filename, long lMapIndex, int base_x, int base_y);
+extern bool	regen_do(const char* filename, long lMapIndex, int base_x, int base_y, LPDUNGEON pDungeon, bool bOnce = true);
+extern bool	regen_load_in_file(const char* filename, long lMapIndex, int base_x, int base_y);
 extern void	regen_free();
 
 extern bool	is_regen_exception(long x, long y);

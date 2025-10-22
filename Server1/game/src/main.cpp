@@ -68,20 +68,20 @@ extern void WriteVersion();
 
 #if !defined(__WIN32__) && defined(ENABLE_ASAN)
 const char* kAsanDefaultOptions = "external_symbolizer_path=\"/usr/bin/llvm-symbolizer\""
-									":verbosity=1"
-									":help=false"
-									":symbolize=true"
-									":detect_stack_use_after_return=true"
-									":log_path=\"/var/log/asan/asan.log.game\""
-									":debug=true"
-									":alloc_dealloc_mismatch=true"
-									":new_delete_type_mismatch=true"
-									":detect_invalid_pointer_pairs=3"
-									":detect_container_overflow=true"
-									":allocator_may_return_null=false"
-									":halt_on_error=false";
+":verbosity=1"
+":help=false"
+":symbolize=true"
+":detect_stack_use_after_return=true"
+":log_path=\"/var/log/asan/asan.log.game\""
+":debug=true"
+":alloc_dealloc_mismatch=true"
+":new_delete_type_mismatch=true"
+":detect_invalid_pointer_pairs=3"
+":detect_container_overflow=true"
+":allocator_may_return_null=false"
+":halt_on_error=false";
 
-extern "C" __attribute__((no_sanitize_address)) const char *__asan_default_options()
+extern "C" __attribute__((no_sanitize_address)) const char* __asan_default_options()
 {
 	return kAsanDefaultOptions;
 }
@@ -100,7 +100,7 @@ LPFDWATCH	main_fdw = NULL;
 
 int		io_loop(LPFDWATCH fdw);
 
-int		start(int argc, char **argv);
+int		start(int argc, char** argv);
 int		idle();
 void	destroy();
 
@@ -120,7 +120,7 @@ static DWORD s_dwProfiler[PROF_MAX_NUM];
 int g_shutdown_disconnect_pulse;
 int g_shutdown_disconnect_force_pulse;
 int g_shutdown_core_pulse;
-bool g_bShutdown=false;
+bool g_bShutdown = false;
 
 extern void CancelReloadSpamEvent();
 
@@ -261,13 +261,13 @@ void heartbeat(LPHEART ht, int pulse)
 	{
 		if (thecore_pulse() > g_shutdown_disconnect_pulse)
 		{
-			const DESC_MANAGER::DESC_SET & c_set_desc = DESC_MANAGER::instance().GetClientSet();
+			const DESC_MANAGER::DESC_SET& c_set_desc = DESC_MANAGER::instance().GetClientSet();
 			std::for_each(c_set_desc.begin(), c_set_desc.end(), ::SendDisconnectFunc());
 			g_shutdown_disconnect_pulse = INT_MAX;
 		}
 		else if (thecore_pulse() > g_shutdown_disconnect_force_pulse)
 		{
-			const DESC_MANAGER::DESC_SET & c_set_desc = DESC_MANAGER::instance().GetClientSet();
+			const DESC_MANAGER::DESC_SET& c_set_desc = DESC_MANAGER::instance().GetClientSet();
 			std::for_each(c_set_desc.begin(), c_set_desc.end(), ::DisconnectFunc());
 		}
 		else if (thecore_pulse() > g_shutdown_disconnect_force_pulse + PASSES_PER_SEC(5))
@@ -281,14 +281,14 @@ static void CleanUpForEarlyExit() {
 	CancelReloadSpamEvent();
 }
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
 #ifdef ENABLE_GOOGLE_TEST
 #ifndef __WIN32__
 	// <Factor> start unit tests if option is set
-	if ( argc > 1 )
+	if (argc > 1)
 	{
-		if ( strcmp( argv[1], "unittest" ) == 0 )
+		if (strcmp(argv[1], "unittest") == 0)
 		{
 			::testing::InitGoogleTest(&argc, argv);
 			return RUN_ALL_TESTS();
@@ -368,7 +368,7 @@ int main(int argc, char **argv)
 
 	// Client PackageCrypt
 	const std::string strPackageCryptInfoDir = "package/";
-	if( !desc_manager.LoadClientPackageCryptInfo( strPackageCryptInfoDir.c_str() ) )
+	if (!desc_manager.LoadClientPackageCryptInfo(strPackageCryptInfoDir.c_str()))
 	{
 		sys_err("Failed to Load ClientPackageCryptInfo File(%s)", strPackageCryptInfoDir.c_str());
 	}
@@ -439,18 +439,18 @@ int main(int argc, char **argv)
 void usage()
 {
 	printf("Option list\n"
-			"-p <port>    : bind port number (port must be over 1024)\n"
-			"-l <level>   : sets log level\n"
-			"-n <locale>  : sets locale name\n"
+		"-p <port>    : bind port number (port must be over 1024)\n"
+		"-l <level>   : sets log level\n"
+		"-n <locale>  : sets locale name\n"
 #ifdef ENABLE_NEWSTUFF
-			"-C <on-off>  : checkpointing check on/off\n"
+		"-C <on-off>  : checkpointing check on/off\n"
 #endif
-			"-v           : log to stdout\n"
-			"-r           : do not load regen tables\n"
+		"-v           : log to stdout\n"
+		"-r           : do not load regen tables\n"
 	);
 }
 
-int start(int argc, char **argv)
+int start(int argc, char** argv)
 {
 	std::string st_localeServiceName;
 
@@ -467,70 +467,70 @@ int start(int argc, char **argv)
 
 		switch (ch)
 		{
-			case 'I': // IP
-				strlcpy(g_szPublicIP, argv[optind], sizeof(g_szPublicIP));
+		case 'I': // IP
+			strlcpy(g_szPublicIP, argv[optind], sizeof(g_szPublicIP));
 
-				printf("IP %s\n", g_szPublicIP);
+			printf("IP %s\n", g_szPublicIP);
 
-				optind++;
+			optind++;
+			optreset = 1;
+			break;
+
+		case 'p': // port
+			mother_port = strtol(argv[optind], &ep, 10);
+
+			if (mother_port <= 1024)
+			{
+				usage();
+				return 0;
+			}
+
+			printf("port %d\n", mother_port);
+
+			optind++;
+			optreset = 1;
+			break;
+
+		case 'l':
+		{
+			long l = strtol(argv[optind], &ep, 10);
+
+			log_set_level(l);
+
+			optind++;
+			optreset = 1;
+		}
+		break;
+
+		// LOCALE_SERVICE
+		case 'n':
+		{
+			if (optind < argc)
+			{
+				st_localeServiceName = argv[optind++];
 				optreset = 1;
-				break;
-
-			case 'p': // port
-				mother_port = strtol(argv[optind], &ep, 10);
-
-				if (mother_port <= 1024)
-				{
-					usage();
-					return 0;
-				}
-
-				printf("port %d\n", mother_port);
-
-				optind++;
-				optreset = 1;
-				break;
-
-			case 'l':
-				{
-					long l = strtol(argv[optind], &ep, 10);
-
-					log_set_level(l);
-
-					optind++;
-					optreset = 1;
-				}
-				break;
-
-				// LOCALE_SERVICE
-			case 'n':
-				{
-					if (optind < argc)
-					{
-						st_localeServiceName = argv[optind++];
-						optreset = 1;
-					}
-				}
-				break;
-				// END_OF_LOCALE_SERVICE
+			}
+		}
+		break;
+		// END_OF_LOCALE_SERVICE
 
 #ifdef ENABLE_NEWSTUFF
-			case 'C': // checkpoint check
-				bCheckpointCheck = strtol(argv[optind], &ep, 10);;
-				printf("CHECKPOINT_CHECK %d\n", bCheckpointCheck);
+		case 'C': // checkpoint check
+			bCheckpointCheck = strtol(argv[optind], &ep, 10);;
+			printf("CHECKPOINT_CHECK %d\n", bCheckpointCheck);
 
-				optind++;
-				optreset = 1;
-				break;
+			optind++;
+			optreset = 1;
+			break;
 #endif
 
-			case 'v': // verbose
-				bVerbose = true;
-				break;
+		case 'v': // verbose
+			bVerbose = true;
+			break;
 
-			case 'r':
-				g_bNoRegen = true;
-				break;
+		case 'r':
+			g_bNoRegen = true;
+			break;
 		}
 	}
 
@@ -595,7 +595,6 @@ int start(int argc, char **argv)
 			g_pkAuthMasterDesc = DESC_MANAGER::instance().CreateConnectionDesc(main_fdw, g_stAuthMasterIP.c_str(), g_wAuthMasterPort, PHASE_P2P, true);
 			P2P_MANAGER::instance().RegisterConnector(g_pkAuthMasterDesc);
 			g_pkAuthMasterDesc->SetP2P(g_stAuthMasterIP.c_str(), g_wAuthMasterPort, g_bChannel);
-
 		}
 		else
 		{
@@ -606,7 +605,7 @@ int start(int argc, char **argv)
 	else
 	{
 		sys_log(0, "SPAM_CONFIG: duration %u score %u reload cycle %u\n",
-				g_uiSpamBlockDuration, g_uiSpamBlockScore, g_uiSpamReloadCycle);
+			g_uiSpamBlockDuration, g_uiSpamBlockScore, g_uiSpamReloadCycle);
 
 		extern void LoadSpamDB();
 		LoadSpamDB();
@@ -648,7 +647,7 @@ int idle()
 	struct timeval		now;
 
 	if (pta.tv_sec == 0)
-		gettimeofday(&pta, (struct timezone *) 0);
+		gettimeofday(&pta, (struct timezone*)0);
 
 	int passed_pulses;
 
@@ -677,28 +676,28 @@ int idle()
 
 	log_rotate();
 
-	gettimeofday(&now, (struct timezone *) 0);
+	gettimeofday(&now, (struct timezone*)0);
 	++process_time_count;
 
 	if (now.tv_sec - pta.tv_sec > 0)
 	{
 		pt_log("[%3d] event %5d/%-5d idle %-4ld event %-4ld heartbeat %-4ld I/O %-4ld chrUpate %-4ld | WRITE: %-7d | PULSE: %d",
-				process_time_count,
-				num_events_called,
-				event_count(),
-				thecore_profiler[PF_IDLE],
-				s_dwProfiler[PROF_EVENT],
-				s_dwProfiler[PROF_HEARTBEAT],
-				s_dwProfiler[PROF_IO],
-				s_dwProfiler[PROF_CHR_UPDATE],
-				current_bytes_written,
-				thecore_pulse());
+			process_time_count,
+			num_events_called,
+			event_count(),
+			thecore_profiler[PF_IDLE],
+			s_dwProfiler[PROF_EVENT],
+			s_dwProfiler[PROF_HEARTBEAT],
+			s_dwProfiler[PROF_IO],
+			s_dwProfiler[PROF_CHR_UPDATE],
+			current_bytes_written,
+			thecore_pulse());
 
 		num_events_called = 0;
 		current_bytes_written = 0;
 
 		process_time_count = 0;
-		gettimeofday(&pta, (struct timezone *) 0);
+		gettimeofday(&pta, (struct timezone*)0);
 
 		memset(&thecore_profiler[0], 0, sizeof(thecore_profiler));
 		memset(&s_dwProfiler[0], 0, sizeof(s_dwProfiler));
@@ -708,10 +707,10 @@ int idle()
 	if (_kbhit()) {
 		int c = _getch();
 		switch (c) {
-			case 0x1b: // Esc
-				return 0; // shutdown
-			default:
-				break;
+		case 0x1b: // Esc
+			return 0; // shutdown
+		default:
+			break;
 		}
 	}
 #endif
@@ -732,7 +731,7 @@ int io_loop(LPFDWATCH fdw)
 
 	for (event_idx = 0; event_idx < num_events; ++event_idx)
 	{
-		d = (LPDESC) fdwatch_get_client_data(fdw, event_idx);
+		d = (LPDESC)fdwatch_get_client_data(fdw, event_idx);
 
 		if (!d)
 		{
@@ -753,57 +752,57 @@ int io_loop(LPFDWATCH fdw)
 
 		switch (iRet)
 		{
-			case FDW_READ:
-				if (db_clientdesc == d)
-				{
-					int size = d->ProcessInput();
+		case FDW_READ:
+			if (db_clientdesc == d)
+			{
+				int size = d->ProcessInput();
 
-					if (size)
-						sys_log(1, "DB_BYTES_READ: %d", size);
+				if (size)
+					sys_log(1, "DB_BYTES_READ: %d", size);
 
-					if (size < 0)
-					{
-						d->SetPhase(PHASE_CLOSE);
-					}
-				}
-				else if (d->ProcessInput() < 0)
+				if (size < 0)
 				{
 					d->SetPhase(PHASE_CLOSE);
 				}
-				break;
-
-			case FDW_WRITE:
-				if (db_clientdesc == d)
-				{
-					int buf_size = buffer_size(d->GetOutputBuffer());
-					int sock_buf_size = fdwatch_get_buffer_size(fdw, d->GetSocket());
-
-					int ret = d->ProcessOutput();
-
-					if (ret < 0)
-					{
-						d->SetPhase(PHASE_CLOSE);
-					}
-
-					if (buf_size)
-						sys_log(1, "DB_BYTES_WRITE: size %d sock_buf %d ret %d", buf_size, sock_buf_size, ret);
-				}
-				else if (d->ProcessOutput() < 0)
-				{
-					d->SetPhase(PHASE_CLOSE);
-				}
-				break;
-
-			case FDW_EOF:
-				{
-					d->SetPhase(PHASE_CLOSE);
-				}
-				break;
-
-			default:
-				sys_err("fdwatch_check_event returned unknown %d", iRet);
+			}
+			else if (d->ProcessInput() < 0)
+			{
 				d->SetPhase(PHASE_CLOSE);
-				break;
+			}
+			break;
+
+		case FDW_WRITE:
+			if (db_clientdesc == d)
+			{
+				int buf_size = buffer_size(d->GetOutputBuffer());
+				int sock_buf_size = fdwatch_get_buffer_size(fdw, d->GetSocket());
+
+				int ret = d->ProcessOutput();
+
+				if (ret < 0)
+				{
+					d->SetPhase(PHASE_CLOSE);
+				}
+
+				if (buf_size)
+					sys_log(1, "DB_BYTES_WRITE: size %d sock_buf %d ret %d", buf_size, sock_buf_size, ret);
+			}
+			else if (d->ProcessOutput() < 0)
+			{
+				d->SetPhase(PHASE_CLOSE);
+			}
+			break;
+
+		case FDW_EOF:
+		{
+			d->SetPhase(PHASE_CLOSE);
+		}
+		break;
+
+		default:
+			sys_err("fdwatch_check_event returned unknown %d", iRet);
+			d->SetPhase(PHASE_CLOSE);
+			break;
 		}
 	}
 

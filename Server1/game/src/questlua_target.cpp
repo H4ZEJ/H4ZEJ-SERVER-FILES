@@ -27,18 +27,18 @@ namespace quest
 			return 0;
 		}
 
-		int x = pos.x + (int) lua_tonumber(L, 2) * 100;
-		int y = pos.y + (int) lua_tonumber(L, 3) * 100;
+		int x = pos.x + (int)lua_tonumber(L, 2) * 100;
+		int y = pos.y + (int)lua_tonumber(L, 3) * 100;
 
 		CTargetManager::instance().CreateTarget(ch->GetPlayerID(),
-				iQuestIndex,
-				lua_tostring(L, 1),
-				TARGET_TYPE_POS,
-				x,
-				y,
-				(int) lua_tonumber(L, 4),
-				lua_isstring(L, 5) ? lua_tostring(L, 5) : NULL,
-				lua_isnumber(L, 6) ? (int)lua_tonumber(L, 6): 1);
+			iQuestIndex,
+			lua_tostring(L, 1),
+			TARGET_TYPE_POS,
+			x,
+			y,
+			(int)lua_tonumber(L, 4),
+			lua_isstring(L, 5) ? lua_tostring(L, 5) : NULL,
+			lua_isnumber(L, 6) ? (int)lua_tonumber(L, 6) : 1);
 
 		return 0;
 	}
@@ -55,14 +55,14 @@ namespace quest
 		}
 
 		CTargetManager::instance().CreateTarget(ch->GetPlayerID(),
-				iQuestIndex,
-				lua_tostring(L, 1),
-				TARGET_TYPE_VID,
-				(int) lua_tonumber(L, 2),
-				0,
-				ch->GetMapIndex(),
-				lua_isstring(L, 3) ? lua_tostring(L, 3) : NULL,
-				lua_isnumber(L, 4) ? (int)lua_tonumber(L, 4): 1);
+			iQuestIndex,
+			lua_tostring(L, 1),
+			TARGET_TYPE_VID,
+			(int)lua_tonumber(L, 2),
+			0,
+			ch->GetMapIndex(),
+			lua_isstring(L, 3) ? lua_tostring(L, 3) : NULL,
+			lua_isnumber(L, 4) ? (int)lua_tonumber(L, 4) : 1);
 
 		return 0;
 	}
@@ -105,15 +105,15 @@ namespace quest
 			return 1;
 		}
 
-		LPEVENT pkEvent = CTargetManager::instance().GetTargetEvent(ch->GetPlayerID(), dwQuestIndex, (const char *) lua_tostring(L, 1));
+		LPEVENT pkEvent = CTargetManager::instance().GetTargetEvent(ch->GetPlayerID(), dwQuestIndex, (const char*)lua_tostring(L, 1));
 
 		if (pkEvent)
 		{
-			TargetInfo * pInfo = dynamic_cast<TargetInfo *>(pkEvent->info);
+			TargetInfo* pInfo = dynamic_cast<TargetInfo*>(pkEvent->info);
 
-			if ( pInfo == NULL )
+			if (pInfo == NULL)
 			{
-				sys_err( "target_id> <Factor> Null pointer" );
+				sys_err("target_id> <Factor> Null pointer");
 				lua_pushnumber(L, 0);
 				return 1;
 			}

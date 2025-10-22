@@ -11,17 +11,17 @@ CPacketInfo::CPacketInfo()
 CPacketInfo::~CPacketInfo()
 {
 	itertype(m_pPacketMap) it = m_pPacketMap.begin();
-	for ( ; it != m_pPacketMap.end(); ++it) {
+	for (; it != m_pPacketMap.end(); ++it) {
 		M2_DELETE(it->second);
 	}
 }
 
-void CPacketInfo::Set(int header, int iSize, const char * c_pszName)
+void CPacketInfo::Set(int header, int iSize, const char* c_pszName)
 {
 	if (m_pPacketMap.find(header) != m_pPacketMap.end())
 		return;
 
-	TPacketElement * element = M2_NEW TPacketElement;
+	TPacketElement* element = M2_NEW TPacketElement;
 
 	element->iSize = iSize;
 	element->stName.assign(c_pszName);
@@ -31,9 +31,9 @@ void CPacketInfo::Set(int header, int iSize, const char * c_pszName)
 	m_pPacketMap.emplace(header, element);
 }
 
-bool CPacketInfo::Get(int header, int * size, const char ** c_ppszName)
+bool CPacketInfo::Get(int header, int* size, const char** c_ppszName)
 {
-	std::map<int, TPacketElement *>::iterator it = m_pPacketMap.find(header);
+	std::map<int, TPacketElement*>::iterator it = m_pPacketMap.find(header);
 
 	if (it == m_pPacketMap.end())
 		return false;
@@ -45,9 +45,9 @@ bool CPacketInfo::Get(int header, int * size, const char ** c_ppszName)
 	return true;
 }
 
-TPacketElement * CPacketInfo::GetElement(int header)
+TPacketElement* CPacketInfo::GetElement(int header)
 {
-	std::map<int, TPacketElement *>::iterator it = m_pPacketMap.find(header);
+	std::map<int, TPacketElement*>::iterator it = m_pPacketMap.find(header);
 
 	if (it == m_pPacketMap.end())
 		return NULL;
@@ -67,29 +67,29 @@ void CPacketInfo::End()
 	m_pCurrentPacket->dwLoad += get_dword_time() - m_dwStartTime;
 }
 
-void CPacketInfo::Log(const char * c_pszFileName)
+void CPacketInfo::Log(const char* c_pszFileName)
 {
-	FILE * fp;
+	FILE* fp;
 
 	fp = fopen(c_pszFileName, "w");
 
 	if (!fp)
 		return;
 
-	std::map<int, TPacketElement *>::iterator it = m_pPacketMap.begin();
+	std::map<int, TPacketElement*>::iterator it = m_pPacketMap.begin();
 
 	fprintf(fp, "Name             Called     Load       Ratio\n");
 
 	while (it != m_pPacketMap.end())
 	{
-		TPacketElement * p = it->second;
+		TPacketElement* p = it->second;
 		++it;
 
 		fprintf(fp, "%-16s %-10d %-10u %.2f\n",
-				p->stName.c_str(),
-				p->iCalled,
-				p->dwLoad,
-				p->iCalled != 0 ? (float) p->dwLoad / p->iCalled : 0.0f);
+			p->stName.c_str(),
+			p->iCalled,
+			p->dwLoad,
+			p->iCalled != 0 ? (float)p->dwLoad / p->iCalled : 0.0f);
 	}
 
 	fclose(fp);
@@ -189,7 +189,6 @@ CPacketInfoCG::CPacketInfoCG()
 
 	Set(HEADER_CG_DRAGON_SOUL_REFINE, sizeof(TPacketCGDragonSoulRefine), "DragonSoulRefine");
 	Set(HEADER_CG_STATE_CHECKER, sizeof(BYTE), "ServerStateCheck");
-
 }
 
 CPacketInfoCG::~CPacketInfoCG()
@@ -200,37 +199,37 @@ CPacketInfoCG::~CPacketInfoCG()
 ////////////////////////////////////////////////////////////////////////////////
 CPacketInfoGG::CPacketInfoGG()
 {
-	Set(HEADER_GG_SETUP,		sizeof(TPacketGGSetup),		"Setup");
-	Set(HEADER_GG_LOGIN,		sizeof(TPacketGGLogin),		"Login");
-	Set(HEADER_GG_LOGOUT,		sizeof(TPacketGGLogout),	"Logout");
-	Set(HEADER_GG_RELAY,		sizeof(TPacketGGRelay),		"Relay");
-	Set(HEADER_GG_NOTICE,		sizeof(TPacketGGNotice),	"Notice");
+	Set(HEADER_GG_SETUP, sizeof(TPacketGGSetup), "Setup");
+	Set(HEADER_GG_LOGIN, sizeof(TPacketGGLogin), "Login");
+	Set(HEADER_GG_LOGOUT, sizeof(TPacketGGLogout), "Logout");
+	Set(HEADER_GG_RELAY, sizeof(TPacketGGRelay), "Relay");
+	Set(HEADER_GG_NOTICE, sizeof(TPacketGGNotice), "Notice");
 #ifdef ENABLE_FULL_NOTICE
-	Set(HEADER_GG_BIG_NOTICE,	sizeof(TPacketGGNotice),	"BigNotice");
+	Set(HEADER_GG_BIG_NOTICE, sizeof(TPacketGGNotice), "BigNotice");
 #endif
-	Set(HEADER_GG_SHUTDOWN,		sizeof(TPacketGGShutdown),	"Shutdown");
-	Set(HEADER_GG_GUILD,		sizeof(TPacketGGGuild),		"Guild");
-	Set(HEADER_GG_SHOUT,		sizeof(TPacketGGShout),		"Shout");
-	Set(HEADER_GG_DISCONNECT,	    	sizeof(TPacketGGDisconnect),	"Disconnect");
-	Set(HEADER_GG_MESSENGER_ADD,	sizeof(TPacketGGMessenger),	"MessengerAdd");
-	Set(HEADER_GG_MESSENGER_REMOVE,	sizeof(TPacketGGMessenger),	"MessengerRemove");
-	Set(HEADER_GG_FIND_POSITION,	sizeof(TPacketGGFindPosition),	"FindPosition");
-	Set(HEADER_GG_WARP_CHARACTER,	sizeof(TPacketGGWarpCharacter),	"WarpCharacter");
+	Set(HEADER_GG_SHUTDOWN, sizeof(TPacketGGShutdown), "Shutdown");
+	Set(HEADER_GG_GUILD, sizeof(TPacketGGGuild), "Guild");
+	Set(HEADER_GG_SHOUT, sizeof(TPacketGGShout), "Shout");
+	Set(HEADER_GG_DISCONNECT, sizeof(TPacketGGDisconnect), "Disconnect");
+	Set(HEADER_GG_MESSENGER_ADD, sizeof(TPacketGGMessenger), "MessengerAdd");
+	Set(HEADER_GG_MESSENGER_REMOVE, sizeof(TPacketGGMessenger), "MessengerRemove");
+	Set(HEADER_GG_FIND_POSITION, sizeof(TPacketGGFindPosition), "FindPosition");
+	Set(HEADER_GG_WARP_CHARACTER, sizeof(TPacketGGWarpCharacter), "WarpCharacter");
 	Set(HEADER_GG_GUILD_WAR_ZONE_MAP_INDEX, sizeof(TPacketGGGuildWarMapIndex), "GuildWarMapIndex");
-	Set(HEADER_GG_TRANSFER,		sizeof(TPacketGGTransfer),	"Transfer");
-	Set(HEADER_GG_XMAS_WARP_SANTA,	sizeof(TPacketGGXmasWarpSanta),	"XmasWarpSanta");
+	Set(HEADER_GG_TRANSFER, sizeof(TPacketGGTransfer), "Transfer");
+	Set(HEADER_GG_XMAS_WARP_SANTA, sizeof(TPacketGGXmasWarpSanta), "XmasWarpSanta");
 	Set(HEADER_GG_XMAS_WARP_SANTA_REPLY, sizeof(TPacketGGXmasWarpSantaReply), "XmasWarpSantaReply");
-	Set(HEADER_GG_RELOAD_CRC_LIST,	sizeof(BYTE),			"ReloadCRCList");
-	Set(HEADER_GG_CHECK_CLIENT_VERSION, sizeof(BYTE),			"CheckClientVersion");
-	Set(HEADER_GG_LOGIN_PING,		sizeof(TPacketGGLoginPing),	"LoginPing");
+	Set(HEADER_GG_RELOAD_CRC_LIST, sizeof(BYTE), "ReloadCRCList");
+	Set(HEADER_GG_CHECK_CLIENT_VERSION, sizeof(BYTE), "CheckClientVersion");
+	Set(HEADER_GG_LOGIN_PING, sizeof(TPacketGGLoginPing), "LoginPing");
 
 	// BLOCK_CHAT
-	Set(HEADER_GG_BLOCK_CHAT,		sizeof(TPacketGGBlockChat),	"BlockChat");
+	Set(HEADER_GG_BLOCK_CHAT, sizeof(TPacketGGBlockChat), "BlockChat");
 	// END_OF_BLOCK_CHAT
 
-	Set(HEADER_GG_MONARCH_NOTICE,		sizeof(TPacketGGMonarchNotice),	"MonarchNotice");
-	Set(HEADER_GG_MONARCH_TRANSFER,		sizeof(TPacketMonarchGGTransfer),	"MonarchTransfer");
-	Set(HEADER_GG_CHECK_AWAKENESS,		sizeof(TPacketGGCheckAwakeness),	"CheckAwakeness");
+	Set(HEADER_GG_MONARCH_NOTICE, sizeof(TPacketGGMonarchNotice), "MonarchNotice");
+	Set(HEADER_GG_MONARCH_TRANSFER, sizeof(TPacketMonarchGGTransfer), "MonarchTransfer");
+	Set(HEADER_GG_CHECK_AWAKENESS, sizeof(TPacketGGCheckAwakeness), "CheckAwakeness");
 }
 
 CPacketInfoGG::~CPacketInfoGG()

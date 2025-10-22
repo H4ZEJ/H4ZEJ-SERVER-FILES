@@ -53,6 +53,7 @@ CMountActor::CMountActor(LPCHARACTER owner, DWORD vnum)
 
 	m_dwSummonItemVID = 0;
 	m_dwSummonItemVnum = 0;
+	m_dwMounted = false;
 }
 
 CMountActor::~CMountActor()
@@ -75,21 +76,29 @@ void CMountActor::SetName()
 	m_name = buf;
 }
 
-bool CMountActor::Mount(LPITEM mountItem)
+void CMountActor::Mount(LPITEM mountItem)
 {
 	if (0 == m_pkOwner)
-		return false;
+        return;
 
 	if (!mountItem)
-		return false;
+        return;
 
-	if (m_pkOwner->IsHorseRiding())
-		m_pkOwner->StopRiding();
+	if (IsMounting() == true)
+        return;
 
-	if (m_pkOwner->GetHorse())
-		m_pkOwner->HorseSummon(false);
+    if (m_pkChar) {
+        M2_DESTROY_CHARACTER(m_pkChar);
+        m_pkChar = nullptr;
+        m_dwVID = 0;
+    }
 
-	Unmount();
+	m_pkOwner->MountVnum(m_dwVnum);
+
+	m_pkOwner->SetMountingM(true);
+	m_pkOwner->RemoveAffect(AFFECT_MOUNT);
+	m_pkOwner->RemoveAffect(AFFECT_MOUNT_BONUS);
+
 	int FixTime;
 	for (int i = 0; i < ITEM_LIMIT_MAX_NUM; i++)
 	{
@@ -99,28 +108,21 @@ bool CMountActor::Mount(LPITEM mountItem)
 			FixTime = INFINITE_AFFECT_DURATION;
 	}
 	m_pkOwner->AddAffect(AFFECT_MOUNT, POINT_MOUNT, m_dwVnum, AFF_NONE, FixTime - time(0), 0, true);
-	return m_pkOwner->GetMountVnum() == m_dwVnum;
+	m_dwMounted = true;
 }
 
 void CMountActor::Unmount()
 {
-	if (0 == m_pkOwner)
-		return;
+	if (!m_pkOwner || IsMounting() == false)
+        return;
 
-	if (!m_pkOwner->GetMountVnum())
-		return;
-
-	m_pkOwner->RemoveAffect(AFFECT_MOUNT);
-	m_pkOwner->RemoveAffect(AFFECT_MOUNT_BONUS);
-	m_pkOwner->MountVnum(0);
+	m_pkOwner->SetMountingM(false);
 
 	if (m_pkOwner->IsHorseRiding())
 		m_pkOwner->StopRiding();
 
-	if (m_pkOwner->GetHorse())
-		m_pkOwner->HorseSummon(false);
-
 	m_pkOwner->MountVnum(0);
+	m_dwMounted = false;
 }
 
 void CMountActor::Unsummon()
@@ -129,21 +131,41 @@ void CMountActor::Unsummon()
 	{
 		this->SetSummonItem(NULL);
 
-		if (NULL != m_pkChar)
+		if (IsMounting() == true)
+			this->Unmount();
+
+		if (nullptr != m_pkChar)
 			M2_DESTROY_CHARACTER(m_pkChar);
 
 		m_pkChar = 0;
 		m_dwVID = 0;
+		m_dwMounted = false;
+		if (m_pkOwner)
+			m_pkOwner->SetMountVnumM(0);
 	}
 }
 
 DWORD CMountActor::Summon(LPITEM pSummonItem, bool bSpawnFar)
 {
+	if (!m_pkOwner)
+		return 0;
+
 	if (CWarMapManager::instance().IsWarMap(m_pkOwner->GetMapIndex()))
 		return 0;
+
 	long x = m_pkOwner->GetX();
 	long y = m_pkOwner->GetY();
 	long z = m_pkOwner->GetZ();
+
+	m_pkOwner->SetMountingM(false);
+
+	if (m_pkOwner->IsHorseRiding())
+		m_pkOwner->StopRiding();
+
+	m_pkOwner->MountVnum(0);
+	m_dwMounted = false;
+	m_pkOwner->RemoveAffect(AFFECT_MOUNT);
+	m_pkOwner->RemoveAffect(AFFECT_MOUNT_BONUS);
 
 	if (true == bSpawnFar)
 	{
@@ -157,7 +179,22 @@ DWORD CMountActor::Summon(LPITEM pSummonItem, bool bSpawnFar)
 	}
 
 	if (m_pkOwner->GetMapIndex() == 113) // In ox you can't summon your mount.
-		return false;
+		return 0;
+
+	if (this->IsMounting() == true && this->IsSummoned() == false)
+	{
+		m_pkOwner->SetMountingM(false);
+
+		if (m_pkOwner->IsHorseRiding())
+			m_pkOwner->StopRiding();
+
+		m_pkOwner->MountVnum(0);
+		m_dwMounted = false;
+		m_pkChar = 0;
+		m_dwVID = 0;
+	}
+	if (this->IsSummoned() == true)
+		this->Unsummon();
 
 	if (0 != m_pkChar)
 	{
@@ -169,24 +206,18 @@ DWORD CMountActor::Summon(LPITEM pSummonItem, bool bSpawnFar)
 
 	m_pkChar = CHARACTER_MANAGER::instance().SpawnMob(m_dwVnum, m_pkOwner->GetMapIndex(), x, y, z, false, (int)(m_pkOwner->GetRotation() + 180), false);
 
-	if (0 == m_pkChar)
-	{
-		sys_err("[CMountActor::Summon] Failed to summon the mount. (vnum: %d)", m_dwVnum);
+    if (!m_pkChar) {
+		sys_err("[CMountActor::Summon] Cannot summon mount - ERROR CODE [1]");
 		return 0;
 	}
 
 	m_pkChar->SetMount();
-
 	m_pkChar->SetEmpire(m_pkOwner->GetEmpire());
-
 	m_dwVID = m_pkChar->GetVID();
-
 	this->SetName();
-
+	m_pkOwner->SetMountVnumM(m_dwVnum);
 	this->SetSummonItem(pSummonItem);
-
 	//m_pkOwner->ComputePoints(); mount lag fix
-
 	m_pkChar->Show(m_pkOwner->GetMapIndex(), x, y, z);
 
 	return m_dwVID;
@@ -313,6 +344,7 @@ CMountSystem::CMountSystem(LPCHARACTER owner)
 	m_dwUpdatePeriod = 400;
 
 	m_dwLastUpdateTime = 0;
+	m_pkMountSystemUpdateEvent = NULL;
 }
 
 CMountSystem::~CMountSystem()
@@ -430,9 +462,35 @@ void CMountSystem::Unsummon(DWORD vnum, bool bDeleteFromList)
 	}
 }
 
+bool CMountSystem::IsActiveMount()
+{
+	bool state = false;
+	for (auto it = m_mountActorMap.begin(); it != m_mountActorMap.end(); it++)
+	{
+		CMountActor* MountActor = it->second;
+		if (MountActor != 0)
+		{
+			if (MountActor->IsSummoned())
+			{
+				state = true;
+				break;
+			}
+		}
+	}
+	return state;
+}
+
+bool CMountSystem::IsMounting(DWORD mobVnum)
+{
+	CMountActor* MountActor = this->GetByVnum(mobVnum);
+	if (MountActor)
+		return MountActor->IsMounting();
+	else
+		return false;
+}
+
 void CMountSystem::Summon(DWORD mobVnum, LPITEM pSummonItem, bool bSpawnFar)
 {
-
 	CMountActor* mountActor = this->GetByVnum(mobVnum);
 
 	if (0 == mountActor)
@@ -454,8 +512,28 @@ void CMountSystem::Summon(DWORD mobVnum, LPITEM pSummonItem, bool bSpawnFar)
 
 		m_pkMountSystemUpdateEvent = event_create(mountsystem_update_event, info, PASSES_PER_SEC(1) / 4);
 	}
+	EnsureUpdateEventStarted();
+}
 
-	//return mountActor;
+void CMountSystem::SummonSilent(DWORD mobVnum)
+{
+	CMountActor* mountActor = this->GetByVnum(mobVnum);
+
+	if (0 == mountActor)
+	{
+		mountActor = M2_NEW CMountActor(m_pkOwner, mobVnum);
+		m_mountActorMap.insert(std::make_pair(mobVnum, mountActor));
+	}
+
+	if (mountActor->IsSummoned() && !mountActor->IsMounting())
+	{
+		mountActor->Unsummon();
+	}
+
+	if (m_pkOwner)
+		m_pkOwner->SetMountVnumM(mobVnum);
+
+	EnsureUpdateEventStarted();
 }
 
 void CMountSystem::Mount(DWORD mobVnum, LPITEM mountItem)
@@ -471,14 +549,7 @@ void CMountSystem::Mount(DWORD mobVnum, LPITEM mountItem)
 	if (!mountItem)
 		return;
 
-	//check timer
-	// if (m_pkOwner->IncreaseMountCounter() >= 5)
-	// {
-		// m_pkOwner->ChatPacket(CHAT_TYPE_INFO, "<Mount> Asteapta 5 secunde pentru a face aceasta actiune");
-		// return;
-	// }
-
-	this->Unsummon(mobVnum, false);
+	Unsummon(mobVnum, false);
 	mountActor->Mount(mountItem);
 }
 
@@ -491,13 +562,6 @@ void CMountSystem::Unmount(DWORD mobVnum)
 		sys_err("[CMountSystem::Mount] Null Pointer (mountActor)");
 		return;
 	}
-
-	//check timer
-	// if (m_pkOwner->IncreaseMountCounter() >= 5)
-	// {
-		// m_pkOwner->ChatPacket(CHAT_TYPE_INFO, "<Mount> Asteapta 5 secunde pentru a face aceasta actiune");
-		// return;
-	// }
 
 	if (LPITEM pSummonItem = m_pkOwner->GetWear(WEAR_COSTUME_MOUNT))
 	{
@@ -560,4 +624,29 @@ size_t CMountSystem::CountSummoned() const
 	}
 
 	return count;
+}
+
+void CMountSystem::UnsummonAll()
+{
+	std::vector<CMountActor*> actors;
+	for (auto it = m_mountActorMap.begin(); it != m_mountActorMap.end(); ++it)
+		if (it->second) actors.push_back(it->second);
+
+	for (auto* a : actors) {
+		a->Unsummon();      // NPC’yi kaldır
+		DeleteMount(a);     // map’ten çıkar
+	}
+}
+
+void CMountSystem::EnsureUpdateEventStarted()
+{
+	if (m_pkMountSystemUpdateEvent)
+	{
+		event_cancel(&m_pkMountSystemUpdateEvent);
+		m_pkMountSystemUpdateEvent = NULL;
+	}
+	mountsystem_event_info* info = AllocEventInfo<mountsystem_event_info>();
+	info->pMountSystem = this;
+	m_pkMountSystemUpdateEvent = event_create(mountsystem_update_event, info, PASSES_PER_SEC(1) / 4);
+	m_dwLastUpdateTime = 0;
 }

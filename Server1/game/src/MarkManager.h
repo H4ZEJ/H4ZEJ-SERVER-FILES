@@ -5,77 +5,77 @@
 
 class CGuildMarkManager : public singleton<CGuildMarkManager>
 {
-	public:
-		enum
-		{
-			MAX_IMAGE_COUNT = 5,
-			INVALID_MARK_ID = 0xffffffff,
-		};
+public:
+	enum
+	{
+		MAX_IMAGE_COUNT = 5,
+		INVALID_MARK_ID = 0xffffffff,
+	};
 
-		// Symbol
-		struct TGuildSymbol
-		{
-			DWORD crc;
-			std::vector<BYTE> raw;
-		};
+	// Symbol
+	struct TGuildSymbol
+	{
+		DWORD crc;
+		std::vector<BYTE> raw;
+	};
 
-		CGuildMarkManager();
-		virtual ~CGuildMarkManager();
+	CGuildMarkManager();
+	virtual ~CGuildMarkManager();
 
-		const TGuildSymbol * GetGuildSymbol(DWORD GID);
-		bool LoadSymbol(const char* filename);
-		void SaveSymbol(const char* filename);
-		void UploadSymbol(DWORD guildID, int iSize, const BYTE* pbyData);
+	const TGuildSymbol* GetGuildSymbol(DWORD GID);
+	bool LoadSymbol(const char* filename);
+	void SaveSymbol(const char* filename);
+	void UploadSymbol(DWORD guildID, int iSize, const BYTE* pbyData);
 
-		// Mark
+	// Mark
 
-		void SetMarkPathPrefix(const char * prefix);
+	void SetMarkPathPrefix(const char* prefix);
 
-		bool LoadMarkIndex();
-		bool SaveMarkIndex();
+	bool LoadMarkIndex();
+	bool SaveMarkIndex();
 
-		void LoadMarkImages();
-		void SaveMarkImage(DWORD imgIdx);
+	void LoadMarkImages();
+	void SaveMarkImage(DWORD imgIdx);
 
-		bool GetMarkImageFilename(DWORD imgIdx, std::string & path) const;
-		bool AddMarkIDByGuildID(DWORD guildID, DWORD markID);
-		DWORD GetMarkImageCount() const;
-		DWORD GetMarkCount() const;
-		DWORD GetMarkID(DWORD guildID);
+	bool GetMarkImageFilename(DWORD imgIdx, std::string& path) const;
+	bool AddMarkIDByGuildID(DWORD guildID, DWORD markID);
+	DWORD GetMarkImageCount() const;
+	DWORD GetMarkCount() const;
+	DWORD GetMarkID(DWORD guildID);
 
-		// SERVER
-		void CopyMarkIdx(char * pcBuf) const;
-		DWORD SaveMark(DWORD guildID, BYTE * pbMarkImage);
-		void DeleteMark(DWORD guildID);
-		void GetDiffBlocks(DWORD imgIdx, const DWORD * crcList, std::map<BYTE, const SGuildMarkBlock *> & mapDiffBlocks);
+	// SERVER
+	void CopyMarkIdx(char* pcBuf) const;
+	DWORD SaveMark(DWORD guildID, BYTE* pbMarkImage);
+	void DeleteMark(DWORD guildID);
+	void GetDiffBlocks(DWORD imgIdx, const DWORD* crcList, std::map<BYTE, const SGuildMarkBlock*>& mapDiffBlocks);
 
-		// CLIENT
-		bool SaveBlockFromCompressedData(DWORD imgIdx, DWORD idBlock, const BYTE * pbBlock, DWORD dwSize);
-		bool GetBlockCRCList(DWORD imgIdx, DWORD * crcList);
+	// CLIENT
+	bool SaveBlockFromCompressedData(DWORD imgIdx, DWORD idBlock, const BYTE* pbBlock, DWORD dwSize);
+	bool GetBlockCRCList(DWORD imgIdx, DWORD* crcList);
 
-	private:
+private:
 
-		// Mark
+	// Mark
 
-		CGuildMarkImage * __NewImage();
-		void __DeleteImage(CGuildMarkImage * pkImgDel);
+	CGuildMarkImage* __NewImage();
+	void __DeleteImage(CGuildMarkImage* pkImgDel);
 
-		DWORD __AllocMarkID(DWORD guildID);
+	DWORD __AllocMarkID(DWORD guildID);
 
-		CGuildMarkImage * __GetImage(DWORD imgIdx);
-		CGuildMarkImage * __GetImagePtr(DWORD idMark);
+	CGuildMarkImage* __GetImage(DWORD imgIdx);
+	CGuildMarkImage* __GetImagePtr(DWORD idMark);
 
-		std::map<DWORD, CGuildMarkImage *> m_mapIdx_Image; // index = image index
-		std::map<DWORD, DWORD> m_mapGID_MarkID; // index = guild id
+	std::map<DWORD, CGuildMarkImage*> m_mapIdx_Image; // index = image index
+	std::map<DWORD, DWORD> m_mapGID_MarkID; // index = guild id
 
-		std::set<DWORD> m_setFreeMarkID;
-		std::string		m_pathPrefix;
+	std::set<DWORD> m_setFreeMarkID;
+	std::string		m_pathPrefix;
 
-	private:
+private:
 
-		// Symbol
+	// Symbol
 
-		std::map<DWORD, TGuildSymbol> m_mapSymbol;
+	std::map<DWORD, TGuildSymbol> m_mapSymbol;
 };
 
 #endif

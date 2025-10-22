@@ -22,11 +22,11 @@
 
 #elif defined(CXX11_ENABLED)
 #	include <functional>
-	template <typename T>
-	decltype(std::bind(&T::second, std::placeholders::_1)) select2nd()
-	{
-		return std::bind(&T::second, std::placeholders::_1);
-	}
+template <typename T>
+decltype(std::bind(&T::second, std::placeholders::_1)) select2nd()
+{
+	return std::bind(&T::second, std::placeholders::_1);
+}
 #endif
 
 CHARACTER_MANAGER::CHARACTER_MANAGER() :
@@ -82,7 +82,7 @@ DWORD CHARACTER_MANAGER::AllocVID()
 	return m_iVIDCount;
 }
 
-LPCHARACTER CHARACTER_MANAGER::CreateCharacter(const char * name, DWORD dwPID)
+LPCHARACTER CHARACTER_MANAGER::CreateCharacter(const char* name, DWORD dwPID)
 {
 	DWORD dwVID = AllocVID();
 
@@ -181,9 +181,9 @@ LPCHARACTER CHARACTER_MANAGER::Find(DWORD dwVID)
 	return found;
 }
 
-LPCHARACTER CHARACTER_MANAGER::Find(const VID & vid)
+LPCHARACTER CHARACTER_MANAGER::Find(const VID& vid)
 {
-	LPCHARACTER tch = Find((DWORD) vid);
+	LPCHARACTER tch = Find((DWORD)vid);
 
 	if (!tch || tch->GetVID() != vid)
 		return NULL;
@@ -207,7 +207,7 @@ LPCHARACTER CHARACTER_MANAGER::FindByPID(DWORD dwPID)
 	return found;
 }
 
-LPCHARACTER CHARACTER_MANAGER::FindPC(const char * name)
+LPCHARACTER CHARACTER_MANAGER::FindPC(const char* name)
 {
 	char szName[CHARACTER_NAME_MAX_LEN + 1];
 	str_lower(name, szName, sizeof(szName));
@@ -251,7 +251,7 @@ LPCHARACTER CHARACTER_MANAGER::SpawnMobRandomPosition(DWORD dwVnum, long lMapInd
 		}
 	}
 
-	const CMob * pkMob = CMobManager::instance().Get(dwVnum);
+	const CMob* pkMob = CMobManager::instance().Get(dwVnum);
 
 	if (!pkMob)
 	{
@@ -272,9 +272,9 @@ LPCHARACTER CHARACTER_MANAGER::SpawnMobRandomPosition(DWORD dwVnum, long lMapInd
 
 	int i;
 	long x, y;
-	for (i=0; i<2000; i++)
+	for (i = 0; i < 2000; i++)
 	{
-		x = number(1, (pkSectreeMap->m_setting.iWidth / 100)  - 1) * 100 + pkSectreeMap->m_setting.iBaseX;
+		x = number(1, (pkSectreeMap->m_setting.iWidth / 100) - 1) * 100 + pkSectreeMap->m_setting.iBaseX;
 		y = number(1, (pkSectreeMap->m_setting.iHeight / 100) - 1) * 100 + pkSectreeMap->m_setting.iBaseY;
 		//LPSECTREE tree = SECTREE_MANAGER::instance().Get(lMapIndex, x, y);
 		LPSECTREE tree = pkSectreeMap->Find(x, y);
@@ -333,7 +333,7 @@ LPCHARACTER CHARACTER_MANAGER::SpawnMobRandomPosition(DWORD dwVnum, long lMapInd
 		return NULL;
 	}
 
-	char buf[512+1];
+	char buf[512 + 1];
 	long local_x = x - pkSectreeMap->m_setting.iBaseX;
 	long local_y = y - pkSectreeMap->m_setting.iBaseY;
 	snprintf(buf, sizeof(buf), "spawn %s[%d] random position at %ld %ld %ld %ld (time: %d)", ch->GetName(), dwVnum, x, y, local_x, local_y, get_global_time());
@@ -347,14 +347,14 @@ LPCHARACTER CHARACTER_MANAGER::SpawnMobRandomPosition(DWORD dwVnum, long lMapInd
 
 LPCHARACTER CHARACTER_MANAGER::SpawnMob(DWORD dwVnum, long lMapIndex, long x, long y, long z, bool bSpawnMotion, int iRot, bool bShow)
 {
-	const CMob * pkMob = CMobManager::instance().Get(dwVnum);
+	const CMob* pkMob = CMobManager::instance().Get(dwVnum);
 	if (!pkMob)
 	{
 		sys_err("SpawnMob: no mob data for vnum %u", dwVnum);
 		return NULL;
 	}
 
-	if (!(pkMob->m_table.bType == CHAR_TYPE_NPC || pkMob->m_table.bType == CHAR_TYPE_WARP || pkMob->m_table.bType == CHAR_TYPE_GOTO) || mining::IsVeinOfOre (dwVnum))
+	if (!(pkMob->m_table.bType == CHAR_TYPE_NPC || pkMob->m_table.bType == CHAR_TYPE_WARP || pkMob->m_table.bType == CHAR_TYPE_GOTO) || mining::IsVeinOfOre(dwVnum))
 	{
 		LPSECTREE tree = SECTREE_MANAGER::instance().Get(lMapIndex, x, y);
 
@@ -368,22 +368,21 @@ LPCHARACTER CHARACTER_MANAGER::SpawnMob(DWORD dwVnum, long lMapIndex, long x, lo
 
 		bool is_set = false;
 
-		if ( mining::IsVeinOfOre (dwVnum) ) is_set = IS_SET(dwAttr, ATTR_BLOCK);
+		if (mining::IsVeinOfOre(dwVnum)) is_set = IS_SET(dwAttr, ATTR_BLOCK);
 		else is_set = IS_SET(dwAttr, ATTR_BLOCK | ATTR_OBJECT);
 
-		if ( is_set )
+		if (is_set)
 		{
 			// SPAWN_BLOCK_LOG
-			static bool s_isLog=quest::CQuestManager::instance().GetEventFlag("spawn_block_log");
-			static DWORD s_nextTime=get_global_time()+10000;
+			static bool s_isLog = quest::CQuestManager::instance().GetEventFlag("spawn_block_log");
+			static DWORD s_nextTime = get_global_time() + 10000;
 
-			DWORD curTime=get_global_time();
+			DWORD curTime = get_global_time();
 
-			if (curTime>s_nextTime)
+			if (curTime > s_nextTime)
 			{
-				s_nextTime=curTime;
-				s_isLog=quest::CQuestManager::instance().GetEventFlag("spawn_block_log");
-
+				s_nextTime = curTime;
+				s_isLog = quest::CQuestManager::instance().GetEventFlag("spawn_block_log");
 			}
 
 			if (s_isLog)
@@ -437,9 +436,9 @@ LPCHARACTER CHARACTER_MANAGER::SpawnMob(DWORD dwVnum, long lMapIndex, long x, lo
 	return (ch);
 }
 
-LPCHARACTER CHARACTER_MANAGER::SpawnMobRange(DWORD dwVnum, long lMapIndex, int sx, int sy, int ex, int ey, bool bIsException, bool bSpawnMotion, bool bAggressive )
+LPCHARACTER CHARACTER_MANAGER::SpawnMobRange(DWORD dwVnum, long lMapIndex, int sx, int sy, int ex, int ey, bool bIsException, bool bSpawnMotion, bool bAggressive)
 {
-	const CMob * pkMob = CMobManager::instance().Get(dwVnum);
+	const CMob* pkMob = CMobManager::instance().Get(dwVnum);
 
 	if (!pkMob)
 		return NULL;
@@ -462,7 +461,7 @@ LPCHARACTER CHARACTER_MANAGER::SpawnMobRange(DWORD dwVnum, long lMapIndex, int s
 
 		if (ch)
 		{
-			sys_log(1, "MOB_SPAWN: %s(%d) %dx%d", ch->GetName(), (DWORD) ch->GetVID(), ch->GetX(), ch->GetY());
+			sys_log(1, "MOB_SPAWN: %s(%d) %dx%d", ch->GetName(), (DWORD)ch->GetVID(), ch->GetX(), ch->GetY());
 			if (bAggressive)
 				ch->SetAggressive();
 			return (ch);
@@ -479,7 +478,7 @@ void CHARACTER_MANAGER::SelectStone(LPCHARACTER pkChr)
 
 bool CHARACTER_MANAGER::SpawnMoveGroup(DWORD dwVnum, long lMapIndex, int sx, int sy, int ex, int ey, int tx, int ty, LPREGEN pkRegen, bool bAggressive_)
 {
-	CMobGroup * pkGroup = CMobManager::Instance().GetGroup(dwVnum);
+	CMobGroup* pkGroup = CMobManager::Instance().GetGroup(dwVnum);
 
 	if (!pkGroup)
 	{
@@ -490,7 +489,7 @@ bool CHARACTER_MANAGER::SpawnMoveGroup(DWORD dwVnum, long lMapIndex, int sx, int
 	LPCHARACTER pkChrMaster = NULL;
 	LPPARTY pkParty = NULL;
 
-	const std::vector<DWORD> & c_rdwMembers = pkGroup->GetMemberVector();
+	const std::vector<DWORD>& c_rdwMembers = pkGroup->GetMemberVector();
 
 	bool bSpawnedByStone = false;
 	bool bAggressive = bAggressive_;
@@ -547,20 +546,20 @@ bool CHARACTER_MANAGER::SpawnGroupGroup(DWORD dwVnum, long lMapIndex, int sx, in
 {
 	const DWORD dwGroupID = CMobManager::Instance().GetGroupFromGroupGroup(dwVnum);
 
-	if( dwGroupID != 0 )
+	if (dwGroupID != 0)
 	{
 		return SpawnGroup(dwGroupID, lMapIndex, sx, sy, ex, ey, pkRegen, bAggressive_, pDungeon);
 	}
 	else
 	{
-		sys_err( "NOT_EXIST_GROUP_GROUP_VNUM(%u) MAP(%ld)", dwVnum, lMapIndex );
+		sys_err("NOT_EXIST_GROUP_GROUP_VNUM(%u) MAP(%ld)", dwVnum, lMapIndex);
 		return false;
 	}
 }
 
 LPCHARACTER CHARACTER_MANAGER::SpawnGroup(DWORD dwVnum, long lMapIndex, int sx, int sy, int ex, int ey, LPREGEN pkRegen, bool bAggressive_, LPDUNGEON pDungeon)
 {
-	CMobGroup * pkGroup = CMobManager::Instance().GetGroup(dwVnum);
+	CMobGroup* pkGroup = CMobManager::Instance().GetGroup(dwVnum);
 
 	if (!pkGroup)
 	{
@@ -571,7 +570,7 @@ LPCHARACTER CHARACTER_MANAGER::SpawnGroup(DWORD dwVnum, long lMapIndex, int sx, 
 	LPCHARACTER pkChrMaster = NULL;
 	LPPARTY pkParty = NULL;
 
-	const std::vector<DWORD> & c_rdwMembers = pkGroup->GetMemberVector();
+	const std::vector<DWORD>& c_rdwMembers = pkGroup->GetMemberVector();
 
 	bool bSpawnedByStone = false;
 	bool bAggressive = bAggressive_;
@@ -669,7 +668,6 @@ void CHARACTER_MANAGER::Update(int iPulse)
 				for_each(v.begin(), v.end(), msl::bind2nd(std::mem_fn(&CHARACTER::UpdateCharacter), iPulse));
 			}
 		}
-
 	}
 
 	{
@@ -692,7 +690,7 @@ void CHARACTER_MANAGER::Update(int iPulse)
 		if (CHARACTER_MANAGER::instance().GetCharactersByRaceNum(xmas::MOB_SANTA_VNUM, i))
 		{
 			for_each(i.begin(), i.end(),
-					msl::bind2nd(std::mem_fn(&CHARACTER::UpdateStateMachine), iPulse));
+				msl::bind2nd(std::mem_fn(&CHARACTER::UpdateStateMachine), iPulse));
 		}
 	}
 
@@ -780,11 +778,11 @@ void CHARACTER_MANAGER::PacketMonsterLog(LPCHARACTER ch, const void* buf, int si
 {
 	itertype(m_set_pkChrMonsterLog) it;
 
-	for (it = m_set_pkChrMonsterLog.begin(); it!=m_set_pkChrMonsterLog.end();++it)
+	for (it = m_set_pkChrMonsterLog.begin(); it != m_set_pkChrMonsterLog.end(); ++it)
 	{
 		LPCHARACTER c = *it;
 
-		if (ch && DISTANCE_APPROX(c->GetX()-ch->GetX(), c->GetY()-ch->GetY())>6000)
+		if (ch && DISTANCE_APPROX(c->GetX() - ch->GetX(), c->GetY() - ch->GetY()) > 6000)
 			continue;
 
 		LPDESC d = c->GetDesc();
@@ -840,7 +838,7 @@ void CHARACTER_MANAGER::UnregisterRaceNumMap(LPCHARACTER ch)
 		it->second.erase(ch);
 }
 
-bool CHARACTER_MANAGER::GetCharactersByRaceNum(DWORD dwRaceNum, CharacterVectorInteractor & i)
+bool CHARACTER_MANAGER::GetCharactersByRaceNum(DWORD dwRaceNum, CharacterVectorInteractor& i)
 {
 	std::map<DWORD, CHARACTER_SET>::iterator it = m_map_pkChrByRaceNum.find(dwRaceNum);
 
@@ -867,7 +865,6 @@ bool CHARACTER_MANAGER::GetCharactersByRaceNum(DWORD dwRaceNum, CharacterVectorI
 #define FIND_JOB_SHAMAN_1	(1 << 13)
 #define FIND_JOB_SHAMAN_2	(1 << 14)
 #define FIND_JOB_SHAMAN		(FIND_JOB_SHAMAN_0 | FIND_JOB_SHAMAN_1 | FIND_JOB_SHAMAN_2)
-
 
 //
 // (job+1)*3+(skill_group)
@@ -914,13 +911,13 @@ int CHARACTER_MANAGER::GetMobItemRate(LPCHARACTER ch)
 	//PREVENT_TOXICATION_FOR_CHINA
 	if (g_bChinaIntoxicationCheck)
 	{
-		if ( ch->IsOverTime( OT_3HOUR ) )
+		if (ch->IsOverTime(OT_3HOUR))
 		{
 			if (ch && ch->GetPremiumRemainSeconds(PREMIUM_ITEM) > 0)
-				return m_iMobItemRatePremium/2;
-			return m_iMobItemRate/2;
+				return m_iMobItemRatePremium / 2;
+			return m_iMobItemRate / 2;
 		}
-		else if ( ch->IsOverTime( OT_5HOUR ) )
+		else if (ch->IsOverTime(OT_5HOUR))
 		{
 			return 0;
 		}
@@ -938,19 +935,19 @@ int CHARACTER_MANAGER::GetMobDamageRate(LPCHARACTER ch)
 
 int CHARACTER_MANAGER::GetMobGoldAmountRate(LPCHARACTER ch)
 {
-	if ( !ch )
+	if (!ch)
 		return m_iMobGoldAmountRate;
 
 	//PREVENT_TOXICATION_FOR_CHINA
 	if (g_bChinaIntoxicationCheck)
 	{
-		if ( ch->IsOverTime( OT_3HOUR ) )
+		if (ch->IsOverTime(OT_3HOUR))
 		{
 			if (ch && ch->GetPremiumRemainSeconds(PREMIUM_GOLD) > 0)
-				return m_iMobGoldAmountRatePremium/2;
-			return m_iMobGoldAmountRate/2;
+				return m_iMobGoldAmountRatePremium / 2;
+			return m_iMobGoldAmountRate / 2;
 		}
-		else if ( ch->IsOverTime( OT_5HOUR ) )
+		else if (ch->IsOverTime(OT_5HOUR))
 		{
 			return 0;
 		}
@@ -963,19 +960,19 @@ int CHARACTER_MANAGER::GetMobGoldAmountRate(LPCHARACTER ch)
 
 int CHARACTER_MANAGER::GetMobGoldDropRate(LPCHARACTER ch)
 {
-	if ( !ch )
+	if (!ch)
 		return m_iMobGoldDropRate;
 
 	//PREVENT_TOXICATION_FOR_CHINA
 	if (g_bChinaIntoxicationCheck)
 	{
-		if ( ch->IsOverTime( OT_3HOUR ) )
+		if (ch->IsOverTime(OT_3HOUR))
 		{
 			if (ch && ch->GetPremiumRemainSeconds(PREMIUM_GOLD) > 0)
-				return m_iMobGoldDropRatePremium/2;
-			return m_iMobGoldDropRate/2;
+				return m_iMobGoldDropRatePremium / 2;
+			return m_iMobGoldDropRate / 2;
 		}
-		else if ( ch->IsOverTime( OT_5HOUR ) )
+		else if (ch->IsOverTime(OT_5HOUR))
 		{
 			return 0;
 		}
@@ -988,19 +985,19 @@ int CHARACTER_MANAGER::GetMobGoldDropRate(LPCHARACTER ch)
 
 int CHARACTER_MANAGER::GetMobExpRate(LPCHARACTER ch)
 {
-	if ( !ch )
+	if (!ch)
 		return m_iMobExpRate;
 
 	//PREVENT_TOXICATION_FOR_CHINA
 	if (g_bChinaIntoxicationCheck)
 	{
-		if ( ch->IsOverTime( OT_3HOUR ) )
+		if (ch->IsOverTime(OT_3HOUR))
 		{
 			if (ch && ch->GetPremiumRemainSeconds(PREMIUM_EXP) > 0)
-				return m_iMobExpRatePremium/2;
-			return m_iMobExpRate/2;
+				return m_iMobExpRatePremium / 2;
+			return m_iMobExpRate / 2;
 		}
-		else if ( ch->IsOverTime( OT_5HOUR ) )
+		else if (ch->IsOverTime(OT_5HOUR))
 		{
 			return 0;
 		}
@@ -1022,7 +1019,7 @@ int	CHARACTER_MANAGER::GetUserDamageRate(LPCHARACTER ch)
 	return m_iUserDamageRate;
 }
 
-void CHARACTER_MANAGER::SendScriptToMap(long lMapIndex, const std::string & s)
+void CHARACTER_MANAGER::SendScriptToMap(long lMapIndex, const std::string& s)
 {
 	LPSECTREE_MAP pSecMap = SECTREE_MANAGER::instance().GetMap(lMapIndex);
 
@@ -1064,7 +1061,7 @@ void CHARACTER_MANAGER::FlushPendingDestroy()
 
 		CHARACTER_SET::iterator it = m_set_pkChrPendingDestroy.begin(),
 			end = m_set_pkChrPendingDestroy.end();
-		for ( ; it != end; ++it) {
+		for (; it != end; ++it) {
 			M2_DESTROY_CHARACTER(*it);
 		}
 
@@ -1072,7 +1069,7 @@ void CHARACTER_MANAGER::FlushPendingDestroy()
 	}
 }
 
-CharacterVectorInteractor::CharacterVectorInteractor(const CHARACTER_SET & r)
+CharacterVectorInteractor::CharacterVectorInteractor(const CHARACTER_SET& r)
 {
 	using namespace std;
 #if defined(__GNUC__) && !defined(__clang__) && !defined(CXX11_ENABLED)

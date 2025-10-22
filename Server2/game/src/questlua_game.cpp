@@ -25,10 +25,10 @@ namespace quest
 {
 	ALUA(game_set_event_flag)
 	{
-		CQuestManager & q = CQuestManager::instance();
+		CQuestManager& q = CQuestManager::instance();
 
-		if (lua_isstring(L,1) && lua_isnumber(L, 2))
-			q.RequestSetEventFlag(lua_tostring(L,1), (int)lua_tonumber(L,2));
+		if (lua_isstring(L, 1) && lua_isnumber(L, 2))
+			q.RequestSetEventFlag(lua_tostring(L, 1), (int)lua_tonumber(L, 2));
 
 		return 0;
 	}
@@ -37,8 +37,8 @@ namespace quest
 	{
 		CQuestManager& q = CQuestManager::instance();
 
-		if (lua_isstring(L,1))
-			lua_pushnumber(L, q.GetEventFlag(lua_tostring(L,1)));
+		if (lua_isstring(L, 1))
+			lua_pushnumber(L, q.GetEventFlag(lua_tostring(L, 1)));
 		else
 			lua_pushnumber(L, 0);
 
@@ -60,7 +60,7 @@ namespace quest
 	ALUA(game_get_safebox_level)
 	{
 		CQuestManager& q = CQuestManager::instance();
-		lua_pushnumber(L, q.GetCurrentCharacterPtr()->GetSafeboxSize()/SAFEBOX_PAGE_SIZE);
+		lua_pushnumber(L, q.GetCurrentCharacterPtr()->GetSafeboxSize() / SAFEBOX_PAGE_SIZE);
 		return 1;
 	}
 
@@ -71,10 +71,10 @@ namespace quest
 		//q.GetCurrentCharacterPtr()->ChangeSafeboxSize(3*(int)lua_tonumber(L,-1));
 		TSafeboxChangeSizePacket p;
 		p.dwID = q.GetCurrentCharacterPtr()->GetDesc()->GetAccountTable().id;
-		p.bSize = (int)lua_tonumber(L,-1);
-		db_clientdesc->DBPacket(HEADER_GD_SAFEBOX_CHANGE_SIZE,  q.GetCurrentCharacterPtr()->GetDesc()->GetHandle(), &p, sizeof(p));
+		p.bSize = (int)lua_tonumber(L, -1);
+		db_clientdesc->DBPacket(HEADER_GD_SAFEBOX_CHANGE_SIZE, q.GetCurrentCharacterPtr()->GetDesc()->GetHandle(), &p, sizeof(p));
 
-		q.GetCurrentCharacterPtr()->SetSafeboxSize(SAFEBOX_PAGE_SIZE * (int)lua_tonumber(L,-1));
+		q.GetCurrentCharacterPtr()->SetSafeboxSize(SAFEBOX_PAGE_SIZE * (int)lua_tonumber(L, -1));
 		return 0;
 	}
 
@@ -102,8 +102,8 @@ namespace quest
 
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
-		DWORD item_vnum = (DWORD) lua_tonumber(L, 1);
-		int count = (int) lua_tonumber(L, 2);
+		DWORD item_vnum = (DWORD)lua_tonumber(L, 1);
+		int count = (int)lua_tonumber(L, 2);
 		long x = ch->GetX();
 		long y = ch->GetY();
 
@@ -133,35 +133,35 @@ namespace quest
 		switch (lua_gettop(L))
 		{
 		case 1:
-			item = ITEM_MANAGER::instance().CreateItem((DWORD) lua_tonumber(L, 1));
+			item = ITEM_MANAGER::instance().CreateItem((DWORD)lua_tonumber(L, 1));
 			break;
 		case 2:
 		case 3:
-			item = ITEM_MANAGER::instance().CreateItem((DWORD) lua_tonumber(L, 1), (int) lua_tonumber(L, 2));
+			item = ITEM_MANAGER::instance().CreateItem((DWORD)lua_tonumber(L, 1), (int)lua_tonumber(L, 2));
 			break;
 		default:
 			return 0;
 		}
 
-		if ( item == NULL )
+		if (item == NULL)
 		{
 			return 0;
 		}
 
 		if (lua_isnumber(L, 3))
 		{
-			int sec = (int) lua_tonumber(L, 3);
+			int sec = (int)lua_tonumber(L, 3);
 			if (sec <= 0)
 			{
-				item->SetOwnership( ch );
+				item->SetOwnership(ch);
 			}
 			else
 			{
-				item->SetOwnership( ch, sec );
+				item->SetOwnership(ch, sec);
 			}
 		}
 		else
-			item->SetOwnership( ch );
+			item->SetOwnership(ch);
 
 		PIXEL_POSITION pos;
 		pos.x = ch->GetX() + number(-200, 200);
@@ -180,17 +180,17 @@ namespace quest
 		switch (lua_gettop(L))
 		{
 		case 1:
-			item = ITEM_MANAGER::instance().CreateItem((DWORD) lua_tonumber(L, 1));
+			item = ITEM_MANAGER::instance().CreateItem((DWORD)lua_tonumber(L, 1));
 			break;
 		case 2:
 		case 3:
-			item = ITEM_MANAGER::instance().CreateItem((DWORD) lua_tonumber(L, 1), (int) lua_tonumber(L, 2));
+			item = ITEM_MANAGER::instance().CreateItem((DWORD)lua_tonumber(L, 1), (int)lua_tonumber(L, 2));
 			break;
 		default:
 			return 0;
 		}
 
-		if ( item == NULL )
+		if (item == NULL)
 		{
 			return 0;
 		}
@@ -204,18 +204,18 @@ namespace quest
 
 		if (lua_isnumber(L, 3))
 		{
-			int sec = (int) lua_tonumber(L, 3);
+			int sec = (int)lua_tonumber(L, 3);
 			if (sec <= 0)
 			{
-				item->SetOwnership( ch );
+				item->SetOwnership(ch);
 			}
 			else
 			{
-				item->SetOwnership( ch, sec );
+				item->SetOwnership(ch, sec);
 			}
 		}
 		else
-			item->SetOwnership( ch );
+			item->SetOwnership(ch);
 
 		PIXEL_POSITION pos;
 		pos.x = ch->GetX() + number(-200, 200);
@@ -232,7 +232,7 @@ namespace quest
 	{
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 
-		if ( ch != NULL )
+		if (ch != NULL)
 		{
 			do_in_game_mall(ch, const_cast<char*>(""), 0, 0);
 		}

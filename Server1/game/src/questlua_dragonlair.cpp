@@ -26,7 +26,7 @@ namespace quest
 			{	NULL,			NULL			}
 		};
 
-		CQuestManager::instance(). AddLuaFunctionTable("DragonLair", dl_functions);
+		CQuestManager::instance().AddLuaFunctionTable("DragonLair", dl_functions);
 	}
 }
 //martysama0134's 8e0aa8057d3f54320e391131a48866b4

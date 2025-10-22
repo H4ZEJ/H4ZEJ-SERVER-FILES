@@ -34,7 +34,7 @@ namespace quest
 	extern void RegisterDNDFunctionTable();
 #endif
 
-	extern void combine_lua_string(lua_State* L, std::ostringstream &s);
+	extern void combine_lua_string(lua_State* L, std::ostringstream& s);
 
 	struct FSetWarpLocation
 	{
@@ -42,9 +42,10 @@ namespace quest
 		long x;
 		long y;
 
-		FSetWarpLocation (long _map_index, long _x, long _y) :
-			map_index (_map_index), x (_x), y (_y)
-		{}
+		FSetWarpLocation(long _map_index, long _x, long _y) :
+			map_index(_map_index), x(_x), y(_y)
+		{
+		}
 		void operator () (LPCHARACTER ch);
 	};
 
@@ -123,11 +124,11 @@ namespace quest
 		long	m_y;
 
 		warp_all_to_map_my_empire_event_info()
-		: m_bEmpire( 0 )
-		, m_lMapIndexFrom( 0 )
-		, m_lMapIndexTo( 0 )
-		, m_x( 0 )
-		, m_y( 0 )
+			: m_bEmpire(0)
+			, m_lMapIndexFrom(0)
+			, m_lMapIndexTo(0)
+			, m_x(0)
+			, m_y(0)
 		{
 		}
 	};
@@ -136,10 +137,10 @@ namespace quest
 
 	struct FBuildLuaGuildWarList
 	{
-		lua_State * L;
+		lua_State* L;
 		int m_count;
 
-		FBuildLuaGuildWarList(lua_State * L);
+		FBuildLuaGuildWarList(lua_State* L);
 		void operator() (DWORD g1, DWORD g2);
 	};
 }

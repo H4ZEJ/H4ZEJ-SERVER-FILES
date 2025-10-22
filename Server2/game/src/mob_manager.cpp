@@ -11,9 +11,9 @@
 
 CMob::CMob()
 {
-	memset( &m_table, 0, sizeof(m_table) );
+	memset(&m_table, 0, sizeof(m_table));
 
-	for( size_t i=0 ; i < MOB_SKILL_MAX_NUM ; ++i )
+	for (size_t i = 0; i < MOB_SKILL_MAX_NUM; ++i)
 	{
 		m_mobSkillInfo[i].dwSkillVnum = 0;
 		m_mobSkillInfo[i].bSkillLevel = 0;
@@ -31,7 +31,7 @@ void CMob::AddSkillSplash(int iIndex, DWORD dwTiming, DWORD dwHitDistance)
 		return;
 
 	sys_log(0, "MOB_SPLASH %s idx %d timing %u hit_distance %u",
-			m_table.szLocaleName, iIndex, dwTiming, dwHitDistance);
+		m_table.szLocaleName, iIndex, dwTiming, dwHitDistance);
 
 	m_mobSkillInfo[iIndex].vecSplashAttack.emplace_back(TMobSplashAttackInfo(dwTiming, dwHitDistance));
 }
@@ -42,7 +42,7 @@ CMobInstance::CMobInstance()
 	m_dwLastAttackedTime = get_dword_time();
 	m_dwLastWarpTime = get_dword_time();
 
-	memset( &m_posLastAttacked, 0, sizeof(m_posLastAttacked) );
+	memset(&m_posLastAttacked, 0, sizeof(m_posLastAttacked));
 }
 
 CMobManager::CMobManager()
@@ -53,16 +53,16 @@ CMobManager::~CMobManager()
 {
 }
 
-bool CMobManager::Initialize(TMobTable * pTable, int iSize)
+bool CMobManager::Initialize(TMobTable* pTable, int iSize)
 {
 	m_map_pkMobByVnum.clear();
 	m_map_pkMobByName.clear();
 
-	TMobTable * t = pTable;
+	TMobTable* t = pTable;
 
 	for (int i = 0; i < iSize; ++i, ++t)
 	{
-		CMob * pkMob = M2_NEW CMob;
+		CMob* pkMob = M2_NEW CMob;
 
 		thecore_memcpy(&pkMob->m_table, t, sizeof(TMobTable));
 
@@ -76,7 +76,7 @@ bool CMobManager::Initialize(TMobTable * pTable, int iSize)
 				++SkillCount;
 
 		sys_log(0, "MOB: #%-5d %-30s LEVEL %u HP %u DEF %u EXP %u DROP_ITEM_VNUM %u SKILL_COUNT %d",
-				t->dwVnum, t->szLocaleName, t->bLevel, t->dwMaxHP, t->wDef, t->dwExp, t->dwDropItemVnum, SkillCount);
+			t->dwVnum, t->szLocaleName, t->bLevel, t->dwMaxHP, t->wDef, t->dwExp, t->dwDropItemVnum, SkillCount);
 
 		if (t->bType == CHAR_TYPE_NPC || t->bType == CHAR_TYPE_WARP || t->bType == CHAR_TYPE_GOTO)
 			CHARACTER_MANAGER::instance().RegisterRaceNum(t->dwVnum);
@@ -90,9 +90,9 @@ bool CMobManager::Initialize(TMobTable * pTable, int iSize)
 	char szGroupGroupFileName[FILE_NAME_LEN];
 
 	snprintf(szGroupFileName, sizeof(szGroupGroupFileName),
-			"%s/group.txt", LocaleService_GetBasePath().c_str());
+		"%s/group.txt", LocaleService_GetBasePath().c_str());
 	snprintf(szGroupGroupFileName, sizeof(szGroupGroupFileName),
-			"%s/group_group.txt", LocaleService_GetBasePath().c_str());
+		"%s/group_group.txt", LocaleService_GetBasePath().c_str());
 
 	if (!LoadGroup(szGroupFileName))
 	{
@@ -107,7 +107,7 @@ bool CMobManager::Initialize(TMobTable * pTable, int iSize)
 	// END_OF_LOCALE_SERVICE
 
 	//exit(1);
-	CHARACTER_MANAGER::instance().for_each_pc(msl::bind1st(std::mem_fn(&CMobManager::RebindMobProto),this));
+	CHARACTER_MANAGER::instance().for_each_pc(msl::bind1st(std::mem_fn(&CMobManager::RebindMobProto), this));
 	return true;
 }
 
@@ -116,15 +116,15 @@ void CMobManager::RebindMobProto(LPCHARACTER ch)
 	if (ch->IsPC())
 		return;
 
-	const CMob * pMob = Get(ch->GetRaceNum());
+	const CMob* pMob = Get(ch->GetRaceNum());
 
 	if (pMob)
 		ch->SetProto(pMob);
 }
 
-const CMob * CMobManager::Get(DWORD dwVnum)
+const CMob* CMobManager::Get(DWORD dwVnum)
 {
-	std::map<DWORD, CMob *>::iterator it = m_map_pkMobByVnum.find(dwVnum);
+	std::map<DWORD, CMob*>::iterator it = m_map_pkMobByVnum.find(dwVnum);
 
 	if (it == m_map_pkMobByVnum.end())
 		return NULL;
@@ -132,9 +132,9 @@ const CMob * CMobManager::Get(DWORD dwVnum)
 	return it->second;
 }
 
-const CMob * CMobManager::Get(const char * c_pszName, bool bIsAbbrev)
+const CMob* CMobManager::Get(const char* c_pszName, bool bIsAbbrev)
 {
-	std::map<std::string, CMob *>::iterator it;
+	std::map<std::string, CMob*>::iterator it;
 
 	if (!bIsAbbrev)
 	{
@@ -164,43 +164,43 @@ void CMobManager::IncRegenCount(BYTE bRegenType, DWORD dwVnum, int iCount, int i
 {
 	switch (bRegenType)
 	{
-		case REGEN_TYPE_MOB:
-			m_mapRegenCount[dwVnum] += iCount * 86400. / iTime;
-			break;
+	case REGEN_TYPE_MOB:
+		m_mapRegenCount[dwVnum] += iCount * 86400. / iTime;
+		break;
 
-		case REGEN_TYPE_GROUP:
-			{
-				CMobGroup * pkGroup = CMobManager::Instance().GetGroup(dwVnum);
-				if (!pkGroup)
-					return;
-				const std::vector<DWORD> & c_rdwMembers = pkGroup->GetMemberVector();
+	case REGEN_TYPE_GROUP:
+	{
+		CMobGroup* pkGroup = CMobManager::Instance().GetGroup(dwVnum);
+		if (!pkGroup)
+			return;
+		const std::vector<DWORD>& c_rdwMembers = pkGroup->GetMemberVector();
 
-				for (DWORD i=0; i<c_rdwMembers.size(); i++)
-					m_mapRegenCount[c_rdwMembers[i]] += iCount * 86400. / iTime;
-			}
-			break;
+		for (DWORD i = 0; i < c_rdwMembers.size(); i++)
+			m_mapRegenCount[c_rdwMembers[i]] += iCount * 86400. / iTime;
+	}
+	break;
 
-		case REGEN_TYPE_GROUP_GROUP:
-			{
-				std::map<DWORD, CMobGroupGroup *>::iterator it = m_map_pkMobGroupGroup.find(dwVnum);
+	case REGEN_TYPE_GROUP_GROUP:
+	{
+		std::map<DWORD, CMobGroupGroup*>::iterator it = m_map_pkMobGroupGroup.find(dwVnum);
 
-				if (it == m_map_pkMobGroupGroup.end())
-					return;
+		if (it == m_map_pkMobGroupGroup.end())
+			return;
 
-				std::vector<DWORD>& v = it->second->m_vec_dwMemberVnum;
-				for (DWORD i=0; i<v.size(); i++)
-				{
-					//m_mapRegenCount[v[i]] += iCount * 86400. / iTime / v.size();
-					CMobGroup * pkGroup = CMobManager::Instance().GetGroup(v[i]);
-					if (!pkGroup)
-						return;
-					const std::vector<DWORD> & c_rdwMembers = pkGroup->GetMemberVector();
+		std::vector<DWORD>& v = it->second->m_vec_dwMemberVnum;
+		for (DWORD i = 0; i < v.size(); i++)
+		{
+			//m_mapRegenCount[v[i]] += iCount * 86400. / iTime / v.size();
+			CMobGroup* pkGroup = CMobManager::Instance().GetGroup(v[i]);
+			if (!pkGroup)
+				return;
+			const std::vector<DWORD>& c_rdwMembers = pkGroup->GetMemberVector();
 
-					for (DWORD i=0; i<c_rdwMembers.size(); i++)
-						m_mapRegenCount[c_rdwMembers[i]] += iCount * 86400. / iTime / v.size();
-				}
-			}
-			break;
+			for (DWORD i = 0; i < c_rdwMembers.size(); i++)
+				m_mapRegenCount[c_rdwMembers[i]] += iCount * 86400. / iTime / v.size();
+		}
+	}
+	break;
 	}
 }
 
@@ -212,11 +212,11 @@ void CMobManager::DumpRegenCount(const char* c_szFilename)
 	{
 		std::map<DWORD, double>::iterator it;
 
-		fprintf(fp,"MOB_VNUM\tCOUNT\n");
+		fprintf(fp, "MOB_VNUM\tCOUNT\n");
 
 		for (it = m_mapRegenCount.begin(); it != m_mapRegenCount.end(); ++it)
 		{
-			fprintf(fp,"%u\t%g\n", it->first, it->second);
+			fprintf(fp, "%u\t%g\n", it->first, it->second);
 		}
 
 		fclose(fp);
@@ -225,7 +225,7 @@ void CMobManager::DumpRegenCount(const char* c_szFilename)
 
 DWORD CMobManager::GetGroupFromGroupGroup(DWORD dwVnum)
 {
-	std::map<DWORD, CMobGroupGroup *>::iterator it = m_map_pkMobGroupGroup.find(dwVnum);
+	std::map<DWORD, CMobGroupGroup*>::iterator it = m_map_pkMobGroupGroup.find(dwVnum);
 
 	if (it == m_map_pkMobGroupGroup.end())
 		return 0;
@@ -233,9 +233,9 @@ DWORD CMobManager::GetGroupFromGroupGroup(DWORD dwVnum)
 	return it->second->GetMember();
 }
 
-CMobGroup * CMobManager::GetGroup(DWORD dwVnum)
+CMobGroup* CMobManager::GetGroup(DWORD dwVnum)
 {
-	std::map<DWORD, CMobGroup *>::iterator it = m_map_pkMobGroup.find(dwVnum);
+	std::map<DWORD, CMobGroup*>::iterator it = m_map_pkMobGroup.find(dwVnum);
 
 	if (it == m_map_pkMobGroup.end())
 		return NULL;
@@ -243,7 +243,7 @@ CMobGroup * CMobManager::GetGroup(DWORD dwVnum)
 	return it->second;
 }
 
-bool CMobManager::LoadGroupGroup(const char * c_pszFileName)
+bool CMobManager::LoadGroupGroup(const char* c_pszFileName)
 {
 	CTextFileLoader loader;
 
@@ -267,9 +267,9 @@ bool CMobManager::LoadGroupGroup(const char * c_pszFileName)
 			continue;
 		}
 
-		TTokenVector * pTok;
+		TTokenVector* pTok;
 
-		CMobGroupGroup * pkGroup = M2_NEW CMobGroupGroup(iVnum);
+		CMobGroupGroup* pkGroup = M2_NEW CMobGroupGroup(iVnum);
 
 		for (int k = 1; k < 256; ++k)
 		{
@@ -304,7 +304,7 @@ bool CMobManager::LoadGroupGroup(const char * c_pszFileName)
 	return true;
 }
 
-bool CMobManager::LoadGroup(const char * c_pszFileName)
+bool CMobManager::LoadGroup(const char* c_pszFileName)
 {
 	CTextFileLoader loader;
 
@@ -328,7 +328,7 @@ bool CMobManager::LoadGroup(const char * c_pszFileName)
 			continue;
 		}
 
-		TTokenVector * pTok;
+		TTokenVector* pTok;
 
 		if (!loader.GetTokenVector("leader", &pTok))
 		{
@@ -344,7 +344,7 @@ bool CMobManager::LoadGroup(const char * c_pszFileName)
 			continue;
 		}
 
-		CMobGroup * pkGroup = M2_NEW CMobGroup;
+		CMobGroup* pkGroup = M2_NEW CMobGroup;
 
 		pkGroup->Create(iVnum, stName);
 		DWORD vnum = 0;

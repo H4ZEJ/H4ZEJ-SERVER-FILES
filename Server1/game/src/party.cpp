@@ -198,7 +198,7 @@ EVENTINFO(party_update_event_info)
 	DWORD pid;
 
 	party_update_event_info()
-	: pid( 0 )
+		: pid(0)
 	{
 	}
 };
@@ -210,11 +210,11 @@ EVENTINFO(party_update_event_info)
 /////////////////////////////////////////////////////////////////////////////
 EVENTFUNC(party_update_event)
 {
-	party_update_event_info* info = dynamic_cast<party_update_event_info*>( event->info );
+	party_update_event_info* info = dynamic_cast<party_update_event_info*>(event->info);
 
-	if ( info == NULL )
+	if (info == NULL)
 	{
-		sys_err( "party_update_event> <Factor> Null pointer" );
+		sys_err("party_update_event> <Factor> Null pointer");
 		return 0;
 	}
 
@@ -300,7 +300,7 @@ void CParty::Destroy()
 
 	while (it != m_memberMap.end())
 	{
-		TMember & rMember = it->second;
+		TMember& rMember = it->second;
 		++it;
 
 		if (rMember.pCharacter)
@@ -346,7 +346,7 @@ void CParty::ChatPacketToAllMember(BYTE type, const char* format, ...)
 
 	for (it = m_memberMap.begin(); it != m_memberMap.end(); ++it)
 	{
-		TMember & rMember = it->second;
+		TMember& rMember = it->second;
 
 		if (rMember.pCharacter)
 		{
@@ -376,8 +376,8 @@ void CParty::P2PJoin(DWORD dwPID)
 	{
 		TMember Member;
 
-		Member.pCharacter	= NULL;
-		Member.bNear		= false;
+		Member.pCharacter = NULL;
+		Member.bNear = false;
 
 		if (m_memberMap.empty())
 		{
@@ -401,7 +401,7 @@ void CParty::P2PJoin(DWORD dwPID)
 			}
 			else
 			{
-				CCI * pcci = P2P_MANAGER::instance().FindByPID(dwPID);
+				CCI* pcci = P2P_MANAGER::instance().FindByPID(dwPID);
 
 				if (!pcci);
 				else if (pcci->bChannel == g_bChannel)
@@ -411,7 +411,7 @@ void CParty::P2PJoin(DWORD dwPID)
 			}
 		}
 
-		sys_log(2, "PARTY[%d] MemberCountChange %d -> %d", GetLeaderPID(), GetMemberCount(), GetMemberCount()+1);
+		sys_log(2, "PARTY[%d] MemberCountChange %d -> %d", GetLeaderPID(), GetMemberCount(), GetMemberCount() + 1);
 
 		m_memberMap.emplace(dwPID, Member);
 
@@ -563,7 +563,6 @@ void CParty::Link(LPCHARACTER pkChr)
 		}
 
 		RequestSetMemberLevel(pkChr->GetPlayerID(), pkChr->GetLevel());
-
 	}
 }
 
@@ -683,7 +682,7 @@ void CParty::SendPartyJoinAllToOne(LPCHARACTER ch)
 	p.header = HEADER_GC_PARTY_ADD;
 	p.name[CHARACTER_NAME_MAX_LEN] = '\0';
 
-	for (TMemberMap::iterator it = m_memberMap.begin();it!= m_memberMap.end(); ++it)
+	for (TMemberMap::iterator it = m_memberMap.begin(); it != m_memberMap.end(); ++it)
 	{
 		p.pid = it->first;
 		strlcpy(p.name, it->second.strName.c_str(), sizeof(p.name));
@@ -703,7 +702,7 @@ void CParty::SendPartyUnlinkOneToAll(LPCHARACTER ch)
 	p.pid = ch->GetPlayerID();
 	p.vid = (DWORD)ch->GetVID();
 
-	for (it = m_memberMap.begin();it!= m_memberMap.end(); ++it)
+	for (it = m_memberMap.begin(); it != m_memberMap.end(); ++it)
 	{
 		if (it->second.pCharacter && it->second.pCharacter->GetDesc())
 		{
@@ -724,7 +723,7 @@ void CParty::SendPartyLinkOneToAll(LPCHARACTER ch)
 	p.vid = ch->GetVID();
 	p.pid = ch->GetPlayerID();
 
-	for (it = m_memberMap.begin();it!= m_memberMap.end(); ++it)
+	for (it = m_memberMap.begin(); it != m_memberMap.end(); ++it)
 	{
 		if (it->second.pCharacter && it->second.pCharacter->GetDesc())
 		{
@@ -743,7 +742,7 @@ void CParty::SendPartyLinkAllToOne(LPCHARACTER ch)
 	TPacketGCPartyLink p;
 	p.header = HEADER_GC_PARTY_LINK;
 
-	for (it = m_memberMap.begin();it!= m_memberMap.end(); ++it)
+	for (it = m_memberMap.begin(); it != m_memberMap.end(); ++it)
 	{
 		if (it->second.pCharacter)
 		{
@@ -775,7 +774,7 @@ void CParty::SendPartyInfoOneToAll(DWORD pid)
 	p.percent_hp = 255;
 	p.role = it->second.bRole;
 
-	for (it = m_memberMap.begin();it!= m_memberMap.end(); ++it)
+	for (it = m_memberMap.begin(); it != m_memberMap.end(); ++it)
 	{
 		if ((it->second.pCharacter) && (it->second.pCharacter->GetDesc()))
 		{
@@ -796,7 +795,7 @@ void CParty::SendPartyInfoOneToAll(LPCHARACTER ch)
 	TPacketGCPartyUpdate p;
 	ch->BuildUpdatePartyPacket(p);
 
-	for (it = m_memberMap.begin();it!= m_memberMap.end(); ++it)
+	for (it = m_memberMap.begin(); it != m_memberMap.end(); ++it)
 	{
 		if ((it->second.pCharacter) && (it->second.pCharacter->GetDesc()))
 		{
@@ -842,87 +841,87 @@ void CParty::SendMessage(LPCHARACTER ch, BYTE bMsg, DWORD dwArg1, DWORD dwArg2)
 
 	switch (bMsg)
 	{
-		case PM_ATTACK:
-			break;
+	case PM_ATTACK:
+		break;
 
-		case PM_RETURN:
+	case PM_RETURN:
+	{
+		TMemberMap::iterator it = m_memberMap.begin();
+
+		while (it != m_memberMap.end())
+		{
+			TMember& rMember = it->second;
+			++it;
+
+			LPCHARACTER pkChr;
+
+			if ((pkChr = rMember.pCharacter) && ch != pkChr)
 			{
-				TMemberMap::iterator it = m_memberMap.begin();
+				DWORD x = dwArg1 + number(-500, 500);
+				DWORD y = dwArg2 + number(-500, 500);
 
-				while (it != m_memberMap.end())
+				pkChr->SetVictim(NULL);
+				pkChr->SetRotationToXY(x, y);
+
+				if (pkChr->Goto(x, y))
 				{
-					TMember & rMember = it->second;
-					++it;
-
-					LPCHARACTER pkChr;
-
-					if ((pkChr = rMember.pCharacter) && ch != pkChr)
-					{
-						DWORD x = dwArg1 + number(-500, 500);
-						DWORD y = dwArg2 + number(-500, 500);
-
-						pkChr->SetVictim(NULL);
-						pkChr->SetRotationToXY(x, y);
-
-						if (pkChr->Goto(x, y))
-						{
-							LPCHARACTER victim = pkChr->GetVictim();
-							sys_log(0, "%s %p RETURN victim %p", pkChr->GetName(), get_pointer(pkChr), get_pointer(victim));
-							pkChr->SendMovePacket(FUNC_WAIT, 0, 0, 0, 0);
-						}
-					}
+					LPCHARACTER victim = pkChr->GetVictim();
+					sys_log(0, "%s %p RETURN victim %p", pkChr->GetName(), get_pointer(pkChr), get_pointer(victim));
+					pkChr->SendMovePacket(FUNC_WAIT, 0, 0, 0, 0);
 				}
 			}
-			break;
+		}
+	}
+	break;
 
-		case PM_ATTACKED_BY:
+	case PM_ATTACKED_BY:
+	{
+		LPCHARACTER pkChrVictim = ch->GetVictim();
+
+		if (!pkChrVictim)
+			return;
+
+		TMemberMap::iterator it = m_memberMap.begin();
+
+		while (it != m_memberMap.end())
+		{
+			TMember& rMember = it->second;
+			++it;
+
+			LPCHARACTER pkChr;
+
+			if ((pkChr = rMember.pCharacter) && ch != pkChr)
 			{
-				LPCHARACTER pkChrVictim = ch->GetVictim();
-
-				if (!pkChrVictim)
-					return;
-
-				TMemberMap::iterator it = m_memberMap.begin();
-
-				while (it != m_memberMap.end())
-				{
-					TMember & rMember = it->second;
-					++it;
-
-					LPCHARACTER pkChr;
-
-					if ((pkChr = rMember.pCharacter) && ch != pkChr)
-					{
-						if (pkChr->CanBeginFight())
-							pkChr->BeginFight(pkChrVictim);
-					}
-				}
+				if (pkChr->CanBeginFight())
+					pkChr->BeginFight(pkChrVictim);
 			}
-			break;
+		}
+	}
+	break;
 
-		case PM_AGGRO_INCREASE:
+	case PM_AGGRO_INCREASE:
+	{
+		LPCHARACTER victim = CHARACTER_MANAGER::instance().Find(dwArg2);
+
+		if (!victim)
+			return;
+
+		TMemberMap::iterator it = m_memberMap.begin();
+
+		while (it != m_memberMap.end())
+		{
+			TMember& rMember = it->second;
+			++it;
+
+			LPCHARACTER pkChr;
+
+			if ((pkChr = rMember.pCharacter) && ch != pkChr)
 			{
-				LPCHARACTER victim = CHARACTER_MANAGER::instance().Find(dwArg2);
-
-				if (!victim)
-					return;
-
-				TMemberMap::iterator it = m_memberMap.begin();
-
-				while (it != m_memberMap.end())
-				{
-					TMember & rMember = it->second;
-					++it;
-
-					LPCHARACTER pkChr;
-
-					if ((pkChr = rMember.pCharacter) && ch != pkChr)
-					{
-						pkChr->UpdateAggrPoint(victim, DAMAGE_TYPE_SPECIAL, dwArg1);
-					}
-				}
+				pkChr->UpdateAggrPoint(victim, DAMAGE_TYPE_SPECIAL, dwArg1);
 			}
-			break;
+		}
+	}
+	break;
 	}
 }
 
@@ -1059,10 +1058,10 @@ void CParty::HealParty()
 
 		LPCHARACTER ch = it->second.pCharacter;
 
-		if (DISTANCE_APPROX(l->GetX()-ch->GetX(), l->GetY()-ch->GetY()) < PARTY_DEFAULT_RANGE)
+		if (DISTANCE_APPROX(l->GetX() - ch->GetX(), l->GetY() - ch->GetY()) < PARTY_DEFAULT_RANGE)
 		{
-			ch->PointChange(POINT_HP, ch->GetMaxHP()-ch->GetHP());
-			ch->PointChange(POINT_SP, ch->GetMaxSP()-ch->GetSP());
+			ch->PointChange(POINT_HP, ch->GetMaxHP() - ch->GetHP());
+			ch->PointChange(POINT_SP, ch->GetMaxSP() - ch->GetSP());
 		}
 	}
 
@@ -1091,7 +1090,7 @@ void CParty::SummonToLeader(DWORD pid)
 	int n = 0;
 	int x[12], y[12];
 
-	SECTREE_MANAGER & s = SECTREE_MANAGER::instance();
+	SECTREE_MANAGER& s = SECTREE_MANAGER::instance();
 	LPCHARACTER l = GetLeaderCharacter();
 
 	if (m_memberMap.find(pid) == m_memberMap.end())
@@ -1118,7 +1117,7 @@ void CParty::SummonToLeader(DWORD pid)
 	{
 		PIXEL_POSITION p;
 
-		if (s.GetMovablePosition(l->GetMapIndex(), l->GetX() + xy [i][0], l->GetY() + xy[i][1], p))
+		if (s.GetMovablePosition(l->GetMapIndex(), l->GetX() + xy[i][0], l->GetY() + xy[i][1], p))
 		{
 			x[n] = p.x;
 			y[n] = p.y;
@@ -1193,7 +1192,7 @@ void CParty::ComputeRolePoint(LPCHARACTER ch, BYTE bRole, bool bAdd)
 	}
 
 	//SKILL_POWER_BY_LEVEL
-	float k = (float) ch->GetSkillPowerByLevel( MIN(SKILL_MAX_LEVEL, m_iLeadership ) )/ 100.0f;
+	float k = (float)ch->GetSkillPowerByLevel(MIN(SKILL_MAX_LEVEL, m_iLeadership)) / 100.0f;
 	//float k = (float) aiSkillPowerByLevel[MIN(SKILL_MAX_LEVEL, m_iLeadership)] / 100.0f;
 
 	//sys_log(0,"ComputeRolePoint %fi %d, %d ", k, SKILL_MAX_LEVEL, m_iLeadership );
@@ -1201,73 +1200,73 @@ void CParty::ComputeRolePoint(LPCHARACTER ch, BYTE bRole, bool bAdd)
 
 	switch (bRole)
 	{
-		case PARTY_ROLE_ATTACKER:
-			{
-				//int iBonus = (int) (10 + 90 * k);
-				int iBonus = (int) (10 + 60 * k);
+	case PARTY_ROLE_ATTACKER:
+	{
+		//int iBonus = (int) (10 + 90 * k);
+		int iBonus = (int)(10 + 60 * k);
 
-				if (ch->GetPoint(POINT_PARTY_ATTACKER_BONUS) != iBonus)
-				{
-					ch->PointChange(POINT_PARTY_ATTACKER_BONUS, iBonus - ch->GetPoint(POINT_PARTY_ATTACKER_BONUS));
-					ch->ComputePoints();
-				}
-			}
-			break;
+		if (ch->GetPoint(POINT_PARTY_ATTACKER_BONUS) != iBonus)
+		{
+			ch->PointChange(POINT_PARTY_ATTACKER_BONUS, iBonus - ch->GetPoint(POINT_PARTY_ATTACKER_BONUS));
+			ch->ComputePoints();
+		}
+	}
+	break;
 
-		case PARTY_ROLE_TANKER:
-			{
-				int iBonus = (int) (50 + 1450 * k);
+	case PARTY_ROLE_TANKER:
+	{
+		int iBonus = (int)(50 + 1450 * k);
 
-				if (ch->GetPoint(POINT_PARTY_TANKER_BONUS) != iBonus)
-				{
-					ch->PointChange(POINT_PARTY_TANKER_BONUS, iBonus - ch->GetPoint(POINT_PARTY_TANKER_BONUS));
-					ch->ComputePoints();
-				}
-			}
-			break;
+		if (ch->GetPoint(POINT_PARTY_TANKER_BONUS) != iBonus)
+		{
+			ch->PointChange(POINT_PARTY_TANKER_BONUS, iBonus - ch->GetPoint(POINT_PARTY_TANKER_BONUS));
+			ch->ComputePoints();
+		}
+	}
+	break;
 
-		case PARTY_ROLE_BUFFER:
-			{
-				int iBonus = (int) (5 + 45 * k);
+	case PARTY_ROLE_BUFFER:
+	{
+		int iBonus = (int)(5 + 45 * k);
 
-				if (ch->GetPoint(POINT_PARTY_BUFFER_BONUS) != iBonus)
-				{
-					ch->PointChange(POINT_PARTY_BUFFER_BONUS, iBonus - ch->GetPoint(POINT_PARTY_BUFFER_BONUS));
-				}
-			}
-			break;
+		if (ch->GetPoint(POINT_PARTY_BUFFER_BONUS) != iBonus)
+		{
+			ch->PointChange(POINT_PARTY_BUFFER_BONUS, iBonus - ch->GetPoint(POINT_PARTY_BUFFER_BONUS));
+		}
+	}
+	break;
 
-		case PARTY_ROLE_SKILL_MASTER:
-			{
-				int iBonus = (int) (25 + 600 * k);
+	case PARTY_ROLE_SKILL_MASTER:
+	{
+		int iBonus = (int)(25 + 600 * k);
 
-				if (ch->GetPoint(POINT_PARTY_SKILL_MASTER_BONUS) != iBonus)
-				{
-					ch->PointChange(POINT_PARTY_SKILL_MASTER_BONUS, iBonus - ch->GetPoint(POINT_PARTY_SKILL_MASTER_BONUS));
-					ch->ComputePoints();
-				}
-			}
-			break;
-		case PARTY_ROLE_HASTE:
-			{
-				int iBonus = (int) (1+5*k);
-				if (ch->GetPoint(POINT_PARTY_HASTE_BONUS) != iBonus)
-				{
-					ch->PointChange(POINT_PARTY_HASTE_BONUS, iBonus - ch->GetPoint(POINT_PARTY_HASTE_BONUS));
-					ch->ComputePoints();
-				}
-			}
-			break;
-		case PARTY_ROLE_DEFENDER:
-			{
-				int iBonus = (int) (5+30*k);
-				if (ch->GetPoint(POINT_PARTY_DEFENDER_BONUS) != iBonus)
-				{
-					ch->PointChange(POINT_PARTY_DEFENDER_BONUS, iBonus - ch->GetPoint(POINT_PARTY_DEFENDER_BONUS));
-					ch->ComputePoints();
-				}
-			}
-			break;
+		if (ch->GetPoint(POINT_PARTY_SKILL_MASTER_BONUS) != iBonus)
+		{
+			ch->PointChange(POINT_PARTY_SKILL_MASTER_BONUS, iBonus - ch->GetPoint(POINT_PARTY_SKILL_MASTER_BONUS));
+			ch->ComputePoints();
+		}
+	}
+	break;
+	case PARTY_ROLE_HASTE:
+	{
+		int iBonus = (int)(1 + 5 * k);
+		if (ch->GetPoint(POINT_PARTY_HASTE_BONUS) != iBonus)
+		{
+			ch->PointChange(POINT_PARTY_HASTE_BONUS, iBonus - ch->GetPoint(POINT_PARTY_HASTE_BONUS));
+			ch->ComputePoints();
+		}
+	}
+	break;
+	case PARTY_ROLE_DEFENDER:
+	{
+		int iBonus = (int)(5 + 30 * k);
+		if (ch->GetPoint(POINT_PARTY_DEFENDER_BONUS) != iBonus)
+		{
+			ch->PointChange(POINT_PARTY_DEFENDER_BONUS, iBonus - ch->GetPoint(POINT_PARTY_DEFENDER_BONUS));
+			ch->ComputePoints();
+		}
+	}
+	break;
 	}
 }
 
@@ -1297,7 +1296,7 @@ void CParty::Update()
 		if (l->GetDungeon())
 			it->second.bNear = l->GetDungeon() == ch->GetDungeon();
 		else
-			it->second.bNear = (DISTANCE_APPROX(l->GetX()-ch->GetX(), l->GetY()-ch->GetY()) < PARTY_DEFAULT_RANGE);
+			it->second.bNear = (DISTANCE_APPROX(l->GetX() - ch->GetX(), l->GetY() - ch->GetY()) < PARTY_DEFAULT_RANGE);
 
 		if (it->second.bNear)
 		{
@@ -1362,13 +1361,13 @@ void CParty::Update()
 	}
 
 	// PARTY_ROLE_LIMIT_LEVEL_BUG_FIX
-	m_anMaxRole[PARTY_ROLE_ATTACKER]	 = m_iLeadership >= 10 ? 1 : 0;
-	m_anMaxRole[PARTY_ROLE_HASTE]	 = m_iLeadership >= 20 ? 1 : 0;
-	m_anMaxRole[PARTY_ROLE_TANKER]	 = m_iLeadership >= 20 ? 1 : 0;
-	m_anMaxRole[PARTY_ROLE_BUFFER]	 = m_iLeadership >= 25 ? 1 : 0;
+	m_anMaxRole[PARTY_ROLE_ATTACKER] = m_iLeadership >= 10 ? 1 : 0;
+	m_anMaxRole[PARTY_ROLE_HASTE] = m_iLeadership >= 20 ? 1 : 0;
+	m_anMaxRole[PARTY_ROLE_TANKER] = m_iLeadership >= 20 ? 1 : 0;
+	m_anMaxRole[PARTY_ROLE_BUFFER] = m_iLeadership >= 25 ? 1 : 0;
 	m_anMaxRole[PARTY_ROLE_SKILL_MASTER] = m_iLeadership >= 35 ? 1 : 0;
-	m_anMaxRole[PARTY_ROLE_DEFENDER] 	 = m_iLeadership >= 40 ? 1 : 0;
-	m_anMaxRole[PARTY_ROLE_ATTACKER]	+= m_iLeadership >= 40 ? 1 : 0;
+	m_anMaxRole[PARTY_ROLE_DEFENDER] = m_iLeadership >= 40 ? 1 : 0;
+	m_anMaxRole[PARTY_ROLE_ATTACKER] += m_iLeadership >= 40 ? 1 : 0;
 	// END_OF_PARTY_ROLE_LIMIT_LEVEL_BUG_FIX
 
 	// Party Heal Update
@@ -1422,7 +1421,7 @@ void CParty::UpdateOfflineState(DWORD dwPID)
 	TPacketGCPartyAdd p;
 	p.header = HEADER_GC_PARTY_ADD;
 	p.pid = dwPID;
-	memset(p.name, 0, CHARACTER_NAME_MAX_LEN+1);
+	memset(p.name, 0, CHARACTER_NAME_MAX_LEN + 1);
 
 	for (TMemberMap::iterator it = m_memberMap.begin(); it != m_memberMap.end(); ++it)
 	{
@@ -1599,7 +1598,7 @@ BYTE CParty::GetMemberMaxLevel()
 	BYTE bMax = 0;
 
 	itertype(m_memberMap) it = m_memberMap.begin();
-	while (it!=m_memberMap.end())
+	while (it != m_memberMap.end())
 	{
 		if (!it->second.bLevel)
 		{
@@ -1621,7 +1620,7 @@ BYTE CParty::GetMemberMinLevel()
 	BYTE bMin = PLAYER_MAX_LEVEL_CONST;
 
 	itertype(m_memberMap) it = m_memberMap.begin();
-	while (it!=m_memberMap.end())
+	while (it != m_memberMap.end())
 	{
 		if (!it->second.bLevel)
 		{
@@ -1648,7 +1647,7 @@ int CParty::ComputePartyBonusExpPercent()
 	int iBonusPartyExpFromItem = 0;
 
 	// UPGRADE_PARTY_BONUS
-	int iMemberCount=MIN(8, GetNearMemberCount());
+	int iMemberCount = MIN(8, GetNearMemberCount());
 
 	if (leader && (leader->IsEquipUniqueItem(UNIQUE_ITEM_PARTY_BONUS_EXP) || leader->IsEquipUniqueItem(UNIQUE_ITEM_PARTY_BONUS_EXP_MALL)
 		|| leader->IsEquipUniqueItem(UNIQUE_ITEM_PARTY_BONUS_EXP_GIFT) || leader->IsEquipUniqueGroup(10010)))
@@ -1662,28 +1661,27 @@ int CParty::ComputePartyBonusExpPercent()
 
 bool CParty::IsPartyInDungeon(int mapIndex)
 {
-	for(TMemberMap::iterator it = m_memberMap.begin(); it != m_memberMap.end(); ++it)
+	for (TMemberMap::iterator it = m_memberMap.begin(); it != m_memberMap.end(); ++it)
 	{
 		LPCHARACTER ch = it->second.pCharacter;
 
-		if(NULL == ch)
+		if (NULL == ch)
 		{
 			continue;
 		}
 
 		LPDUNGEON d = ch->GetDungeon();
 
-		if(NULL == d)
+		if (NULL == d)
 		{
-			sys_log(0,"not in dungeon");
+			sys_log(0, "not in dungeon");
 			continue;
 		}
 
-		if( mapIndex == (d->GetMapIndex())/10000 )
+		if (mapIndex == (d->GetMapIndex()) / 10000)
 		{
 			return true;
 		}
-
 	}
 	return false;
 }

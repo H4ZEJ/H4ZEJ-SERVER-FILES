@@ -13,12 +13,12 @@ CGroupTextParseTreeLoader::~CGroupTextParseTreeLoader()
 		delete m_pRootGroupNode;
 }
 
-const char * CGroupTextParseTreeLoader::GetFileName()
+const char* CGroupTextParseTreeLoader::GetFileName()
 {
 	return m_strFileName.c_str();
 }
 
-bool CGroupTextParseTreeLoader::Load(const char * c_szFileName)
+bool CGroupTextParseTreeLoader::Load(const char* c_szFileName)
 {
 	m_strFileName = c_szFileName;
 
@@ -33,7 +33,7 @@ bool CGroupTextParseTreeLoader::Load(const char * c_szFileName)
 	const size_t fileSize = ftell(fp);
 	fseek(fp, 0, SEEK_SET);
 
-	char * pData = M2_NEW char[fileSize];
+	char* pData = M2_NEW char[fileSize];
 	fread(pData, fileSize, 1, fp);
 	fclose(fp);
 
@@ -54,7 +54,7 @@ bool CGroupTextParseTreeLoader::Load(const char * c_szFileName)
 	return true;
 }
 
-bool CGroupTextParseTreeLoader::LoadGroup(CGroupNode * pGroupNode)
+bool CGroupTextParseTreeLoader::LoadGroup(CGroupNode* pGroupNode)
 {
 	TTokenVector stTokenVector;
 	for (; m_dwcurLineIndex < m_fileLoader.GetLineCount(); ++m_dwcurLineIndex)
@@ -82,7 +82,7 @@ bool CGroupTextParseTreeLoader::LoadGroup(CGroupNode * pGroupNode)
 				continue;
 			}
 
-			CGroupNode * pNewNode = new CGroupNode();
+			CGroupNode* pNewNode = new CGroupNode();
 
 			pNewNode->strGroupName = stTokenVector[1];
 			stl_lowers(pNewNode->strGroupName);
@@ -109,9 +109,9 @@ bool CGroupTextParseTreeLoader::LoadGroup(CGroupNode * pGroupNode)
 			if (1 == stTokenVector.size())
 			{
 				sys_err("CGroupTextParseTreeLoader::LoadGroup : must have a value (filename: %s line: %d key: %s)",
-						m_strFileName.c_str(),
-						m_dwcurLineIndex,
-						key.c_str());
+					m_strFileName.c_str(),
+					m_dwcurLineIndex,
+					key.c_str());
 				break;
 			}
 
@@ -123,7 +123,7 @@ bool CGroupTextParseTreeLoader::LoadGroup(CGroupNode * pGroupNode)
 	return true;
 }
 
-CGroupNode* CGroupTextParseTreeLoader::GetGroup(const char * c_szGroupName)
+CGroupNode* CGroupTextParseTreeLoader::GetGroup(const char* c_szGroupName)
 {
 	if (NULL == m_pRootGroupNode)
 		return NULL;
@@ -147,7 +147,7 @@ DWORD CGroupNode::GetChildNodeCount()
 	return m_mapChildNodes.size();
 }
 
-bool CGroupNode::SetChildNode(const char * c_szKey, CGroupNode* pChildGroup)
+bool CGroupNode::SetChildNode(const char* c_szKey, CGroupNode* pChildGroup)
 {
 	if (NULL == pChildGroup)
 	{
@@ -163,7 +163,7 @@ bool CGroupNode::SetChildNode(const char * c_szKey, CGroupNode* pChildGroup)
 	return true;
 }
 
-CGroupNode* CGroupNode::GetChildNode(const std::string & c_rstrKey) const
+CGroupNode* CGroupNode::GetChildNode(const std::string& c_rstrKey) const
 {
 	TMapGroup::const_iterator it = m_mapChildNodes.find(c_rstrKey);
 	if (it != m_mapChildNodes.end())
@@ -177,7 +177,7 @@ std::string CGroupNode::GetNodeName() const
 	return strGroupName;
 }
 
-bool CGroupNode::IsToken(const std::string & c_rstrKey) const
+bool CGroupNode::IsToken(const std::string& c_rstrKey) const
 {
 	return m_map_rows.end() != m_map_rows.find(c_rstrKey);
 }
@@ -187,7 +187,7 @@ int CGroupNode::GetRowCount()
 	return m_map_rows.size();
 }
 
-bool CGroupNode::GetRow(const std::string & c_rstrRowKey, OUT const CGroupNode::CGroupNodeRow ** ppRow) const
+bool CGroupNode::GetRow(const std::string& c_rstrRowKey, OUT const CGroupNode::CGroupNodeRow** ppRow) const
 {
 	TMapRow::const_iterator row_it = m_map_rows.find(c_rstrRowKey);
 	if (m_map_rows.end() == row_it)
@@ -200,7 +200,7 @@ bool CGroupNode::GetRow(const std::string & c_rstrRowKey, OUT const CGroupNode::
 	return true;
 }
 
-bool CGroupNode::GetRow(int idx, OUT const CGroupNode::CGroupNodeRow ** ppRow) const
+bool CGroupNode::GetRow(int idx, OUT const CGroupNode::CGroupNodeRow** ppRow) const
 {
 	if ((TMapRow::size_type)idx >= m_map_rows.size())
 		return false;
@@ -214,7 +214,7 @@ bool CGroupNode::GetRow(int idx, OUT const CGroupNode::CGroupNodeRow ** ppRow) c
 	return true;
 }
 
-bool CGroupNode::GetGroupRow(const std::string& stGroupName, const std::string& stRow, OUT const CGroupNode::CGroupNodeRow ** ppRow) const
+bool CGroupNode::GetGroupRow(const std::string& stGroupName, const std::string& stRow, OUT const CGroupNode::CGroupNodeRow** ppRow) const
 {
 	CGroupNode* pChildGroup = GetChildNode(stGroupName);
 	if (NULL != pChildGroup)

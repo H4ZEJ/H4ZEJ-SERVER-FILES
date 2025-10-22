@@ -46,7 +46,7 @@ bool MakeDistinctRandomNumberSet(std::list <float> prob_lst, OUT std::vector<int
 		{
 			range += *it;
 		}
-		float r = fnumber (0.f, range);
+		float r = fnumber(0.f, range);
 		float sum = 0.f;
 		int idx = 0;
 		for (std::list <float>::iterator it = prob_lst.begin(); it != prob_lst.end(); it++)
@@ -86,7 +86,7 @@ BYTE GetStrengthIdx(DWORD dwVnum)
 	return (dwVnum / 10) % 10;
 }
 
-bool DSManager::ReadDragonSoulTableFile(const char * c_pszFileName)
+bool DSManager::ReadDragonSoulTableFile(const char* c_pszFileName)
 {
 	m_pTable = new DragonSoulTable();
 	return m_pTable->ReadDragonSoulTableFile(c_pszFileName);
@@ -138,7 +138,7 @@ bool DSManager::RefreshItemAttributes(LPITEM pDS)
 {
 	if (!pDS->IsDragonSoul())
 	{
-		sys_err ("This item(ID : %d) is not DragonSoul.", pDS->GetID());
+		sys_err("This item(ID : %d) is not DragonSoul.", pDS->GetID());
 		return false;
 	}
 
@@ -150,20 +150,20 @@ bool DSManager::RefreshItemAttributes(LPITEM pDS)
 
 	if (!m_pTable->GetBasicApplys(ds_type, vec_basic_applys))
 	{
-		sys_err ("There is no BasicApply about %d type dragon soul.", ds_type);
+		sys_err("There is no BasicApply about %d type dragon soul.", ds_type);
 		return false;
 	}
 
 	if (!m_pTable->GetAdditionalApplys(ds_type, vec_addtional_applys))
 	{
-		sys_err ("There is no AdditionalApply about %d type dragon soul.", ds_type);
+		sys_err("There is no AdditionalApply about %d type dragon soul.", ds_type);
 		return false;
 	}
 
 	int basic_apply_num, add_min, add_max;
 	if (!m_pTable->GetApplyNumSettings(ds_type, grade_idx, basic_apply_num, add_min, add_max))
 	{
-		sys_err ("In ApplyNumSettings, INVALID VALUES Group type(%d), GRADE idx(%d)", ds_type, grade_idx);
+		sys_err("In ApplyNumSettings, INVALID VALUES Group type(%d), GRADE idx(%d)", ds_type, grade_idx);
 		return false;
 	}
 
@@ -207,7 +207,7 @@ bool DSManager::PutAttributes(LPITEM pDS)
 {
 	if (!pDS->IsDragonSoul())
 	{
-		sys_err ("This item(ID : %d) is not DragonSoul.", pDS->GetID());
+		sys_err("This item(ID : %d) is not DragonSoul.", pDS->GetID());
 		return false;
 	}
 
@@ -219,19 +219,19 @@ bool DSManager::PutAttributes(LPITEM pDS)
 
 	if (!m_pTable->GetBasicApplys(ds_type, vec_basic_applys))
 	{
-		sys_err ("There is no BasicApply about %d type dragon soul.", ds_type);
+		sys_err("There is no BasicApply about %d type dragon soul.", ds_type);
 		return false;
 	}
 	if (!m_pTable->GetAdditionalApplys(ds_type, vec_addtional_applys))
 	{
-		sys_err ("There is no AdditionalApply about %d type dragon soul.", ds_type);
+		sys_err("There is no AdditionalApply about %d type dragon soul.", ds_type);
 		return false;
 	}
 
 	int basic_apply_num, add_min, add_max;
 	if (!m_pTable->GetApplyNumSettings(ds_type, grade_idx, basic_apply_num, add_min, add_max))
 	{
-		sys_err ("In ApplyNumSettings, INVALID VALUES Group type(%d), GRADE idx(%d)", ds_type, grade_idx);
+		sys_err("In ApplyNumSettings, INVALID VALUES Group type(%d), GRADE idx(%d)", ds_type, grade_idx);
 		return false;
 	}
 
@@ -252,7 +252,7 @@ bool DSManager::PutAttributes(LPITEM pDS)
 		pDS->SetForceAttribute(i, bType, sValue);
 	}
 
-	BYTE additional_attr_num = MIN(number (add_min, add_max), 3);
+	BYTE additional_attr_num = MIN(number(add_min, add_max), 3);
 
 	std::vector <int> random_set;
 	if (additional_attr_num > 0)
@@ -265,7 +265,7 @@ bool DSManager::PutAttributes(LPITEM pDS)
 		}
 		if (!MakeDistinctRandomNumberSet(list_probs, random_set))
 		{
-			sys_err ("MakeDistinctRandomNumberSet error.");
+			sys_err("MakeDistinctRandomNumberSet error.");
 			return false;
 		}
 
@@ -338,12 +338,12 @@ bool DSManager::ExtractDragonHeart(LPCHARACTER ch, LPITEM pItem, LPITEM pExtract
 	//float sum = 0.f;
 	if (-1 == idx)
 	{
-		sys_err ("Gamble is failed. ds_type(%d), grade_idx(%d)", ds_type, grade_idx);
+		sys_err("Gamble is failed. ds_type(%d), grade_idx(%d)", ds_type, grade_idx);
 		return false;
 	}
 
 	float fCharge = vec_chargings[idx] * (100 + iBonus) / 100.f;
-	fCharge = std::MINMAX <float> (0.f, fCharge, 100.f);
+	fCharge = std::MINMAX <float>(0.f, fCharge, 100.f);
 
 	if (fCharge < FLT_EPSILON)
 	{
@@ -363,7 +363,7 @@ bool DSManager::ExtractDragonHeart(LPCHARACTER ch, LPITEM pItem, LPITEM pExtract
 
 		if (NULL == pDH)
 		{
-			sys_err ("Cannot create DRAGON_HEART(%d).", DRAGON_HEART_VNUM);
+			sys_err("Cannot create DRAGON_HEART(%d).", DRAGON_HEART_VNUM);
 			return false;
 		}
 
@@ -389,7 +389,7 @@ bool DSManager::PullOut(LPCHARACTER ch, TItemPos DestCell, LPITEM& pItem, LPITEM
 {
 	if (NULL == ch || NULL == pItem)
 	{
-		sys_err ("NULL POINTER. ch(%p) or pItem(%p)", ch, pItem);
+		sys_err("NULL POINTER. ch(%p) or pItem(%p)", ch, pItem);
 		return false;
 	}
 
@@ -485,7 +485,7 @@ bool DSManager::PullOut(LPCHARACTER ch, TItemPos DestCell, LPITEM& pItem, LPITEM
 	return bSuccess;
 }
 
-bool DSManager::DoRefineGrade(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_SOUL_REFINE_GRID_SIZE])
+bool DSManager::DoRefineGrade(LPCHARACTER ch, TItemPos(&aItemPoses)[DRAGON_SOUL_REFINE_GRID_SIZE])
 {
 	if (NULL == ch)
 		return false;
@@ -497,7 +497,7 @@ bool DSManager::DoRefineGrade(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_SOUL
 
 	if (!ch->DragonSoul_RefineWindow_CanRefine())
 	{
-		sys_err ("%s do not activate DragonSoulRefineWindow. But how can he come here?", ch->GetName());
+		sys_err("%s do not activate DragonSoulRefineWindow. But how can he come here?", ch->GetName());
 		ch->ChatPacket(CHAT_TYPE_INFO, "[SYSTEM ERROR]You cannot upgrade dragon soul without refine window.");
 		return false;
 	}
@@ -571,8 +571,8 @@ bool DSManager::DoRefineGrade(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_SOUL
 
 	if (count != need_count)
 	{
-		sys_err ("Possiblity of invalid client. Name %s", ch->GetName());
-		BYTE bSubHeader = count < need_count? DS_SUB_HEADER_REFINE_FAIL_NOT_ENOUGH_MATERIAL : DS_SUB_HEADER_REFINE_FAIL_TOO_MUCH_MATERIAL;
+		sys_err("Possiblity of invalid client. Name %s", ch->GetName());
+		BYTE bSubHeader = count < need_count ? DS_SUB_HEADER_REFINE_FAIL_NOT_ENOUGH_MATERIAL : DS_SUB_HEADER_REFINE_FAIL_TOO_MUCH_MATERIAL;
 		SendRefineResultPacket(ch, bSubHeader, NPOS);
 		return false;
 	}
@@ -586,7 +586,7 @@ bool DSManager::DoRefineGrade(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_SOUL
 
 	if (-1 == (result_grade = Gamble(vec_probs)))
 	{
-		sys_err ("Gamble failed. See RefineGardeTables' probabilities");
+		sys_err("Gamble failed. See RefineGardeTables' probabilities");
 		return false;
 	}
 
@@ -594,7 +594,7 @@ bool DSManager::DoRefineGrade(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_SOUL
 
 	if (NULL == pResultItem)
 	{
-		sys_err ("INVALID DRAGON SOUL(%d)", MakeDragonSoulVnum(ds_type, (BYTE)result_grade, 0, 0));
+		sys_err("INVALID DRAGON SOUL(%d)", MakeDragonSoulVnum(ds_type, (BYTE)result_grade, 0, 0));
 		return false;
 	}
 
@@ -625,7 +625,7 @@ bool DSManager::DoRefineGrade(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_SOUL
 		sprintf(buf, "GRADE : %d -> %d", grade_idx, result_grade);
 		LogManager::instance().ItemLog(ch, pResultItem, "DS_GRADE_REFINE_SUCCESS", buf);
 		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("등급 개량에 성공했습니다."));
-		SendRefineResultPacket(ch, DS_SUB_HEADER_REFINE_SUCCEED, TItemPos (pResultItem->GetWindow(), pResultItem->GetCell()));
+		SendRefineResultPacket(ch, DS_SUB_HEADER_REFINE_SUCCEED, TItemPos(pResultItem->GetWindow(), pResultItem->GetCell()));
 		return true;
 	}
 	else
@@ -634,12 +634,12 @@ bool DSManager::DoRefineGrade(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_SOUL
 		sprintf(buf, "GRADE : %d -> %d", grade_idx, result_grade);
 		LogManager::instance().ItemLog(ch, pResultItem, "DS_GRADE_REFINE_FAIL", buf);
 		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("등급 개량에 실패했습니다."));
-		SendRefineResultPacket(ch, DS_SUB_HEADER_REFINE_FAIL, TItemPos (pResultItem->GetWindow(), pResultItem->GetCell()));
+		SendRefineResultPacket(ch, DS_SUB_HEADER_REFINE_FAIL, TItemPos(pResultItem->GetWindow(), pResultItem->GetCell()));
 		return false;
 	}
 }
 
-bool DSManager::DoRefineStep(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_SOUL_REFINE_GRID_SIZE])
+bool DSManager::DoRefineStep(LPCHARACTER ch, TItemPos(&aItemPoses)[DRAGON_SOUL_REFINE_GRID_SIZE])
 {
 	if (NULL == ch)
 		return false;
@@ -650,7 +650,7 @@ bool DSManager::DoRefineStep(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_SOUL_
 
 	if (!ch->DragonSoul_RefineWindow_CanRefine())
 	{
-		sys_err ("%s do not activate DragonSoulRefineWindow. But how can he come here?", ch->GetName());
+		sys_err("%s do not activate DragonSoulRefineWindow. But how can he come here?", ch->GetName());
 		ch->ChatPacket(CHAT_TYPE_INFO, "[SYSTEM ERROR]You cannot use dragon soul refine window.");
 		return false;
 	}
@@ -699,7 +699,7 @@ bool DSManager::DoRefineStep(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_SOUL_
 		}
 	}
 
-	while(++it != set_items.end())
+	while (++it != set_items.end())
 	{
 		LPITEM pItem = *it;
 
@@ -717,8 +717,8 @@ bool DSManager::DoRefineStep(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_SOUL_
 
 	if (count != need_count)
 	{
-		sys_err ("Possiblity of invalid client. Name %s", ch->GetName());
-		BYTE bSubHeader = count < need_count? DS_SUB_HEADER_REFINE_FAIL_NOT_ENOUGH_MATERIAL : DS_SUB_HEADER_REFINE_FAIL_TOO_MUCH_MATERIAL;
+		sys_err("Possiblity of invalid client. Name %s", ch->GetName());
+		BYTE bSubHeader = count < need_count ? DS_SUB_HEADER_REFINE_FAIL_NOT_ENOUGH_MATERIAL : DS_SUB_HEADER_REFINE_FAIL_TOO_MUCH_MATERIAL;
 		SendRefineResultPacket(ch, bSubHeader, NPOS);
 		return false;
 	}
@@ -734,7 +734,7 @@ bool DSManager::DoRefineStep(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_SOUL_
 
 	if (-1 == (result_step = Gamble(vec_probs)))
 	{
-		sys_err ("Gamble failed. See RefineStepTables' probabilities");
+		sys_err("Gamble failed. See RefineStepTables' probabilities");
 		return false;
 	}
 
@@ -742,7 +742,7 @@ bool DSManager::DoRefineStep(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_SOUL_
 
 	if (NULL == pResultItem)
 	{
-		sys_err ("INVALID DRAGON SOUL(%d)", MakeDragonSoulVnum(ds_type, grade_idx, (BYTE)result_step, 0));
+		sys_err("INVALID DRAGON SOUL(%d)", MakeDragonSoulVnum(ds_type, grade_idx, (BYTE)result_step, 0));
 		return false;
 	}
 
@@ -771,7 +771,7 @@ bool DSManager::DoRefineStep(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_SOUL_
 		sprintf(buf, "STEP : %d -> %d", step_idx, result_step);
 		LogManager::instance().ItemLog(ch, pResultItem, "DS_STEP_REFINE_SUCCESS", buf);
 		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("단계 개량에 성공했습니다."));
-		SendRefineResultPacket(ch, DS_SUB_HEADER_REFINE_SUCCEED, TItemPos (pResultItem->GetWindow(), pResultItem->GetCell()));
+		SendRefineResultPacket(ch, DS_SUB_HEADER_REFINE_SUCCEED, TItemPos(pResultItem->GetWindow(), pResultItem->GetCell()));
 		return true;
 	}
 	else
@@ -780,7 +780,7 @@ bool DSManager::DoRefineStep(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_SOUL_
 		sprintf(buf, "STEP : %d -> %d", step_idx, result_step);
 		LogManager::instance().ItemLog(ch, pResultItem, "DS_STEP_REFINE_FAIL", buf);
 		ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("단계 개량에 실패했습니다."));
-		SendRefineResultPacket(ch, DS_SUB_HEADER_REFINE_FAIL, TItemPos (pResultItem->GetWindow(), pResultItem->GetCell()));
+		SendRefineResultPacket(ch, DS_SUB_HEADER_REFINE_FAIL, TItemPos(pResultItem->GetWindow(), pResultItem->GetCell()));
 		return false;
 	}
 }
@@ -794,7 +794,7 @@ bool IsDragonSoulRefineMaterial(LPITEM pItem)
 		pItem->GetSubType() == MATERIAL_DS_REFINE_HOLLY);
 }
 
-bool DSManager::DoRefineStrength(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_SOUL_REFINE_GRID_SIZE])
+bool DSManager::DoRefineStrength(LPCHARACTER ch, TItemPos(&aItemPoses)[DRAGON_SOUL_REFINE_GRID_SIZE])
 {
 	if (NULL == ch)
 		return false;
@@ -805,7 +805,7 @@ bool DSManager::DoRefineStrength(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_S
 
 	if (!ch->DragonSoul_RefineWindow_CanRefine())
 	{
-		sys_err ("%s do not activate DragonSoulRefineWindow. But how can he come here?", ch->GetName());
+		sys_err("%s do not activate DragonSoulRefineWindow. But how can he come here?", ch->GetName());
 		ch->ChatPacket(CHAT_TYPE_INFO, "[SYSTEM ERROR]You cannot use dragon soul refine window.");
 		return false;
 	}
@@ -846,7 +846,7 @@ bool DSManager::DoRefineStrength(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_S
 			}
 			pDragonSoul = pItem;
 		}
-		else if(IsDragonSoulRefineMaterial(pItem))
+		else if (IsDragonSoulRefineMaterial(pItem))
 		{
 			if (pRefineStone != NULL)
 			{
@@ -863,7 +863,7 @@ bool DSManager::DoRefineStrength(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_S
 		}
 	}
 
-	BYTE bType=0, bGrade=0, bStep=0, bStrength=0;
+	BYTE bType = 0, bGrade = 0, bStep = 0, bStrength = 0;
 
 	if (!pDragonSoul || !pRefineStone)
 	{
@@ -916,7 +916,7 @@ bool DSManager::DoRefineStrength(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_S
 		pResult = ITEM_MANAGER::instance().CreateItem(MakeDragonSoulVnum(bType, bGrade, bStep, bStrength + 1));
 		if (NULL == pResult)
 		{
-			sys_err ("INVALID DRAGON SOUL(%d)", MakeDragonSoulVnum(bType, bGrade, bStep, bStrength + 1));
+			sys_err("INVALID DRAGON SOUL(%d)", MakeDragonSoulVnum(bType, bGrade, bStep, bStrength + 1));
 			return false;
 		}
 		// @fixme345 removed line (pDragonSoul->RemoveFromCharacter();)
@@ -941,7 +941,7 @@ bool DSManager::DoRefineStrength(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_S
 			pResult = ITEM_MANAGER::instance().CreateItem(MakeDragonSoulVnum(bType, bGrade, bStep, bStrength - 1));
 			if (NULL == pResult)
 			{
-				sys_err ("INVALID DRAGON SOUL(%d)", MakeDragonSoulVnum(bType, bGrade, bStep, bStrength - 1));
+				sys_err("INVALID DRAGON SOUL(%d)", MakeDragonSoulVnum(bType, bGrade, bStep, bStrength - 1));
 				return false;
 			}
 			pDragonSoul->CopyAttributeTo(pResult);
@@ -959,10 +959,9 @@ bool DSManager::DoRefineStrength(LPCHARACTER ch, TItemPos (&aItemPoses)[DRAGON_S
 		pRefineStone->SetCount(pRefineStone->GetCount() - 1);
 		if (NULL != pResult)
 			ch->AutoGiveItem(pResult, true);
-
 	}
 
-	SendRefineResultPacket(ch, bSubHeader, NULL == pResult? NPOS : TItemPos (pResult->GetWindow(), pResult->GetCell()));
+	SendRefineResultPacket(ch, bSubHeader, NULL == pResult ? NPOS : TItemPos(pResult->GetWindow(), pResult->GetCell()));
 
 	return true;
 }
@@ -979,7 +978,7 @@ void DSManager::SendRefineResultPacket(LPCHARACTER ch, BYTE bSubHeader, const TI
 	LPDESC d = ch->GetDesc();
 	if (NULL == d)
 	{
-		return ;
+		return;
 	}
 	else
 	{
@@ -1038,12 +1037,12 @@ bool DSManager::ActivateDragonSoul(LPITEM pItem)
 		return false;
 
 	if (INVENTORY_MAX_NUM + WEAR_MAX_NUM + DS_SLOT_MAX * deck_idx <= pItem->GetCell() &&
-			pItem->GetCell() < INVENTORY_MAX_NUM + WEAR_MAX_NUM + DS_SLOT_MAX * (deck_idx + 1))
+		pItem->GetCell() < INVENTORY_MAX_NUM + WEAR_MAX_NUM + DS_SLOT_MAX * (deck_idx + 1))
 	{
 		if (IsTimeLeftDragonSoul(pItem) && !IsActiveDragonSoul(pItem))
 		{
 			char buf[128];
-			sprintf (buf, "LEFT TIME(%d)", LeftTime(pItem));
+			sprintf(buf, "LEFT TIME(%d)", LeftTime(pItem));
 			LogManager::instance().ItemLog(pOwner, pItem, "DS_ACTIVATE", buf);
 			pItem->ModifyPoints(true);
 			pItem->SetSocket(ITEM_SOCKET_DRAGON_SOUL_ACTIVE_IDX, 1);
@@ -1073,7 +1072,7 @@ bool DSManager::DeactivateDragonSoul(LPITEM pItem, bool bSkipRefreshOwnerActiveS
 	pItem->SetSocket(ITEM_SOCKET_DRAGON_SOUL_ACTIVE_IDX, 0);
 	pItem->ModifyPoints(false);
 
-	sprintf (buf, "LEFT TIME(%d)", LeftTime(pItem));
+	sprintf(buf, "LEFT TIME(%d)", LeftTime(pItem));
 	LogManager::instance().ItemLog(pOwner, pItem, "DS_DEACTIVATE", buf);
 
 	if (false == bSkipRefreshOwnerActiveState)
@@ -1085,13 +1084,13 @@ bool DSManager::DeactivateDragonSoul(LPITEM pItem, bool bSkipRefreshOwnerActiveS
 void DSManager::RefreshDragonSoulState(LPCHARACTER ch)
 {
 	if (NULL == ch)
-		return ;
+		return;
 	for (int i = WEAR_MAX_NUM; i < WEAR_MAX_NUM + DS_SLOT_MAX * DRAGON_SOUL_DECK_MAX_NUM; i++)
 	{
 		LPITEM pItem = ch->GetWear(i);
 		if (pItem != NULL)
 		{
-			if(IsActiveDragonSoul(pItem))
+			if (IsActiveDragonSoul(pItem))
 			{
 				return;
 			}

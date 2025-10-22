@@ -36,7 +36,7 @@ namespace quest
 		{
 			return 1;
 		}
-		DWORD cell = (DWORD) lua_tonumber(L, 1);
+		DWORD cell = (DWORD)lua_tonumber(L, 1);
 
 		LPCHARACTER ch = CQuestManager::instance().GetCurrentCharacterPtr();
 		LPITEM item = ch ? ch->GetInventoryItem(cell) : NULL;
@@ -59,7 +59,7 @@ namespace quest
 		{
 			return 1;
 		}
-		DWORD id = (DWORD) lua_tonumber(L, 1);
+		DWORD id = (DWORD)lua_tonumber(L, 1);
 		LPITEM item = ITEM_MANAGER::instance().Find(id);
 
 		if (!item)
@@ -93,7 +93,8 @@ namespace quest
 		if (item != NULL) {
 			if (q.GetCurrentCharacterPtr() == item->GetOwner()) {
 				ITEM_MANAGER::instance().RemoveItem(item);
-			} else {
+			}
+			else {
 				sys_err("Tried to remove invalid item %p", get_pointer(item));
 			}
 			q.ClearCurrentItem();
@@ -107,15 +108,15 @@ namespace quest
 		CQuestManager& q = CQuestManager::instance();
 		if (q.GetCurrentItem() && lua_isnumber(L, 1))
 		{
-			int idx = (int) lua_tonumber(L, 1);
+			int idx = (int)lua_tonumber(L, 1);
 			if (idx < 0 || idx >= ITEM_SOCKET_MAX_NUM)
-				lua_pushnumber(L,0);
+				lua_pushnumber(L, 0);
 			else
 				lua_pushnumber(L, q.GetCurrentItem()->GetSocket(idx));
 		}
 		else
 		{
-			lua_pushnumber(L,0);
+			lua_pushnumber(L, 0);
 		}
 		return 1;
 	}
@@ -123,11 +124,11 @@ namespace quest
 	ALUA(item_set_socket)
 	{
 		CQuestManager& q = CQuestManager::instance();
-		if (q.GetCurrentItem() && lua_isnumber(L,1) && lua_isnumber(L,2))
+		if (q.GetCurrentItem() && lua_isnumber(L, 1) && lua_isnumber(L, 2))
 		{
-			int idx = (int) lua_tonumber(L, 1);
-			int value = (int) lua_tonumber(L, 2);
-			if (idx >=0 && idx < ITEM_SOCKET_MAX_NUM)
+			int idx = (int)lua_tonumber(L, 1);
+			int value = (int)lua_tonumber(L, 2);
+			if (idx >= 0 && idx < ITEM_SOCKET_MAX_NUM)
 				q.GetCurrentItem()->SetSocket(idx, value);
 		}
 		return 0;
@@ -164,7 +165,7 @@ namespace quest
 			return 1;
 		}
 
-		long lCheckFlag = (long) lua_tonumber(L, 1);
+		long lCheckFlag = (long)lua_tonumber(L, 1);
 		lua_pushboolean(L, IS_SET(item->GetFlag(), lCheckFlag));
 
 		return 1;
@@ -188,7 +189,7 @@ namespace quest
 			return 1;
 		}
 
-		int index = (int) lua_tonumber(L, 1);
+		int index = (int)lua_tonumber(L, 1);
 
 		if (index < 0 || index >= ITEM_VALUES_MAX_NUM)
 		{
@@ -310,7 +311,7 @@ namespace quest
 	{
 		DWORD vnum = 0;
 		if (lua_isnumber(L, 1))
-			vnum = (DWORD) lua_tonumber(L, 1);
+			vnum = (DWORD)lua_tonumber(L, 1);
 
 		TItemTable* pTable = ITEM_MANAGER::instance().GetTable(vnum);
 		if (pTable)
@@ -348,7 +349,7 @@ namespace quest
 			{
 				return 0;
 			}
-			lua_pushnumber(L, q.GetCurrentItem() -> GetLevelLimit());
+			lua_pushnumber(L, q.GetCurrentItem()->GetLevelLimit());
 			return 1;
 		}
 		return 0;
@@ -513,27 +514,27 @@ namespace quest
 		CQuestManager& q = CQuestManager::instance();
 		LPITEM item = q.GetCurrentItem();
 
-		if(item)
+		if (item)
 		{
 			int m_count = 0;
 			int m_reqsf = 1;
 			if (lua_isnumber(L, 2))
 				m_reqsf = lua_tonumber(L, 2);
 
-			if (m_mode==1 || m_mode==0)
+			if (m_mode == 1 || m_mode == 0)
 			{
 				m_count = ITEM_ATTRIBUTE_NORM_NUM - item->GetAttributeCount();
-				if (m_count>m_reqsf && m_reqsf!=0)
+				if (m_count > m_reqsf && m_reqsf != 0)
 					m_count = m_reqsf;
-				for (int i=0; i<m_count; i++)
+				for (int i = 0; i < m_count; i++)
 					item->AddAttribute();
 			}
-			if (m_mode==2 || m_mode==0)
+			if (m_mode == 2 || m_mode == 0)
 			{
 				m_count = ITEM_ATTRIBUTE_RARE_NUM - item->GetRareAttrCount();
-				if (m_count>m_reqsf && m_reqsf!=0)
+				if (m_count > m_reqsf && m_reqsf != 0)
 					m_count = m_reqsf;
-				for (int i=0; i<m_count; i++)
+				for (int i = 0; i < m_count; i++)
 					item->AddRareAttribute();
 			}
 		}
@@ -547,11 +548,11 @@ namespace quest
 		CQuestManager& q = CQuestManager::instance();
 		LPITEM item = q.GetCurrentItem();
 
-		if(item)
+		if (item)
 		{
-			if (m_mode==0 || m_mode==1)
+			if (m_mode == 0 || m_mode == 1)
 				item->ChangeAttribute();
-			if (m_mode==0 || m_mode==2)
+			if (m_mode == 0 || m_mode == 2)
 				item->ChangeRareAttribute();
 		}
 		return 0;
@@ -567,12 +568,12 @@ namespace quest
 		int m_start = 0;
 		int m_end = ITEM_ATTRIBUTE_MAX_NUM;
 
-		if (m_mode==1)
+		if (m_mode == 1)
 			m_end = ITEM_ATTRIBUTE_NORM_NUM;
-		else if (m_mode==2)
+		else if (m_mode == 2)
 			m_start = ITEM_ATTRIBUTE_NORM_NUM;
 
-		for (int i=m_start; i<m_end; i++)
+		for (int i = m_start; i < m_end; i++)
 			item->SetForceAttribute(i, 0, 0);
 		return 0;
 	}
@@ -584,11 +585,11 @@ namespace quest
 		CQuestManager& q = CQuestManager::instance();
 		LPITEM item = q.GetCurrentItem();
 
-		if(item)
+		if (item)
 		{
-			if (m_mode==1)
+			if (m_mode == 1)
 				lua_pushnumber(L, item->GetAttributeCount());
-			else if(m_mode==2)
+			else if (m_mode == 2)
 				lua_pushnumber(L, item->GetRareAttrCount());
 			else //0
 			{
@@ -621,15 +622,15 @@ namespace quest
 			// {id, value, id, value, id, value, id, value, id, value, id, value, id, value}
 			// es. {1, 1000, 2, 500, 73, 15, 23, 20, 0, 0, 71, 15, 72, 15}
 			lua_newtable(L);
-			for (int i=0; i<ITEM_ATTRIBUTE_MAX_NUM; i++)
+			for (int i = 0; i < ITEM_ATTRIBUTE_MAX_NUM; i++)
 			{
 				m_attr = item->GetAttribute(i);
 				// push type
 				lua_pushnumber(L, m_attr.bType);
-				lua_rawseti(L, -2, (i*2)+1);
+				lua_rawseti(L, -2, (i * 2) + 1);
 				// push value
 				lua_pushnumber(L, m_attr.sValue);
-				lua_rawseti(L, -2, (i*2)+2);
+				lua_rawseti(L, -2, (i * 2) + 2);
 			}
 		}
 		else
@@ -646,24 +647,24 @@ namespace quest
 		CQuestManager& q = CQuestManager::instance();
 		LPITEM item = q.GetCurrentItem();
 
-		int m_attr[ITEM_ATTRIBUTE_MAX_NUM*2] = {0};
+		int m_attr[ITEM_ATTRIBUTE_MAX_NUM * 2] = { 0 };
 		int m_idx = 0;
 		// start
 		lua_pushnil(L);
-		while (lua_next(L, 1) && m_idx<(ITEM_ATTRIBUTE_MAX_NUM*2))
+		while (lua_next(L, 1) && m_idx < (ITEM_ATTRIBUTE_MAX_NUM * 2))
 		{
 			m_attr[m_idx++] = lua_tonumber(L, -1);
 			lua_pop(L, 1);
 		}
 		// end
-		for (int i=0; i<ITEM_ATTRIBUTE_MAX_NUM; i++)
-			item->SetForceAttribute(i, m_attr[(i*2)+0], m_attr[(i*2)+1]);
+		for (int i = 0; i < ITEM_ATTRIBUTE_MAX_NUM; i++)
+			item->SetForceAttribute(i, m_attr[(i * 2) + 0], m_attr[(i * 2) + 1]);
 		return 0;
 	}
 
 	ALUA(item_set_count0)
 	{
-		if(!lua_isnumber(L, 1))
+		if (!lua_isnumber(L, 1))
 			return 0;
 
 		CQuestManager& q = CQuestManager::instance();
@@ -671,7 +672,7 @@ namespace quest
 
 		if (item)
 			item->SetCount(lua_tonumber(L, 1));
-			//item->SetCount(MINMAX(1, lua_tonumber(L, 1), g_bItemCountLimit));
+		//item->SetCount(MINMAX(1, lua_tonumber(L, 1), g_bItemCountLimit));
 
 		return 0;
 	}
@@ -702,7 +703,7 @@ namespace quest
 		CQuestManager& q = CQuestManager::instance();
 		LPITEM item = q.GetCurrentItem();
 
-		lua_pushboolean(L, item!=NULL);
+		lua_pushboolean(L, item != NULL);
 		return 1;
 	}
 

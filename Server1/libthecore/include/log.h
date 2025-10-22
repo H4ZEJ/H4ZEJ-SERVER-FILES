@@ -5,9 +5,9 @@
 extern "C"
 {
 #endif /* __cplusplus */
-    extern int log_init(void);
-    extern void log_destroy(void);
-    extern void log_rotate(void);
+	extern int log_init(void);
+	extern void log_destroy(void);
+	extern void log_rotate(void);
 
 	extern void log_set_level(unsigned int level);
 	extern void log_unset_level(unsigned int level);
@@ -16,13 +16,13 @@ extern "C"
 	extern int log_get_expiration_days(void);
 
 #ifndef __WIN32__
-    extern void _sys_err(const char *func, int line, const char *format, ...);
+	extern void _sys_err(const char* func, int line, const char* format, ...);
 #else
-	extern void _sys_err(const char *func, int line, const char *format, ...);
+	extern void _sys_err(const char* func, int line, const char* format, ...);
 #endif
-    extern void sys_log_header(const char *header);
-    extern void sys_log(unsigned int lv, const char *format, ...);
-    extern void pt_log(const char *format, ...);
+	extern void sys_log_header(const char* header);
+	extern void sys_log(unsigned int lv, const char* format, ...);
+	extern void pt_log(const char* format, ...);
 
 #ifndef __WIN32__
 #define sys_err(fmt, args...) _sys_err(__FUNCTION__, __LINE__, fmt, ##args)

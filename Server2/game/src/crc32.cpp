@@ -54,7 +54,7 @@ static unsigned long CRCTable[256] =
 #define DO8(buf, i)	DO4(buf, i); DO4(buf, i + 4);
 #define DO16(buf, i)	DO8(buf, i); DO8(buf, i + 8);
 
-crc_t GetCRC32(const char * buf, size_t len)
+crc_t GetCRC32(const char* buf, size_t len)
 {
 	crc_t crc = 0xffffffff;
 
@@ -90,7 +90,7 @@ crc_t GetCRC32(const char * buf, size_t len)
 #define DO8CI(buf, i)	DO4CI(buf, i); DO4CI(buf, i + 4);
 #define DO16CI(buf, i)	DO8CI(buf, i); DO8CI(buf, i + 8);
 
-crc_t GetCaseCRC32(const char * buf, size_t len)
+crc_t GetCaseCRC32(const char* buf, size_t len)
 {
 	crc_t crc = 0xffffffff;
 
@@ -120,9 +120,9 @@ crc_t GetCaseCRC32(const char * buf, size_t len)
 	return crc;
 }
 
-crc_t GetFastHash(const char * key, size_t len)
+crc_t GetFastHash(const char* key, size_t len)
 {
-	const char * end = key + len;
+	const char* end = key + len;
 	unsigned long h = 0;
 
 	while (key < end)

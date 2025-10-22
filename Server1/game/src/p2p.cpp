@@ -30,7 +30,7 @@ P2P_MANAGER::~P2P_MANAGER()
 
 void P2P_MANAGER::Boot(LPDESC d)
 {
-	CHARACTER_MANAGER::NAME_MAP & map = CHARACTER_MANAGER::instance().GetPCMap();
+	CHARACTER_MANAGER::NAME_MAP& map = CHARACTER_MANAGER::instance().GetPCMap();
 	CHARACTER_MANAGER::NAME_MAP::iterator it = map.begin();
 
 	TPacketGGLogin p;
@@ -107,7 +107,7 @@ void P2P_MANAGER::EraseUserByDesc(LPDESC d)
 
 	while (it != m_map_pkCCI.end())
 	{
-		CCI * pkCCI = it->second;
+		CCI* pkCCI = it->second;
 		it++;
 
 		if (pkCCI->pkDesc == d)
@@ -115,7 +115,7 @@ void P2P_MANAGER::EraseUserByDesc(LPDESC d)
 	}
 }
 
-void P2P_MANAGER::Send(const void * c_pvData, int iSize, LPDESC except)
+void P2P_MANAGER::Send(const void* c_pvData, int iSize, LPDESC except)
 {
 	TR1_NS::unordered_set<LPDESC>::iterator it = m_set_pkPeers.begin();
 
@@ -130,7 +130,7 @@ void P2P_MANAGER::Send(const void * c_pvData, int iSize, LPDESC except)
 	}
 }
 
-void P2P_MANAGER::Login(LPDESC d, const TPacketGGLogin * p)
+void P2P_MANAGER::Login(LPDESC d, const TPacketGGLogin* p)
 {
 	CCI* pkCCI = Find(p->szName);
 
@@ -172,11 +172,11 @@ void P2P_MANAGER::Login(LPDESC d, const TPacketGGLogin * p)
 
 	if (UpdateP2P) {
 		std::string name(pkCCI->szName);
-	    MessengerManager::instance().P2PLogin(name);
+		MessengerManager::instance().P2PLogin(name);
 	}
 }
 
-void P2P_MANAGER::Logout(CCI * pkCCI)
+void P2P_MANAGER::Logout(CCI* pkCCI)
 {
 	if (pkCCI->bChannel == g_bChannel)
 	{
@@ -206,9 +206,9 @@ void P2P_MANAGER::Logout(CCI * pkCCI)
 	M2_DELETE(pkCCI);
 }
 
-void P2P_MANAGER::Logout(const char * c_pszName)
+void P2P_MANAGER::Logout(const char* c_pszName)
 {
-	CCI * pkCCI = Find(c_pszName);
+	CCI* pkCCI = Find(c_pszName);
 
 	if (!pkCCI)
 		return;
@@ -217,7 +217,7 @@ void P2P_MANAGER::Logout(const char * c_pszName)
 	sys_log(0, "P2P: Logout %s", c_pszName);
 }
 
-CCI * P2P_MANAGER::FindByPID(DWORD pid)
+CCI* P2P_MANAGER::FindByPID(DWORD pid)
 {
 	TPIDCCIMap::iterator it = m_map_dwPID_pkCCI.find(pid);
 	if (it == m_map_dwPID_pkCCI.end())
@@ -225,7 +225,7 @@ CCI * P2P_MANAGER::FindByPID(DWORD pid)
 	return it->second;
 }
 
-CCI * P2P_MANAGER::Find(const char * c_pszName)
+CCI* P2P_MANAGER::Find(const char* c_pszName)
 {
 	TCCIMap::const_iterator it;
 
@@ -265,7 +265,6 @@ void P2P_MANAGER::GetP2PHostNames(std::string& hostNames)
 		LPDESC pkDesc = *it++;
 
 		oss << pkDesc->GetP2PHost() << " " << pkDesc->GetP2PPort() << "\n";
-
 	}
 	hostNames += oss.str();
 }

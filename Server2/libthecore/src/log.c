@@ -15,16 +15,16 @@
 #define MAXNAMLEN 512
 #endif
 
-typedef struct log_file_s * LPLOGFILE;
+typedef struct log_file_s* LPLOGFILE;
 typedef struct log_file_s LOGFILE;
 
 struct log_file_s
 {
-    char*	filename;
-    FILE*	fp;
+	char* filename;
+	FILE* fp;
 
-    int		last_hour;
-    int		last_day;
+	int		last_hour;
+	int		last_day;
 };
 
 LPLOGFILE	log_file_sys = NULL;
@@ -34,11 +34,11 @@ static char	log_dir[32] = { 0, };
 unsigned int log_keep_days = 3;
 
 // Internal functions
-LPLOGFILE log_file_init(const char* filename, const char *openmode);
+LPLOGFILE log_file_init(const char* filename, const char* openmode);
 void log_file_destroy(LPLOGFILE logfile);
 void log_file_rotate(LPLOGFILE logfile);
 void log_file_check(LPLOGFILE logfile);
-void log_file_set_dir(const char *dir);
+void log_file_set_dir(const char* dir);
 
 static unsigned int log_level_bits = 0;
 
@@ -69,17 +69,16 @@ int log_init(void)
 	do
 	{
 		log_file_sys = log_file_init(SYSLOG_FILENAME, "a+");
-		if( NULL == log_file_sys ) break;
+		if (NULL == log_file_sys) break;
 
 		log_file_err = log_file_init(SYSERR_FILENAME, "a+");
-		if( NULL == log_file_err ) break;
+		if (NULL == log_file_err) break;
 
 		log_file_pt = log_file_init(PTS_FILENAME, "w");
-		if( NULL == log_file_pt ) break;
+		if (NULL == log_file_pt) break;
 
 		return true;
-	}
-	while( false );
+	} while (false);
 
 	return false;
 }
@@ -105,11 +104,11 @@ void log_rotate(void)
 }
 
 #ifndef __WIN32__
-void _sys_err(const char *func, int line, const char *format, ...)
+void _sys_err(const char* func, int line, const char* format, ...)
 {
 	va_list args;
 	time_t ct = time(0);
-	char *time_s = asctime(localtime(&ct));
+	char* time_s = asctime(localtime(&ct));
 
 	char buf[1024 + 2];
 	int len;
@@ -118,8 +117,8 @@ void _sys_err(const char *func, int line, const char *format, ...)
 		return;
 
 	time_s[strlen(time_s) - 1] = '\0';
-	len = snprintf(buf, sizeof(buf)-2, "SYSERR: %-15.15s :: %s: ", time_s + 4, func);
-	buf[sizeof(buf)-1] = '\0';
+	len = snprintf(buf, sizeof(buf) - 2, "SYSERR: %-15.15s :: %s: ", time_s + 4, func);
+	buf[sizeof(buf) - 1] = '\0';
 
 	if (len < 1024)
 	{
@@ -137,11 +136,11 @@ void _sys_err(const char *func, int line, const char *format, ...)
 	fflush(log_file_sys->fp);
 }
 #else
-void _sys_err(const char *func, int line, const char *format, ...)
+void _sys_err(const char* func, int line, const char* format, ...)
 {
 	va_list args;
 	time_t ct = time(0);
-	char *time_s = asctime(localtime(&ct));
+	char* time_s = asctime(localtime(&ct));
 
 	char buf[1024 + 2];
 	int len;
@@ -150,8 +149,8 @@ void _sys_err(const char *func, int line, const char *format, ...)
 		return;
 
 	time_s[strlen(time_s) - 1] = '\0';
-	len = snprintf(buf, sizeof(buf)-2, "SYSERR: %-15.15s :: %s: ", time_s + 4, func);
-	buf[sizeof(buf)-1] = '\0';
+	len = snprintf(buf, sizeof(buf) - 2, "SYSERR: %-15.15s :: %s: ", time_s + 4, func);
+	buf[sizeof(buf) - 1] = '\0';
 
 	if (len < 1024)
 	{
@@ -175,12 +174,12 @@ void _sys_err(const char *func, int line, const char *format, ...)
 
 static char sys_log_header_string[33] = { 0, };
 
-void sys_log_header(const char *header)
+void sys_log_header(const char* header)
 {
 	strncpy(sys_log_header_string, header, 32);
 }
 
-void sys_log(unsigned int bit, const char *format, ...)
+void sys_log(unsigned int bit, const char* format, ...)
 {
 	va_list	args;
 
@@ -190,7 +189,7 @@ void sys_log(unsigned int bit, const char *format, ...)
 	if (log_file_sys)
 	{
 		time_t ct = time(0);
-		char *time_s = asctime(localtime(&ct));
+		char* time_s = asctime(localtime(&ct));
 
 		fprintf(log_file_sys->fp, "%s", sys_log_header_string);
 
@@ -220,7 +219,7 @@ void sys_log(unsigned int bit, const char *format, ...)
 	}
 }
 
-void pt_log(const char *format, ...)
+void pt_log(const char* format, ...)
 {
 	va_list	args;
 
@@ -235,10 +234,10 @@ void pt_log(const char *format, ...)
 	fflush(log_file_pt->fp);
 }
 
-LPLOGFILE log_file_init(const char * filename, const char * openmode)
+LPLOGFILE log_file_init(const char* filename, const char* openmode)
 {
 	LPLOGFILE logfile;
-	FILE * fp;
+	FILE* fp;
 	struct tm curr_tm;
 	time_t time_s;
 
@@ -250,13 +249,13 @@ LPLOGFILE log_file_init(const char * filename, const char * openmode)
 	if (!fp)
 		return NULL;
 
-	logfile = (LPLOGFILE) malloc(sizeof(LOGFILE));
+	logfile = (LPLOGFILE)malloc(sizeof(LOGFILE));
 #ifndef __WIN32__
 	logfile->filename = strdup(filename);
 #else
 	logfile->filename = _strdup(filename);
 #endif
-	logfile->fp	= fp;
+	logfile->fp = fp;
 	logfile->last_hour = curr_tm.tm_hour;
 	logfile->last_day = curr_tm.tm_mday;
 
@@ -295,12 +294,12 @@ void log_file_check(LPLOGFILE logfile)
 	}
 }
 
-void log_file_delete_old(const char *filename)
+void log_file_delete_old(const char* filename)
 {
 	struct stat		sb;
 	int			num1, num2;
 	char		buf[32];
-	char		system_cmd[64+MAXNAMLEN+1];
+	char		system_cmd[64 + MAXNAMLEN + 1];
 	struct tm		new_tm;
 
 	if (stat(filename, &sb) == -1)
@@ -317,7 +316,7 @@ void log_file_delete_old(const char *filename)
 	num1 = atoi(buf);
 #ifndef __WIN32__
 	{
-		struct dirent ** namelist;
+		struct dirent** namelist;
 		int	n;
 
 		n = scandir(filename, &namelist, 0, alphasort);
@@ -326,7 +325,7 @@ void log_file_delete_old(const char *filename)
 			perror("scandir");
 		else
 		{
-			char name[MAXNAMLEN+1];
+			char name[MAXNAMLEN + 1];
 
 			while (n-- > 0)
 			{
@@ -376,8 +375,7 @@ void log_file_delete_old(const char *filename)
 
 					sys_log(0, "SYSTEM_CMD: %s", system_cmd);
 				}
-			}
-			while (FindNextFile(hFind, &fdata));
+			} while (FindNextFile(hFind, &fdata));
 		}
 	}
 #endif
@@ -385,33 +383,33 @@ void log_file_delete_old(const char *filename)
 
 void log_file_rotate(LPLOGFILE logfile)
 {
-    struct tm	curr_tm;
-    time_t	time_s;
-    char	dir[128];
-    char	system_cmd[128+MAXNAMLEN+1];
+	struct tm	curr_tm;
+	time_t	time_s;
+	char	dir[128];
+	char	system_cmd[128 + MAXNAMLEN + 1];
 
-    time_s = time(0);
-    curr_tm = *localtime(&time_s);
+	time_s = time(0);
+	curr_tm = *localtime(&time_s);
 
-    if (curr_tm.tm_mday != logfile->last_day)
-    {
-	struct tm new_tm;
-	new_tm = *tm_calc(&curr_tm, -3);
+	if (curr_tm.tm_mday != logfile->last_day)
+	{
+		struct tm new_tm;
+		new_tm = *tm_calc(&curr_tm, -3);
 
 #ifndef __WIN32__
-	sprintf(system_cmd, "rm -rf %s/%04d%02d%02d", log_dir, new_tm.tm_year + 1900, new_tm.tm_mon + 1, new_tm.tm_mday);
+		sprintf(system_cmd, "rm -rf %s/%04d%02d%02d", log_dir, new_tm.tm_year + 1900, new_tm.tm_mon + 1, new_tm.tm_mday);
 #else
-	sprintf(system_cmd, "del %s\\%04d%02d%02d", log_dir, new_tm.tm_year + 1900, new_tm.tm_mon + 1, new_tm.tm_mday);
+		sprintf(system_cmd, "del %s\\%04d%02d%02d", log_dir, new_tm.tm_year + 1900, new_tm.tm_mon + 1, new_tm.tm_mday);
 #endif
-	system(system_cmd);
+		system(system_cmd);
 
-	sys_log(0, "SYSTEM_CMD: %s", system_cmd);
+		sys_log(0, "SYSTEM_CMD: %s", system_cmd);
 
-	logfile->last_day = curr_tm.tm_mday;
-    }
+		logfile->last_day = curr_tm.tm_mday;
+	}
 
-    if (curr_tm.tm_hour != logfile->last_hour)
-    {
+	if (curr_tm.tm_hour != logfile->last_hour)
+	{
 		struct stat	stat_buf;
 		snprintf(dir, sizeof(dir), "%s/%04d%02d%02d", log_dir, curr_tm.tm_year + 1900, curr_tm.tm_mon + 1, curr_tm.tm_mday);
 
@@ -425,7 +423,7 @@ void log_file_rotate(LPLOGFILE logfile)
 		}
 
 		sys_log(0, "SYSTEM: LOG ROTATE (%04d-%02d-%02d %d)",
-				curr_tm.tm_year + 1900, curr_tm.tm_mon + 1, curr_tm.tm_mday, logfile->last_hour);
+			curr_tm.tm_year + 1900, curr_tm.tm_mon + 1, curr_tm.tm_mday, logfile->last_hour);
 
 		fclose(logfile->fp);
 
@@ -442,9 +440,9 @@ void log_file_rotate(LPLOGFILE logfile)
 	}
 }
 
-void log_file_set_dir(const char *dir)
+void log_file_set_dir(const char* dir)
 {
-    strcpy(log_dir, dir);
-    log_file_delete_old(log_dir);
+	strcpy(log_dir, dir);
+	log_file_delete_old(log_dir);
 }
 //martysama0134's 8e0aa8057d3f54320e391131a48866b4

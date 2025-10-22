@@ -16,20 +16,20 @@ enum
 	DEVILTOWER_BLACKSMITH_ARMOR_MOB = 20075,
 	DEVILTOWER_BLACKSMITH_ACCESSORY_MOB = 20076,
 
-	BLACKSMITH2_MOB	= 20091,
+	BLACKSMITH2_MOB = 20091,
 };
 
 class CRefineManager : public singleton<CRefineManager>
 {
 	typedef std::map<DWORD, TRefineTable> TRefineRecipeMap;
-	public:
+public:
 	CRefineManager();
 	virtual ~CRefineManager();
 
-	bool	Initialize(TRefineTable * table, int size);
+	bool	Initialize(TRefineTable* table, int size);
 	const TRefineTable* GetRefineRecipe(DWORD id);
 
-	private:
+private:
 	TRefineRecipeMap    m_map_RefineRecipe;
 };
 #endif

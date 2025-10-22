@@ -20,7 +20,7 @@ void CItemAddonManager::ApplyAddonTo(int iAddonType, LPITEM pItem)
 		return;
 	}
 
-	int iSkillBonus = MINMAX(-30, (int) (gauss_random(0, 5) + 0.5f), 30);
+	int iSkillBonus = MINMAX(-30, (int)(gauss_random(0, 5) + 0.5f), 30);
 	int iNormalHitBonus = 0;
 	if (abs(iSkillBonus) <= 20)
 		iNormalHitBonus = -2 * iSkillBonus + abs(number(-8, 8) + number(-8, 8)) + number(1, 4);

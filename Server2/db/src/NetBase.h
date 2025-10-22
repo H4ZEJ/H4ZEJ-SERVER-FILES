@@ -4,17 +4,17 @@
 
 class CNetBase
 {
-    public:
+public:
 	CNetBase();
 	virtual ~CNetBase();
 
-    protected:
+protected:
 	static LPFDWATCH	m_fdWatcher;
 };
 
 class CNetPoller : public CNetBase, public singleton<CNetPoller>
 {
-    public:
+public:
 	CNetPoller();
 	virtual ~CNetPoller();
 

@@ -22,7 +22,7 @@ namespace marriage
 		std::string name1;
 		std::string name2;
 
-		TWeddingInfo * pWeddingInfo;
+		TWeddingInfo* pWeddingInfo;
 
 		TMarriage(DWORD pid1, DWORD pid2, int _love_point, time_t _marry_time, const char* name1, const char* name2) :
 			m_pid1(pid1),
@@ -87,64 +87,64 @@ namespace marriage
 
 	class CManager : public singleton<CManager>
 	{
-		public:
-			CManager();
-			virtual ~CManager();
+	public:
+		CManager();
+		virtual ~CManager();
 
-			bool	Initialize();
-			void	Destroy();
+		bool	Initialize();
+		void	Destroy();
 
-			TMarriage*	Get(DWORD dwPlayerID);
+		TMarriage* Get(DWORD dwPlayerID);
 
-			bool	IsMarriageUniqueItem(DWORD dwItemVnum);
+		bool	IsMarriageUniqueItem(DWORD dwItemVnum);
 
-			bool	IsMarried(DWORD dwPlayerID);
-			bool	IsEngaged(DWORD dwPlayerID);
-			bool	IsEngagedOrMarried(DWORD dwPlayerID);
+		bool	IsMarried(DWORD dwPlayerID);
+		bool	IsEngaged(DWORD dwPlayerID);
+		bool	IsEngagedOrMarried(DWORD dwPlayerID);
 
-			void	RequestAdd(DWORD dwPID1, DWORD dwPID2, const char* szName1, const char* szName2);
-			void	Add(DWORD dwPID1, DWORD dwPID2, time_t tMarryTime, const char* szName1, const char* szName2);
+		void	RequestAdd(DWORD dwPID1, DWORD dwPID2, const char* szName1, const char* szName2);
+		void	Add(DWORD dwPID1, DWORD dwPID2, time_t tMarryTime, const char* szName1, const char* szName2);
 
-			void	RequestUpdate(DWORD dwPID1, DWORD dwPID2, int iUpdatePoint, BYTE byMarried);
-			void	Update(DWORD dwPID1, DWORD dwPID2, long lTotalPoint, BYTE byMarried);
+		void	RequestUpdate(DWORD dwPID1, DWORD dwPID2, int iUpdatePoint, BYTE byMarried);
+		void	Update(DWORD dwPID1, DWORD dwPID2, long lTotalPoint, BYTE byMarried);
 
-			void	RequestRemove(DWORD dwPID1, DWORD dwPID2);
-			void	Remove(DWORD dwPID1, DWORD dwPID2);
+		void	RequestRemove(DWORD dwPID1, DWORD dwPID2);
+		void	Remove(DWORD dwPID1, DWORD dwPID2);
 
-			//void	P2PLogin(DWORD dwPID);
-			//void	P2PLogout(DWORD dwPID);
+		//void	P2PLogin(DWORD dwPID);
+		//void	P2PLogout(DWORD dwPID);
 
-			void	Login(LPCHARACTER ch);
+		void	Login(LPCHARACTER ch);
 
-			void	Logout(DWORD pid);
-			void	Logout(LPCHARACTER ch);
+		void	Logout(DWORD pid);
+		void	Logout(LPCHARACTER ch);
 
-			void	WeddingReady(DWORD dwPID1, DWORD dwPID2, DWORD dwMapIndex);
-			void	WeddingStart(DWORD dwPID1, DWORD dwPID2);
-			void	WeddingEnd(DWORD dwPID1, DWORD dwPID2);
+		void	WeddingReady(DWORD dwPID1, DWORD dwPID2, DWORD dwMapIndex);
+		void	WeddingStart(DWORD dwPID1, DWORD dwPID2);
+		void	WeddingEnd(DWORD dwPID1, DWORD dwPID2);
 
-			void	RequestEndWedding(DWORD dwPID1, DWORD dwPID2);
+		void	RequestEndWedding(DWORD dwPID1, DWORD dwPID2);
 
-			template <typename Func>
-				Func	for_each_wedding(Func f);
+		template <typename Func>
+		Func	for_each_wedding(Func f);
 
-		private:
-			TR1_NS::unordered_set<TMarriage*> m_Marriages;
-			std::map<DWORD, TMarriage *> m_MarriageByPID;
-			std::set<std::pair<DWORD, DWORD> > m_setWedding;
+	private:
+		TR1_NS::unordered_set<TMarriage*> m_Marriages;
+		std::map<DWORD, TMarriage*> m_MarriageByPID;
+		std::set<std::pair<DWORD, DWORD> > m_setWedding;
 	};
 
 	template <typename Func>
-		Func CManager::for_each_wedding(Func f)
+	Func CManager::for_each_wedding(Func f)
+	{
+		for (itertype(m_setWedding) it = m_setWedding.begin(); it != m_setWedding.end(); ++it)
 		{
-			for (itertype(m_setWedding) it = m_setWedding.begin(); it!=m_setWedding.end(); ++it)
-			{
-				TMarriage* pMarriage = Get(it->first);
-				if (pMarriage)
-					f(pMarriage);
-			}
-			return f;
+			TMarriage* pMarriage = Get(it->first);
+			if (pMarriage)
+				f(pMarriage);
 		}
+		return f;
+	}
 }
 
 #endif

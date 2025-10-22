@@ -11,60 +11,60 @@ class CGrid;
 /* ---------------------------------------------------------------------------------- */
 class CShop
 {
-	public:
-		typedef struct shop_item
+public:
+	typedef struct shop_item
+	{
+		DWORD	vnum;
+		long	price;
+
+		BYTE	count;
+
+		LPITEM	pkItem;
+		int		itemid;
+
+		shop_item()
 		{
-			DWORD	vnum;
-			long	price;
+			vnum = 0;
+			price = 0;
+			count = 0;
+			itemid = 0;
+			pkItem = NULL;
+		}
+	} SHOP_ITEM;
 
-			BYTE	count;
+	CShop();
+	virtual ~CShop(); // @fixme139 (+virtual)
 
-			LPITEM	pkItem;
-			int		itemid;
+	bool			Create(DWORD dwVnum, DWORD dwNPCVnum, TShopItemTable* pItemTable);
+	void			SetShopItems(TShopItemTable* pItemTable, BYTE bItemCount);
 
-			shop_item()
-			{
-				vnum = 0;
-				price = 0;
-				count = 0;
-				itemid = 0;
-				pkItem = NULL;
-			}
-		} SHOP_ITEM;
+	virtual void	SetPCShop(LPCHARACTER ch);
+	virtual bool	IsPCShop() { return m_pkPC ? true : false; }
 
-		CShop();
-		virtual ~CShop(); // @fixme139 (+virtual)
+	virtual bool	AddGuest(LPCHARACTER ch, DWORD owner_vid, bool bOtherEmpire);
+	void			RemoveGuest(LPCHARACTER ch);
+	virtual int		Buy(LPCHARACTER ch, BYTE pos);
+	void			BroadcastUpdateItem(BYTE pos);
+	int				GetNumberByVnum(DWORD dwVnum);
+	virtual bool	IsSellingItem(DWORD itemID);
 
-		bool			Create(DWORD dwVnum, DWORD dwNPCVnum, TShopItemTable * pItemTable);
-		void			SetShopItems(TShopItemTable * pItemTable, BYTE bItemCount);
+	DWORD	GetVnum() { return m_dwVnum; }
+	DWORD	GetNPCVnum() { return m_dwNPCVnum; }
 
-		virtual void	SetPCShop(LPCHARACTER ch);
-		virtual bool	IsPCShop()	{ return m_pkPC ? true : false; }
+protected:
+	void	Broadcast(const void* data, int bytes);
 
-		virtual bool	AddGuest(LPCHARACTER ch,DWORD owner_vid, bool bOtherEmpire);
-		void			RemoveGuest(LPCHARACTER ch);
-		virtual int		Buy(LPCHARACTER ch, BYTE pos);
-		void			BroadcastUpdateItem(BYTE pos);
-		int				GetNumberByVnum(DWORD dwVnum);
-		virtual bool	IsSellingItem(DWORD itemID);
+protected:
+	DWORD				m_dwVnum;
+	DWORD				m_dwNPCVnum;
 
-		DWORD	GetVnum() { return m_dwVnum; }
-		DWORD	GetNPCVnum() { return m_dwNPCVnum; }
+	CGrid* m_pGrid;
 
-	protected:
-		void	Broadcast(const void * data, int bytes);
+	typedef TR1_NS::unordered_map<LPCHARACTER, bool> GuestMapType;
+	GuestMapType m_map_guest;
+	std::vector<SHOP_ITEM>		m_itemVector;
 
-	protected:
-		DWORD				m_dwVnum;
-		DWORD				m_dwNPCVnum;
-
-		CGrid *				m_pGrid;
-
-		typedef TR1_NS::unordered_map<LPCHARACTER, bool> GuestMapType;
-		GuestMapType m_map_guest;
-		std::vector<SHOP_ITEM>		m_itemVector;
-
-		LPCHARACTER			m_pkPC;
+	LPCHARACTER			m_pkPC;
 };
 
 #endif

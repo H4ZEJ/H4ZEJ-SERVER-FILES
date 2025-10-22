@@ -33,14 +33,14 @@ CSkillManager::CSkillManager()
 CSkillManager::~CSkillManager()
 {
 	itertype(m_map_pkSkillProto) it = m_map_pkSkillProto.begin();
-	for ( ; it != m_map_pkSkillProto.end(); ++it) {
+	for (; it != m_map_pkSkillProto.end(); ++it) {
 		M2_DELETE(it->second);
 	}
 }
 
 struct SPointOnType
 {
-	const char * c_pszName;
+	const char* c_pszName;
 	int		 iPointOn;
 } kPointOnTypes[] = {
 	{ "NONE",		POINT_NONE		},
@@ -79,7 +79,7 @@ struct SPointOnType
 	{ "\n",		POINT_NONE		},
 };
 
-int FindPointType(const char * c_sz)
+int FindPointType(const char* c_sz)
 {
 	for (int i = 0; *kPointOnTypes[i].c_pszName != '\n'; ++i)
 	{
@@ -89,17 +89,17 @@ int FindPointType(const char * c_sz)
 	return -1;
 }
 
-bool CSkillManager::Initialize(TSkillTable * pTab, int iSize)
+bool CSkillManager::Initialize(TSkillTable* pTab, int iSize)
 {
 	char buf[1024];
-	std::map<DWORD, CSkillProto *> map_pkSkillProto;
+	std::map<DWORD, CSkillProto*> map_pkSkillProto;
 
-	TSkillTable * t = pTab;
+	TSkillTable* t = pTab;
 	bool bError = false;
 
 	for (int i = 0; i < iSize; ++i, ++t)
 	{
-		CSkillProto * pkProto = M2_NEW CSkillProto;
+		CSkillProto* pkProto = M2_NEW CSkillProto;
 
 		pkProto->dwVnum = t->dwVnum;
 		strlcpy(pkProto->szName, t->szName, sizeof(pkProto->szName));
@@ -291,7 +291,7 @@ bool CSkillManager::Initialize(TSkillTable * pTab, int iSize)
 		}
 
 		sys_log(0, "#%-3d %-24s type %u flag %u affect %u point_poly: %s",
-				pkProto->dwVnum, pkProto->szName, pkProto->dwType, pkProto->dwFlag, pkProto->dwAffectFlag, t->szPointPoly);
+			pkProto->dwVnum, pkProto->szName, pkProto->dwType, pkProto->dwFlag, pkProto->dwAffectFlag, t->szPointPoly);
 
 		map_pkSkillProto.emplace(pkProto->dwVnum, pkProto);
 	}
@@ -323,9 +323,9 @@ bool CSkillManager::Initialize(TSkillTable * pTab, int iSize)
 	return !bError;
 }
 
-CSkillProto * CSkillManager::Get(DWORD dwVnum)
+CSkillProto* CSkillManager::Get(DWORD dwVnum)
 {
-	std::map<DWORD, CSkillProto *>::iterator it = m_map_pkSkillProto.find(dwVnum);
+	std::map<DWORD, CSkillProto*>::iterator it = m_map_pkSkillProto.find(dwVnum);
 
 	if (it == m_map_pkSkillProto.end())
 		return NULL;
@@ -333,9 +333,9 @@ CSkillProto * CSkillManager::Get(DWORD dwVnum)
 	return it->second;
 }
 
-CSkillProto * CSkillManager::Get(const char * c_pszSkillName)
+CSkillProto* CSkillManager::Get(const char* c_pszSkillName)
 {
-	std::map<DWORD, CSkillProto *>::iterator it = m_map_pkSkillProto.begin();
+	std::map<DWORD, CSkillProto*>::iterator it = m_map_pkSkillProto.begin();
 
 	while (it != m_map_pkSkillProto.end())
 	{

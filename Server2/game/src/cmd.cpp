@@ -187,8 +187,8 @@ ACMD(do_oxevent_log);
 ACMD(do_oxevent_get_attender);
 
 ACMD(do_effect);
-ACMD(do_threeway_war_info );
-ACMD(do_threeway_war_myinfo );
+ACMD(do_threeway_war_info);
+ACMD(do_threeway_war_myinfo);
 //
 
 ACMD(do_monarch_warpto);
@@ -214,7 +214,7 @@ ACMD(do_temp);
 
 ACMD(do_check_monarch_money);
 
-ACMD(do_reset_subskill );
+ACMD(do_reset_subskill);
 ACMD(do_flush);
 
 ACMD(do_eclipse);
@@ -237,20 +237,20 @@ ACMD(do_set_socket);
 ACMD(do_costume);
 ACMD(do_set_stat);
 
-ACMD (do_can_dead);
+ACMD(do_can_dead);
 
-ACMD (do_full_set);
+ACMD(do_full_set);
 
-ACMD (do_item_full_set);
+ACMD(do_item_full_set);
 
-ACMD (do_attr_full_set);
+ACMD(do_attr_full_set);
 
-ACMD (do_all_skill_master);
+ACMD(do_all_skill_master);
 
-ACMD (do_use_item);
-ACMD (do_dragon_soul);
-ACMD (do_ds_list);
-ACMD (do_clear_affect);
+ACMD(do_use_item);
+ACMD(do_dragon_soul);
+ACMD(do_ds_list);
+ACMD(do_clear_affect);
 
 #ifdef ENABLE_NEWSTUFF
 ACMD(do_change_rare_attr);
@@ -266,7 +266,6 @@ ACMD(do_rewarp);
 #ifdef ENABLE_MOVE_CHANNEL
 ACMD(DoChangeChannel);
 #endif
-
 
 struct command_info cmd_info[] =
 {
@@ -570,7 +569,7 @@ struct command_info cmd_info[] =
 	{ "\n",		NULL,			0,			POS_DEAD,	GM_IMPLEMENTOR	}
 };
 
-void interpreter_set_privilege(const char *cmd, int lvl)
+void interpreter_set_privilege(const char* cmd, int lvl)
 {
 	int i;
 
@@ -585,9 +584,9 @@ void interpreter_set_privilege(const char *cmd, int lvl)
 	}
 }
 
-void double_dollar(const char *src, size_t src_len, char *dest, size_t dest_len)
+void double_dollar(const char* src, size_t src_len, char* dest, size_t dest_len)
 {
-	const char * tmp = src;
+	const char* tmp = src;
 	size_t cur_len = 0;
 
 	dest_len -= 1;
@@ -616,7 +615,7 @@ void double_dollar(const char *src, size_t src_len, char *dest, size_t dest_len)
 	*dest = '\0';
 }
 
-void interpret_command(LPCHARACTER ch, const char * argument, size_t len)
+void interpret_command(LPCHARACTER ch, const char* argument, size_t len)
 {
 	if (!ch)
 	{
@@ -636,7 +635,7 @@ void interpret_command(LPCHARACTER ch, const char * argument, size_t len)
 
 	char cmd[128 + 1];
 	char new_line[256 + 1];
-	const char * line;
+	const char* line;
 	int icmd;
 
 	if (len == 0 || !*argument)
@@ -666,26 +665,26 @@ void interpret_command(LPCHARACTER ch, const char * argument, size_t len)
 	{
 		switch (ch->GetPosition())
 		{
-			case POS_MOUNTING:
-				ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("탄 상태에서는 할 수 없습니다."));
-				break;
+		case POS_MOUNTING:
+			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("탄 상태에서는 할 수 없습니다."));
+			break;
 
-			case POS_DEAD:
-				ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("쓰러진 상태에서는 할 수 없습니다."));
-				break;
+		case POS_DEAD:
+			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("쓰러진 상태에서는 할 수 없습니다."));
+			break;
 
-			case POS_SLEEPING:
-				ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("꿈속에서 어떻게요?"));
-				break;
+		case POS_SLEEPING:
+			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("꿈속에서 어떻게요?"));
+			break;
 
-			case POS_RESTING:
-			case POS_SITTING:
-				ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("먼저 일어 나세요."));
-				break;
+		case POS_RESTING:
+		case POS_SITTING:
+			ch->ChatPacket(CHAT_TYPE_INFO, LC_TEXT("먼저 일어 나세요."));
+			break;
 
-			default:
-				sys_err("unknown position %d", ch->GetPosition());
-				break;
+		default:
+			sys_err("unknown position %d", ch->GetPosition());
+			break;
 		}
 
 		return;
@@ -713,7 +712,7 @@ void interpret_command(LPCHARACTER ch, const char * argument, size_t len)
 		if (cmd_info[icmd].gm_level >= GM_LOW_WIZARD)
 		{
 			char buf[1024];
-			snprintf( buf, sizeof(buf), "%s", argument );
+			snprintf(buf, sizeof(buf), "%s", argument);
 
 			LogManager::instance().GMCommandLog(ch->GetPlayerID(), ch->GetName(), ch->GetDesc()->GetHostName(), g_bChannel, buf);
 		}

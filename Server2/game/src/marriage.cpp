@@ -27,7 +27,6 @@ namespace marriage
 		{ 71072,	{ -4,	-5,	-6,	-8, } },
 		{ 71073,	{ 20,	25,	30,	40, } },
 		{ 71074,	{ 12,	16,	20,	30, } },
-
 	};
 
 	const int MARRIAGE_POINT_PER_DAY = 1;
@@ -82,7 +81,7 @@ namespace marriage
 		if (IsOnline())
 		{
 			if (ch1->GetPremiumRemainSeconds(PREMIUM_MARRIAGE_FAST) > 0 ||
-					ch2->GetPremiumRemainSeconds(PREMIUM_MARRIAGE_FAST) > 0)
+				ch2->GetPremiumRemainSeconds(PREMIUM_MARRIAGE_FAST) > 0)
 			{
 				point_per_day = MARRIAGE_POINT_PER_DAY_FAST;
 				max_limit = 40;
@@ -110,15 +109,15 @@ namespace marriage
 		/*if (!ch1->GetParty() || ch1->GetParty() != ch2->GetParty())
 		  return false;*/
 
-		/*const int DISTANCE = 5000;
+		  /*const int DISTANCE = 5000;
 
-		  if (labs(ch1->GetX() - ch2->GetX()) > DISTANCE)
-		  return false;
+			if (labs(ch1->GetX() - ch2->GetX()) > DISTANCE)
+			return false;
 
-		  if (labs(ch1->GetY() - ch2->GetY()) > DISTANCE)
-		  return false;
+			if (labs(ch1->GetY() - ch2->GetY()) > DISTANCE)
+			return false;
 
-		  return (DISTANCE_APPROX(ch1->GetX() - ch2->GetX(), ch1->GetY() - ch2->GetY()) < DISTANCE);*/
+			return (DISTANCE_APPROX(ch1->GetX() - ch2->GetX(), ch1->GetY() - ch2->GetY()) < DISTANCE);*/
 	}
 
 	int TMarriage::GetBonus(DWORD dwItemVnum, bool bShare, LPCHARACTER me)
@@ -126,7 +125,7 @@ namespace marriage
 		if (!is_married)
 			return 0;
 
-		int iFindedBonusIndex=0;
+		int iFindedBonusIndex = 0;
 		{
 			for (iFindedBonusIndex = 0; iFindedBonusIndex < MAX_MARRIAGE_UNIQUE_ITEM; ++iFindedBonusIndex)
 			{
@@ -142,27 +141,27 @@ namespace marriage
 		{
 			int count = 0;
 			if (NULL != ch1 && ch1->IsEquipUniqueItem(dwItemVnum))
-				count ++;
+				count++;
 			if (NULL != ch2 && ch2->IsEquipUniqueItem(dwItemVnum))
-				count ++;
+				count++;
 
 			const TMarriageItemBonusByGrade& rkBonus = g_ItemBonus[iFindedBonusIndex];
 
-			if (count>=1)
+			if (count >= 1)
 				return rkBonus.value[GetMarriageGrade()];
 			return 0;
 		}
 		else
 		{
 			int count = 0;
-			if (me != ch1 && NULL!= ch1 && ch1->IsEquipUniqueItem(dwItemVnum))
-				count ++;
-			if (me != ch2 && NULL!= ch2 && ch2->IsEquipUniqueItem(dwItemVnum))
-				count ++;
+			if (me != ch1 && NULL != ch1 && ch1->IsEquipUniqueItem(dwItemVnum))
+				count++;
+			if (me != ch2 && NULL != ch2 && ch2->IsEquipUniqueItem(dwItemVnum))
+				count++;
 
 			const TMarriageItemBonusByGrade& rkBonus = g_ItemBonus[iFindedBonusIndex];
 
-			if (count>=1)
+			if (count >= 1)
 				return rkBonus.value[GetMarriageGrade()];
 			return 0;
 		}
@@ -194,7 +193,7 @@ namespace marriage
 		if (is_married)
 		{
 			LPDESC d1, d2;
-			CCI * pkCCI;
+			CCI* pkCCI;
 
 			d1 = ch1 ? ch1->GetDesc() : NULL;
 
@@ -254,7 +253,7 @@ namespace marriage
 		if (is_married)
 		{
 			LPDESC d1, d2;
-			CCI * pkCCI;
+			CCI* pkCCI;
 
 			d1 = ch1 ? ch1->GetDesc() : NULL;
 
@@ -334,18 +333,18 @@ namespace marriage
 		TMarriage* pMarriage;
 
 		near_check_event_info()
-		: pMarriage( 0 )
+			: pMarriage(0)
 		{
 		}
 	};
 
 	EVENTFUNC(near_check_event)
 	{
-		near_check_event_info* info = dynamic_cast<near_check_event_info*>( event->info );
+		near_check_event_info* info = dynamic_cast<near_check_event_info*>(event->info);
 
-		if ( info == NULL )
+		if (info == NULL)
 		{
-			sys_err( "near_check_event> <Factor> Null pointer" );
+			sys_err("near_check_event> <Factor> Null pointer");
 			return 0;
 		}
 
@@ -406,7 +405,7 @@ namespace marriage
 			bSave = true;
 			// @fixme126
 			uint64_t llActualPoints = static_cast<uint64_t>(love_point) + point;
-			love_point = MIN( llActualPoints, 2000000000 );
+			love_point = MIN(llActualPoints, 2000000000);
 
 			if (test_server)
 			{
@@ -430,7 +429,7 @@ namespace marriage
 		if (ch)
 		{
 			PIXEL_POSITION pos;
-			if (!SECTREE_MANAGER::instance().GetRecallPositionByEmpire(pWeddingInfo->dwMapIndex/10000, 0, pos))
+			if (!SECTREE_MANAGER::instance().GetRecallPositionByEmpire(pWeddingInfo->dwMapIndex / 10000, 0, pos))
 			{
 				sys_err("cannot get warp position");
 				return;
@@ -467,7 +466,7 @@ namespace marriage
 
 	bool CManager::IsMarried(DWORD dwPlayerID)
 	{
-		TMarriage* pkMarriageFinded=Get(dwPlayerID);
+		TMarriage* pkMarriageFinded = Get(dwPlayerID);
 		if (pkMarriageFinded && pkMarriageFinded->is_married)
 			return true;
 
@@ -476,7 +475,7 @@ namespace marriage
 
 	bool CManager::IsEngaged(DWORD dwPlayerID)
 	{
-		TMarriage* pkMarriageFinded=Get(dwPlayerID);
+		TMarriage* pkMarriageFinded = Get(dwPlayerID);
 		if (pkMarriageFinded && !pkMarriageFinded->is_married)
 			return true;
 
@@ -627,7 +626,7 @@ namespace marriage
 
 	void CManager::Logout(DWORD pid)
 	{
-		TMarriage * pMarriage = Get(pid);
+		TMarriage* pMarriage = Get(pid);
 
 		if (!pMarriage)
 			return;
@@ -670,7 +669,7 @@ namespace marriage
 			return;
 		}
 
-		TWeddingInfo * pwi = pMarriage->pWeddingInfo;
+		TWeddingInfo* pwi = pMarriage->pWeddingInfo;
 
 		if (!pwi)
 			return;

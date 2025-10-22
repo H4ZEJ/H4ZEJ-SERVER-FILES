@@ -6,14 +6,14 @@
 
 class CMoneyLog : public singleton<CMoneyLog>
 {
-    public:
+public:
 	CMoneyLog();
 	virtual ~CMoneyLog();
 
 	void Save();
 	void AddLog(BYTE bType, DWORD dwVnum, int iGold);
 
-    private:
+private:
 	std::map<DWORD, int> m_MoneyLogContainer[MONEY_LOG_TYPE_MAX_NUM];
 };
 

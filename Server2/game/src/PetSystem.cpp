@@ -19,14 +19,14 @@ EVENTINFO(petsystem_event_info)
 
 EVENTFUNC(petsystem_update_event)
 {
-	petsystem_event_info* info = dynamic_cast<petsystem_event_info*>( event->info );
-	if ( info == NULL )
+	petsystem_event_info* info = dynamic_cast<petsystem_event_info*>(event->info);
+	if (info == NULL)
 	{
-		sys_err( "check_speedhack_event> <Factor> Null pointer" );
+		sys_err("check_speedhack_event> <Factor> Null pointer");
 		return 0;
 	}
 
-	CPetSystem*	pPetSystem = info->pPetSystem;
+	CPetSystem* pPetSystem = info->pPetSystem;
 
 	if (NULL == pPetSystem)
 		return 0;
@@ -136,17 +136,17 @@ DWORD CPetActor::Summon(const char* petName, LPITEM pSummonItem, bool bSpawnFar)
 
 	if (0 != m_pkChar)
 	{
-		m_pkChar->Show (m_pkOwner->GetMapIndex(), x, y);
+		m_pkChar->Show(m_pkOwner->GetMapIndex(), x, y);
 		m_dwVID = m_pkChar->GetVID();
 
 		return m_dwVID;
 	}
 
 	m_pkChar = CHARACTER_MANAGER::instance().SpawnMob(
-				m_dwVnum,
-				m_pkOwner->GetMapIndex(),
-				x, y, z,
-				false, (int)(m_pkOwner->GetRotation()+180), false);
+		m_dwVnum,
+		m_pkOwner->GetMapIndex(),
+		x, y, z,
+		false, (int)(m_pkOwner->GetRotation() + 180), false);
 
 	if (0 == m_pkChar)
 	{
@@ -172,7 +172,7 @@ DWORD CPetActor::Summon(const char* petName, LPITEM pSummonItem, bool bSpawnFar)
 bool CPetActor::_UpdatAloneActionAI(float fMinDist, float fMaxDist)
 {
 	float fDist = number(fMinDist, fMaxDist);
-	float r = (float)number (0, 359);
+	float r = (float)number(0, 359);
 	float dest_x = GetOwner()->GetX() + fDist * cos(r);
 	float dest_y = GetOwner()->GetY() + fDist * sin(r);
 
@@ -229,7 +229,7 @@ bool CPetActor::_UpdateFollowAI()
 
 	if (fDist >= START_FOLLOW_DISTANCE)
 	{
-		if( fDist >= START_RUN_DISTANCE)
+		if (fDist >= START_RUN_DISTANCE)
 		{
 			bRun = true;
 		}
@@ -269,7 +269,7 @@ bool CPetActor::Update(DWORD deltaTime)
 
 bool CPetActor::Follow(float fMinDistance)
 {
-	if( !m_pkOwner || !m_pkChar)
+	if (!m_pkOwner || !m_pkChar)
 		return false;
 
 	float fOwnerX = m_pkOwner->GetX();
@@ -289,7 +289,7 @@ bool CPetActor::Follow(float fMinDistance)
 	float fDistToGo = fDist - fMinDistance;
 	GetDeltaByDegree(m_pkChar->GetRotation(), fDistToGo, &fx, &fy);
 
-	if (!m_pkChar->Goto((int)(fPetX+fx+0.5f), (int)(fPetY+fy+0.5f)) )
+	if (!m_pkChar->Goto((int)(fPetX + fx + 0.5f), (int)(fPetY + fy + 0.5f)))
 		return false;
 
 	m_pkChar->SendMovePacket(FUNC_WAIT, 0, 0, 0, 0, 0);
@@ -303,7 +303,6 @@ bool CPetActor::SetSummonItem(LPITEM pItem
 {
 	if (!pItem)
 	{
-
 		m_dwSummonItemVID = 0;
 		m_dwSummonItemVnum = 0;
 		return false;
@@ -319,12 +318,12 @@ bool __PetCheckBuff(const CPetActor* pPetActor)
 	bool bMustHaveBuff = true;
 	switch (pPetActor->GetVnum())
 	{
-		case 34004:
-		case 34009:
-			if (!pPetActor->GetOwner()->GetDungeon())
-				bMustHaveBuff = false;
-		default:
-			break;
+	case 34004:
+	case 34009:
+		if (!pPetActor->GetOwner()->GetDungeon())
+			bMustHaveBuff = false;
+	default:
+		break;
 	}
 	return bMustHaveBuff;
 }
@@ -336,13 +335,13 @@ void CPetActor::GiveBuff()
 	LPITEM item = ITEM_MANAGER::instance().FindByVID(m_dwSummonItemVID);
 	if (item)
 		item->ModifyPoints(true);
-	return ;
+	return;
 }
 
 void CPetActor::ClearBuff()
 {
 	if (NULL == m_pkOwner)
-		return ;
+		return;
 	TItemTable* item_proto = ITEM_MANAGER::instance().GetTable(m_dwSummonItemVnum);
 	if (NULL == item_proto)
 		return;
@@ -355,7 +354,7 @@ void CPetActor::ClearBuff()
 		m_pkOwner->ApplyPoint(item_proto->aApplies[i].bType, -item_proto->aApplies[i].lValue);
 	}
 
-	return ;
+	return;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -493,15 +492,15 @@ void CPetSystem::Unsummon(DWORD vnum, bool bDeleteFromList)
 
 void CPetSystem::UnsummonAll()
 {
-	for (auto & iter : m_petActorMap)
+	for (auto& iter : m_petActorMap)
 	{
-		auto * actor = iter.second;
+		auto* actor = iter.second;
 		if (actor)
 			actor->Unsummon();
 	}
 
 	bool bActive = false;
-	for (auto & it : m_petActorMap)
+	for (auto& it : m_petActorMap)
 		bActive |= it.second->IsSummoned();
 	if (!bActive)
 	{

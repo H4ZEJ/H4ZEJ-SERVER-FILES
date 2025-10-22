@@ -43,7 +43,7 @@ bool CShopEx::AddShopTable(TShopTableEx& shopTable)
 	return true;
 }
 
-bool CShopEx::AddGuest(LPCHARACTER ch,DWORD owner_vid, bool bOtherEmpire)
+bool CShopEx::AddGuest(LPCHARACTER ch, DWORD owner_vid, bool bOtherEmpire)
 {
 	if (!ch)
 		return false;
@@ -60,8 +60,8 @@ bool CShopEx::AddGuest(LPCHARACTER ch,DWORD owner_vid, bool bOtherEmpire)
 
 	TPacketGCShop pack;
 
-	pack.header		= HEADER_GC_SHOP;
-	pack.subheader	= SHOP_SUBHEADER_GC_START_EX;
+	pack.header = HEADER_GC_SHOP;
+	pack.subheader = SHOP_SUBHEADER_GC_START_EX;
 
 	TPacketGCShopStartEx pack2;
 
@@ -83,7 +83,7 @@ bool CShopEx::AddGuest(LPCHARACTER ch,DWORD owner_vid, bool bOtherEmpire)
 		{
 			pack_tab.items[i].vnum = shop_tab.items[i].vnum;
 			pack_tab.items[i].count = shop_tab.items[i].count;
-			switch(shop_tab.coinType)
+			switch (shop_tab.coinType)
 			{
 			case SHOP_COIN_TYPE_GOLD:
 #ifdef ENABLE_NEWSTUFF
@@ -152,22 +152,22 @@ int CShopEx::Buy(LPCHARACTER ch, BYTE pos)
 		if (it->second)	// if other empire, price is triple
 			dwPrice *= 3;
 
-		if (ch->GetGold() < (int) dwPrice)
+		if (ch->GetGold() < (int)dwPrice)
 		{
 			sys_log(1, "ShopEx::Buy : Not enough money : %s has %d, price %d", ch->GetName(), ch->GetGold(), dwPrice);
 			return SHOP_SUBHEADER_GC_NOT_ENOUGH_MONEY;
 		}
 		break;
 	case SHOP_COIN_TYPE_SECONDARY_COIN:
+	{
+		DWORD count = ch->CountSpecifyTypeItem(ITEM_SECONDARY_COIN);
+		if (count < dwPrice)
 		{
-			DWORD count = ch->CountSpecifyTypeItem(ITEM_SECONDARY_COIN);
-			if (count < dwPrice)
-			{
-				sys_log(1, "ShopEx::Buy : Not enough myeongdojun : %s has %d, price %d", ch->GetName(), count, dwPrice);
-				return SHOP_SUBHEADER_GC_NOT_ENOUGH_MONEY_EX;
-			}
+			sys_log(1, "ShopEx::Buy : Not enough myeongdojun : %s has %d, price %d", ch->GetName(), count, dwPrice);
+			return SHOP_SUBHEADER_GC_NOT_ENOUGH_MONEY_EX;
 		}
-		break;
+	}
+	break;
 	}
 
 	LPITEM item = ITEM_MANAGER::instance().CreateItem(r_item.vnum, r_item.count);
@@ -209,6 +209,6 @@ int CShopEx::Buy(LPCHARACTER ch, BYTE pos)
 
 	ch->Save();
 
-    return (SHOP_SUBHEADER_GC_OK);
+	return (SHOP_SUBHEADER_GC_OK);
 }
 //martysama0134's 8e0aa8057d3f54320e391131a48866b4

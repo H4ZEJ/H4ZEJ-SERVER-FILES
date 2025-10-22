@@ -12,46 +12,46 @@
 
 class CQueryInfo
 {
-    public:
+public:
 	int	iType;
 	DWORD	dwIdent;
-	void *	pvData;
+	void* pvData;
 };
 
 enum eSQL_SLOT
 {
-    SQL_PLAYER,
-    SQL_ACCOUNT,
+	SQL_PLAYER,
+	SQL_ACCOUNT,
 	SQL_COMMON,
 #ifdef ENABLE_DB_SQL_LOG
 	SQL_LOG,
 #endif
-    SQL_MAX_NUM,
+	SQL_MAX_NUM,
 };
 
 class CDBManager : public singleton<CDBManager>
 {
-    protected:
+protected:
 	void			Initialize();
 	void			Destroy();
 
-    public:
+public:
 	CDBManager();
 	virtual ~CDBManager();
 
 	void			Clear();
 	void			Quit();
 
-	int			Connect(int iSlot, const char * host, int port, const char* dbname, const char* user, const char* pass);
+	int			Connect(int iSlot, const char* host, int port, const char* dbname, const char* user, const char* pass);
 
-	void			ReturnQuery(const char * c_pszQuery, int iType, DWORD dwIdent, void * pvData, int iSlot = SQL_PLAYER);
-	void			AsyncQuery(const char * c_pszQuery, int iSlot = SQL_PLAYER);
-	std::unique_ptr<SQLMsg>		DirectQuery(const char * c_pszQuery, int iSlot = SQL_PLAYER);
+	void			ReturnQuery(const char* c_pszQuery, int iType, DWORD dwIdent, void* pvData, int iSlot = SQL_PLAYER);
+	void			AsyncQuery(const char* c_pszQuery, int iSlot = SQL_PLAYER);
+	std::unique_ptr<SQLMsg>		DirectQuery(const char* c_pszQuery, int iSlot = SQL_PLAYER);
 
-	SQLMsg *		PopResult();
-	SQLMsg * 		PopResult(eSQL_SLOT slot );
+	SQLMsg* PopResult();
+	SQLMsg* PopResult(eSQL_SLOT slot);
 
-	unsigned long		EscapeString(void * to, const void * from, unsigned long length, int iSlot = SQL_PLAYER);
+	unsigned long		EscapeString(void* to, const void* from, unsigned long length, int iSlot = SQL_PLAYER);
 
 	DWORD			CountReturnQuery(int i) { return m_mainSQL[i] ? m_mainSQL[i]->CountQuery() : 0; }
 	DWORD			CountReturnResult(int i) { return m_mainSQL[i] ? m_mainSQL[i]->CountResult() : 0; }
@@ -65,7 +65,7 @@ class CDBManager : public singleton<CDBManager>
 
 	void			ResetCounter()
 	{
-	    for (int i = 0; i < SQL_MAX_NUM; ++i)
+		for (int i = 0; i < SQL_MAX_NUM; ++i)
 		{
 			if (m_mainSQL[i])
 			{
@@ -81,16 +81,16 @@ class CDBManager : public singleton<CDBManager>
 		}
 	}
 
-    private:
+private:
 	std::unique_ptr<CAsyncSQL2>		m_mainSQL[SQL_MAX_NUM];
 	std::unique_ptr<CAsyncSQL2>	 	m_directSQL[SQL_MAX_NUM];
 	std::unique_ptr<CAsyncSQL2>		m_asyncSQL[SQL_MAX_NUM];
 
 	//CHARSET
-	public:
-	void SetLocale(const char * szLocale );
+public:
+	void SetLocale(const char* szLocale);
 	void QueryLocaleSet();
-	private:
+private:
 
 	//END_CHARSET
 };

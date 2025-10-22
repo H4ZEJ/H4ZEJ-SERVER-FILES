@@ -21,7 +21,7 @@ namespace quest
 	{
 	}
 
-	void NPC::Set(unsigned int vnum, const string & script_name)
+	void NPC::Set(unsigned int vnum, const string& script_name)
 	{
 		m_vnum = vnum;
 
@@ -38,18 +38,18 @@ namespace quest
 			{
 				int is = snprintf(buf, sizeof(buf), "%s/%s/%s/", itObjectDir->c_str(), script_name.c_str(), it->first.c_str());
 
-				if (is < 0 || is >= (int) sizeof(buf))
+				if (is < 0 || is >= (int)sizeof(buf))
 					is = sizeof(buf) - 1;
 
 				//sys_log(0, "XXX %s", buf);
 				int event_index = it->second;
 
-				DIR * pdir = opendir(buf);
+				DIR* pdir = opendir(buf);
 
 				if (!pdir)
 					continue;
 
-				dirent * pde;
+				dirent* pde;
 
 				while ((pde = readdir(pdir)))
 				{
@@ -76,7 +76,7 @@ namespace quest
 
 		size_t i = s.find('.');
 
-		CQuestManager & q = CQuestManager::instance();
+		CQuestManager& q = CQuestManager::instance();
 
 		// script_name examples:
 		//   christmas_tree.start -> argument not exist
@@ -114,7 +114,7 @@ namespace quest
 		///////////////////////////////////////////////////////////////////////////
 
 		sys_log(0, "QUEST loading %s : %s [STATE] %s",
-				filename, stQuestName.c_str(), stStateName.c_str());
+			filename, stQuestName.c_str(), stStateName.c_str());
 
 		if (i == s.npos)
 		{
@@ -134,7 +134,7 @@ namespace quest
 
 			if (i == s.npos)
 			{
-				sys_err("invalid QUEST STATE index [%s] [%s]",filename, script_name);
+				sys_err("invalid QUEST STATE index [%s] [%s]", filename, script_name);
 				return;
 			}
 
@@ -146,7 +146,7 @@ namespace quest
 
 			if (i != s.npos)
 			{
-				sys_err("invalid QUEST STATE name [%s] [%s]",filename, script_name);
+				sys_err("invalid QUEST STATE name [%s] [%s]", filename, script_name);
 				return;
 			}
 
@@ -169,7 +169,7 @@ namespace quest
 
 				for (string::iterator it = s.begin(); it != s.end(); ++it)
 				{
-					m_mapOwnArgQuest[event_index][quest_index][state_index][index].arg+=*it;
+					m_mapOwnArgQuest[event_index][quest_index][state_index][index].arg += *it;
 				}
 			}
 			else if (type_name == "script")
@@ -196,7 +196,7 @@ namespace quest
 		return ExecuteEventScript(pc, QUEST_LETTER_EVENT, quest_index, state);
 	}
 
-	bool NPC::OnTarget(PC & pc, DWORD dwQuestIndex, const char * c_pszTargetName, const char * c_pszVerb, bool & bRet)
+	bool NPC::OnTarget(PC& pc, DWORD dwQuestIndex, const char* c_pszTargetName, const char* c_pszVerb, bool& bRet)
 	{
 		sys_log(1, "OnTarget begin %s verb %s qi %u", c_pszTargetName, c_pszVerb, dwQuestIndex);
 
@@ -212,7 +212,7 @@ namespace quest
 
 		int iState = itPCQuest->second.st;
 
-		AArgQuestScriptType & r = m_mapOwnArgQuest[QUEST_TARGET_EVENT][dwQuestIndex];
+		AArgQuestScriptType& r = m_mapOwnArgQuest[QUEST_TARGET_EVENT][dwQuestIndex];
 		AArgQuestScriptType::iterator it = r.find(iState);
 
 		if (it == r.end())
@@ -227,15 +227,15 @@ namespace quest
 
 		while (it_vec != it->second.end())
 		{
-			AArgScript & argScript = *(it_vec++);
-			const char * c_pszArg = argScript.arg.c_str();
+			AArgScript& argScript = *(it_vec++);
+			const char* c_pszArg = argScript.arg.c_str();
 
 			sys_log(1, "OnTarget compare %s %d", c_pszArg, argScript.arg.length());
 
 			if (strncmp(c_pszArg, c_pszTargetName, iTargetLen))
 				continue;
 
-			const char * c_pszArgVerb = strchr(c_pszArg, '.');
+			const char* c_pszArgVerb = strchr(c_pszArg, '.');
 
 			if (!c_pszArgVerb)
 				continue;
@@ -249,7 +249,7 @@ namespace quest
 			if (argScript.when_condition.size() != 0 && !IsScriptTrue(&argScript.when_condition[0], argScript.when_condition.size()))
 				continue;
 
-			sys_log(1, "OnTarget execute qi %u st %d code %s", dwQuestIndex, iState, (const char *) argScript.script.GetCode());
+			sys_log(1, "OnTarget execute qi %u st %d code %s", dwQuestIndex, iState, (const char*)argScript.script.GetCode());
 			bRet = CQuestManager::ExecuteQuestScript(pc, dwQuestIndex, iState, argScript.script.GetCode(), argScript.script.GetSize());
 			bRet = true;
 			return true;
@@ -304,7 +304,7 @@ namespace quest
 		return HandleEvent(pc, QUEST_TIMER_EVENT);
 	}
 
-	bool NPC::OnKill(PC & pc)
+	bool NPC::OnKill(PC& pc)
 	{
 		//PROF_UNIT puOnKill("quest::NPC::OnKill");
 		if (m_vnum)
@@ -319,7 +319,7 @@ namespace quest
 		}
 	}
 
-	bool NPC::OnPartyKill(PC & pc)
+	bool NPC::OnPartyKill(PC& pc)
 	{
 		if (m_vnum)
 		{
@@ -346,7 +346,7 @@ namespace quest
 #endif
 
 #ifdef ENABLE_QUEST_DND_EVENT
-	bool NPC::OnDND(PC & pc, bool bReceiveAll)
+	bool NPC::OnDND(PC& pc, bool bReceiveAll)
 	{
 		if (bReceiveAll)
 			return HandleReceiveAllEvent(pc, QUEST_DND_EVENT);
@@ -360,7 +360,7 @@ namespace quest
 		return HandleReceiveAllEvent(pc, QUEST_LEVELUP_EVENT);
 	}
 
-	bool NPC::OnLogin(PC& pc, const char * c_pszQuestName)
+	bool NPC::OnLogin(PC& pc, const char* c_pszQuestName)
 	{
 		bool bRet = HandleReceiveAllNoWaitEvent(pc, QUEST_LOGIN_EVENT);
 		HandleReceiveAllEvent(pc, QUEST_LETTER_EVENT);
@@ -383,7 +383,8 @@ namespace quest
 		int size;
 
 		FuncMissHandleEvent() : vdwNewStartQuestIndices(0), size(0)
-		{}
+		{
+		}
 
 		bool Matched()
 		{
@@ -419,7 +420,8 @@ namespace quest
 
 		FuncMatchHandleEvent()
 			: bMatched(false), vdwQuesIndices(0), viPCStates(0), vcodes(0), vcode_sizes(0), size(0)
-		{}
+		{
+		}
 
 		bool Matched()
 		{
@@ -455,11 +457,11 @@ namespace quest
 		{
 			if (test_server)
 			{
-				CQuestManager & mgr = CQuestManager::instance();
+				CQuestManager& mgr = CQuestManager::instance();
 
 				sys_err("QUEST There's suspended quest state, can't run new quest state (quest: %s pc: %s)",
-						pc.GetCurrentQuestName().c_str(),
-						mgr.GetCurrentCharacterPtr() ? mgr.GetCurrentCharacterPtr()->GetName() : "<none>");
+					pc.GetCurrentQuestName().c_str(),
+					mgr.GetCurrentCharacterPtr() ? mgr.GetCurrentCharacterPtr()->GetName() : "<none>");
 			}
 
 			return false;
@@ -474,7 +476,7 @@ namespace quest
 		{
 			for (int i = 0; i < fMatch.size; i++)
 			{
-				if ( i != 0 ) {
+				if (i != 0) {
 					//PC * pPC = CQuestManager::instance().GetPC(pc.GetID());
 				}
 
@@ -516,18 +518,18 @@ namespace quest
 
 			if (NPC::HasStartState(itQuestMap->second) && CQuestManager::instance().CanStartQuest(dwQuestIndex))
 			{
-				const NPC::AQuestScriptType & QuestScript = itQuestMap->second;
+				const NPC::AQuestScriptType& QuestScript = itQuestMap->second;
 				itertype(QuestScript) it = QuestScript.find(QUEST_START_STATE_INDEX);
 
 				if (it != QuestScript.end())
 				{
 					bHandled = true;
 					CQuestManager::ExecuteQuestScript(
-							*CQuestManager::instance().GetCurrentPC(),
-							dwQuestIndex,
-							QUEST_START_STATE_INDEX,
-							it->second.GetCode(),
-							it->second.GetSize());
+						*CQuestManager::instance().GetCurrentPC(),
+						dwQuestIndex,
+						QUEST_START_STATE_INDEX,
+						it->second.GetCode(),
+						it->second.GetSize());
 				}
 			}
 		}
@@ -553,11 +555,11 @@ namespace quest
 				bHandled = true;
 
 				CQuestManager::ExecuteQuestScript(
-						*CQuestManager::instance().GetCurrentPC(),
-						itQuestMap->first,
-						iPCState,
-						itQuestScript->second.GetCode(),
-						itQuestScript->second.GetSize());
+					*CQuestManager::instance().GetCurrentPC(),
+					itQuestMap->first,
+					iPCState,
+					itQuestScript->second.GetCode(),
+					itQuestScript->second.GetSize());
 			}
 		}
 	};
@@ -574,11 +576,11 @@ namespace quest
 		{
 			if (test_server)
 			{
-				CQuestManager & mgr = CQuestManager::instance();
+				CQuestManager& mgr = CQuestManager::instance();
 
 				sys_err("QUEST There's suspended quest state, can't run new quest state (quest: %s pc: %s)",
-						pc.GetCurrentQuestName().c_str(),
-						mgr.GetCurrentCharacterPtr() ? mgr.GetCurrentCharacterPtr()->GetName() : "<none>");
+					pc.GetCurrentQuestName().c_str(),
+					mgr.GetCurrentCharacterPtr() ? mgr.GetCurrentCharacterPtr()->GetName() : "<none>");
 			}
 
 			return false;
@@ -620,14 +622,14 @@ namespace quest
 					bHandled = true;
 					PC* pPC = CQuestManager::instance().GetCurrentPC();
 					if (CQuestManager::ExecuteQuestScript(
-								*pPC,
-								dwQuestIndex,
-								QUEST_START_STATE_INDEX,
-								it->second.GetCode(),
-								it->second.GetSize()))
+						*pPC,
+						dwQuestIndex,
+						QUEST_START_STATE_INDEX,
+						it->second.GetCode(),
+						it->second.GetSize()))
 					{
 						sys_err("QUEST NOT END RUNNING on Login/Logout - %s",
-								CQuestManager::instance().GetQuestNameByIndex(itQuestMap->first).c_str());
+							CQuestManager::instance().GetQuestNameByIndex(itQuestMap->first).c_str());
 
 						QuestState& rqs = *pPC->GetRunningQuestState();
 						CQuestManager::instance().CloseState(rqs);
@@ -647,25 +649,25 @@ namespace quest
 			bHandled = false;
 		}
 
-		void operator()(PC::QuestInfoIterator & itPCQuest, NPC::QuestMapType::iterator & itQuestMap)
+		void operator()(PC::QuestInfoIterator& itPCQuest, NPC::QuestMapType::iterator& itQuestMap)
 		{
-			const NPC::AQuestScriptType & QuestScript = itQuestMap->second;
+			const NPC::AQuestScriptType& QuestScript = itQuestMap->second;
 			int iPCState = itPCQuest->second.st;
 			itertype(QuestScript) itQuestScript = QuestScript.find(iPCState);
 
 			if (itQuestScript != QuestScript.end())
 			{
-				PC * pPC = CQuestManager::instance().GetCurrentPC();
+				PC* pPC = CQuestManager::instance().GetCurrentPC();
 
 				if (CQuestManager::ExecuteQuestScript(
-							*pPC,
-							itQuestMap->first,
-							iPCState,
-							itQuestScript->second.GetCode(),
-							itQuestScript->second.GetSize()))
+					*pPC,
+					itQuestMap->first,
+					iPCState,
+					itQuestScript->second.GetCode(),
+					itQuestScript->second.GetSize()))
 				{
 					sys_err("QUEST NOT END RUNNING on Login/Logout - %s",
-							CQuestManager::instance().GetQuestNameByIndex(itQuestMap->first).c_str());
+						CQuestManager::instance().GetQuestNameByIndex(itQuestMap->first).c_str());
 
 					QuestState& rqs = *pPC->GetRunningQuestState();
 					CQuestManager::instance().CloseState(rqs);
@@ -679,7 +681,7 @@ namespace quest
 	bool NPC::HandleReceiveAllNoWaitEvent(PC& pc, int EventIndex)
 	{
 		//cerr << EventIndex << endl;
-		if (EventIndex<0 || EventIndex>=QUEST_EVENT_COUNT)
+		if (EventIndex < 0 || EventIndex >= QUEST_EVENT_COUNT)
 		{
 			sys_err("QUEST invalid EventIndex : %d", EventIndex);
 			return false;
@@ -695,7 +697,7 @@ namespace quest
 		return fMatch.bHandled || fMiss.bHandled;
 	}
 
-	bool NPC::OnInfo(PC & pc, unsigned int quest_index)
+	bool NPC::OnInfo(PC& pc, unsigned int quest_index)
 	{
 		const int EventIndex = QUEST_INFO_EVENT;
 
@@ -703,11 +705,11 @@ namespace quest
 		{
 			if (test_server)
 			{
-				CQuestManager & mgr = CQuestManager::instance();
+				CQuestManager& mgr = CQuestManager::instance();
 
 				sys_err("QUEST There's suspended quest state, can't run new quest state (quest: %s pc: %s)",
-						pc.GetCurrentQuestName().c_str(),
-						mgr.GetCurrentCharacterPtr() ? mgr.GetCurrentCharacterPtr()->GetName() : "<none>");
+					pc.GetCurrentQuestName().c_str(),
+					mgr.GetCurrentCharacterPtr() ? mgr.GetCurrentCharacterPtr()->GetName() : "<none>");
 			}
 
 			return false;
@@ -721,10 +723,10 @@ namespace quest
 			return false;
 		}
 
-		QuestMapType & rmapEventOwnQuest = m_mapOwnQuest[EventIndex];
+		QuestMapType& rmapEventOwnQuest = m_mapOwnQuest[EventIndex];
 		QuestMapType::iterator itQuestMap = rmapEventOwnQuest.find(quest_index);
 
-		const char * questName = CQuestManager::instance().GetQuestNameByIndex(quest_index).c_str();
+		const char* questName = CQuestManager::instance().GetQuestNameByIndex(quest_index).c_str();
 
 		if (itQuestMap == rmapEventOwnQuest.end())
 		{
@@ -744,7 +746,7 @@ namespace quest
 		return true;
 	}
 
-	bool NPC::OnButton(PC & pc, unsigned int quest_index)
+	bool NPC::OnButton(PC& pc, unsigned int quest_index)
 	{
 		const int EventIndex = QUEST_BUTTON_EVENT;
 
@@ -752,11 +754,11 @@ namespace quest
 		{
 			if (test_server)
 			{
-				CQuestManager & mgr = CQuestManager::instance();
+				CQuestManager& mgr = CQuestManager::instance();
 
 				sys_err("QUEST There's suspended quest state, can't run new quest state (quest: %s pc: %s)",
-						pc.GetCurrentQuestName().c_str(),
-						mgr.GetCurrentCharacterPtr() ? mgr.GetCurrentCharacterPtr()->GetName() : "<none>");
+					pc.GetCurrentQuestName().c_str(),
+					mgr.GetCurrentCharacterPtr() ? mgr.GetCurrentCharacterPtr()->GetName() : "<none>");
 			}
 
 			return false;
@@ -764,7 +766,7 @@ namespace quest
 
 		PC::QuestInfoIterator itPCQuest = pc.quest_find(quest_index);
 
-		QuestMapType & rmapEventOwnQuest = m_mapOwnQuest[EventIndex];
+		QuestMapType& rmapEventOwnQuest = m_mapOwnQuest[EventIndex];
 		QuestMapType::iterator itQuestMap = rmapEventOwnQuest.find(quest_index);
 
 		if (itQuestMap == rmapEventOwnQuest.end())
@@ -784,9 +786,9 @@ namespace quest
 				return false;
 		}
 
-		AQuestScriptType::iterator itQuestScript=itQuestMap->second.find(iState);
+		AQuestScriptType::iterator itQuestScript = itQuestMap->second.find(iState);
 
-		if (itQuestScript==itQuestMap->second.end())
+		if (itQuestScript == itQuestMap->second.end())
 			return false;
 
 		CQuestManager::ExecuteQuestScript(pc, quest_index, iState, itQuestScript->second.GetCode(), itQuestScript->second.GetSize());
@@ -797,7 +799,8 @@ namespace quest
 	{
 		FuncMissChatEvent(vector<AArgScript*>& rAvailScript, PC& pc)
 			: rAvailScript(rAvailScript), rPC(pc)
-			{}
+		{
+		}
 
 		void operator()(PC::QuestInfoIterator& itPCQuest, NPC::ArgQuestMapType::iterator& itQuestMap)
 		{
@@ -814,7 +817,7 @@ namespace quest
 					rPC.SetRunningQuestStateRef(&itPCQuest->second); // @fixme317 set current quest
 
 					if (itQuestMap->second[QUEST_START_STATE_INDEX][i].when_condition.size() == 0 ||
-							IsScriptTrue(&itQuestMap->second[QUEST_START_STATE_INDEX][i].when_condition[0], itQuestMap->second[QUEST_START_STATE_INDEX][i].when_condition.size()))
+						IsScriptTrue(&itQuestMap->second[QUEST_START_STATE_INDEX][i].when_condition[0], itQuestMap->second[QUEST_START_STATE_INDEX][i].when_condition.size()))
 						rAvailScript.emplace_back(&itQuestMap->second[QUEST_START_STATE_INDEX][i]);
 				}
 			}
@@ -831,7 +834,8 @@ namespace quest
 	{
 		FuncMatchChatEvent(vector<AArgScript*>& rAvailScript, PC& pc)
 			: rAvailScript(rAvailScript), rPC(pc)
-			{}
+		{
+		}
 
 		void operator()(PC::QuestInfoIterator& itPCQuest, NPC::ArgQuestMapType::iterator& itQuestMap)
 		{
@@ -848,8 +852,8 @@ namespace quest
 					rPC.SetCurQuest(questName); // @fixme317 set current quest
 					rPC.SetRunningQuestStateRef(&itPCQuest->second); // @fixme317 set current quest
 
-					if ( itQuestMap->second[iState][i].when_condition.size() == 0 ||
-							IsScriptTrue(&itQuestMap->second[iState][i].when_condition[0], itQuestMap->second[iState][i].when_condition.size()))
+					if (itQuestMap->second[iState][i].when_condition.size() == 0 ||
+						IsScriptTrue(&itQuestMap->second[iState][i].when_condition[0], itQuestMap->second[iState][i].when_condition.size()))
 						rAvailScript.emplace_back(&itQuestMap->second[iState][i]);
 				}
 			}
@@ -868,11 +872,11 @@ namespace quest
 		{
 			if (test_server)
 			{
-				CQuestManager & mgr = CQuestManager::instance();
+				CQuestManager& mgr = CQuestManager::instance();
 
 				sys_err("QUEST There's suspended quest state, can't run new quest state (quest: %s pc: %s)",
-						pc.GetCurrentQuestName().c_str(),
-						mgr.GetCurrentCharacterPtr() ? mgr.GetCurrentCharacterPtr()->GetName() : "<none>");
+					pc.GetCurrentQuestName().c_str(),
+					mgr.GetCurrentCharacterPtr() ? mgr.GetCurrentCharacterPtr()->GetName() : "<none>");
 			}
 
 			return false;
@@ -896,7 +900,7 @@ namespace quest
 			{
 				os << ",\"" << ScriptToString(AvailScript[i]->arg.c_str()) << '"';
 			}
-			os << ", '"<<LC_TEXT("´Ý±â")<<"'";
+			os << ", '" << LC_TEXT("´Ý±â") << "'";
 			os << ")";
 
 			CQuestManager::ExecuteQuestScript(pc, "QUEST_CHAT_TEMP_QUEST", 0, os.str().c_str(), os.str().size(), &AvailScript, false);
