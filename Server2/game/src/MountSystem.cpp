@@ -313,6 +313,7 @@ CMountSystem::CMountSystem(LPCHARACTER owner)
 	m_dwUpdatePeriod = 400;
 
 	m_dwLastUpdateTime = 0;
+	m_pkMountSystemUpdateEvent = NULL;
 }
 
 CMountSystem::~CMountSystem()
@@ -332,6 +333,7 @@ void CMountSystem::Destroy()
 		}
 	}
 	event_cancel(&m_pkMountSystemUpdateEvent);
+	m_pkMountSystemUpdateEvent = NULL;
 	m_mountActorMap.clear();
 }
 
@@ -430,6 +432,38 @@ void CMountSystem::Unsummon(DWORD vnum, bool bDeleteFromList)
 	}
 }
 
+void CMountSystem::UnsummonAll()
+{
+	std::vector<CMountActor*> actors;
+	actors.reserve(m_mountActorMap.size());
+
+	for (auto& it : m_mountActorMap)
+	{
+		if (it.second)
+			actors.push_back(it.second);
+	}
+
+	for (auto* actor : actors)
+	{
+		actor->Unsummon();
+		DeleteMount(actor);
+	}
+}
+
+void CMountSystem::EnsureUpdateEventStarted()
+{
+	if (m_pkMountSystemUpdateEvent)
+	{
+		event_cancel(&m_pkMountSystemUpdateEvent);
+		m_pkMountSystemUpdateEvent = NULL;
+	}
+
+	mountsystem_event_info* info = AllocEventInfo<mountsystem_event_info>();
+	info->pMountSystem = this;
+	m_pkMountSystemUpdateEvent = event_create(mountsystem_update_event, info, PASSES_PER_SEC(1) / 4);
+	m_dwLastUpdateTime = 0;
+}
+
 void CMountSystem::Summon(DWORD mobVnum, LPITEM pSummonItem, bool bSpawnFar)
 {
 
@@ -446,16 +480,26 @@ void CMountSystem::Summon(DWORD mobVnum, LPITEM pSummonItem, bool bSpawnFar)
 	if (!mountVID)
 		sys_err("[CMountSystem::Summon(%d)] Null Pointer (mountVID)", pSummonItem->GetID());
 
-	if (NULL == m_pkMountSystemUpdateEvent)
+	EnsureUpdateEventStarted();
+}
+
+void CMountSystem::SummonSilent(DWORD mobVnum, LPITEM pSummonItem)
+{
+	CMountActor* mountActor = GetByVnum(mobVnum);
+
+	if (!mountActor)
 	{
-		mountsystem_event_info* info = AllocEventInfo<mountsystem_event_info>();
-
-		info->pMountSystem = this;
-
-		m_pkMountSystemUpdateEvent = event_create(mountsystem_update_event, info, PASSES_PER_SEC(1) / 4);
+		mountActor = M2_NEW CMountActor(m_pkOwner, mobVnum);
+		m_mountActorMap.insert(std::make_pair(mobVnum, mountActor));
 	}
 
-	//return mountActor;
+	if (mountActor->IsSummoned())
+	{
+		mountActor->Unsummon();
+	}
+
+	mountActor->SetSummonItem(pSummonItem);
+	EnsureUpdateEventStarted();
 }
 
 void CMountSystem::Mount(DWORD mobVnum, LPITEM mountItem)
@@ -480,6 +524,7 @@ void CMountSystem::Mount(DWORD mobVnum, LPITEM mountItem)
 
 	this->Unsummon(mobVnum, false);
 	mountActor->Mount(mountItem);
+	EnsureUpdateEventStarted();
 }
 
 void CMountSystem::Unmount(DWORD mobVnum)
@@ -505,6 +550,7 @@ void CMountSystem::Unmount(DWORD mobVnum)
 	}
 
 	mountActor->Unmount();
+	EnsureUpdateEventStarted();
 }
 
 CMountActor* CMountSystem::GetByVID(DWORD vid) const

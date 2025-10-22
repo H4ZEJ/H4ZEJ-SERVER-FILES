@@ -67,15 +67,18 @@ public:
 	void		SetUpdatePeriod(DWORD ms);
 
 	void		Summon(DWORD mobVnum, LPITEM pSummonItem, bool bSpawnFar);
+	void		SummonSilent(DWORD mobVnum, LPITEM pSummonItem);
 
 	void		Unsummon(DWORD mobVnum, bool bDeleteFromList = false);
 	void		Unsummon(CMountActor* mountActor, bool bDeleteFromList = false);
+	void		UnsummonAll();
 
 	void		Mount(DWORD mobVnum, LPITEM mountItem);
 	void		Unmount(DWORD mobVnum);
 
 	void		DeleteMount(DWORD mobVnum);
 	void		DeleteMount(CMountActor* mountActor);
+	void		EnsureUpdateEventStarted();
 private:
 	TMountActorMap	m_mountActorMap;
 	LPCHARACTER		m_pkOwner;
