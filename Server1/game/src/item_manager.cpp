@@ -36,7 +36,7 @@ ITEM_MANAGER::~ITEM_MANAGER()
 void ITEM_MANAGER::Destroy()
 {
 	itertype(m_VIDMap) it = m_VIDMap.begin();
-	for (; it != m_VIDMap.end(); ++it) {
+	for ( ; it != m_VIDMap.end(); ++it) {
 		M2_DELETE(it->second);
 	}
 	m_VIDMap.clear();
@@ -52,40 +52,40 @@ void ITEM_MANAGER::GracefulShutdown()
 	m_set_pkItemForDelayedSave.clear();
 }
 
-bool ITEM_MANAGER::Initialize(TItemTable* table, int size)
+bool ITEM_MANAGER::Initialize(TItemTable * table, int size)
 {
 	m_vec_prototype.clear();
 	m_vec_prototype.resize(size);
 	m_map_ItemRefineFrom.clear();
-#ifdef ENABLE_ITEM_PROTO_MAP
+	#ifdef ENABLE_ITEM_PROTO_MAP
 	m_mapItemProto.clear();
-#endif
+	#endif
 
 	thecore_memcpy(&m_vec_prototype[0], table, sizeof(TItemTable) * size);
 
 	for (int i = 0; i < size; i++)
 	{
-#ifdef ENABLE_ITEM_PROTO_MAP
+		#ifdef ENABLE_ITEM_PROTO_MAP
 		m_mapItemProto[m_vec_prototype[i].dwVnum] = &m_vec_prototype[i];
-#endif
+		#endif
 
 		if (0 != m_vec_prototype[i].dwVnumRange)
-			m_vec_item_vnum_range_info.emplace_back(&m_vec_prototype[i]);
+			m_vec_item_vnum_range_info.emplace_back( &m_vec_prototype[i]);
 
 		if (m_vec_prototype[i].dwRefinedVnum)
 			m_map_ItemRefineFrom.emplace(m_vec_prototype[i].dwRefinedVnum, m_vec_prototype[i].dwVnum);
 
 		if (m_vec_prototype[i].bType == ITEM_QUEST || IS_SET(m_vec_prototype[i].dwFlags, ITEM_FLAG_QUEST_USE | ITEM_FLAG_QUEST_USE_MULTIPLE)
-			)
+		)
 			quest::CQuestManager::instance().RegisterNPCVnum(m_vec_prototype[i].dwVnum);
 
 		m_map_vid.emplace(m_vec_prototype[i].dwVnum, m_vec_prototype[i]);
 		if (test_server)
-			sys_log(0, "ITEM_INFO %d %s ", m_vec_prototype[i].dwVnum, m_vec_prototype[i].szLocaleName);
+			sys_log( 0, "ITEM_INFO %d %s ", m_vec_prototype[i].dwVnum, m_vec_prototype[i].szLocaleName );
 	}
 
 	ITEM_VID_MAP::iterator it = m_VIDMap.begin();
-	sys_log(1, "ITEM_VID_MAP %d", m_VIDMap.size());
+	sys_log (1, "ITEM_VID_MAP %d", m_VIDMap.size() );
 	while (it != m_VIDMap.end())
 	{
 		LPITEM item = it->second;
@@ -138,6 +138,7 @@ LPITEM ITEM_MANAGER::CreateItem(DWORD vnum, DWORD count, DWORD id, bool bTryMagi
 	if (item->GetType() == ITEM_ELK)
 		item->SetSkipSave(true);
 
+
 	else if (!bIsNewItem)
 	{
 		item->SetID(id);
@@ -163,26 +164,28 @@ LPITEM ITEM_MANAGER::CreateItem(DWORD vnum, DWORD count, DWORD id, bool bTryMagi
 
 	switch (item->GetVnum())
 	{
-	case ITEM_AUTO_HP_RECOVERY_S:
-	case ITEM_AUTO_HP_RECOVERY_M:
-	case ITEM_AUTO_HP_RECOVERY_L:
-	case ITEM_AUTO_HP_RECOVERY_X:
-	case ITEM_AUTO_SP_RECOVERY_S:
-	case ITEM_AUTO_SP_RECOVERY_M:
-	case ITEM_AUTO_SP_RECOVERY_L:
-	case ITEM_AUTO_SP_RECOVERY_X:
-	case REWARD_BOX_ITEM_AUTO_SP_RECOVERY_XS:
-	case REWARD_BOX_ITEM_AUTO_SP_RECOVERY_S:
-	case REWARD_BOX_ITEM_AUTO_HP_RECOVERY_XS:
-	case REWARD_BOX_ITEM_AUTO_HP_RECOVERY_S:
-	case FUCKING_BRAZIL_ITEM_AUTO_SP_RECOVERY_S:
-	case FUCKING_BRAZIL_ITEM_AUTO_HP_RECOVERY_S:
-		if (bIsNewItem)
-			item->SetSocket(2, item->GetValue(0), true);
-		else
-			item->SetSocket(2, item->GetValue(0), false);
-		break;
+		case ITEM_AUTO_HP_RECOVERY_S:
+		case ITEM_AUTO_HP_RECOVERY_M:
+		case ITEM_AUTO_HP_RECOVERY_L:
+		case ITEM_AUTO_HP_RECOVERY_X:
+		case ITEM_AUTO_SP_RECOVERY_S:
+		case ITEM_AUTO_SP_RECOVERY_M:
+		case ITEM_AUTO_SP_RECOVERY_L:
+		case ITEM_AUTO_SP_RECOVERY_X:
+		case REWARD_BOX_ITEM_AUTO_SP_RECOVERY_XS:
+		case REWARD_BOX_ITEM_AUTO_SP_RECOVERY_S:
+		case REWARD_BOX_ITEM_AUTO_HP_RECOVERY_XS:
+		case REWARD_BOX_ITEM_AUTO_HP_RECOVERY_S:
+		case FUCKING_BRAZIL_ITEM_AUTO_SP_RECOVERY_S:
+		case FUCKING_BRAZIL_ITEM_AUTO_HP_RECOVERY_S:
+			if (bIsNewItem)
+				item->SetSocket(2, item->GetValue(0), true);
+			else
+				item->SetSocket(2, item->GetValue(0), false);
+			break;
 	}
+
+
 
 	if (item->GetType() == ITEM_ELK)
 		;
@@ -213,7 +216,7 @@ LPITEM ITEM_MANAGER::CreateItem(DWORD vnum, DWORD count, DWORD id, bool bTryMagi
 	if (item->GetType() == ITEM_UNIQUE && item->GetValue(2) != 0)
 		item->StartUniqueExpireEvent();
 
-	for (int i = 0; i < ITEM_LIMIT_MAX_NUM; i++)
+	for (int i=0 ; i < ITEM_LIMIT_MAX_NUM ; i++)
 	{
 		if (LIMIT_REAL_TIME == item->GetLimitType(i))
 		{
@@ -223,7 +226,7 @@ LPITEM ITEM_MANAGER::CreateItem(DWORD vnum, DWORD count, DWORD id, bool bTryMagi
 			}
 			else
 			{
-				item->SetSocket(0, time(0) + 60 * 60 * 24 * 7);
+				item->SetSocket(0, time(0) + 60*60*24*7);
 			}
 
 			item->StartRealTimeExpireEvent();
@@ -235,7 +238,7 @@ LPITEM ITEM_MANAGER::CreateItem(DWORD vnum, DWORD count, DWORD id, bool bTryMagi
 			{
 				item->StartTimerBasedOnWearExpireEvent();
 			}
-			else if (0 == id)
+			else if(0 == id)
 			{
 				long duration = item->GetSocket(0);
 				if (0 == duration)
@@ -251,7 +254,7 @@ LPITEM ITEM_MANAGER::CreateItem(DWORD vnum, DWORD count, DWORD id, bool bTryMagi
 
 	if (id == 0)
 	{
-		if (ITEM_BLEND == item->GetType())
+		if (ITEM_BLEND==item->GetType())
 		{
 			if (Blend_Item_find(item->GetVnum()))
 			{
@@ -307,7 +310,7 @@ LPITEM ITEM_MANAGER::CreateItem(DWORD vnum, DWORD count, DWORD id, bool bTryMagi
 
 	if (item->GetType() == ITEM_QUEST)
 	{
-		for (itertype(m_map_pkQuestItemGroup) it = m_map_pkQuestItemGroup.begin(); it != m_map_pkQuestItemGroup.end(); it++)
+		for (itertype (m_map_pkQuestItemGroup) it = m_map_pkQuestItemGroup.begin(); it != m_map_pkQuestItemGroup.end(); it++)
 		{
 			if (it->second->m_bType == CSpecialItemGroup::QUEST && it->second->Contains(vnum))
 			{
@@ -318,11 +321,11 @@ LPITEM ITEM_MANAGER::CreateItem(DWORD vnum, DWORD count, DWORD id, bool bTryMagi
 
 	else if (item->GetType() == ITEM_UNIQUE
 #ifdef ENABLE_MOUNT_COSTUME_SYSTEM
-		|| (item->GetType() == ITEM_COSTUME && item->GetSubType() == COSTUME_MOUNT)
+	|| (item->GetType() == ITEM_COSTUME && item->GetSubType() == COSTUME_MOUNT)
 #endif
-		)
+	)
 	{
-		for (itertype(m_map_pkSpecialItemGroup) it = m_map_pkSpecialItemGroup.begin(); it != m_map_pkSpecialItemGroup.end(); it++)
+		for (itertype (m_map_pkSpecialItemGroup) it = m_map_pkSpecialItemGroup.begin(); it != m_map_pkSpecialItemGroup.end(); it++)
 		{
 			if (it->second->m_bType == CSpecialItemGroup::SPECIAL && it->second->Contains(vnum))
 			{
@@ -380,33 +383,33 @@ void ITEM_MANAGER::SaveSingleItem(LPITEM item)
 	t.window = item->GetWindow();
 	switch (t.window)
 	{
-	case EQUIPMENT:
-		t.pos = item->GetCell() - INVENTORY_MAX_NUM;
-		break;
-#ifdef ENABLE_BELT_INVENTORY_EX
-	case INVENTORY:
-		if (BELT_INVENTORY_SLOT_START <= item->GetCell() && BELT_INVENTORY_SLOT_END > item->GetCell())
-		{
-			t.window = BELT_INVENTORY;
-			t.pos = item->GetCell() - BELT_INVENTORY_SLOT_START;
+		case EQUIPMENT:
+			t.pos = item->GetCell() - INVENTORY_MAX_NUM;
 			break;
-		}
+#ifdef ENABLE_BELT_INVENTORY_EX
+		case INVENTORY:
+			if (BELT_INVENTORY_SLOT_START <= item->GetCell() && BELT_INVENTORY_SLOT_END > item->GetCell())
+			{
+				t.window = BELT_INVENTORY;
+				t.pos = item->GetCell() - BELT_INVENTORY_SLOT_START;
+				break;
+			}
 #endif
-	default:
-		t.pos = item->GetCell();
-		break;
+		default:
+			t.pos = item->GetCell();
+			break;
 	}
 	t.count = item->GetCount();
 	t.vnum = item->GetOriginalVnum();
 	switch (t.window)
 	{
-	case SAFEBOX:
-	case MALL:
-		t.owner = item->GetOwner()->GetDesc()->GetAccountTable().id;
-		break;
-	default:
-		t.owner = item->GetOwner()->GetPlayerID();
-		break;
+		case SAFEBOX:
+		case MALL:
+			t.owner = item->GetOwner()->GetDesc()->GetAccountTable().id;
+			break;
+		default:
+			t.owner = item->GetOwner()->GetPlayerID();
+			break;
 	}
 	thecore_memcpy(t.alSockets, item->GetSockets(), sizeof(t.alSockets));
 	thecore_memcpy(t.aAttr, item->GetAttributes(), sizeof(t.aAttr));
@@ -444,7 +447,7 @@ void ITEM_MANAGER::Update()
 	}
 }
 
-void ITEM_MANAGER::RemoveItem(LPITEM item, const char* c_pszReason)
+void ITEM_MANAGER::RemoveItem(LPITEM item, const char * c_pszReason)
 {
 	LPCHARACTER o;
 
@@ -488,7 +491,7 @@ void ITEM_MANAGER::DestroyItem(LPITEM item)
 		}
 		else
 		{
-			sys_err("WTH! Invalid item owner. owner pointer : %p", item->GetOwner());
+			sys_err ("WTH! Invalid item owner. owner pointer : %p", item->GetOwner());
 		}
 	}
 
@@ -539,19 +542,19 @@ LPITEM ITEM_MANAGER::FindByVID(DWORD vid)
 	return (it->second);
 }
 
-TItemTable* ITEM_MANAGER::GetTable(DWORD vnum)
+TItemTable * ITEM_MANAGER::GetTable(DWORD vnum)
 {
-#ifdef ENABLE_ITEM_PROTO_MAP
+	#ifdef ENABLE_ITEM_PROTO_MAP
 	if (const auto it = m_mapItemProto.find(vnum); it != m_mapItemProto.end())
 		return it->second;
 	// dragon soul vnum range
 	else if (const auto it = m_mapItemProto.find(vnum - (vnum % 100));
-		it != m_mapItemProto.end()
-		&& it->second->dwVnumRange
-		&& it->second->dwVnum <= vnum && vnum <= it->second->dwVnum + it->second->dwVnumRange)
+			it != m_mapItemProto.end()
+			&& it->second->dwVnumRange
+			&& it->second->dwVnum <= vnum && vnum <= it->second->dwVnum + it->second->dwVnumRange)
 		return it->second;
 	return nullptr;
-#else
+	#else
 	int rnum = RealNumber(vnum);
 	if (rnum < 0) // dragon soul vnum range search
 	{
@@ -569,7 +572,7 @@ TItemTable* ITEM_MANAGER::GetTable(DWORD vnum)
 	}
 
 	return &m_vec_prototype[rnum];
-#endif
+	#endif
 }
 
 int ITEM_MANAGER::RealNumber(DWORD vnum)
@@ -579,7 +582,7 @@ int ITEM_MANAGER::RealNumber(DWORD vnum)
 	bot = 0;
 	top = m_vec_prototype.size();
 
-	TItemTable* pTable = &m_vec_prototype[0];
+	TItemTable * pTable = &m_vec_prototype[0];
 	while (1) // primitive binary tree search
 	{
 		mid = (bot + top) >> 1;
@@ -597,11 +600,11 @@ int ITEM_MANAGER::RealNumber(DWORD vnum)
 	}
 }
 
-bool ITEM_MANAGER::GetVnum(const char* c_pszName, DWORD& r_dwVnum)
+bool ITEM_MANAGER::GetVnum(const char * c_pszName, DWORD & r_dwVnum)
 {
 	int len = strlen(c_pszName);
 
-	TItemTable* pTable = &m_vec_prototype[0];
+	TItemTable * pTable = &m_vec_prototype[0];
 
 	for (DWORD i = 0; i < m_vec_prototype.size(); ++i, ++pTable)
 	{
@@ -615,11 +618,11 @@ bool ITEM_MANAGER::GetVnum(const char* c_pszName, DWORD& r_dwVnum)
 	return false;
 }
 
-bool ITEM_MANAGER::GetVnumByOriginalName(const char* c_pszName, DWORD& r_dwVnum)
+bool ITEM_MANAGER::GetVnumByOriginalName(const char * c_pszName, DWORD & r_dwVnum)
 {
 	int len = strlen(c_pszName);
 
-	TItemTable* pTable = &m_vec_prototype[0];
+	TItemTable * pTable = &m_vec_prototype[0];
 
 	for (DWORD i = 0; i < m_vec_prototype.size(); ++i, ++pTable)
 	{
@@ -635,28 +638,28 @@ bool ITEM_MANAGER::GetVnumByOriginalName(const char* c_pszName, DWORD& r_dwVnum)
 
 class CItemDropInfo
 {
-public:
-	CItemDropInfo(int iLevelStart, int iLevelEnd, int iPercent, DWORD dwVnum) :
-		m_iLevelStart(iLevelStart), m_iLevelEnd(iLevelEnd), m_iPercent(iPercent), m_dwVnum(dwVnum)
-	{
-	}
+	public:
+		CItemDropInfo(int iLevelStart, int iLevelEnd, int iPercent, DWORD dwVnum) :
+			m_iLevelStart(iLevelStart), m_iLevelEnd(iLevelEnd), m_iPercent(iPercent), m_dwVnum(dwVnum)
+			{
+			}
 
-	int	m_iLevelStart;
-	int	m_iLevelEnd;
-	int	m_iPercent; // 1 ~ 1000
-	DWORD	m_dwVnum;
+		int	m_iLevelStart;
+		int	m_iLevelEnd;
+		int	m_iPercent; // 1 ~ 1000
+		DWORD	m_dwVnum;
 
-	friend bool operator < (const CItemDropInfo& l, const CItemDropInfo& r)
-	{
-		return l.m_iLevelEnd < r.m_iLevelEnd;
-	}
+		friend bool operator < (const CItemDropInfo & l, const CItemDropInfo & r)
+		{
+			return l.m_iLevelEnd < r.m_iLevelEnd;
+		}
 };
 
 extern std::vector<CItemDropInfo> g_vec_pkCommonDropItem[MOB_RANK_MAX_NUM];
 
 // 20050503.ipkn.
 
-int GetDropPerKillPct(int iMinimum, int iDefault, int iDeltaPercent, const char* c_pszFlag)
+int GetDropPerKillPct(int iMinimum, int iDefault, int iDeltaPercent, const char * c_pszFlag)
 {
 	int iVal = 0;
 
@@ -680,7 +683,7 @@ int GetDropPerKillPct(int iMinimum, int iDefault, int iDeltaPercent, const char*
 
 bool ITEM_MANAGER::GetDropPct(LPCHARACTER pkChr, LPCHARACTER pkKiller, OUT int& iDeltaPercent, OUT int& iRandRange)
 {
-	if (NULL == pkChr || NULL == pkKiller)
+ 	if (NULL == pkChr || NULL == pkKiller)
 		return false;
 
 	int iLevel = pkKiller->GetLevel();
@@ -705,22 +708,22 @@ bool ITEM_MANAGER::GetDropPct(LPCHARACTER pkChr, LPCHARACTER pkKiller, OUT int& 
 	//iDeltaPercent += iDeltaPercent * pkKiller->GetPoint(POINT_MALL_ITEMBONUS) / 100;
 	// ADD_PREMIUM
 	if (pkKiller->GetPremiumRemainSeconds(PREMIUM_ITEM) > 0 ||
-		pkKiller->IsEquipUniqueGroup(UNIQUE_GROUP_DOUBLE_ITEM))
+			pkKiller->IsEquipUniqueGroup(UNIQUE_GROUP_DOUBLE_ITEM))
 		iDeltaPercent += iDeltaPercent;
 	// END_OF_ADD_PREMIUM
 
 	iRandRange = 4000000;
 	iRandRange = iRandRange * 100 /
 		(100 +
-			CPrivManager::instance().GetPriv(pkKiller, PRIV_ITEM_DROP) +
-			(pkKiller->IsEquipUniqueItem(UNIQUE_ITEM_DOUBLE_ITEM) ? 100 : 0));
+		 CPrivManager::instance().GetPriv(pkKiller, PRIV_ITEM_DROP) +
+		 (pkKiller->IsEquipUniqueItem(UNIQUE_ITEM_DOUBLE_ITEM)?100:0));
 
 	if (distribution_test_server) iRandRange /= 3;
 
 	return true;
 }
 
-bool ITEM_MANAGER::CreateDropItem(LPCHARACTER pkChr, LPCHARACTER pkKiller, std::vector<LPITEM>& vec_item)
+bool ITEM_MANAGER::CreateDropItem(LPCHARACTER pkChr, LPCHARACTER pkKiller, std::vector<LPITEM> & vec_item)
 {
 	int iLevel = pkKiller->GetLevel();
 
@@ -736,7 +739,7 @@ bool ITEM_MANAGER::CreateDropItem(LPCHARACTER pkChr, LPCHARACTER pkKiller, std::
 
 	while (it != g_vec_pkCommonDropItem[bRank].end())
 	{
-		const CItemDropInfo& c_rInfo = *(it++);
+		const CItemDropInfo & c_rInfo = *(it++);
 
 		if (iLevel < c_rInfo.m_iLevelStart || iLevel > c_rInfo.m_iLevelEnd)
 			continue;
@@ -746,7 +749,7 @@ bool ITEM_MANAGER::CreateDropItem(LPCHARACTER pkChr, LPCHARACTER pkKiller, std::
 
 		if (iPercent >= number(1, iRandRange))
 		{
-			TItemTable* table = GetTable(c_rInfo.m_dwVnum);
+			TItemTable * table = GetTable(c_rInfo.m_dwVnum);
 
 			if (!table)
 				continue;
@@ -809,7 +812,7 @@ bool ITEM_MANAGER::CreateDropItem(LPCHARACTER pkChr, LPCHARACTER pkKiller, std::
 		itertype(m_map_pkMobItemGroup) it;
 		it = m_map_pkMobItemGroup.find(pkChr->GetRaceNum());
 
-		if (it != m_map_pkMobItemGroup.end())
+		if ( it != m_map_pkMobItemGroup.end() )
 		{
 			CMobItemGroup* pGroup = it->second;
 
@@ -835,19 +838,19 @@ bool ITEM_MANAGER::CreateDropItem(LPCHARACTER pkChr, LPCHARACTER pkKiller, std::
 		itertype(m_map_pkLevelItemGroup) it;
 		it = m_map_pkLevelItemGroup.find(pkChr->GetRaceNum());
 
-		if (it != m_map_pkLevelItemGroup.end())
+		if ( it != m_map_pkLevelItemGroup.end() )
 		{
-			if (it->second->GetLevelLimit() <= (DWORD)iLevel)
+			if ( it->second->GetLevelLimit() <= (DWORD)iLevel )
 			{
 				typeof(it->second->GetVector()) v = it->second->GetVector();
 
-				for (DWORD i = 0; i < v.size(); i++)
+				for ( DWORD i=0; i < v.size(); i++ )
 				{
-					if (v[i].dwPct >= (DWORD)number(1, 1000000/*iRandRange*/))
+					if ( v[i].dwPct >= (DWORD)number(1, 1000000/*iRandRange*/) )
 					{
 						DWORD dwVnum = v[i].dwVNum;
 						item = CreateItem(dwVnum, v[i].iCount, 0, true);
-						if (item) vec_item.emplace_back(item);
+						if ( item ) vec_item.emplace_back(item);
 					}
 				}
 			}
@@ -857,7 +860,7 @@ bool ITEM_MANAGER::CreateDropItem(LPCHARACTER pkChr, LPCHARACTER pkKiller, std::
 	// BuyerTheitGloves Item Group
 	{
 		if (pkKiller->GetPremiumRemainSeconds(PREMIUM_ITEM) > 0 ||
-			pkKiller->IsEquipUniqueGroup(UNIQUE_GROUP_DOUBLE_ITEM))
+				pkKiller->IsEquipUniqueGroup(UNIQUE_GROUP_DOUBLE_ITEM))
 		{
 			itertype(m_map_pkGloveItemGroup) it;
 			it = m_map_pkGloveItemGroup.find(pkChr->GetRaceNum());
@@ -912,7 +915,7 @@ bool ITEM_MANAGER::CreateDropItem(LPCHARACTER pkChr, LPCHARACTER pkKiller, std::
 	}
 
 	if (pkKiller->IsHorseRiding() &&
-		GetDropPerKillPct(1000, 1000000, iDeltaPercent, "horse_skill_book_drop") >= number(1, iRandRange))
+			GetDropPerKillPct(1000, 1000000, iDeltaPercent, "horse_skill_book_drop") >= number(1, iRandRange))
 	{
 		sys_log(0, "EVENT HORSE_SKILL_BOOK_DROP");
 
@@ -964,9 +967,9 @@ static struct DropEvent_CharStone
 
 	DropEvent_CharStone()
 	{
-		percent_lv01_10 = 100;
-		percent_lv11_30 = 200;
-		percent_lv31_MX = 300;
+		percent_lv01_10 =  100;
+		percent_lv11_30 =  200;
+		percent_lv31_MX =  300;
 		level_range = 10;
 		alive = false;
 	}
@@ -974,22 +977,22 @@ static struct DropEvent_CharStone
 
 static int __DropEvent_CharStone_GetDropPercent(int killer_level)
 {
-	int killer_levelStep = (killer_level - 1) / 10;
+	int killer_levelStep = (killer_level-1)/10;
 
 	switch (killer_levelStep)
 	{
-	case 0:
-		return gs_dropEvent_charStone.percent_lv01_10;
+		case 0:
+			return gs_dropEvent_charStone.percent_lv01_10;
 
-	case 1:
-	case 2:
-		return gs_dropEvent_charStone.percent_lv11_30;
+		case 1:
+		case 2:
+			return gs_dropEvent_charStone.percent_lv11_30;
 	}
 
 	return gs_dropEvent_charStone.percent_lv31_MX;
 }
 
-static void __DropEvent_CharStone_DropItem(CHARACTER& killer, CHARACTER& victim, ITEM_MANAGER& itemMgr, std::vector<LPITEM>& vec_item)
+static void __DropEvent_CharStone_DropItem(CHARACTER & killer, CHARACTER & victim, ITEM_MANAGER& itemMgr, std::vector<LPITEM>& vec_item)
 {
 	if (!gs_dropEvent_charStone.alive)
 		return;
@@ -1008,13 +1011,13 @@ static void __DropEvent_CharStone_DropItem(CHARACTER& killer, CHARACTER& victim,
 		if (level_diff >= +gs_dropEvent_charStone.level_range || level_diff <= -gs_dropEvent_charStone.level_range)
 		{
 			sys_log(log_level,
-				"dropevent.drop_char_stone.level_range_over: killer(%s: lv%d), victim(%s: lv:%d), level_diff(%d)",
-				killer.GetName(), killer.GetLevel(), victim.GetName(), victim.GetLevel(), level_diff);
+					"dropevent.drop_char_stone.level_range_over: killer(%s: lv%d), victim(%s: lv:%d), level_diff(%d)",
+					killer.GetName(), killer.GetLevel(), victim.GetName(), victim.GetLevel(), level_diff);
 			return;
 		}
 
 		static const int Stones[] = { 30210, 30211, 30212, 30213, 30214, 30215, 30216, 30217, 30218, 30219, 30258, 30259, 30260, 30261, 30262, 30263 };
-		int item_vnum = Stones[number(0, _countof(Stones) - 1)]; // @fixme189
+		int item_vnum = Stones[number(0, _countof(Stones)-1)]; // @fixme189
 
 		LPITEM p_item = NULL;
 
@@ -1023,8 +1026,8 @@ static void __DropEvent_CharStone_DropItem(CHARACTER& killer, CHARACTER& victim,
 			vec_item.emplace_back(p_item);
 
 			sys_log(log_level,
-				"dropevent.drop_char_stone.item_drop: killer(%s: lv%d), victim(%s: lv:%d), item_name(%s)",
-				killer.GetName(), killer.GetLevel(), victim.GetName(), victim.GetLevel(), p_item->GetName());
+					"dropevent.drop_char_stone.item_drop: killer(%s: lv%d), victim(%s: lv:%d), item_name(%s)",
+					killer.GetName(), killer.GetLevel(), victim.GetName(), victim.GetLevel(), p_item->GetName());
 		}
 	}
 }
@@ -1039,6 +1042,7 @@ bool DropEvent_CharStone_SetValue(const std::string& name, int value)
 			sys_log(0, "dropevent.drop_char_stone = on");
 		else
 			sys_log(0, "dropevent.drop_char_stone = off");
+
 	}
 	else if (name == "drop_char_stone.percent_lv01_10")
 		gs_dropEvent_charStone.percent_lv01_10 = value;
@@ -1052,9 +1056,9 @@ bool DropEvent_CharStone_SetValue(const std::string& name, int value)
 		return false;
 
 	sys_log(0, "dropevent.drop_char_stone: %d", gs_dropEvent_charStone.alive ? true : false);
-	sys_log(0, "dropevent.drop_char_stone.percent_lv01_10: %f", gs_dropEvent_charStone.percent_lv01_10 / 100.0f);
-	sys_log(0, "dropevent.drop_char_stone.percent_lv11_30: %f", gs_dropEvent_charStone.percent_lv11_30 / 100.0f);
-	sys_log(0, "dropevent.drop_char_stone.percent_lv31_MX: %f", gs_dropEvent_charStone.percent_lv31_MX / 100.0f);
+	sys_log(0, "dropevent.drop_char_stone.percent_lv01_10: %f", gs_dropEvent_charStone.percent_lv01_10/100.0f);
+	sys_log(0, "dropevent.drop_char_stone.percent_lv11_30: %f", gs_dropEvent_charStone.percent_lv11_30/100.0f);
+	sys_log(0, "dropevent.drop_char_stone.percent_lv31_MX: %f", gs_dropEvent_charStone.percent_lv31_MX/100.0f);
 	sys_log(0, "dropevent.drop_char_stone.level_range: %d", gs_dropEvent_charStone.level_range);
 
 	return true;
@@ -1076,17 +1080,17 @@ static struct DropEvent_RefineBox
 
 	DropEvent_RefineBox()
 	{
-		percent_low = 100;
+		percent_low =  100;
 		low = 20;
-		percent_mid = 100;
+		percent_mid =  100;
 		mid = 45;
-		percent_high = 100;
+		percent_high =  100;
 		//level_range = 10;
 		alive = false;
 	}
 } gs_dropEvent_refineBox;
 
-static LPITEM __DropEvent_RefineBox_GetDropItem(CHARACTER& killer, CHARACTER& victim, ITEM_MANAGER& itemMgr)
+static LPITEM __DropEvent_RefineBox_GetDropItem(CHARACTER & killer, CHARACTER & victim, ITEM_MANAGER& itemMgr)
 {
 	static const int lowerBox[] = { 50197, 50198, 50199 };
 	static const int lowerBox_range = 3;
@@ -1101,29 +1105,29 @@ static LPITEM __DropEvent_RefineBox_GetDropItem(CHARACTER& killer, CHARACTER& vi
 	int killer_level = killer.GetLevel();
 	if (killer_level <= gs_dropEvent_refineBox.low)
 	{
-		if (number(1, gs_dropEvent_refineBox.percent_low) == 1)
+		if (number (1, gs_dropEvent_refineBox.percent_low) == 1)
 		{
-			return itemMgr.CreateItem(lowerBox[number(1, lowerBox_range) - 1], 1, 0, true);
+			return itemMgr.CreateItem(lowerBox [number (1,lowerBox_range) - 1], 1, 0, true);
 		}
 	}
 	else if (killer_level <= gs_dropEvent_refineBox.mid)
 	{
-		if (number(1, gs_dropEvent_refineBox.percent_mid) == 1)
+		if (number (1, gs_dropEvent_refineBox.percent_mid) == 1)
 		{
-			return itemMgr.CreateItem(midderBox[number(1, midderBox_range) - 1], 1, 0, true);
+			return itemMgr.CreateItem(midderBox [number (1,midderBox_range) - 1], 1, 0, true);
 		}
 	}
 	else
 	{
-		if (number(1, gs_dropEvent_refineBox.percent_high) == 1)
+		if (number (1, gs_dropEvent_refineBox.percent_high) == 1)
 		{
-			return itemMgr.CreateItem(higherBox[number(1, higherBox_range) - 1], 1, 0, true);
+			return itemMgr.CreateItem(higherBox [number (1,higherBox_range) - 1], 1, 0, true);
 		}
 	}
 	return NULL;
 }
 
-static void __DropEvent_RefineBox_DropItem(CHARACTER& killer, CHARACTER& victim, ITEM_MANAGER& itemMgr, std::vector<LPITEM>& vec_item)
+static void __DropEvent_RefineBox_DropItem(CHARACTER & killer, CHARACTER & victim, ITEM_MANAGER& itemMgr, std::vector<LPITEM>& vec_item)
 {
 	if (!gs_dropEvent_refineBox.alive)
 		return;
@@ -1152,6 +1156,7 @@ bool DropEvent_RefineBox_SetValue(const std::string& name, int value)
 			sys_log(0, "refine_box_drop = on");
 		else
 			sys_log(0, "refine_box_drop = off");
+
 	}
 	else if (name == "refine_box_low")
 		gs_dropEvent_refineBox.percent_low = value < 100 ? 100 : value;
@@ -1173,7 +1178,7 @@ bool DropEvent_RefineBox_SetValue(const std::string& name, int value)
 	return true;
 }
 
-void ITEM_MANAGER::CreateQuestDropItem(LPCHARACTER pkChr, LPCHARACTER pkKiller, std::vector<LPITEM>& vec_item, int iDeltaPercent, int iRandRange)
+void ITEM_MANAGER::CreateQuestDropItem(LPCHARACTER pkChr, LPCHARACTER pkKiller, std::vector<LPITEM> & vec_item, int iDeltaPercent, int iRandRange)
 {
 	LPITEM item = NULL;
 
@@ -1183,7 +1188,7 @@ void ITEM_MANAGER::CreateQuestDropItem(LPCHARACTER pkChr, LPCHARACTER pkKiller, 
 	if (!pkKiller)
 		return;
 
-	sys_log(1, "CreateQuestDropItem victim(%s), killer(%s)", pkChr->GetName(), pkKiller->GetName());
+	sys_log(1, "CreateQuestDropItem victim(%s), killer(%s)", pkChr->GetName(), pkKiller->GetName() );
 
 	// DROPEVENT_CHARSTONE
 	__DropEvent_CharStone_DropItem(*pkKiller, *pkChr, *this, vec_item);
@@ -1204,7 +1209,7 @@ void ITEM_MANAGER::CreateQuestDropItem(LPCHARACTER pkChr, LPCHARACTER pkKiller, 
 			0,
 		};
 
-		if (iDropPerKill[pkChr->GetMobRank()] != 0)
+		if ( iDropPerKill[pkChr->GetMobRank()] != 0 )
 		{
 			int iPercent = 40000 * iDeltaPercent / iDropPerKill[pkChr->GetMobRank()];
 
@@ -1251,7 +1256,7 @@ void ITEM_MANAGER::CreateQuestDropItem(LPCHARACTER pkChr, LPCHARACTER pkKiller, 
 		{
 			const DWORD ITEM_VNUM = 30178;
 
-			if (number(1, 100) <= pct)
+			if (number(1,100) <= pct)
 			{
 				if ((item = CreateItem(ITEM_VNUM, 1, 0, true)))
 					vec_item.emplace_back(item);
@@ -1267,6 +1272,7 @@ void ITEM_MANAGER::CreateQuestDropItem(LPCHARACTER pkChr, LPCHARACTER pkKiller, 
 
 		if ((item = CreateItem(dwVnum, 1, 0, true)))
 			vec_item.emplace_back(item);
+
 	}
 
 	if (GetDropPerKillPct(100, 2000, iDeltaPercent, "2007_drop") >= number(1, iRandRange))
@@ -1292,7 +1298,7 @@ void ITEM_MANAGER::CreateQuestDropItem(LPCHARACTER pkChr, LPCHARACTER pkKiller, 
 		sys_log(0, "EVENT NEWYEAR_MOON DROP");
 
 		const static DWORD wonso_items[6] = { 50016, 50017, 50018, 50019, 50019, 50019, };
-		DWORD dwVnum = wonso_items[number(0, 5)];
+		DWORD dwVnum = wonso_items[number(0,5)];
 
 		if ((item = CreateItem(dwVnum, 1, 0, true)))
 			vec_item.emplace_back(item);
@@ -1320,13 +1326,13 @@ void ITEM_MANAGER::CreateQuestDropItem(LPCHARACTER pkChr, LPCHARACTER pkKiller, 
 	if ((pkKiller->CountSpecifyItem(53002) > 0) && (GetDropPerKillPct(50, 100, iDeltaPercent, "new_xmas_event") >= number(1, iRandRange)))
 	{
 		const static DWORD xmas_sock = 50010;
-		pkKiller->AutoGiveItem(xmas_sock, 1);
+		pkKiller->AutoGiveItem (xmas_sock, 1);
 	}
 
 	if ((pkKiller->CountSpecifyItem(53007) > 0) && (GetDropPerKillPct(50, 100, iDeltaPercent, "new_xmas_event") >= number(1, iRandRange)))
 	{
 		const static DWORD xmas_sock = 50010;
-		pkKiller->AutoGiveItem(xmas_sock, 1);
+		pkKiller->AutoGiveItem (xmas_sock, 1);
 	}
 
 	//if (pkChr->GetLevel() >= 30 && (GetDropPerKillPct(50, 100, iDeltaPercent, "ds_drop") >= number(1, iRandRange)))
@@ -1336,35 +1342,35 @@ void ITEM_MANAGER::CreateQuestDropItem(LPCHARACTER pkChr, LPCHARACTER pkKiller, 
 	//		vec_item.emplace_back(item);
 	//}
 
-	if (GetDropPerKillPct(100, 2000, iDeltaPercent, "halloween_drop") >= number(1, iRandRange))
+	if ( GetDropPerKillPct(100, 2000, iDeltaPercent, "halloween_drop") >= number(1, iRandRange) )
 	{
 		const static DWORD halloween_item = 30321;
 
-		if ((item = CreateItem(halloween_item, 1, 0, true)))
+		if ( (item=CreateItem(halloween_item, 1, 0, true)) )
 			vec_item.emplace_back(item);
 	}
 
-	if (GetDropPerKillPct(100, 2000, iDeltaPercent, "ramadan_drop") >= number(1, iRandRange))
+	if ( GetDropPerKillPct(100, 2000, iDeltaPercent, "ramadan_drop") >= number(1, iRandRange) )
 	{
 		const static DWORD ramadan_item = 30315;
 
-		if ((item = CreateItem(ramadan_item, 1, 0, true)))
+		if ( (item=CreateItem(ramadan_item, 1, 0, true)) )
 			vec_item.emplace_back(item);
 	}
 
-	if (GetDropPerKillPct(100, 2000, iDeltaPercent, "easter_drop") >= number(1, iRandRange))
+	if ( GetDropPerKillPct(100, 2000, iDeltaPercent, "easter_drop") >= number(1, iRandRange) )
 	{
 		const static DWORD easter_item_base = 50160;
 
-		if ((item = CreateItem(easter_item_base + number(0, 19), 1, 0, true)))
+		if ( (item=CreateItem(easter_item_base+number(0,19), 1, 0, true)) )
 			vec_item.emplace_back(item);
 	}
 
-	if (GetDropPerKillPct(100, 2000, iDeltaPercent, "football_drop") >= number(1, iRandRange))
+	if ( GetDropPerKillPct(100, 2000, iDeltaPercent, "football_drop") >= number(1, iRandRange) )
 	{
 		const static DWORD football_item = 50096;
 
-		if ((item = CreateItem(football_item, 1, 0, true)))
+		if ( (item=CreateItem(football_item, 1, 0, true)) )
 			vec_item.emplace_back(item);
 	}
 
@@ -1372,13 +1378,13 @@ void ITEM_MANAGER::CreateQuestDropItem(LPCHARACTER pkChr, LPCHARACTER pkKiller, 
 	{
 		sys_log(0, "EVENT WHITEDAY_DROP");
 		const static DWORD whiteday_items[2] = { ITEM_WHITEDAY_ROSE, ITEM_WHITEDAY_CANDY };
-		DWORD dwVnum = whiteday_items[number(0, 1)];
+		DWORD dwVnum = whiteday_items[number(0,1)];
 
 		if ((item = CreateItem(dwVnum, 1, 0, true)))
 			vec_item.emplace_back(item);
 	}
 
-	if (pkKiller->GetLevel() >= 50)
+	if (pkKiller->GetLevel()>=50)
 	{
 		if (GetDropPerKillPct(100, 1000, iDeltaPercent, "kids_day_drop_high") >= number(1, iRandRange))
 		{
@@ -1402,7 +1408,7 @@ void ITEM_MANAGER::CreateQuestDropItem(LPCHARACTER pkChr, LPCHARACTER pkKiller, 
 	if (pkChr->GetLevel() >= 30 && GetDropPerKillPct(50, 100, iDeltaPercent, "medal_part_drop") >= number(1, iRandRange))
 	{
 		const static DWORD drop_items[] = { 30265, 30266, 30267, 30268, 30269 };
-		int i = number(0, 4);
+		int i = number (0, 4);
 		item = CreateItem(drop_items[i]);
 		if (item != NULL)
 			vec_item.emplace_back(item);
@@ -1441,7 +1447,7 @@ void ITEM_MANAGER::CreateQuestDropItem(LPCHARACTER pkChr, LPCHARACTER pkKiller, 
 		};
 
 		if (iDropMultiply[pkChr->GetMobRank()] &&
-			GetDropPerKillPct(1000, 1500, iDeltaPercent, "mars_drop") >= number(1, iRandRange) * iDropMultiply[pkChr->GetMobRank()])
+				GetDropPerKillPct(1000, 1500, iDeltaPercent, "mars_drop") >= number(1, iRandRange) * iDropMultiply[pkChr->GetMobRank()])
 		{
 			if ((item = CreateItem(ITEM_HANIRON, 1, 0, true)))
 				vec_item.emplace_back(item);
@@ -1479,7 +1485,7 @@ const CSpecialAttrGroup* ITEM_MANAGER::GetSpecialAttrGroup(DWORD dwVnum)
 
 DWORD ITEM_MANAGER::GetMaskVnum(DWORD dwVnum)
 {
-	TMapDW2DW::iterator it = m_map_new_to_ori.find(dwVnum);
+	TMapDW2DW::iterator it = m_map_new_to_ori.find (dwVnum);
 	if (it != m_map_new_to_ori.end())
 	{
 		return it->second;
@@ -1519,6 +1525,7 @@ void ITEM_MANAGER::CopyAllAttrTo(LPITEM pkOldItem, LPITEM pkNewItem)
 			if (socket > 2 && socket != ITEM_BROKEN_METIN_VNUM)
 				pkNewItem->SetSocket(slot++, socket);
 		}
+
 	}
 
 	pkOldItem->CopyAttributeTo(pkNewItem);

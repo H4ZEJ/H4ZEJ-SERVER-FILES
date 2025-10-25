@@ -22,7 +22,7 @@
 #include "locale_service.h"
 #include "../../common/CommonDefines.h"
 
-int battle_hit(LPCHARACTER ch, LPCHARACTER victim, int& iRetDam);
+int battle_hit(LPCHARACTER ch, LPCHARACTER victim, int & iRetDam);
 
 bool battle_distance_valid_by_xy(long x, long y, long tx, long ty)
 {
@@ -63,9 +63,9 @@ bool battle_is_attackable(LPCHARACTER ch, LPCHARACTER victim)
 #endif
 
 	{
-		SECTREE* sectree = NULL;
+		SECTREE	*sectree = NULL;
 
-		sectree = ch->GetSectree();
+		sectree	= ch->GetSectree();
 		if (sectree && sectree->IsAttr(ch->GetX(), ch->GetY(), ATTR_BANPK))
 			return false;
 
@@ -97,19 +97,19 @@ bool battle_is_attackable(LPCHARACTER ch, LPCHARACTER victim)
 
 int battle_melee_attack(LPCHARACTER ch, LPCHARACTER victim)
 {
-	if (test_server && ch->IsPC())
+	if (test_server&&ch->IsPC())
 		sys_log(0, "battle_melee_attack : [%s] attack to [%s]", ch->GetName(), victim->GetName());
 
 	if (!victim || ch == victim)
 		return BATTLE_NONE;
 
-	if (test_server && ch->IsPC())
+	if (test_server&&ch->IsPC())
 		sys_log(0, "battle_melee_attack : [%s] attack to [%s]", ch->GetName(), victim->GetName());
 
 	if (!battle_is_attackable(ch, victim))
 		return BATTLE_NONE;
 
-	if (test_server && ch->IsPC())
+	if (test_server&&ch->IsPC())
 		sys_log(0, "battle_melee_attack : [%s] attack to [%s]", ch->GetName(), victim->GetName());
 
 	int distance = DISTANCE_APPROX(ch->GetX() - victim->GetX(), ch->GetY() - victim->GetY());
@@ -120,12 +120,12 @@ int battle_melee_attack(LPCHARACTER ch, LPCHARACTER victim)
 
 		if (false == ch->IsPC())
 		{
-			max = (int)(ch->GetMobAttackRange() * 1.15f);
+			max = (int) (ch->GetMobAttackRange() * 1.15f);
 		}
 		else
 		{
 			if (false == victim->IsPC() && BATTLE_TYPE_MELEE == victim->GetMobBattleType())
-				max = MAX(300, (int)(victim->GetMobAttackRange() * 1.15f));
+				max = MAX(300, (int) (victim->GetMobAttackRange() * 1.15f));
 		}
 
 		if (distance > max)
@@ -146,7 +146,7 @@ int battle_melee_attack(LPCHARACTER ch, LPCHARACTER victim)
 	ch->SetPosition(POS_FIGHTING);
 	ch->SetVictim(victim);
 
-	const PIXEL_POSITION& vpos = victim->GetXYZ();
+	const PIXEL_POSITION & vpos = victim->GetXYZ();
 	ch->SetRotationToXY(vpos.x, vpos.y);
 
 	int dam;
@@ -207,16 +207,16 @@ float CalcAttackRating(LPCHARACTER pkAttacker, LPCHARACTER pkVictim, bool bIgnor
 		int victim_dx = pkVictim->GetPolymorphPoint(POINT_DX);
 		int victim_lv = pkAttacker->GetLevel();
 
-		iARSrc = MIN(90, (attacker_dx * 4 + attacker_lv * 2) / 6);
-		iERSrc = MIN(90, (victim_dx * 4 + victim_lv * 2) / 6);
+		iARSrc = MIN(90, (attacker_dx * 4	+ attacker_lv * 2) / 6);
+		iERSrc = MIN(90, (victim_dx	  * 4	+ victim_lv   * 2) / 6);
 	}
 
-	float fAR = ((float)iARSrc + 210.0f) / 300.0f;
+	float fAR = ((float) iARSrc + 210.0f) / 300.0f;
 
 	if (bIgnoreTargetRating)
 		return fAR;
 
-	float fER = ((float)(iERSrc * 2 + 5) / (iERSrc + 95)) * 3.0f / 10.0f;
+	float fER = ((float) (iERSrc * 2 + 5) / (iERSrc + 95)) * 3.0f / 10.0f;
 
 	return fAR - fER;
 }
@@ -270,21 +270,21 @@ int CalcAttBonus(LPCHARACTER pkAttacker, LPCHARACTER pkVictim, int iAtk)
 
 		switch (pkVictim->GetJob())
 		{
-		case JOB_WARRIOR:
-			iAtk += (iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_WARRIOR)) / 100;
-			break;
+			case JOB_WARRIOR:
+				iAtk += (iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_WARRIOR)) / 100;
+				break;
 
-		case JOB_ASSASSIN:
-			iAtk += (iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_ASSASSIN)) / 100;
-			break;
+			case JOB_ASSASSIN:
+				iAtk += (iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_ASSASSIN)) / 100;
+				break;
 
-		case JOB_SURA:
-			iAtk += (iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_SURA)) / 100;
-			break;
+			case JOB_SURA:
+				iAtk += (iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_SURA)) / 100;
+				break;
 
-		case JOB_SHAMAN:
-			iAtk += (iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_SHAMAN)) / 100;
-			break;
+			case JOB_SHAMAN:
+				iAtk += (iAtk * pkAttacker->GetPoint(POINT_ATTBONUS_SHAMAN)) / 100;
+				break;
 		}
 	}
 
@@ -292,39 +292,41 @@ int CalcAttBonus(LPCHARACTER pkAttacker, LPCHARACTER pkVictim, int iAtk)
 	{
 		switch (pkAttacker->GetJob())
 		{
-		case JOB_WARRIOR:
-			iAtk -= (iAtk * pkVictim->GetPoint(POINT_RESIST_WARRIOR)) / 100;
-			break;
+			case JOB_WARRIOR:
+				iAtk -= (iAtk * pkVictim->GetPoint(POINT_RESIST_WARRIOR)) / 100;
+				break;
 
-		case JOB_ASSASSIN:
-			iAtk -= (iAtk * pkVictim->GetPoint(POINT_RESIST_ASSASSIN)) / 100;
-			break;
+			case JOB_ASSASSIN:
+				iAtk -= (iAtk * pkVictim->GetPoint(POINT_RESIST_ASSASSIN)) / 100;
+				break;
 
-		case JOB_SURA:
-			iAtk -= (iAtk * pkVictim->GetPoint(POINT_RESIST_SURA)) / 100;
-			break;
+			case JOB_SURA:
+				iAtk -= (iAtk * pkVictim->GetPoint(POINT_RESIST_SURA)) / 100;
+				break;
 
-		case JOB_SHAMAN:
-			iAtk -= (iAtk * pkVictim->GetPoint(POINT_RESIST_SHAMAN)) / 100;
-			break;
+			case JOB_SHAMAN:
+				iAtk -= (iAtk * pkVictim->GetPoint(POINT_RESIST_SHAMAN)) / 100;
+				break;
+
 		}
 	}
 
 	if (pkAttacker->IsNPC() && pkVictim->IsPC())
 	{
 		if (pkAttacker->IsRaceFlag(RACE_FLAG_ATT_ELEC))
-			iAtk -= (iAtk * 30 * pkVictim->GetPoint(POINT_RESIST_ELEC)) / 10000;
+			iAtk -= (iAtk * 30 * pkVictim->GetPoint(POINT_RESIST_ELEC))		/ 10000;
 		else if (pkAttacker->IsRaceFlag(RACE_FLAG_ATT_FIRE))
-			iAtk -= (iAtk * 30 * pkVictim->GetPoint(POINT_RESIST_FIRE)) / 10000;
+			iAtk -= (iAtk * 30 * pkVictim->GetPoint(POINT_RESIST_FIRE))		/ 10000;
 		else if (pkAttacker->IsRaceFlag(RACE_FLAG_ATT_ICE))
-			iAtk -= (iAtk * 30 * pkVictim->GetPoint(POINT_RESIST_ICE)) / 10000;
+			iAtk -= (iAtk * 30 * pkVictim->GetPoint(POINT_RESIST_ICE))		/ 10000;
 		else if (pkAttacker->IsRaceFlag(RACE_FLAG_ATT_WIND))
-			iAtk -= (iAtk * 30 * pkVictim->GetPoint(POINT_RESIST_WIND)) / 10000;
+			iAtk -= (iAtk * 30 * pkVictim->GetPoint(POINT_RESIST_WIND))		/ 10000;
 		else if (pkAttacker->IsRaceFlag(RACE_FLAG_ATT_EARTH))
-			iAtk -= (iAtk * 30 * pkVictim->GetPoint(POINT_RESIST_EARTH)) / 10000;
+			iAtk -= (iAtk * 30 * pkVictim->GetPoint(POINT_RESIST_EARTH))	/ 10000;
 		else if (pkAttacker->IsRaceFlag(RACE_FLAG_ATT_DARK))
-			iAtk -= (iAtk * 30 * pkVictim->GetPoint(POINT_RESIST_DARK)) / 10000;
+			iAtk -= (iAtk * 30 * pkVictim->GetPoint(POINT_RESIST_DARK))		/ 10000;
 	}
+
 
 	return iAtk;
 }
@@ -339,9 +341,9 @@ void Item_GetDamage(LPITEM pkItem, int* pdamMin, int* pdamMax)
 
 	switch (pkItem->GetType())
 	{
-	case ITEM_ROD:
-	case ITEM_PICK:
-		return;
+		case ITEM_ROD:
+		case ITEM_PICK:
+			return;
 	}
 
 	if (pkItem->GetType() != ITEM_WEAPON)
@@ -363,20 +365,20 @@ int CalcMeleeDamage(LPCHARACTER pkAttacker, LPCHARACTER pkVictim, bool bIgnoreDe
 
 		switch (pWeapon->GetSubType())
 		{
-		case WEAPON_SWORD:
-		case WEAPON_DAGGER:
-		case WEAPON_TWO_HANDED:
-		case WEAPON_BELL:
-		case WEAPON_FAN:
-		case WEAPON_MOUNT_SPEAR:
-			break;
+			case WEAPON_SWORD:
+			case WEAPON_DAGGER:
+			case WEAPON_TWO_HANDED:
+			case WEAPON_BELL:
+			case WEAPON_FAN:
+			case WEAPON_MOUNT_SPEAR:
+				break;
 
-		case WEAPON_BOW:
-			sys_err("CalcMeleeDamage should not handle bows (name: %s)", pkAttacker->GetName());
-			return 0;
+			case WEAPON_BOW:
+				sys_err("CalcMeleeDamage should not handle bows (name: %s)", pkAttacker->GetName());
+				return 0;
 
-		default:
-			return 0;
+			default:
+				return 0;
 		}
 	}
 
@@ -396,7 +398,7 @@ int CalcMeleeDamage(LPCHARACTER pkAttacker, LPCHARACTER pkVictim, bool bIgnoreDe
 		// END_OF_MONKEY_ROD_ATTACK_BUG_FIX
 
 		DWORD dwMobVnum = pkAttacker->GetPolymorphVnum();
-		const CMob* pMob = CMobManager::instance().Get(dwMobVnum);
+		const CMob * pMob = CMobManager::instance().Get(dwMobVnum);
 
 		if (pMob)
 		{
@@ -427,7 +429,7 @@ int CalcMeleeDamage(LPCHARACTER pkAttacker, LPCHARACTER pkVictim, bool bIgnoreDe
 
 	// level must be ignored when multiply by fAR, so subtract it before calculation.
 	iAtk = pkAttacker->GetPoint(POINT_ATT_GRADE) + iDam - (pkAttacker->GetLevel() * 2);
-	iAtk = (int)(iAtk * fAR);
+	iAtk = (int) (iAtk * fAR);
 	iAtk += pkAttacker->GetLevel() * 2; // and add again
 
 	if (pWeapon)
@@ -440,7 +442,7 @@ int CalcMeleeDamage(LPCHARACTER pkAttacker, LPCHARACTER pkVictim, bool bIgnoreDe
 	}
 
 	iAtk += pkAttacker->GetPoint(POINT_PARTY_ATTACKER_BONUS); // party attacker role bonus
-	iAtk = (int)(iAtk * (100 + (pkAttacker->GetPoint(POINT_ATT_BONUS) + pkAttacker->GetPoint(POINT_MELEE_MAGIC_ATT_BONUS_PER))) / 100);
+	iAtk = (int) (iAtk * (100 + (pkAttacker->GetPoint(POINT_ATT_BONUS) + pkAttacker->GetPoint(POINT_MELEE_MAGIC_ATT_BONUS_PER))) / 100);
 
 	iAtk = CalcAttBonus(pkAttacker, pkVictim, iAtk);
 
@@ -455,13 +457,13 @@ int CalcMeleeDamage(LPCHARACTER pkAttacker, LPCHARACTER pkVictim, bool bIgnoreDe
 	}
 
 	if (pkAttacker->IsNPC())
-		iAtk = (int)(iAtk * pkAttacker->GetMobDamageMultiply());
+		iAtk = (int) (iAtk * pkAttacker->GetMobDamageMultiply());
 
 	iDam = MAX(0, iAtk - iDef);
 
 	if (test_server)
 	{
-		int DEBUG_iLV = pkAttacker->GetLevel() * 2;
+		int DEBUG_iLV = pkAttacker->GetLevel()*2;
 		int DEBUG_iST = int((pkAttacker->GetPoint(POINT_ATT_GRADE) - DEBUG_iLV) * fAR);
 		int DEBUG_iPT = pkAttacker->GetPoint(POINT_PARTY_ATTACKER_BONUS);
 		int DEBUG_iWP = 0;
@@ -471,7 +473,7 @@ int CalcMeleeDamage(LPCHARACTER pkAttacker, LPCHARACTER pkVictim, bool bIgnoreDe
 		char szGradeAtkBonus[32] = "";
 
 		DEBUG_iWP = int(DEBUG_iDamCur * fAR);
-		DEBUG_iPureAtk = DEBUG_iLV + DEBUG_iST + DEBUG_iWP + DEBUG_iDamBonus;
+		DEBUG_iPureAtk = DEBUG_iLV + DEBUG_iST + DEBUG_iWP+DEBUG_iDamBonus;
 		DEBUG_iPureDam = iAtk - iDef;
 
 		if (pkAttacker->IsNPC())
@@ -491,31 +493,31 @@ int CalcMeleeDamage(LPCHARACTER pkAttacker, LPCHARACTER pkVictim, bool bIgnoreDe
 		char szUnknownAtk[32] = "";
 
 		if (iAtk != DEBUG_iPureAtk)
-			snprintf(szUnknownAtk, sizeof(szUnknownAtk), "+?(%d)", iAtk - DEBUG_iPureAtk);
+			snprintf(szUnknownAtk, sizeof(szUnknownAtk), "+?(%d)", iAtk-DEBUG_iPureAtk);
 
 		char szUnknownDam[32] = "";
 
 		if (iDam != DEBUG_iPureDam)
-			snprintf(szUnknownDam, sizeof(szUnknownDam), "+?(%d)", iDam - DEBUG_iPureDam);
+			snprintf(szUnknownDam, sizeof(szUnknownDam), "+?(%d)", iDam-DEBUG_iPureDam);
 
 		char szMeleeAttack[128];
 
 		snprintf(szMeleeAttack, sizeof(szMeleeAttack),
-			"%s(%d)-%s(%d)=%d%s, ATK=LV(%d)+ST(%d)+WP(%d)%s%s%s, AR=%.3g%s",
-			pkAttacker->GetName(),
-			iAtk,
-			pkVictim->GetName(),
-			iDef,
-			iDam,
-			szUnknownDam,
-			DEBUG_iLV,
-			DEBUG_iST,
-			DEBUG_iWP,
-			szRB,
-			szUnknownAtk,
-			szGradeAtkBonus,
-			fAR,
-			szPT);
+				"%s(%d)-%s(%d)=%d%s, ATK=LV(%d)+ST(%d)+WP(%d)%s%s%s, AR=%.3g%s",
+				pkAttacker->GetName(),
+				iAtk,
+				pkVictim->GetName(),
+				iDef,
+				iDam,
+				szUnknownDam,
+				DEBUG_iLV,
+				DEBUG_iST,
+				DEBUG_iWP,
+				szRB,
+				szUnknownAtk,
+				szGradeAtkBonus,
+				fAR,
+				szPT);
 
 		pkAttacker->ChatPacket(CHAT_TYPE_TALKING, "%s", szMeleeAttack);
 		pkVictim->ChatPacket(CHAT_TYPE_TALKING, "%s", szMeleeAttack);
@@ -532,7 +534,7 @@ int CalcArrowDamage(LPCHARACTER pkAttacker, LPCHARACTER pkVictim, LPITEM pkBow, 
 	if (!pkArrow)
 		return 0;
 
-	int iDist = (int)(DISTANCE_SQRT(pkAttacker->GetX() - pkVictim->GetX(), pkAttacker->GetY() - pkVictim->GetY()));
+	int iDist = (int) (DISTANCE_SQRT(pkAttacker->GetX() - pkVictim->GetX(), pkAttacker->GetY() - pkVictim->GetY()));
 	//int iGap = (iDist / 100) - 5 - pkBow->GetValue(5) - pkAttacker->GetPoint(POINT_BOW_DISTANCE);
 	int iGap = (iDist / 100) - 5 - pkAttacker->GetPoint(POINT_BOW_DISTANCE);
 	int iPercent = 100 - (iGap * 5);
@@ -555,14 +557,14 @@ int CalcArrowDamage(LPCHARACTER pkAttacker, LPCHARACTER pkVictim, LPITEM pkBow, 
 
 	// level must be ignored when multiply by fAR, so subtract it before calculation.
 	iAtk = pkAttacker->GetPoint(POINT_ATT_GRADE) + iDam - (pkAttacker->GetLevel() * 2);
-	iAtk = (int)(iAtk * fAR);
+	iAtk = (int) (iAtk * fAR);
 	iAtk += pkAttacker->GetLevel() * 2; // and add again
 
 	// Refine Grade
 	iAtk += pkBow->GetValue(5) * 2;
 
 	iAtk += pkAttacker->GetPoint(POINT_PARTY_ATTACKER_BONUS);
-	iAtk = (int)(iAtk * (100 + (pkAttacker->GetPoint(POINT_ATT_BONUS) + pkAttacker->GetPoint(POINT_MELEE_MAGIC_ATT_BONUS_PER))) / 100);
+	iAtk = (int) (iAtk * (100 + (pkAttacker->GetPoint(POINT_ATT_BONUS) + pkAttacker->GetPoint(POINT_MELEE_MAGIC_ATT_BONUS_PER))) / 100);
 
 	iAtk = CalcAttBonus(pkAttacker, pkVictim, iAtk);
 
@@ -572,7 +574,7 @@ int CalcArrowDamage(LPCHARACTER pkAttacker, LPCHARACTER pkVictim, LPITEM pkBow, 
 		iDef = (pkVictim->GetPoint(POINT_DEF_GRADE) * (100 + pkAttacker->GetPoint(POINT_DEF_BONUS)) / 100);
 
 	if (pkAttacker->IsNPC())
-		iAtk = (int)(iAtk * pkAttacker->GetMobDamageMultiply());
+		iAtk = (int) (iAtk * pkAttacker->GetMobDamageMultiply());
 
 	iDam = MAX(0, iAtk - iDef);
 
@@ -583,10 +585,10 @@ int CalcArrowDamage(LPCHARACTER pkAttacker, LPCHARACTER pkVictim, LPITEM pkBow, 
 	if (test_server)
 	{
 		pkAttacker->ChatPacket(CHAT_TYPE_INFO, "ARROW %s -> %s, DAM %d DIST %d GAP %d %% %d",
-			pkAttacker->GetName(),
-			pkVictim->GetName(),
-			iPureDam,
-			iDist, iGap, iPercent);
+				pkAttacker->GetName(),
+				pkVictim->GetName(),
+				iPureDam,
+				iDist, iGap, iPercent);
 	}
 
 	return iPureDam;
@@ -604,11 +606,11 @@ void NormalAttackAffect(LPCHARACTER pkAttacker, LPCHARACTER pkVictim)
 	if (pkAttacker->IsPC() && !pkVictim->IsPC())
 		iStunDuration = 4;
 
-	AttackAffect(pkAttacker, pkVictim, POINT_STUN_PCT, IMMUNE_STUN, AFFECT_STUN, POINT_NONE, 0, AFF_STUN, iStunDuration, "STUN");
-	AttackAffect(pkAttacker, pkVictim, POINT_SLOW_PCT, IMMUNE_SLOW, AFFECT_SLOW, POINT_MOV_SPEED, -30, AFF_SLOW, 20, "SLOW");
+	AttackAffect(pkAttacker, pkVictim, POINT_STUN_PCT, IMMUNE_STUN,  AFFECT_STUN, POINT_NONE,        0, AFF_STUN, iStunDuration, "STUN");
+	AttackAffect(pkAttacker, pkVictim, POINT_SLOW_PCT, IMMUNE_SLOW,  AFFECT_SLOW, POINT_MOV_SPEED, -30, AFF_SLOW, 20,		"SLOW");
 }
 
-int battle_hit(LPCHARACTER pkAttacker, LPCHARACTER pkVictim, int& iRetDam)
+int battle_hit(LPCHARACTER pkAttacker, LPCHARACTER pkVictim, int & iRetDam)
 {
 	if (test_server)
 		sys_log(0, "battle_hit : [%s] attack to [%s] : dam :%d type :%d", pkAttacker->GetName(), pkVictim->GetName(), iRetDam);
@@ -625,29 +627,29 @@ int battle_hit(LPCHARACTER pkAttacker, LPCHARACTER pkVictim, int& iRetDam)
 	if (pkWeapon)
 		switch (pkWeapon->GetSubType())
 		{
-		case WEAPON_SWORD:
-			iDam = iDam * (100 - pkVictim->GetPoint(POINT_RESIST_SWORD)) / 100;
-			break;
+			case WEAPON_SWORD:
+				iDam = iDam * (100 - pkVictim->GetPoint(POINT_RESIST_SWORD)) / 100;
+				break;
 
-		case WEAPON_TWO_HANDED:
-			iDam = iDam * (100 - pkVictim->GetPoint(POINT_RESIST_TWOHAND)) / 100;
-			break;
+			case WEAPON_TWO_HANDED:
+				iDam = iDam * (100 - pkVictim->GetPoint(POINT_RESIST_TWOHAND)) / 100;
+				break;
 
-		case WEAPON_DAGGER:
-			iDam = iDam * (100 - pkVictim->GetPoint(POINT_RESIST_DAGGER)) / 100;
-			break;
+			case WEAPON_DAGGER:
+				iDam = iDam * (100 - pkVictim->GetPoint(POINT_RESIST_DAGGER)) / 100;
+				break;
 
-		case WEAPON_BELL:
-			iDam = iDam * (100 - pkVictim->GetPoint(POINT_RESIST_BELL)) / 100;
-			break;
+			case WEAPON_BELL:
+				iDam = iDam * (100 - pkVictim->GetPoint(POINT_RESIST_BELL)) / 100;
+				break;
 
-		case WEAPON_FAN:
-			iDam = iDam * (100 - pkVictim->GetPoint(POINT_RESIST_FAN)) / 100;
-			break;
+			case WEAPON_FAN:
+				iDam = iDam * (100 - pkVictim->GetPoint(POINT_RESIST_FAN)) / 100;
+				break;
 
-		case WEAPON_BOW:
-			iDam = iDam * (100 - pkVictim->GetPoint(POINT_RESIST_BOW)) / 100;
-			break;
+			case WEAPON_BOW:
+				iDam = iDam * (100 - pkVictim->GetPoint(POINT_RESIST_BOW)) / 100;
+				break;
 		}
 
 	float attMul = pkAttacker->GetAttMul();
@@ -705,13 +707,13 @@ void SET_ATTACKED_TIME(LPCHARACTER ch, LPCHARACTER victim, DWORD current_time)
 	if (!ch->IsPC())
 		return;
 
-	victim->m_AttackedLog.dwPID = ch->GetPlayerID();
-	victim->m_AttackedLog.dwAttackedTime = current_time;
+	victim->m_AttackedLog.dwPID			= ch->GetPlayerID();
+	victim->m_AttackedLog.dwAttackedTime= current_time;
 }
 
 bool IS_SPEED_HACK(LPCHARACTER ch, LPCHARACTER victim, DWORD current_time)
 {
-	if (!gHackCheckEnable) return false;
+	if(!gHackCheckEnable) return false;
 
 	if (ch->m_kAttackLog.dwVID == victim->GetVID())
 	{
@@ -722,16 +724,16 @@ bool IS_SPEED_HACK(LPCHARACTER ch, LPCHARACTER victim, DWORD current_time)
 			if (test_server)
 			{
 				sys_log(0, "%s attack hack! time (delta, limit)=(%u, %u) hack_count %d",
-					ch->GetName(),
-					current_time - ch->m_kAttackLog.dwTime,
-					GET_ATTACK_SPEED(ch),
-					ch->m_speed_hack_count);
+						ch->GetName(),
+						current_time - ch->m_kAttackLog.dwTime,
+						GET_ATTACK_SPEED(ch),
+						ch->m_speed_hack_count);
 
 				ch->ChatPacket(CHAT_TYPE_INFO, "%s attack hack! time (delta, limit)=(%u, %u) hack_count %d",
-					ch->GetName(),
-					current_time - ch->m_kAttackLog.dwTime,
-					GET_ATTACK_SPEED(ch),
-					ch->m_speed_hack_count);
+						ch->GetName(),
+						current_time - ch->m_kAttackLog.dwTime,
+						GET_ATTACK_SPEED(ch),
+						ch->m_speed_hack_count);
 			}
 
 			SET_ATTACK_TIME(ch, victim, current_time);
@@ -751,15 +753,15 @@ bool IS_SPEED_HACK(LPCHARACTER ch, LPCHARACTER victim, DWORD current_time)
 			if (test_server)
 			{
 				sys_log(0, "%s Attack Speed HACK! time (delta, limit)=(%u, %u), hack_count = %d",
-					ch->GetName(),
-					current_time - victim->m_AttackedLog.dwAttackedTime,
-					GET_ATTACK_SPEED(ch),
-					ch->m_speed_hack_count);
+						ch->GetName(),
+						current_time - victim->m_AttackedLog.dwAttackedTime,
+						GET_ATTACK_SPEED(ch),
+						ch->m_speed_hack_count);
 
 				ch->ChatPacket(CHAT_TYPE_INFO, "Attack Speed Hack(%s), (delta, limit)=(%u, %u)",
-					ch->GetName(),
-					current_time - victim->m_AttackedLog.dwAttackedTime,
-					GET_ATTACK_SPEED(ch));
+						ch->GetName(),
+						current_time - victim->m_AttackedLog.dwAttackedTime,
+						GET_ATTACK_SPEED(ch));
 			}
 
 			SET_ATTACKED_TIME(ch, victim, current_time);

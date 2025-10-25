@@ -18,10 +18,10 @@ EVENTINFO(mount_event_info)
 
 EVENTFUNC(mount_update_event)
 {
-	mount_event_info* info = dynamic_cast<mount_event_info*>(event->info);
-	if (info == nullptr)
+	mount_event_info* info = dynamic_cast<mount_event_info*>( event->info );
+	if ( info == nullptr )
 	{
-		sys_err("mountsystem_update_event> <Factor> Null pointer");
+		sys_err( "mountsystem_update_event> <Factor> Null pointer" );
 		return 0;
 	}
 
@@ -35,6 +35,7 @@ EVENTFUNC(mount_update_event)
 	pMountSystem->Update(0);
 	return PASSES_PER_SEC(1) / 4;
 }
+
 
 CMountActor::CMountActor(LPCHARACTER owner, uint32_t vnum)
 {
@@ -57,6 +58,7 @@ void CMountActor::SetName(const char* name)
 {
 	std::string mountName = std::string(name) + "'s Mount";
 
+
 	if (true == IsSummoned())
 	{
 		m_pkCharacter->SetName(mountName);
@@ -72,23 +74,23 @@ uint32_t CMountActor::Mount()
 
 	// x += number(-100, 100);
 	// y += number(-100, 100);
-
+	
 	if (IsMounting() == true)
 		return 0;
 
 	if (nullptr != m_pkCharacter)
 		M2_DESTROY_CHARACTER(m_pkCharacter);
-
+	
 	m_pkCharacter = 0;
 
 	m_pkOwner->MountVnum(m_dwVnum);
-
+	
 	m_pkOwner->SetMountingM(true);
 	m_pkOwner->RemoveAffect(AFFECT_MOUNT);
 	m_pkOwner->RemoveAffect(AFFECT_MOUNT_BONUS);
 	m_pkOwner->AddAffect(AFFECT_MOUNT, POINT_NONE, 0, AFF_NONE, INFINITE_AFFECT_DURATION, 0, true);
 	m_dwMounted = true;
-
+	
 	return m_dwVnum;
 }
 
@@ -98,11 +100,11 @@ uint32_t CMountActor::Unmount()
 		return 0;
 
 	m_pkOwner->SetMountingM(false);
-
+	
 	if (m_pkOwner->IsHorseRiding())
 		m_pkOwner->StopRiding();
 
-	m_pkOwner->MountVnum(0);
+	m_pkOwner->MountVnum(0);	
 	m_dwMounted = false;
 	this->Summon(m_pkOwner->GetName(), m_dwVnum);
 
@@ -116,12 +118,12 @@ void CMountActor::Unsummon()
 		if (m_pkOwner)
 			m_pkOwner->ComputePoints();
 
-		if (IsMounting() == true)
+		if(IsMounting() == true)
 			this->Unmount();
 
 		if (nullptr != m_pkCharacter)
 			M2_DESTROY_CHARACTER(m_pkCharacter);
-
+		
 		m_pkCharacter = 0;
 		m_dwVID = 0;
 		m_dwMounted = false;
@@ -139,42 +141,43 @@ void CMountActor::Summon(const char* mName, uint32_t mobVnum)
 	int32_t x = m_pkOwner->GetX(), y = m_pkOwner->GetY(), z = m_pkOwner->GetZ();
 
 	m_pkOwner->SetMountingM(false);
-
+	
 	if (m_pkOwner->IsHorseRiding())
 		m_pkOwner->StopRiding();
 
-	m_pkOwner->MountVnum(0);
+	m_pkOwner->MountVnum(0);	
 	m_dwMounted = false;
 	m_pkOwner->RemoveAffect(AFFECT_MOUNT);
 	m_pkOwner->RemoveAffect(AFFECT_MOUNT_BONUS);
-
+	
 	x += number(-100, 100);
 	y += number(-100, 100);
 
-	if (this->IsMounting() == true && this->IsSummoned() == false)
+	if(this->IsMounting() == true && this->IsSummoned() == false)
 	{
 		m_pkOwner->SetMountingM(false);
-
+	
 		if (m_pkOwner->IsHorseRiding())
 			m_pkOwner->StopRiding();
 
-		m_pkOwner->MountVnum(0);
+		m_pkOwner->MountVnum(0);	
 		m_dwMounted = false;
 		m_pkCharacter = 0;
 		m_dwVID = 0;
+
 	}
 	if (this->IsSummoned() == true)
 		this->Unsummon();
 
 	if (0 != m_pkCharacter)
 	{
-		m_pkCharacter->Show(m_pkOwner->GetMapIndex(), x, y);
+		m_pkCharacter->Show (m_pkOwner->GetMapIndex(), x, y);
 		m_dwVID = m_pkCharacter->GetVID();
 
 		return;
 	}
-
-	m_pkCharacter = CHARACTER_MANAGER::instance().SpawnMob(mobVnum, m_pkOwner->GetMapIndex(), x, y, z, false, (int32_t)(m_pkOwner->GetRotation() + 180), false);
+	
+	m_pkCharacter = CHARACTER_MANAGER::instance().SpawnMob(mobVnum, m_pkOwner->GetMapIndex(), x, y, z, false, (int32_t)(m_pkOwner->GetRotation()+180), false);
 
 	if (0 == m_pkCharacter)
 	{
@@ -182,23 +185,25 @@ void CMountActor::Summon(const char* mName, uint32_t mobVnum)
 		return;
 	}
 
+
 	m_pkCharacter->SetEmpire(m_pkOwner->GetEmpire());
 	m_pkCharacter->SetMount();
-
+	
+	
 	m_dwVID = m_pkCharacter->GetVID();
-
-	this->SetName(m_pkOwner->GetName());
+	
+	this->SetName(m_pkOwner->GetName());	
 	m_pkOwner->SetMountVnumM(m_dwVnum);
 	m_pkOwner->ComputePoints();
 	m_pkCharacter->Show(m_pkOwner->GetMapIndex(), x, y, z);
-
+	
 	return;
 }
 
 bool CMountActor::_UpdatAloneActionAI(float fMinDist, float fMaxDist)
 {
-	float fDist = number(fMinDist, fMaxDist), r = (float)number(0, 359), dest_x = GetOwner()->GetX() + fDist * cos(r), dest_y = GetOwner()->GetY() + fDist * sin(r);
-
+	float fDist = number(fMinDist, fMaxDist), r = (float)number (0, 359), dest_x = GetOwner()->GetX() + fDist * cos(r), dest_y = GetOwner()->GetY() + fDist * sin(r);
+	
 	m_pkCharacter->SetNowWalking(true);
 
 	if (!m_pkCharacter->IsStateMove() && m_pkCharacter->Goto(dest_x, dest_y))
@@ -224,10 +229,10 @@ bool CMountActor::_UpdateFollowAI()
 			m_OMoveSpeed = mobData->m_table.sMovingSpeed;
 	}
 	float	START_FOLLOW_DISTANCE = 300.0f, START_RUN_DISTANCE = 900.0f, RESPAWN_DISTANCE = 4500.f;
-	int32_t		APPROACH = 290;
-
+	int32_t		APPROACH = 290;						
+	
 	bool bRun = false;
-
+	
 	uint32_t currentTime = get_dword_time();
 
 	int32_t ownerX = m_pkOwner->GetX(), ownerY = m_pkOwner->GetY(), charX = m_pkCharacter->GetX(), charY = m_pkCharacter->GetY();
@@ -240,10 +245,11 @@ bool CMountActor::_UpdateFollowAI()
 		if (m_pkCharacter->Show(m_pkOwner->GetMapIndex(), ownerX + fx, ownerY + fy))
 			return true;
 	}
-
+	
+	
 	if (fDist >= START_FOLLOW_DISTANCE)
 	{
-		if (fDist >= START_RUN_DISTANCE)
+		if( fDist >= START_RUN_DISTANCE)
 		{
 			bRun = true;
 		}
@@ -252,9 +258,9 @@ bool CMountActor::_UpdateFollowAI()
 		m_pkCharacter->SetLastAttacked(currentTime);
 		m_dwLastActionTime = currentTime;
 	}
-	else
+	else 
 		m_pkCharacter->SendMovePacket(FUNC_WAIT, 0, 0, 0, 0);
-
+	
 	return true;
 }
 
@@ -279,11 +285,11 @@ bool CMountActor::Update(uint32_t deltaTime)
 
 bool CMountActor::Follow(float fMinDistance)
 {
-	if (!m_pkOwner || !m_pkCharacter)
+	if( !m_pkOwner || !m_pkCharacter) 
 		return false;
 
 	float fOwnerX = m_pkOwner->GetX(), fOwnerY = m_pkOwner->GetY(), fMountX = m_pkCharacter->GetX(), fMountY = m_pkCharacter->GetY(), fDist = DISTANCE_SQRT(fOwnerX - fMountX, fOwnerY - fMountY);
-
+	
 	if (fDist <= fMinDistance)
 		return false;
 
@@ -291,14 +297,15 @@ bool CMountActor::Follow(float fMinDistance)
 
 	float fx, fy, fDistToGo = fDist - fMinDistance;
 	GetDeltaByDegree(m_pkCharacter->GetRotation(), fDistToGo, &fx, &fy);
-
-	if (!m_pkCharacter->Goto((int32_t)(fMountX + fx + 0.5f), (int32_t)(fMountY + fy + 0.5f)))
+	
+	if (!m_pkCharacter->Goto((int32_t)(fMountX+fx+0.5f), (int32_t)(fMountY+fy+0.5f)) )
 		return false;
 
 	m_pkCharacter->SendMovePacket(FUNC_WAIT, 0, 0, 0, 0, 0);
 
 	return true;
 }
+
 
 CMountSystem::CMountSystem(LPCHARACTER owner)
 {
@@ -312,6 +319,7 @@ CMountSystem::~CMountSystem()
 {
 	Destroy();
 }
+
 
 void CMountSystem::Destroy()
 {
@@ -331,10 +339,10 @@ bool CMountSystem::Update(uint32_t deltaTime)
 	bool bResult = true;
 
 	uint32_t currentTime = get_dword_time();
-
+	
 	if (m_dwUpdatePeriod > currentTime - m_dwLastUpdateTime)
 		return true;
-
+	
 	std::vector <CMountActor*> v_garbageActor;
 
 	for (TMountActorMap::iterator iter = m_MountActorMap.begin(); iter != m_MountActorMap.end(); ++iter)
@@ -344,7 +352,7 @@ bool CMountSystem::Update(uint32_t deltaTime)
 		if (0 != MountActor && MountActor->IsSummoned())
 		{
 			LPCHARACTER pMount = MountActor->GetCharacter();
-
+			
 			if (nullptr == CHARACTER_MANAGER::instance().Find(pMount->GetVID()))
 				v_garbageActor.push_back(MountActor);
 			else
@@ -375,7 +383,7 @@ void CMountSystem::DeleteMount(uint32_t mobVnum)
 	else
 		delete MountActor;
 
-	m_MountActorMap.erase(iter);
+	m_MountActorMap.erase(iter);	
 }
 
 void CMountSystem::DeleteMount(CMountActor* MountActor)
@@ -410,7 +418,7 @@ void CMountSystem::Unsummon(uint32_t vnum, bool bDeleteFromList)
 	bool bActive = false;
 	for (TMountActorMap::iterator it = m_MountActorMap.begin(); it != m_MountActorMap.end(); it++)
 		bActive |= it->second->IsSummoned();
-
+	
 	if (false == bActive)
 	{
 		event_cancel(&m_pkMountSystemUpdateEvent);
@@ -426,11 +434,11 @@ bool CMountSystem::IsActiveMount()
 		CMountActor* MountActor = iter->second;
 		if (MountActor != 0)
 		{
-			if (MountActor->IsSummoned())
+			if (MountActor->IsSummoned()) 
 			{
 				state = true;
 				break;
-			}
+			}			
 		}
 	}
 	return state;
@@ -462,31 +470,33 @@ CMountActor* CMountSystem::Summon(uint32_t mobVnum, const char* mName)
 
 		info->pMountSystem = this;
 
-		m_pkMountSystemUpdateEvent = event_create(mount_update_event, info, PASSES_PER_SEC(1) / 4);
+		m_pkMountSystemUpdateEvent = event_create(mount_update_event, info, PASSES_PER_SEC(1) / 4);	
 	}
-	EnsureUpdateEventStarted();
+EnsureUpdateEventStarted();
 	return MountActor;
 }
 
 CMountActor* CMountSystem::SummonSilent(uint32_t mobVnum, const char* mName)
 {
-	// Ensure an actor exists for the requested mount vnum but do not visually spawn it.
-	CMountActor* MountActor = this->GetByVnum(mobVnum);
-	if (0 == MountActor)
-	{
-		MountActor = M2_NEW CMountActor(m_pkOwner, mobVnum);
-		m_MountActorMap.insert(std::make_pair(mobVnum, MountActor));
-	}
-	// If there is a stray summoned mount (not mounted), unsummon it to avoid duplication.
-	if (MountActor->IsSummoned() && !MountActor->IsMounting())
-	{
-		MountActor->Unsummon();
-	}
-	// Prepare toggling by remembering the mount vnum to be mounted.
-	if (m_pkOwner)
-		m_pkOwner->SetMountVnumM(mobVnum);
-	EnsureUpdateEventStarted();
-	return MountActor;
+    // Ensure an actor exists for the requested mount vnum but do not visually spawn it.
+    CMountActor* MountActor = this->GetByVnum(mobVnum);
+    if (0 == MountActor)
+    {
+        MountActor = M2_NEW CMountActor(m_pkOwner, mobVnum);
+        m_MountActorMap.insert(std::make_pair(mobVnum, MountActor));
+    }
+    // If there is a stray summoned mount (not mounted), unsummon it to avoid duplication.
+    if (MountActor->IsSummoned() && !MountActor->IsMounting())
+    {
+        MountActor->Unsummon();
+    }
+    // Prepare toggling by remembering the mount vnum to be mounted.
+    if (m_pkOwner)
+        m_pkOwner->SetMountVnumM(mobVnum);
+EnsureUpdateEventStarted();
+    return MountActor;
+
+    
 }
 
 CMountActor* CMountSystem::Mount(uint32_t mobVnum)
@@ -505,7 +515,7 @@ CMountActor* CMountSystem::Unmount(uint32_t mobVnum)
 	if (MountActor)
 		MountActor->Unmount();
 
-	EnsureUpdateEventStarted();
+    EnsureUpdateEventStarted();
 	return MountActor;
 }
 
@@ -513,7 +523,7 @@ CMountActor* CMountSystem::GetByVID(uint32_t vid) const
 {
 	CMountActor* MountActor = 0;
 	bool bFound = false;
-
+	
 	for (TMountActorMap::const_iterator iter = m_MountActorMap.begin(); iter != m_MountActorMap.end(); ++iter)
 	{
 		MountActor = iter->second;
@@ -560,25 +570,26 @@ size_t CMountSystem::CountSummoned() const
 }
 
 void CMountSystem::UnsummonAll() {
-	std::vector<CMountActor*> actors;
-	for (auto it = m_MountActorMap.begin(); it != m_MountActorMap.end(); ++it)
-		if (it->second) actors.push_back(it->second);
+    std::vector<CMountActor*> actors;
+    for (auto it = m_MountActorMap.begin(); it != m_MountActorMap.end(); ++it)
+        if (it->second) actors.push_back(it->second);
 
-	for (auto* a : actors) {
-		a->Unsummon();      // NPC’yi kaldýr
-		DeleteMount(a);     // map’ten çýkar
-	}
+    for (auto* a : actors) {
+        a->Unsummon();      // NPC’yi kaldýr
+        DeleteMount(a);     // map’ten çýkar
+    }
 }
 
 void CMountSystem::EnsureUpdateEventStarted()
 {
-	if (m_pkMountSystemUpdateEvent)
-	{
-		event_cancel(&m_pkMountSystemUpdateEvent);
-		m_pkMountSystemUpdateEvent = NULL;
-	}
-	mount_event_info* info = AllocEventInfo<mount_event_info>();
-	info->pMountSystem = this;
-	m_pkMountSystemUpdateEvent = event_create(mount_update_event, info, PASSES_PER_SEC(1) / 4);
-	m_dwLastUpdateTime = 0;
+    if (m_pkMountSystemUpdateEvent)
+    {
+        event_cancel(&m_pkMountSystemUpdateEvent);
+        m_pkMountSystemUpdateEvent = NULL;
+    }
+    mount_event_info* info = AllocEventInfo<mount_event_info>();
+    info->pMountSystem = this;
+    m_pkMountSystemUpdateEvent = event_create(mount_update_event, info, PASSES_PER_SEC(1) / 4);
+    m_dwLastUpdateTime = 0;
 }
+
